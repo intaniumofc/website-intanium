@@ -1,12 +1,10 @@
-// Service for managing and fetching data about Intan (Biography, Trivia, Streaming Stats)
-
 const INTAN_BIO = {
-  fullName: 'Intan',
-  nickname: 'Intan / Intan-chan',
-  debutDate: '2024-05-15',
-  zodiac: 'Taurus',
-  height: '158 cm',
-  description: 'Intan adalah virtual content creator dan entertainer berbakat asal Indonesia yang berfokus pada gaming, interactive talk shows, cover lagu, dan pembuatan konten kreatif digital. Dengan pembawaan yang ramah, menghibur, dan penuh energi positif, Intan berhasil merangkul ribuan penggemar setianya yang tergabung dalam komunitas "Intanium".',
+  fullName: 'Nur Intan',
+  nickname: 'Dik Nuy',
+  dateOfBirth: '24 Februari 2006',
+  zodiac: 'Pisces',
+  height: '157 cm',
+  description: 'Intan permata yang berkilau, temukan cahaya ku di hatimu!',
   socialStats: [
     { label: 'YouTube Subscribers', value: '45,000+', icon: '📺' },
     { label: 'Instagram Followers', value: '12,500+', icon: '📸' },

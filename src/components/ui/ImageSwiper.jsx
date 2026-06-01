@@ -1,13 +1,9 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 
-/**
- * Reusable ImageSwiper component with smooth pointer-based swipe gestures
- * AND native click-to-swipe automation handled directly in the pointer pipeline.
- */
 export const ImageSwiper = ({
   images,
-  cardWidth = 256,  // 16rem = 256px
-  cardHeight = 352, // 22rem = 352px
+  cardWidth = 256,
+  cardHeight = 352,
   className = ''
 }) => {
   const cardStackRef = useRef(null);
@@ -15,18 +11,27 @@ export const ImageSwiper = ({
   const startX = useRef(0);
   const currentX = useRef(0);
   const animationFrameId = useRef(null);
-  const hasMoved = useRef(false); // Track if pointer dragged more than 5px
-  const clickDirection = useRef(1); // Alternates between 1 (right) and -1 (left)
+  const hasMoved = useRef(false);
+  const clickDirection = useRef(1);
 
   const imageList = images.split(',').map(img => img.trim()).filter(img => img);
   const [cardOrder, setCardOrder] = useState(() =>
     Array.from({ length: imageList.length }, (_, i) => i)
   );
 
-  const getDurationFromCSS = useCallback((
-    variableName,
-    element
-  ) => {
+  const stackOffsets = useMemo(() => {
+    const seed = (i) => {
+      const x = Math.sin(i * 9301 + 4927) * 49297;
+      return x - Math.floor(x); // 0..1
+    };
+    return imageList.map((_, i) => ({
+      rotate: (seed(i) - 0.5) * 12,
+      offsetX: (seed(i + 100) - 0.5) * 10,
+      offsetY: (seed(i + 200) - 0.5) * 8,
+    }));
+  }, [imageList.length]);
+
+  const getDurationFromCSS = useCallback((variableName, element) => {
     const targetElement = element || document.documentElement;
     const value = getComputedStyle(targetElement)
       ?.getPropertyValue(variableName)
@@ -44,13 +49,12 @@ export const ImageSwiper = ({
 
   const getActiveCard = useCallback(() => {
     const cards = getCards();
-    return cards[0] || null;
+    return cards.length > 0 ? cards[cards.length - 1] : null;
   }, [getCards]);
 
   const updatePositions = useCallback(() => {
     const cards = getCards();
     cards.forEach((card, i) => {
-      card.style.setProperty('--i', (i + 1).toString());
       card.style.setProperty('--swipe-x', '0px');
       card.style.setProperty('--swipe-rotate', '0deg');
       card.style.opacity = '1';
@@ -61,8 +65,8 @@ export const ImageSwiper = ({
     const card = getActiveCard();
     if (!card) return;
     card.style.setProperty('--swipe-x', `${deltaX}px`);
-    card.style.setProperty('--swipe-rotate', `${deltaX * 0.2}deg`);
-    card.style.opacity = (1 - Math.min(Math.abs(deltaX) / 100, 1) * 0.75).toString();
+    card.style.setProperty('--swipe-rotate', `${deltaX * 0.15}deg`);
+    card.style.opacity = (1 - Math.min(Math.abs(deltaX) / 120, 1) * 0.7).toString();
   }, [getActiveCard]);
 
   const handleStart = useCallback((clientX) => {
@@ -70,7 +74,7 @@ export const ImageSwiper = ({
     isSwiping.current = true;
     startX.current = clientX;
     currentX.current = clientX;
-    hasMoved.current = false; // Reset pointer movement flag
+    hasMoved.current = false;
     const card = getActiveCard();
     if (card) card.style.transition = 'none';
   }, [getActiveCard]);
@@ -91,7 +95,6 @@ export const ImageSwiper = ({
       card.style.transition = `transform ${duration}ms ease, opacity ${duration}ms ease`;
 
       if (Math.abs(deltaX) > threshold) {
-        // Drag crossed threshold: swipe in the direction of the drag
         const direction = Math.sign(deltaX);
         card.style.setProperty('--swipe-x', `${direction * 300}px`);
         card.style.setProperty('--swipe-rotate', `${direction * 20}deg`);
@@ -109,9 +112,8 @@ export const ImageSwiper = ({
           });
         }, duration);
       } else if (!hasMoved.current) {
-        // Drag didn't happen (user clicked): alternate swipe direction left/right
         const direction = clickDirection.current;
-        clickDirection.current *= -1; // Flip for next click
+        clickDirection.current *= -1;
         card.style.setProperty('--swipe-x', `${direction * 320}px`);
         card.style.setProperty('--swipe-rotate', `${direction * 25}deg`);
         card.style.opacity = '0';
@@ -129,7 +131,6 @@ export const ImageSwiper = ({
           });
         }, duration);
       } else {
-        // Dragged but didn't cross threshold: snap back to center
         applySwipeStyles(0);
       }
     }
@@ -147,8 +148,7 @@ export const ImageSwiper = ({
     animationFrameId.current = requestAnimationFrame(() => {
       currentX.current = clientX;
       const deltaX = currentX.current - startX.current;
-      
-      // If movement is larger than 5px, it is a drag, not a simple click
+
       if (Math.abs(deltaX) > 5) {
         hasMoved.current = true;
       }
@@ -162,27 +162,21 @@ export const ImageSwiper = ({
   }, [applySwipeStyles, handleEnd]);
 
   useEffect(() => {
-    const cardStackElement = cardStackRef.current;
-    if (!cardStackElement) return;
+    const el = cardStackRef.current;
+    if (!el) return;
 
-    const handlePointerDown = (e) => {
-      handleStart(e.clientX);
-    };
-    const handlePointerMove = (e) => {
-      handleMove(e.clientX);
-    };
-    const handlePointerUp = (e) => {
-      handleEnd();
-    };
+    const onDown = (e) => handleStart(e.clientX);
+    const onMove = (e) => handleMove(e.clientX);
+    const onUp = () => handleEnd();
 
-    cardStackElement.addEventListener('pointerdown', handlePointerDown);
-    cardStackElement.addEventListener('pointermove', handlePointerMove);
-    cardStackElement.addEventListener('pointerup', handlePointerUp);
+    el.addEventListener('pointerdown', onDown);
+    el.addEventListener('pointermove', onMove);
+    el.addEventListener('pointerup', onUp);
 
     return () => {
-      cardStackElement.removeEventListener('pointerdown', handlePointerDown);
-      cardStackElement.removeEventListener('pointermove', handlePointerMove);
-      cardStackElement.removeEventListener('pointerup', handlePointerUp);
+      el.removeEventListener('pointerdown', onDown);
+      el.removeEventListener('pointermove', onMove);
+      el.removeEventListener('pointerup', onUp);
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
       }
@@ -193,48 +187,71 @@ export const ImageSwiper = ({
     updatePositions();
   }, [cardOrder, updatePositions]);
 
+  const visibleCount = Math.min(imageList.length, 4);
+
   return (
     <section
-      className={`relative grid place-content-center select-none ${className}`}
+      className={`relative select-none ${className}`}
       ref={cardStackRef}
       style={{
-        width: cardWidth + 32,
-        height: cardHeight + 32,
+        width: cardWidth + 40,
+        height: cardHeight + 40,
         touchAction: 'none',
-        transformStyle: 'preserve-3d',
-        '--card-perspective': '700px',
-        '--card-z-offset': '12px',
-        '--card-y-offset': '7px',
-        '--card-max-z-index': imageList.length.toString(),
         '--card-swap-duration': '0.3s',
       }}
     >
-      {cardOrder.map((originalIndex, displayIndex) => (
-        <article
-          key={`${imageList[originalIndex]}-${originalIndex}`}
-          className={`image-card absolute select-none place-self-center border border-[var(--border-color)] rounded-xl bg-white shadow-md overflow-hidden will-change-transform ${
-            displayIndex === 0 ? 'cursor-pointer active:scale-98 transition-transform' : 'pointer-events-none'
-          }`}
-          style={{
-            '--i': (displayIndex + 1).toString(),
-            zIndex: imageList.length - displayIndex,
-            width: cardWidth,
-            height: cardHeight,
-            transform: `perspective(var(--card-perspective))
-                       translateZ(calc(-1 * var(--card-z-offset) * var(--i)))
-                       translateY(calc(var(--card-y-offset) * var(--i)))
-                       translateX(var(--swipe-x, 0px))
-                       rotateY(var(--swipe-rotate, 0deg))`
-          }}
-        >
-          <img
-            src={imageList[originalIndex]}
-            alt={`Swiper image ${originalIndex + 1}`}
-            className="w-full h-full object-cover select-none pointer-events-none"
-            draggable={false}
-          />
-        </article>
-      ))}
+      {[...cardOrder].reverse().map((originalIndex, reverseIdx) => {
+        const displayIndex = cardOrder.length - 1 - reverseIdx;
+        const isFront = displayIndex === 0;
+        const isVisible = displayIndex < visibleCount;
+        const offsets = stackOffsets[originalIndex] || { rotate: 0, offsetX: 0, offsetY: 0 };
+
+        const behindScale = 1 - Math.min(displayIndex, visibleCount - 1) * 0.02;
+        const behindY = Math.min(displayIndex, visibleCount - 1) * 6;
+        const stackRotate = isFront ? 0 : offsets.rotate;
+        const stackX = isFront ? 0 : offsets.offsetX;
+        const stackY = isFront ? 0 : behindY + offsets.offsetY;
+
+        return (
+          <article
+            key={`${imageList[originalIndex]}-${originalIndex}`}
+            className={`image-card absolute select-none will-change-transform ${isFront
+              ? 'cursor-pointer active:scale-[0.98] transition-transform'
+              : 'pointer-events-none'
+              }`}
+            style={{
+              zIndex: imageList.length - displayIndex,
+              width: cardWidth,
+              height: cardHeight,
+              left: '50%',
+              top: '50%',
+              marginLeft: -cardWidth / 2,
+              marginTop: -cardHeight / 2,
+              borderRadius: '14px',
+              overflow: 'hidden',
+              boxShadow: isFront
+                ? '0 8px 30px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.12)'
+                : `0 ${4 + displayIndex * 2}px ${12 + displayIndex * 4}px rgba(0,0,0,${0.10 + displayIndex * 0.04})`,
+              border: '3px solid rgba(255,255,255,0.85)',
+              background: '#fff',
+              transform: isFront
+                ? `translateX(var(--swipe-x, 0px)) rotate(var(--swipe-rotate, 0deg))`
+                : `translateX(${stackX}px) translateY(${stackY}px) rotate(${stackRotate}deg) scale(${behindScale})`,
+              opacity: isVisible ? (isFront ? undefined : (1 - displayIndex * 0.08)) : 0,
+              transition: isFront ? undefined : 'transform 0.4s cubic-bezier(.22,1,.36,1), opacity 0.4s ease',
+              visibility: isVisible ? 'visible' : 'hidden',
+            }}
+          >
+            <img
+              src={imageList[originalIndex]}
+              alt={`Photo ${originalIndex + 1}`}
+              className="w-full h-full object-cover select-none pointer-events-none"
+              draggable={false}
+              style={{ borderRadius: '11px' }}
+            />
+          </article>
+        );
+      })}
     </section>
   );
 };
