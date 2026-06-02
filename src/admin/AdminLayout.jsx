@@ -1,14 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../lib/constants';
 import Button from '../components/common/Button';
+import { supabase } from '../lib/supabaseClient';
 
 export default function AdminLayout({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleLogout = () => {
+  useEffect(() => {
+    // Basic protection (can be expanded with full session checks)
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session && !localStorage.getItem('isAdminAuthenticated')) {
+        navigate(ROUTES.ADMIN_LOGIN);
+      }
+    };
+    checkAuth();
+  }, [navigate]);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
     localStorage.removeItem('isAdminAuthenticated');
     navigate(ROUTES.ADMIN_LOGIN);
   };
