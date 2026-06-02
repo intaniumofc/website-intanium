@@ -63,6 +63,14 @@
   background: var(--color-primary);
 }
 
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* Background Animated Gradient Blobs */
 .bg-blob {
   position: absolute;
