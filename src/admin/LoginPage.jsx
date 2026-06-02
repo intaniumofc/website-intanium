@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
 import { ROUTES } from '../lib/constants';
+import { supabase } from '../lib/supabaseClient';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -21,17 +22,18 @@ export default function LoginPage() {
     setIsLoading(true);
     setError('');
 
-    // Simulate login delay
-    await new Promise((r) => setTimeout(r, 600));
+    const { data, error: authError } = await supabase.auth.signInWithPassword({
+      email: formData.email,
+      password: formData.password,
+    });
 
-    // Standard local authentication bypass for boilerplate purposes
-    if (formData.email === 'admin@intanium.com' && formData.password === 'admin123') {
+    if (authError) {
+      setError(authError.message || 'Email atau password salah.');
+      setIsLoading(false);
+    } else if (data.session) {
       localStorage.setItem('isAdminAuthenticated', 'true');
       setIsLoading(false);
       navigate(ROUTES.ADMIN_DASHBOARD);
-    } else {
-      setError('Email atau password admin salah. Hubungi Developer.');
-      setIsLoading(false);
     }
   };
 

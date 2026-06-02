@@ -1,17 +1,41 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
 import { ROUTES } from '../lib/constants';
 import { Link } from 'react-router-dom';
 import { ShoppingBag, BookOpen, Calendar, Pin, Newspaper, Zap, ShieldAlert } from 'lucide-react';
+import { supabase } from '../lib/supabaseClient';
 
 export default function DashboardPage() {
-  const stats = [
-    { label: 'Total Merchandise', value: '4 Produk', icon: ShoppingBag, change: 'Edisi Anniversary' },
-    { label: 'Zine Terbit', value: '2 Edisi', icon: BookOpen, change: 'Edisi Summer' },
-    { label: 'Jadwal Aktif', value: '3 Siaran', icon: Calendar, change: 'Minggu Ini' },
-    { label: 'Pesan Mading', value: '24 Tertempel', icon: Pin, change: 'Butuh Moderasi' },
-  ];
+  const [stats, setStats] = useState([
+    { label: 'Total Merchandise', value: '...', icon: ShoppingBag, change: 'Total Produk' },
+    { label: 'Zine Terbit', value: '...', icon: BookOpen, change: 'Total Recap' },
+    { label: 'Jadwal Aktif', value: '...', icon: Calendar, change: 'Semua Event' },
+    { label: 'Pesan Mading', value: '...', icon: Pin, change: 'Total Catatan' },
+  ]);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const [merch, recaps, events, mading] = await Promise.all([
+          supabase.from('merchandise').select('id', { count: 'exact' }),
+          supabase.from('recaps').select('id', { count: 'exact' }),
+          supabase.from('events').select('id', { count: 'exact' }),
+          supabase.from('mading_notes').select('id', { count: 'exact' }),
+        ]);
+
+        setStats([
+          { label: 'Total Merchandise', value: `${merch.count || 0} Produk`, icon: ShoppingBag, change: 'Total Produk' },
+          { label: 'Zine Terbit', value: `${recaps.count || 0} Edisi`, icon: BookOpen, change: 'Total Recap' },
+          { label: 'Jadwal Aktif', value: `${events.count || 0} Jadwal`, icon: Calendar, change: 'Semua Event' },
+          { label: 'Pesan Mading', value: `${mading.count || 0} Tertempel`, icon: Pin, change: 'Total Catatan' },
+        ]);
+      } catch (err) {
+        console.error('Failed to load stats:', err);
+      }
+    };
+    fetchStats();
+  }, []);
 
   const quickActions = [
     { label: 'Tambah Merchandise', link: ROUTES.ADMIN_MERCHANDISE, icon: ShoppingBag },
