@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, useReducedMotion, LayoutGroup } from 'framer-motion';
 import { BookmarkIcon, X, ArrowRight, Newspaper } from 'lucide-react';
 import { ROUTES } from '../../lib/constants';
-import Button from '../../components/common/Button';
 import Card from '../../components/common/Card';
 
 // Mapping categories to premium gradient glow color schemes
@@ -117,8 +116,6 @@ export default function HomeNewsSection({ articles = [] }) {
         <motion.div
           className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 w-full"
           variants={shouldAnimate ? cardContainerVariants : {}}
-          initial={shouldAnimate ? "hidden" : "visible"}
-          animate="visible"
         >
           {formattedArticles.map((article) => {
             if (selectedArticle?.id === article.id) {

@@ -4,18 +4,32 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { formatCurrency } from '../../lib/helpers';
 import { ROUTES } from '../../lib/constants';
 import { ArrowRight } from 'lucide-react';
-import Button from '../../components/common/Button';
 import Card from '../../components/common/Card';
 
-// Deceleration cubic bezier easing
-const revealEase = [0.25, 0.1, 0.25, 1.0];
-
-const sectionRevealVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0 }
+const cardContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.05
+    }
+  }
 };
 
-const ProductCard = ({ product, delay, active }) => {
+const cardVariants = {
+  hidden: { opacity: 0, y: 25 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: [0.25, 0.1, 0.25, 1.0]
+    }
+  }
+};
+
+const ProductCard = ({ product }) => {
   const images = React.useMemo(() => {
     const urls = (product.imageUrls ?? []).filter(Boolean);
     return urls.length > 0 ? urls : [product.imageUrl].filter(Boolean);
@@ -23,9 +37,7 @@ const ProductCard = ({ product, delay, active }) => {
 
   const [imgIndex, setImgIndex] = useState(0);
 
-  React.useEffect(() => {
-    setImgIndex(0);
-  }, [product.id]);
+  // imgIndex resets to 0 automatically when key changes, so useEffect is redundant
 
   React.useEffect(() => {
     if (images.length <= 1) return;
@@ -42,9 +54,7 @@ const ProductCard = ({ product, delay, active }) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 25 }}
-      animate={active ? { opacity: 1, y: 0 } : { opacity: 0, y: 25 }}
-      transition={{ delay: delay / 1000, duration: 0.6, ease: revealEase }}
+      variants={cardVariants}
       whileHover={{ y: -5, transition: { duration: 0.25 } }}
       className="group h-full select-none"
     >
@@ -170,7 +180,6 @@ const PaginationDots = ({ totalPages, activePage, labelPrefix, onChange }) => {
 export default function HomeMerchandiseSection({ products = [] }) {
   const [recentPage, setRecentPage] = useState(1);
   const itemsPerPage = 4;
-  const productsVisible = true; // Auto-trigger animations
 
   // Fetch only active dynamic products
   const recentProducts = [...products];
@@ -196,27 +205,18 @@ export default function HomeMerchandiseSection({ products = [] }) {
       </div>
 
       {/* Grid Layout (Mobile & Desktop) */}
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={sectionRevealVariants}
-        transition={{ duration: 0.6, ease: revealEase }}
-      >
+      <div>
         <AnimatePresence mode="wait">
           <motion.div
             key={`recent-grid-${recentPage}`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4, ease: revealEase }}
+            variants={cardContainerVariants}
+            exit={{ opacity: 0, transition: { duration: 0.3 } }}
             className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 lg:gap-5"
           >
-            {recentDisplayProducts.map((product, index) => (
+            {recentDisplayProducts.map((product) => (
               <ProductCard
                 key={product.id}
                 product={product}
-                delay={index * 110}
-                active={productsVisible}
               />
             ))}
           </motion.div>
@@ -228,7 +228,7 @@ export default function HomeMerchandiseSection({ products = [] }) {
           labelPrefix="produk terbaru"
           onChange={setRecentPage}
         />
-      </motion.div>
+      </div>
 
     </section>
   );
