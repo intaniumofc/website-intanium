@@ -107,6 +107,36 @@ export const merchandiseService = {
       return { success: false, error: error.message };
     }
     return { success: true };
+  },
+
+  createProduct: async (productData) => {
+    const id = productData.id || `merch-${Math.floor(1000 + Math.random() * 9000)}`;
+    const { data, error } = await supabase
+      .from('merchandise')
+      .insert([{ ...productData, id }])
+      .select()
+      .single();
+      
+    if (error) {
+      console.error('Error creating product:', error);
+      return { success: false, error: error.message };
+    }
+    return { success: true, data };
+  },
+
+  updateProduct: async (id, productData) => {
+    const { data, error } = await supabase
+      .from('merchandise')
+      .update(productData)
+      .eq('id', id)
+      .select()
+      .single();
+      
+    if (error) {
+      console.error('Error updating product:', error);
+      return { success: false, error: error.message };
+    }
+    return { success: true, data };
   }
 };
 

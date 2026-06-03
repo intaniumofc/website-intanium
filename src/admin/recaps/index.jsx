@@ -5,6 +5,7 @@ import Modal from '../../components/common/Modal';
 import { recapService } from '../../features/recaps/recapService';
 import Loading from '../../components/common/Loading';
 import { Plus, Edit, Trash2, Calendar, FileText, Search, PlusCircle, Trash } from 'lucide-react';
+import { useSupabaseUpload } from '../../hooks/useSupabaseUpload';
 
 export default function AdminRecaps() {
   const [items, setItems] = useState([]);
@@ -16,6 +17,8 @@ export default function AdminRecaps() {
   const [modalMode, setModalMode] = useState('add'); // 'add' | 'edit'
   const [editingId, setEditingId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [file, setFile] = useState(null);
+  const { uploadFile, isUploading } = useSupabaseUpload();
 
   const [formData, setFormData] = useState({
     title: '',
@@ -24,7 +27,7 @@ export default function AdminRecaps() {
     thumbnail_url: ''
   });
 
-  const [formPages, setFormPages] = useState([]); // Array of { image_url: '', caption: '' }
+  const [formPages, setFormPages] = useState([]); // Array of { image_url: '', caption: '', file: null }
 
   useEffect(() => {
     fetchData();
@@ -46,7 +49,8 @@ export default function AdminRecaps() {
       summary: '',
       thumbnail_url: ''
     });
-    setFormPages([{ image_url: '', caption: '' }]);
+    setFile(null);
+    setFormPages([{ image_url: '', caption: '', file: null }]);
     setIsModalOpen(true);
   };
 
@@ -59,7 +63,8 @@ export default function AdminRecaps() {
       summary: item.summary || '',
       thumbnail_url: item.thumbnailUrl || ''
     });
-    setFormPages(item.pages ? item.pages.map(p => ({ image_url: p.imageUrl, caption: p.caption || '' })) : []);
+    setFile(null);
+    setFormPages(item.pages ? item.pages.map(p => ({ image_url: p.imageUrl, caption: p.caption || '', file: null })) : []);
     setIsModalOpen(true);
   };
 
@@ -79,8 +84,14 @@ export default function AdminRecaps() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+    }
+  };
+
   const handleAddPageRow = () => {
-    setFormPages(prev => [...prev, { image_url: '', caption: '' }]);
+    setFormPages(prev => [...prev, { image_url: '', caption: '', file: null }]);
   };
 
   const handleRemovePageRow = (index) => {
@@ -95,6 +106,14 @@ export default function AdminRecaps() {
     });
   };
 
+  const handlePageFileChange = (index, fileObj) => {
+    setFormPages(prev => {
+      const updated = [...prev];
+      updated[index].file = fileObj;
+      return updated;
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.title.trim()) {
@@ -104,26 +123,50 @@ export default function AdminRecaps() {
 
     setIsSubmitting(true);
     
-    // Filter out pages that don't have an image URL
-    const validPages = formPages
-      .filter(p => p.image_url.trim())
-      .map((p, index) => ({
-        image_url: p.image_url.trim(),
-        caption: p.caption.trim(),
-        page_number: index + 1
-      }));
+    // Upload thumbnail if exists
+    let publicUrl = formData.thumbnail_url;
+    if (file) {
+      try {
+        publicUrl = await uploadFile(file, 'assets', 'recaps');
+      } catch (err) {
+        alert('Gagal mengupload thumbnail.');
+        setIsSubmitting(false);
+        return;
+      }
+    }
+    
+    // Upload page images if they exist
+    const processedPages = [];
+    for (let i = 0; i < formPages.length; i++) {
+      const page = formPages[i];
+      let pageImageUrl = page.image_url;
+      if (page.file) {
+        try {
+          pageImageUrl = await uploadFile(page.file, 'assets', 'recaps');
+        } catch (err) {
+          console.error('Failed to upload page file', err);
+        }
+      }
+      if (pageImageUrl.trim()) {
+        processedPages.push({
+          image_url: pageImageUrl.trim(),
+          caption: page.caption.trim(),
+          page_number: processedPages.length + 1
+        });
+      }
+    }
 
     // Default thumbnail if empty
     const payload = {
       ...formData,
-      thumbnail_url: formData.thumbnail_url.trim() || (validPages[0] ? validPages[0].image_url : 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=600')
+      thumbnail_url: publicUrl.trim() || (processedPages[0] ? processedPages[0].image_url : 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=600')
     };
 
     let result;
     if (modalMode === 'add') {
-      result = await recapService.createRecap(payload, validPages);
+      result = await recapService.createRecap(payload, processedPages);
     } else {
-      result = await recapService.updateRecap(editingId, payload, validPages);
+      result = await recapService.updateRecap(editingId, payload, processedPages);
     }
 
     setIsSubmitting(false);
@@ -284,9 +327,16 @@ export default function AdminRecaps() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Thumbnail URL */}
+            {/* Thumbnail Upload / URL */}
             <div className="flex flex-col gap-1.5">
-              <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">URL Gambar Sampul (Thumbnail)</label>
+              <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Gambar Sampul (Thumbnail)</label>
+              <input 
+                type="file" 
+                accept="image/*"
+                onChange={handleFileChange}
+                className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all text-xs"
+              />
+              <p className="text-[10px] text-[var(--text-muted)] text-center my-1">- ATAU -</p>
               <input 
                 type="text" 
                 name="thumbnail_url"
@@ -335,20 +385,28 @@ export default function AdminRecaps() {
                   </span>
 
                   <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <input 
-                      type="text" 
-                      placeholder="URL Gambar Halaman..." 
-                      value={page.image_url}
-                      onChange={(e) => handlePageRowChange(index, 'image_url', e.target.value)}
-                      className="w-full px-3 py-1.5 bg-white border border-[var(--border-color)] rounded-lg outline-none text-xs focus:border-[var(--color-primary)] transition-all"
-                      required={index === 0} // Page 1 is mandatory
-                    />
+                    <div className="flex flex-col gap-1">
+                      <input 
+                        type="file" 
+                        accept="image/*"
+                        onChange={(e) => handlePageFileChange(index, e.target.files[0])}
+                        className="w-full px-2 py-1 bg-white border border-[var(--border-color)] rounded-lg outline-none text-xs focus:border-[var(--color-primary)] transition-all"
+                      />
+                      <input 
+                        type="text" 
+                        placeholder="URL Gambar Halaman (atau upload)" 
+                        value={page.image_url}
+                        onChange={(e) => handlePageRowChange(index, 'image_url', e.target.value)}
+                        className="w-full px-3 py-1.5 bg-white border border-[var(--border-color)] rounded-lg outline-none text-xs focus:border-[var(--color-primary)] transition-all"
+                        required={index === 0 && !page.file} // Page 1 is mandatory
+                      />
+                    </div>
                     <input 
                       type="text" 
                       placeholder="Keterangan Halaman (opsional)..." 
                       value={page.caption}
                       onChange={(e) => handlePageRowChange(index, 'caption', e.target.value)}
-                      className="w-full px-3 py-1.5 bg-white border border-[var(--border-color)] rounded-lg outline-none text-xs focus:border-[var(--color-primary)] transition-all"
+                      className="w-full px-3 py-1.5 bg-white border border-[var(--border-color)] rounded-lg outline-none text-xs focus:border-[var(--color-primary)] transition-all h-fit mt-auto"
                     />
                   </div>
 

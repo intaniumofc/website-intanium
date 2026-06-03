@@ -6,6 +6,7 @@ import { merchandiseService } from '../../features/merchandise/merchandiseServic
 import Loading from '../../components/common/Loading';
 import { Plus, Edit, Trash2, Check, X, Search } from 'lucide-react';
 import { MERCH_CATEGORIES } from '../../lib/constants';
+import { useSupabaseUpload } from '../../hooks/useSupabaseUpload';
 
 export default function AdminMerchandise() {
   const [items, setItems] = useState([]);
@@ -18,6 +19,8 @@ export default function AdminMerchandise() {
   const [modalMode, setModalMode] = useState('add'); // 'add' | 'edit'
   const [editingId, setEditingId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [file, setFile] = useState(null);
+  const { uploadFile, isUploading } = useSupabaseUpload();
   
   const [formData, setFormData] = useState({
     name: '',
@@ -52,6 +55,7 @@ export default function AdminMerchandise() {
       is_available: true,
       sizes: ['M', 'L', 'XL']
     });
+    setFile(null);
     setIsModalOpen(true);
   };
 
@@ -67,6 +71,7 @@ export default function AdminMerchandise() {
       is_available: item.is_available ?? true,
       sizes: item.sizes || []
     });
+    setFile(null);
     setIsModalOpen(true);
   };
 
@@ -100,6 +105,12 @@ export default function AdminMerchandise() {
     }));
   };
 
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.price) {
@@ -108,11 +119,23 @@ export default function AdminMerchandise() {
     }
 
     setIsSubmitting(true);
+    
+    let publicUrl = formData.image_url.trim();
+    if (file) {
+      try {
+        publicUrl = await uploadFile(file, 'assets', 'merchandise');
+      } catch (err) {
+        alert('Gagal mengupload gambar.');
+        setIsSubmitting(false);
+        return;
+      }
+    }
+
     const payload = {
       ...formData,
       price: parseFloat(formData.price),
-      image_url: formData.image_url.trim() || 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&auto=format&fit=crop&q=80',
-      image_urls: [formData.image_url.trim() || 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&auto=format&fit=crop&q=80']
+      image_url: publicUrl || 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&auto=format&fit=crop&q=80',
+      image_urls: [publicUrl || 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&auto=format&fit=crop&q=80']
     };
 
     let result;
@@ -323,9 +346,16 @@ export default function AdminMerchandise() {
             </div>
           </div>
 
-          {/* Image URL */}
+          {/* Image Upload / URL */}
           <div className="flex flex-col gap-1.5">
-            <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">URL Gambar Produk</label>
+            <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Gambar Produk</label>
+            <input 
+              type="file" 
+              accept="image/*"
+              onChange={handleFileChange}
+              className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all text-xs"
+            />
+            <p className="text-[10px] text-[var(--text-muted)] text-center my-1">- ATAU -</p>
             <input 
               type="text" 
               name="image_url"
@@ -334,7 +364,7 @@ export default function AdminMerchandise() {
               onChange={handleInputChange}
               className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
             />
-            <p className="text-[10px] text-[var(--text-muted)]">Kosongkan jika ingin menggunakan gambar placeholder bawaan.</p>
+            <p className="text-[10px] text-[var(--text-muted)] mt-1">Pilih file untuk diupload ATAU gunakan link URL gambar.</p>
           </div>
 
           {/* Description */}

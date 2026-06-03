@@ -132,6 +132,28 @@ export const newsService = {
       return { success: false, error: error.message };
     }
     return { success: true };
+  },
+
+  createNews: async (newsData) => {
+    const id = newsData.id || `news-${Math.floor(1000 + Math.random() * 9000)}`;
+    const { data, error } = await supabase
+      .from('news')
+      .insert([{ ...newsData, id }])
+      .select()
+      .single();
+    if (error) return { success: false, error: error.message };
+    return { success: true, data };
+  },
+
+  updateNews: async (id, newsData) => {
+    const { data, error } = await supabase
+      .from('news')
+      .update(newsData)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) return { success: false, error: error.message };
+    return { success: true, data };
   }
 };
 

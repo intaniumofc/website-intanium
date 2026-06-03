@@ -24,21 +24,8 @@ export function useSupabaseUpload() {
     setProgress(10);
 
     try {
-      // Validate credentials exist; if not, do mock local simulation
-      if (
-        !import.meta.env.VITE_SUPABASE_URL ||
-        import.meta.env.VITE_SUPABASE_URL.includes('placeholder')
-      ) {
-        // Simulate progress bar and mock base64/local URL upload
-        setProgress(40);
-        await new Promise((r) => setTimeout(r, 600));
-        setProgress(80);
-        await new Promise((r) => setTimeout(r, 400));
-        setProgress(100);
-        setIsUploading(false);
-
-        // Return a mock object URL or high-quality placeholder image
-        return URL.createObjectURL(file);
+      if (!import.meta.env.VITE_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL.includes('your-supabase-project')) {
+        console.warn("WARNING: Using placeholder Supabase credentials. Uploads will fail unless you configure .env.");
       }
 
       const fileExt = file.name.split('.').pop();

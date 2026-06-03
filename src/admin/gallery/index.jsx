@@ -5,6 +5,7 @@ import Modal from '../../components/common/Modal';
 import { galleryService } from '../../features/gallery/galleryService';
 import Loading from '../../components/common/Loading';
 import { Plus, Edit, Trash2, Search, ImageIcon } from 'lucide-react';
+import { useSupabaseUpload } from '../../hooks/useSupabaseUpload';
 
 export default function AdminGallery() {
   const [items, setItems] = useState([]);
@@ -16,6 +17,8 @@ export default function AdminGallery() {
   const [modalMode, setModalMode] = useState('add'); // 'add' | 'edit'
   const [editingId, setEditingId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [file, setFile] = useState(null);
+  const { uploadFile, isUploading } = useSupabaseUpload();
 
   const [formData, setFormData] = useState({
     title: '',
@@ -42,6 +45,7 @@ export default function AdminGallery() {
       description: '',
       url: ''
     });
+    setFile(null);
     setIsModalOpen(true);
   };
 
@@ -53,6 +57,7 @@ export default function AdminGallery() {
       description: item.description || '',
       url: item.url || ''
     });
+    setFile(null);
     setIsModalOpen(true);
   };
 
@@ -72,6 +77,12 @@ export default function AdminGallery() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.title.trim() || !formData.url.trim()) {
@@ -80,10 +91,22 @@ export default function AdminGallery() {
     }
 
     setIsSubmitting(true);
+    
+    let publicUrl = formData.url.trim();
+    if (file) {
+      try {
+        publicUrl = await uploadFile(file, 'assets', 'gallery');
+      } catch (err) {
+        alert('Gagal mengupload gambar.');
+        setIsSubmitting(false);
+        return;
+      }
+    }
+
     const payload = {
       title: formData.title.trim(),
       description: formData.description.trim(),
-      url: formData.url.trim()
+      url: publicUrl
     };
 
     let result;
@@ -223,9 +246,16 @@ export default function AdminGallery() {
             />
           </div>
 
-          {/* URL Gambar */}
+          {/* URL Gambar / Upload */}
           <div className="flex flex-col gap-1.5">
-            <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">URL Gambar (Direct Link)</label>
+            <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Gambar Galeri</label>
+            <input 
+              type="file" 
+              accept="image/*"
+              onChange={handleFileChange}
+              className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all text-xs"
+            />
+            <p className="text-[10px] text-[var(--text-muted)] text-center my-1">- ATAU -</p>
             <input 
               type="text" 
               name="url"
@@ -233,9 +263,8 @@ export default function AdminGallery() {
               value={formData.url}
               onChange={handleInputChange}
               className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
-              required
             />
-            <p className="text-[10px] text-[var(--text-muted)]">Pastikan link mengarah langsung ke berkas gambar (JPG, PNG, atau GIF).</p>
+            <p className="text-[10px] text-[var(--text-muted)] mt-1">Pilih file untuk diupload ATAU gunakan link URL gambar.</p>
           </div>
 
           {/* Description */}

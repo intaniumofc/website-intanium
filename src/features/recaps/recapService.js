@@ -137,6 +137,28 @@ export const recapService = {
       return { success: false, error: error.message };
     }
     return { success: true };
+  },
+
+  createRecap: async (recapData) => {
+    const id = recapData.id || `recap-${Math.floor(1000 + Math.random() * 9000)}`;
+    const { data, error } = await supabase
+      .from('recaps')
+      .insert([{ ...recapData, id }])
+      .select()
+      .single();
+    if (error) return { success: false, error: error.message };
+    return { success: true, data };
+  },
+
+  updateRecap: async (id, recapData) => {
+    const { data, error } = await supabase
+      .from('recaps')
+      .update(recapData)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) return { success: false, error: error.message };
+    return { success: true, data };
   }
 };
 

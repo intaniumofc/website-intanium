@@ -75,6 +75,28 @@ export const scheduleService = {
       return { success: false, error: error.message };
     }
     return { success: true };
+  },
+
+  createEvent: async (eventData) => {
+    const id = eventData.id || `event-${Math.floor(1000 + Math.random() * 9000)}`;
+    const { data, error } = await supabase
+      .from('events')
+      .insert([{ ...eventData, id }])
+      .select()
+      .single();
+    if (error) return { success: false, error: error.message };
+    return { success: true, data };
+  },
+
+  updateEvent: async (id, eventData) => {
+    const { data, error } = await supabase
+      .from('events')
+      .update(eventData)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) return { success: false, error: error.message };
+    return { success: true, data };
   }
 };
 

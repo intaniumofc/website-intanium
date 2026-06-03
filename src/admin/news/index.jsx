@@ -5,6 +5,7 @@ import Modal from '../../components/common/Modal';
 import { newsService } from '../../features/news/newsService';
 import Loading from '../../components/common/Loading';
 import { Plus, Edit, Trash2, Calendar, Search, Newspaper } from 'lucide-react';
+import { useSupabaseUpload } from '../../hooks/useSupabaseUpload';
 
 export default function AdminNews() {
   const [items, setItems] = useState([]);
@@ -16,16 +17,8 @@ export default function AdminNews() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState('add'); // 'add' | 'edit'
   const [editingId, setEditingId] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const [formData, setFormData] = useState({
-    title: '',
-    date: '',
-    category: 'Announcement',
-    summary: '',
-    content: '',
-    image_url: ''
-  });
+  const [file, setFile] = useState(null);
+  const { uploadFile, isUploading } = useSupabaseUpload();
 
   useEffect(() => {
     fetchData();
@@ -49,10 +42,15 @@ export default function AdminNews() {
       content: '',
       image_url: ''
     });
+    setFile(null);
     setIsModalOpen(true);
   };
 
   const handleOpenEditModal = (item) => {
+    if (item.id.includes('theater')) {
+      alert('Berita teater dari API tidak dapat diedit secara manual.');
+      return;
+    }
     setModalMode('edit');
     setEditingId(item.id);
     setFormData({
@@ -63,6 +61,7 @@ export default function AdminNews() {
       content: item.content || '',
       image_url: item.imageUrl || ''
     });
+    setFile(null);
     setIsModalOpen(true);
   };
 
@@ -82,6 +81,12 @@ export default function AdminNews() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.title.trim() || !formData.date) {
@@ -90,9 +95,21 @@ export default function AdminNews() {
     }
 
     setIsSubmitting(true);
+    
+    let publicUrl = formData.image_url;
+    if (file) {
+      try {
+        publicUrl = await uploadFile(file, 'assets', 'news');
+      } catch (err) {
+        alert('Gagal mengupload gambar.');
+        setIsSubmitting(false);
+        return;
+      }
+    }
+
     const payload = {
       ...formData,
-      image_url: formData.image_url.trim() || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600'
+      image_url: publicUrl || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600'
     };
 
     let result;
@@ -294,9 +311,16 @@ export default function AdminNews() {
             </div>
           </div>
 
-          {/* Banner URL */}
+          {/* Banner Upload / URL */}
           <div className="flex flex-col gap-1.5">
-            <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">URL Gambar Banner Utama</label>
+            <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Gambar Banner Utama</label>
+            <input 
+              type="file" 
+              accept="image/*"
+              onChange={handleFileChange}
+              className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all text-xs"
+            />
+            <p className="text-[10px] text-[var(--text-muted)] text-center my-1">- ATAU -</p>
             <input 
               type="text" 
               name="image_url"
@@ -305,7 +329,7 @@ export default function AdminNews() {
               onChange={handleInputChange}
               className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
             />
-            <p className="text-[10px] text-[var(--text-muted)]">Kosongkan jika ingin menggunakan banner default.</p>
+            <p className="text-[10px] text-[var(--text-muted)] mt-1">Pilih file untuk diupload ATAU gunakan link URL gambar.</p>
           </div>
 
           {/* Summary */}
