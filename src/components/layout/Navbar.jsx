@@ -19,6 +19,7 @@ import {
   PlayCircle,
   ChevronDown
 } from "lucide-react";
+import logoNobg from '../../assets/logos/logo-nobg.png';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -32,7 +33,7 @@ export default function Navbar() {
     { name: 'Jadwal', path: ROUTES.SCHEDULE },
     { name: 'Mading', path: ROUTES.MADING },
     { name: 'Galeri', path: ROUTES.GALLERY },
-    { name: 'Playlist', path: ROUTES.DENGER_INTAN },
+    { name: '#dengerINTAN', path: ROUTES.DENGER_INTAN },
   ];
 
   // Nested navigation schemas for custom hover dropdowns on desktop viewports
@@ -164,26 +165,8 @@ export default function Navbar() {
     },
     {
       id: 5,
-      label: "Musik & Rilis",
-      subMenus: [
-        {
-          title: "Lagu & Audio",
-          items: [
-            {
-              label: "Diskografi Rilis",
-              description: "Album EP Matcha Vibes, cover orisinal",
-              icon: Music,
-              link: ROUTES.DISCOGRAPHY,
-            },
-            {
-              label: "Denger Intan",
-              description: "Playlist musik chill & upbeat rekomendasi pilihan",
-              icon: PlayCircle,
-              link: ROUTES.DENGER_INTAN,
-            },
-          ],
-        },
-      ],
+      label: "#dengerINTAN",
+      link: ROUTES.DENGER_INTAN,
     },
   ];
 
@@ -194,12 +177,23 @@ export default function Navbar() {
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
             <Link to="/" className="flex items-center gap-2 group">
-              <span className="w-8 h-8 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-extrabold shadow-md border border-white/20 text-neon-glow">
-                I
-              </span>
-              <span className="text-xl font-bold tracking-tight text-white group-hover:text-purple-200 transition-colors">
-                INTAN<span className="text-purple-300 font-extrabold">IUM</span>
-              </span>
+              <img
+                src={logoNobg}
+                alt="Intanium"
+                className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+              />
+              <motion.span
+                className="text-2xl font-extrabold tracking-tight bg-[linear-gradient(110deg,#ffffff,35%,#a5b4fc,50%,#ffffff,75%,#ffffff)] bg-[length:200%_100%] bg-clip-text text-transparent select-none"
+                initial={{ backgroundPosition: "200% 0" }}
+                animate={{ backgroundPosition: "-200% 0" }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 2.5,
+                  ease: "linear",
+                }}
+              >
+                INTANIUM
+              </motion.span>
             </Link>
           </div>
 
@@ -249,11 +243,10 @@ export default function Navbar() {
                 key={link.name}
                 to={link.path}
                 onClick={() => setIsOpen(false)}
-                className={`block px-3 py-2 rounded-lg text-base font-semibold transition-all ${
-                  isActive
-                    ? 'text-white bg-white/20 shadow-md'
-                    : 'text-white/80 hover:text-white hover:bg-white/10'
-                }`}
+                className={`block px-3 py-2 rounded-lg text-base font-semibold transition-all ${isActive
+                  ? 'text-white bg-white/20 shadow-md'
+                  : 'text-white/80 hover:text-white hover:bg-white/10'
+                  }`}
               >
                 {link.name}
               </Link>

@@ -89,6 +89,7 @@ export default function DengerIntanPage() {
   const [activePlaylist, setActivePlaylist] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [mostPlayedSongs, setMostPlayedSongs] = useState(MOST_PLAYED_LIVE_SONGS);
 
   const playerCardRef = useRef(null);
   const [isPlayerHovered, setIsPlayerHovered] = useState(false);
@@ -100,7 +101,7 @@ export default function DengerIntanPage() {
     document.title = '#DengerINTAN Playlist | Intanium';
   }, []);
 
-  // Fetch playlists on mount
+  // Fetch playlists and most played songs on mount
   useEffect(() => {
     playlistService.getPlaylists()
       .then((data) => {
@@ -117,6 +118,16 @@ export default function DengerIntanPage() {
       .catch((err) => {
         console.error(err);
         setIsLoading(false);
+      });
+
+    playlistService.getMostPlayedSongs()
+      .then((data) => {
+        if (data && data.length > 0) {
+          setMostPlayedSongs(data);
+        }
+      })
+      .catch((err) => {
+        console.error('Error fetching most played songs:', err);
       });
   }, []);
 
@@ -374,7 +385,7 @@ export default function DengerIntanPage() {
           className="flex flex-col gap-4 select-none"
           variants={staggerContainer}
         >
-          {MOST_PLAYED_LIVE_SONGS.map((song) => (
+          {mostPlayedSongs.map((song) => (
             <motion.div
               key={song.id}
               variants={fadeUp}

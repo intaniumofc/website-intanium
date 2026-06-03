@@ -38,6 +38,36 @@ export const scheduleService = {
     return result;
   },
 
+  createEvent: async (eventData) => {
+    const id = eventData.id || `event-${Math.floor(100000 + Math.random() * 900000)}`;
+    const { data, error } = await supabase
+      .from('events')
+      .insert([{ ...eventData, id }])
+      .select()
+      .single();
+      
+    if (error) {
+      console.error('Error creating event:', error);
+      return { success: false, error: error.message };
+    }
+    return { success: true, data };
+  },
+
+  updateEvent: async (id, eventData) => {
+    const { data, error } = await supabase
+      .from('events')
+      .update(eventData)
+      .eq('id', id)
+      .select()
+      .single();
+      
+    if (error) {
+      console.error('Error updating event:', error);
+      return { success: false, error: error.message };
+    }
+    return { success: true, data };
+  },
+
   deleteEvent: async (id) => {
     const { error } = await supabase.from('events').delete().eq('id', id);
     if (error) {
@@ -47,3 +77,4 @@ export const scheduleService = {
     return { success: true };
   }
 };
+

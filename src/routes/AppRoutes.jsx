@@ -17,7 +17,6 @@ import RecapDetailPage from '../features/recaps/RecapDetailPage';
 import SchedulePage from '../features/schedule/SchedulePage';
 import IntanShiningStarPage from '../features/intan-shining-star/IntanShiningStarPage';
 import FanartPage from '../features/fanart/FanartPage';
-import DiscographyPage from '../features/discography/DiscographyPage';
 import DengerIntanPage from '../features/denger-intan/DengerIntanPage';
 import MadingPage from '../features/mading/MadingPage';
 import NewsPage from '../features/news/NewsPage';
@@ -34,6 +33,7 @@ import AdminSchedule from '../admin/schedule';
 import AdminNews from '../admin/news';
 import AdminGallery from '../admin/gallery';
 import AdminMading from '../admin/mading';
+import AdminPlaylists from '../admin/playlists';
 
 // Reusable Admin Guard Route
 const AdminGuard = ({ children }) => {
@@ -133,14 +133,7 @@ export default function AppRoutes() {
           </MainLayout>
         }
       />
-      <Route
-        path={ROUTES.DISCOGRAPHY}
-        element={
-          <MainLayout>
-            <DiscographyPage />
-          </MainLayout>
-        }
-      />
+
       <Route
         path={ROUTES.DENGER_INTAN}
         element={
@@ -238,6 +231,14 @@ export default function AppRoutes() {
         element={
           <AdminGuard>
             <AdminMading />
+          </AdminGuard>
+        }
+      />
+      <Route
+        path={ROUTES.ADMIN_PLAYLISTS}
+        element={
+          <AdminGuard>
+            <AdminPlaylists />
           </AdminGuard>
         }
       />
