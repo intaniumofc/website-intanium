@@ -45,6 +45,91 @@ export const recapService = {
     };
   },
 
+  createRecap: async (recapData, pagesData = []) => {
+    const id = recapData.id || `recap-${Math.floor(100000 + Math.random() * 900000)}`;
+    const { data: recap, error: recapError } = await supabase
+      .from('recaps')
+      .insert([{
+        id,
+        title: recapData.title,
+        publish_date: recapData.publish_date || recapData.publishDate,
+        summary: recapData.summary,
+        thumbnail_url: recapData.thumbnail_url || recapData.thumbnailUrl
+      }])
+      .select()
+      .single();
+
+    if (recapError) {
+      console.error('Error creating recap:', recapError);
+      return { success: false, error: recapError.message };
+    }
+
+    if (pagesData.length > 0) {
+      const inserts = pagesData.map((p, index) => ({
+        recap_id: id,
+        image_url: p.image_url || p.imageUrl,
+        caption: p.caption || '',
+        page_number: p.page_number !== undefined ? p.page_number : (index + 1)
+      }));
+      const { error: pagesError } = await supabase
+        .from('recap_pages')
+        .insert(inserts);
+      if (pagesError) {
+        console.error('Error inserting recap pages:', pagesError);
+        return { success: false, error: pagesError.message };
+      }
+    }
+
+    return { success: true, data: recap };
+  },
+
+  updateRecap: async (id, recapData, pagesData = []) => {
+    const { data: recap, error: recapError } = await supabase
+      .from('recaps')
+      .update({
+        title: recapData.title,
+        publish_date: recapData.publish_date || recapData.publishDate,
+        summary: recapData.summary,
+        thumbnail_url: recapData.thumbnail_url || recapData.thumbnailUrl
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (recapError) {
+      console.error('Error updating recap:', recapError);
+      return { success: false, error: recapError.message };
+    }
+
+    const { error: deleteError } = await supabase
+      .from('recap_pages')
+      .delete()
+      .eq('recap_id', id);
+
+    if (deleteError) {
+      console.error('Error clearing old recap pages:', deleteError);
+      return { success: false, error: deleteError.message };
+    }
+
+    if (pagesData.length > 0) {
+      const inserts = pagesData.map((p, index) => ({
+        recap_id: id,
+        image_url: p.image_url || p.imageUrl,
+        caption: p.caption || '',
+        page_number: p.page_number !== undefined ? p.page_number : (index + 1)
+      }));
+      const { error: pagesError } = await supabase
+        .from('recap_pages')
+        .insert(inserts);
+      if (pagesError) {
+        console.error('Error inserting new recap pages:', pagesError);
+        return { success: false, error: pagesError.message };
+      }
+    }
+
+    return { success: true, data: recap };
+  },
+
   deleteRecap: async (id) => {
     const { error } = await supabase.from('recaps').delete().eq('id', id);
     if (error) {
@@ -54,3 +139,4 @@ export const recapService = {
     return { success: true };
   }
 };
+

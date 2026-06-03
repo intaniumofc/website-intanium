@@ -77,6 +77,51 @@ export const newsService = {
     };
   },
 
+  createNews: async (newsData) => {
+    const id = newsData.id || `news-${Math.floor(100000 + Math.random() * 900000)}`;
+    const { data, error } = await supabase
+      .from('news')
+      .insert([{
+        id,
+        title: newsData.title,
+        date: newsData.date,
+        summary: newsData.summary,
+        content: newsData.content,
+        image_url: newsData.image_url || newsData.imageUrl,
+        category: newsData.category
+      }])
+      .select()
+      .single();
+      
+    if (error) {
+      console.error('Error creating news:', error);
+      return { success: false, error: error.message };
+    }
+    return { success: true, data };
+  },
+
+  updateNews: async (id, newsData) => {
+    const { data, error } = await supabase
+      .from('news')
+      .update({
+        title: newsData.title,
+        date: newsData.date,
+        summary: newsData.summary,
+        content: newsData.content,
+        image_url: newsData.image_url || newsData.imageUrl,
+        category: newsData.category
+      })
+      .eq('id', id)
+      .select()
+      .single();
+      
+    if (error) {
+      console.error('Error updating news:', error);
+      return { success: false, error: error.message };
+    }
+    return { success: true, data };
+  },
+
   deleteNews: async (id) => {
     // If it's a dynamic theater ID, we can't delete it from Supabase as it's fetched from API
     if (id.includes('theater')) return { success: false, error: 'Cannot delete API data' };
@@ -89,3 +134,4 @@ export const newsService = {
     return { success: true };
   }
 };
+

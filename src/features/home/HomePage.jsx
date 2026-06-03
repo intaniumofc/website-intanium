@@ -291,13 +291,13 @@ export default function HomePage() {
 
                 {/* Left Side: Details */}
                 <div className="w-full lg:flex-1 lg:max-w-xl space-y-6 text-center lg:text-left flex flex-col items-center lg:items-start">
-                  <h3 className="text-5xl sm:text-6xl font-serif font-black tracking-wide text-white uppercase leading-none">
+                  <h3 className="text-5xl sm:text-6xl font-playfair font-black tracking-wide text-white uppercase leading-none">
                     NUR <br className="hidden lg:block" /> INTAN
                   </h3>
 
                   <div className="w-16 h-[2px] bg-white/40 my-1" />
 
-                  <p className="text-xl sm:text-2xl font-serif italic text-white/95 leading-relaxed max-w-lg">
+                  <p className="text-xl sm:text-2xl font-playfair italic text-white/95 leading-relaxed max-w-lg">
                     "Intan permata yang berkilau, <br className="hidden sm:inline" />
                     <span className="text-[#FFE285] font-semibold">temukan cahaya ku di hatimu!"</span>
                   </p>

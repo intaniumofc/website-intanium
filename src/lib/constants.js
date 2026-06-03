@@ -15,7 +15,6 @@ export const ROUTES = {
   SCHEDULE: '/schedule',
   SHINING_STAR: '/shining-star',
   FANART: '/fanart',
-  DISCOGRAPHY: '/discography',
   DENGER_INTAN: '/denger-intan',
   MADING: '/mading',
   NEWS: '/news',
@@ -31,6 +30,7 @@ export const ROUTES = {
   ADMIN_NEWS: '/admin/news',
   ADMIN_GALLERY: '/admin/gallery',
   ADMIN_MADING: '/admin/mading',
+  ADMIN_PLAYLISTS: '/admin/denger-intan',
 };
 
 export const SOCIALS = {

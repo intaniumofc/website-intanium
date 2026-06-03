@@ -1,5 +1,7 @@
 import React from "react";
 import { FaInstagram, FaTwitter, FaTiktok } from "react-icons/fa";
+import { motion } from 'framer-motion';
+import logoNobg from "../../assets/logos/logo-nobg.png";
 
 const defaultSections = [
   {
@@ -8,7 +10,7 @@ const defaultSections = [
       { name: "Tentang Intan", href: "/about-intan" },
       { name: "Lore Intanium", href: "/about-intanium" },
       { name: "Bintang Berkilau", href: "/shining-star" },
-      { name: "Diskografi & Rilis", href: "/discography" },
+      { name: "#dengerINTAN", href: "/denger-intan" },
     ],
   },
   {
@@ -44,7 +46,7 @@ const defaultLegalLinks = [
 export default function Footer({
   logo = {
     url: "/",
-    src: "", // Empty to trigger gorgeous custom text logo
+    src: logoNobg,
     alt: "logo",
     title: "INTANIUM",
   },
@@ -74,9 +76,18 @@ export default function Footer({
                     I
                   </span>
                 )}
-                <h2 className="text-xl font-bold tracking-tight text-white group-hover:text-purple-200 transition-colors">
-                  INTAN<span className="text-purple-300 font-extrabold">IUM</span>
-                </h2>
+                <motion.h2
+                  className="text-2xl font-extrabold tracking-tight bg-[linear-gradient(110deg,#ffffff,35%,#a5b4fc,50%,#ffffff,75%,#ffffff)] bg-[length:200%_100%] bg-clip-text text-transparent select-none"
+                  initial={{ backgroundPosition: "200% 0" }}
+                  animate={{ backgroundPosition: "-200% 0" }}
+                  transition={{
+                    repeat: Infinity,
+                    duration: 2.5,
+                    ease: "linear",
+                  }}
+                >
+                  INTANIUM
+                </motion.h2>
               </a>
             </div>
             <p className="max-w-[85%] text-xs sm:text-sm text-white/70 leading-relaxed">

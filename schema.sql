@@ -125,3 +125,39 @@ CREATE POLICY "Allow admin all on orders" ON orders FOR ALL USING (auth.role() =
 ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public insert on payments" ON payments FOR INSERT WITH CHECK (true);
 CREATE POLICY "Allow admin all on payments" ON payments FOR ALL USING (auth.role() = 'authenticated');
+
+-- 8. Playlists (Public Read, Admin All)
+CREATE TABLE IF NOT EXISTS playlists (
+  id TEXT PRIMARY KEY,
+  title TEXT NOT NULL,
+  description TEXT,
+  image_url TEXT,
+  category TEXT NOT NULL,
+  badge_text TEXT,
+  duration TEXT,
+  tracks_count TEXT,
+  embed_url TEXT,
+  spotify_url TEXT NOT NULL,
+  spotify_embed_url TEXT NOT NULL,
+  curator_note TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE playlists ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public read on playlists" ON playlists FOR SELECT USING (true);
+CREATE POLICY "Allow admin all on playlists" ON playlists FOR ALL USING (auth.role() = 'authenticated');
+
+-- 9. Most Played Songs (Public Read, Admin All)
+CREATE TABLE IF NOT EXISTS most_played_songs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  title TEXT NOT NULL,
+  artist TEXT NOT NULL,
+  play_count TEXT NOT NULL,
+  mood TEXT,
+  note TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE most_played_songs ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public read on most_played_songs" ON most_played_songs FOR SELECT USING (true);
+CREATE POLICY "Allow admin all on most_played_songs" ON most_played_songs FOR ALL USING (auth.role() = 'authenticated');
