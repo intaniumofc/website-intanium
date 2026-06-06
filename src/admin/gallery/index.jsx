@@ -4,12 +4,20 @@ import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
 import { galleryService } from '../../features/gallery/galleryService';
 import Loading from '../../components/common/Loading';
-import { Plus, Edit, Trash2, Search, ImageIcon } from 'lucide-react';
+import { Plus, Edit, Trash2, Search, ImageIcon, Upload, Loader } from 'lucide-react';
+import { useSupabaseUpload } from '../../hooks/useSupabaseUpload';
 
 export default function AdminGallery() {
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [filterType, setFilterType] = useState('all'); // 'all' | 'gallery' | 'showcase'
+
+  // Upload and hook states
+  const { uploadFile, isUploading: isFileUploading, progress: uploadProgress } = useSupabaseUpload();
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [filePreview, setFilePreview] = useState('');
+  const [isConverting, setIsConverting] = useState(false);
 
   // Modal form states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,7 +28,8 @@ export default function AdminGallery() {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    url: ''
+    url: '',
+    display_type: 'gallery'
   });
 
   useEffect(() => {
@@ -34,14 +43,61 @@ export default function AdminGallery() {
     setIsLoading(false);
   };
 
+  const convertToWebP = (file) => {
+    return new Promise((resolve, reject) => {
+      if (!file.type.startsWith('image/')) {
+        resolve(file);
+        return;
+      }
+      if (file.type === 'image/webp') {
+        resolve(file);
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.naturalWidth;
+          canvas.height = img.naturalHeight;
+
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+
+          canvas.toBlob(
+            (blob) => {
+              if (!blob) {
+                reject(new Error('Konversi ke WebP gagal.'));
+                return;
+              }
+              const originalName = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+              const webpFile = new File([blob], `${originalName}.webp`, { type: 'image/webp' });
+              resolve(webpFile);
+            },
+            'image/webp',
+            0.8
+          );
+        };
+        img.onerror = (error) => reject(error);
+      };
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
   const handleOpenAddModal = () => {
     setModalMode('add');
     setEditingId(null);
     setFormData({
       title: '',
       description: '',
-      url: ''
+      url: '',
+      display_type: 'gallery'
     });
+    setSelectedFile(null);
+    setFilePreview('');
     setIsModalOpen(true);
   };
 
@@ -51,8 +107,11 @@ export default function AdminGallery() {
     setFormData({
       title: item.title,
       description: item.description || '',
-      url: item.url || ''
+      url: item.url || '',
+      display_type: item.display_type || 'gallery'
     });
+    setSelectedFile(null);
+    setFilePreview(item.url || '');
     setIsModalOpen(true);
   };
 
@@ -72,41 +131,90 @@ export default function AdminGallery() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert('Hanya diperbolehkan mengunggah berkas gambar!');
+      return;
+    }
+
+    setSelectedFile(file);
+    setFilePreview(URL.createObjectURL(file));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.title.trim() || !formData.url.trim()) {
-      alert('Judul dan URL foto galeri harus diisi!');
+    if (!formData.title.trim()) {
+      alert('Judul foto harus diisi!');
+      return;
+    }
+
+    if (!selectedFile && !formData.url.trim()) {
+      alert('Pilih berkas gambar untuk diunggah atau masukkan URL gambar!');
       return;
     }
 
     setIsSubmitting(true);
-    const payload = {
-      title: formData.title.trim(),
-      description: formData.description.trim(),
-      url: formData.url.trim()
-    };
+    let finalUrl = formData.url.trim();
 
-    let result;
-    if (modalMode === 'add') {
-      result = await galleryService.createGalleryPhoto(payload);
-    } else {
-      result = await galleryService.updateGalleryPhoto(editingId, payload);
-    }
+    try {
+      if (selectedFile) {
+        setIsConverting(true);
+        const webpFile = await convertToWebP(selectedFile);
+        setIsConverting(false);
 
-    setIsSubmitting(false);
+        // Upload using useSupabaseUpload
+        finalUrl = await uploadFile(webpFile, 'assets', 'gallery');
+      }
 
-    if (result.success) {
-      setIsModalOpen(false);
-      fetchData();
-    } else {
-      alert('Gagal menyimpan data: ' + result.error);
+      const payload = {
+        title: formData.title.trim(),
+        description: formData.description.trim(),
+        url: finalUrl,
+        display_type: formData.display_type
+      };
+
+      let result;
+      if (modalMode === 'add') {
+        result = await galleryService.createGalleryPhoto(payload);
+      } else {
+        result = await galleryService.updateGalleryPhoto(editingId, payload);
+      }
+
+      if (result.success) {
+        setIsModalOpen(false);
+        fetchData();
+      } else {
+        alert('Gagal menyimpan data: ' + result.error);
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Gagal mengunggah berkas: ' + err.message);
+    } finally {
+      setIsSubmitting(false);
+      setIsConverting(false);
     }
   };
 
-  const filteredItems = items.filter(item => 
-    item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  const filteredItems = items.filter(item => {
+    const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    let matchesFilter = false;
+    if (filterType === 'all') {
+      matchesFilter = true;
+    } else if (filterType === 'gallery') {
+      matchesFilter = item.display_type === 'gallery' || item.display_type === 'both' || !item.display_type;
+    } else if (filterType === 'showcase') {
+      matchesFilter = item.display_type === 'showcase' || item.display_type === 'both';
+    } else if (filterType === 'both') {
+      matchesFilter = item.display_type === 'both';
+    }
+    
+    return matchesSearch && matchesFilter;
+  });
 
   return (
     <div className="space-y-6">
@@ -124,16 +232,29 @@ export default function AdminGallery() {
       </div>
 
       {/* Filters & Search */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
         <div className="flex items-center gap-2 px-3 py-2 bg-white border border-[var(--border-color)] rounded-xl text-sm w-full sm:w-80 shadow-sm">
           <Search className="h-4 w-4 text-[var(--text-muted)]" />
-          <input 
-            type="text" 
-            placeholder="Cari foto galeri..." 
+          <input
+            type="text"
+            placeholder="Cari foto galeri..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="bg-transparent border-none outline-none flex-1 text-[var(--text-primary)] placeholder-[var(--text-muted)]"
           />
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-bold text-[var(--text-secondary)]">Tipe Tampilan:</span>
+          <select
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value)}
+            className="px-3 py-2 bg-white border border-[var(--border-color)] rounded-xl text-xs font-semibold text-[var(--text-primary)] outline-none focus:border-[var(--color-primary)] transition-all shadow-sm"
+          >
+            <option value="all">Semua Foto ({items.length})</option>
+            <option value="gallery">Galeri Utama ({items.filter(i => (i.display_type || 'gallery') === 'gallery' || i.display_type === 'both').length})</option>
+            <option value="showcase">Highlight Showcase ({items.filter(i => i.display_type === 'showcase' || i.display_type === 'both').length})</option>
+            <option value="both">Keduanya ({items.filter(i => i.display_type === 'both').length})</option>
+          </select>
         </div>
       </div>
 
@@ -148,6 +269,7 @@ export default function AdminGallery() {
                 <tr>
                   <th className="px-6 py-4">Foto</th>
                   <th className="px-6 py-4">Judul Foto</th>
+                  <th className="px-6 py-4">Tipe Tampilan</th>
                   <th className="px-6 py-4">Deskripsi</th>
                   <th className="px-6 py-4 text-right">Aksi</th>
                 </tr>
@@ -156,29 +278,44 @@ export default function AdminGallery() {
                 {filteredItems.map(item => (
                   <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <img 
-                        src={item.url || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100'} 
-                        alt={item.title} 
-                        className="w-16 h-16 object-cover rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] shadow-sm" 
+                      <img
+                        src={item.url || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100'}
+                        alt={item.title}
+                        className="w-16 h-16 object-cover rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] shadow-sm"
                       />
                     </td>
                     <td className="px-6 py-4 font-bold text-[var(--text-primary)] text-sm">
                       {item.title}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider border ${
+                        item.display_type === 'showcase'
+                          ? 'bg-purple-50 text-purple-700 border-purple-200'
+                          : item.display_type === 'both'
+                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                          : 'bg-blue-50 text-blue-700 border-blue-200'
+                      }`}>
+                        {item.display_type === 'showcase'
+                          ? 'Showcase'
+                          : item.display_type === 'both'
+                          ? 'Keduanya'
+                          : 'Gallery'}
+                      </span>
                     </td>
                     <td className="px-6 py-4 text-xs text-[var(--text-secondary)] max-w-sm truncate">
                       {item.description || <span className="text-[var(--text-muted)] italic">Tidak ada keterangan</span>}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-semibold">
                       <div className="flex items-center justify-end gap-2">
-                        <button 
-                          onClick={() => handleOpenEditModal(item)} 
+                        <button
+                          onClick={() => handleOpenEditModal(item)}
                           className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-all"
                           title="Ubah Foto"
                         >
                           <Edit className="h-4 w-4" />
                         </button>
-                        <button 
-                          onClick={() => handleDelete(item.id)} 
+                        <button
+                          onClick={() => handleDelete(item.id)}
                           className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-all"
                           title="Hapus Foto"
                         >
@@ -190,7 +327,7 @@ export default function AdminGallery() {
                 ))}
                 {filteredItems.length === 0 && (
                   <tr>
-                    <td colSpan="4" className="px-6 py-12 text-center text-[var(--text-muted)] text-sm">
+                    <td colSpan="5" className="px-6 py-12 text-center text-[var(--text-muted)] text-sm">
                       Belum ada foto galeri yang sesuai dengan pencarian Anda.
                     </td>
                   </tr>
@@ -212,8 +349,8 @@ export default function AdminGallery() {
           {/* Title */}
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Judul Foto</label>
-            <input 
-              type="text" 
+            <input
+              type="text"
               name="title"
               placeholder="Masukkan judul atau caption singkat foto..."
               value={formData.title}
@@ -223,25 +360,85 @@ export default function AdminGallery() {
             />
           </div>
 
-          {/* URL Gambar */}
+          {/* Display Type */}
           <div className="flex flex-col gap-1.5">
-            <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">URL Gambar (Direct Link)</label>
-            <input 
-              type="text" 
+            <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Tipe Tampilan</label>
+            <select
+              name="display_type"
+              value={formData.display_type}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all font-semibold text-xs text-[var(--text-primary)]"
+            >
+              <option value="gallery">Halaman Galeri Utama (Public Gallery Page)</option>
+              <option value="showcase">Highlight Showcase (Homepage & Tentang Intanium)</option>
+              <option value="both">Keduanya (Galeri Utama & Highlight Showcase)</option>
+            </select>
+          </div>
+
+          {/* File Upload Zone */}
+          <div className="flex flex-col gap-1.5">
+            <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Unggah Berkas Gambar</label>
+            <div className="relative border-2 border-dashed border-[var(--border-color)] rounded-2xl p-6 bg-[var(--bg-primary)] hover:border-[var(--color-primary)] transition-all flex flex-col items-center justify-center text-center group cursor-pointer">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                disabled={isSubmitting || isFileUploading || isConverting}
+              />
+              <Upload className="h-8 w-8 text-[var(--text-muted)] group-hover:text-[var(--color-primary)] transition-colors mb-2" />
+              <span className="font-extrabold text-xs text-[var(--text-secondary)]">
+                {selectedFile ? selectedFile.name : 'Pilih atau Seret Foto ke Sini'}
+              </span>
+              <span className="text-[10px] text-[var(--text-muted)] mt-1">
+                Akan otomatis dikonversi menjadi format WebP (.webp)
+              </span>
+            </div>
+          </div>
+
+          {/* Progress / Status Indicators */}
+          {(isConverting || isFileUploading) && (
+            <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl flex flex-col gap-2">
+              <div className="flex items-center gap-2 text-xs font-bold text-blue-700">
+                <Loader className="h-4 w-4 animate-spin text-blue-600" />
+                <span>
+                  {isConverting ? 'Mengompres gambar ke format WebP (Canvas)...' : 'Mengunggah gambar ke Supabase Storage...'}
+                </span>
+              </div>
+              {!isConverting && (
+                <div className="w-full bg-blue-200/50 h-1.5 rounded-full overflow-hidden">
+                  <div className="bg-blue-600 h-full transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Image Preview */}
+          {filePreview && (
+            <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-[var(--border-color)] bg-[var(--bg-primary)] mt-2">
+              <img src={filePreview} alt="Preview" className="w-full h-full object-contain" />
+            </div>
+          )}
+
+          {/* Fallback URL Input (Optional) */}
+          <div className="flex flex-col gap-1.5">
+            <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Atau Gunakan Direct URL (Opsional)</label>
+            <input
+              type="text"
               name="url"
               placeholder="https://images.unsplash.com/photo-..."
               value={formData.url}
               onChange={handleInputChange}
               className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
-              required
+              disabled={isSubmitting || isFileUploading || isConverting}
             />
-            <p className="text-[10px] text-[var(--text-muted)]">Pastikan link mengarah langsung ke berkas gambar (JPG, PNG, atau GIF).</p>
+            <p className="text-[10px] text-[var(--text-muted)]">Kosongkan jika Anda sudah memilih berkas foto di atas.</p>
           </div>
 
           {/* Description */}
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Deskripsi Tambahan</label>
-            <textarea 
+            <textarea
               name="description"
               rows="3"
               placeholder="Keterangan pendukung untuk foto ini..."
@@ -253,23 +450,23 @@ export default function AdminGallery() {
 
           {/* Submit Action */}
           <div className="flex justify-end gap-2 pt-4 border-t border-[var(--border-color)]">
-            <Button 
-              type="button" 
-              variant="outline" 
-              size="sm" 
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
               onClick={() => setIsModalOpen(false)}
               disabled={isSubmitting}
             >
               Batal
             </Button>
-            <Button 
-              type="submit" 
-              variant="primary" 
+            <Button
+              type="submit"
+              variant="primary"
               size="sm"
-              disabled={isSubmitting}
+              disabled={isSubmitting || isFileUploading || isConverting}
               className="cursor-pointer"
             >
-              {isSubmitting ? 'Menyimpan...' : 'Simpan Foto'}
+              {isSubmitting || isFileUploading || isConverting ? 'Memproses...' : 'Simpan Foto'}
             </Button>
           </div>
         </form>

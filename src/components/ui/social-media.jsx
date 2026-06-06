@@ -9,7 +9,7 @@ import { cn } from "../../lib/utils";
 const SocialTooltip = React.forwardRef(({ className, items, ...props }, ref) => {
   // Base styles for the component
   const baseIconStyles =
-    "relative flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 overflow-hidden transition-all duration-300 ease-in-out group-hover:shadow-lg hover:scale-105 active:scale-95";
+    "relative flex items-center justify-center w-9.5 h-9.5 sm:w-10 sm:h-10 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 overflow-hidden transition-all duration-300 ease-in-out group-hover:shadow-lg hover:scale-105 active:scale-95";
   
   const baseFilledStyles =
     "absolute bottom-0 left-0 w-full h-0 transition-all duration-300 ease-in-out group-hover:h-full z-0";
@@ -49,7 +49,7 @@ const SocialTooltip = React.forwardRef(({ className, items, ...props }, ref) => 
                   <img
                     src={item.svgUrl}
                     alt={item.ariaLabel}
-                    className="w-5 h-5 sm:w-6 sm:h-6 object-contain"
+                    className="w-4 h-4 sm:w-4.5 sm:h-4.5 object-contain"
                   />
                 )}
               </div>

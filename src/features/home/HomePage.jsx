@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { FaThreads } from 'react-icons/fa6';
 import Button from '../../components/common/Button';
 import { scheduleService } from '../schedule/scheduleService';
 import { newsService } from '../news/newsService';
@@ -50,23 +51,23 @@ export default function HomePage() {
 
   const socialLinks = React.useMemo(() => [
     {
-      href: SOCIALS.TWITTER,
+      href: "https://x.com/N_IntanJKT48",
       ariaLabel: "Twitter / X",
       tooltip: "Twitter / X",
       color: "#111111",
       icon: (
-        <svg className="w-5 h-5 fill-current text-white" viewBox="0 0 24 24">
+        <svg className="w-4 h-4 sm:w-4.5 sm:h-4.5 fill-current text-white" viewBox="0 0 24 24">
           <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
         </svg>
       )
     },
     {
-      href: SOCIALS.INSTAGRAM,
+      href: "https://www.instagram.com/intan.jkt48",
       ariaLabel: "Instagram",
       tooltip: "Instagram",
       color: "#E1306C",
       icon: (
-        <svg className="w-5 h-5 fill-none stroke-current stroke-2 text-white" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+        <svg className="w-4 h-4 sm:w-4.5 sm:h-4.5 fill-none stroke-current stroke-2 text-white" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
           <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
           <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
           <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
@@ -74,32 +75,41 @@ export default function HomePage() {
       )
     },
     {
-      href: SOCIALS.TIKTOK,
+      href: "https://www.threads.net/@intan.jkt48",
+      ariaLabel: "Threads",
+      tooltip: "Threads",
+      color: "#000000",
+      icon: (
+        <FaThreads className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-white" />
+      )
+    },
+    {
+      href: "https://www.tiktok.com/@jkt48.intan",
       ariaLabel: "TikTok",
       tooltip: "TikTok",
       color: "#111111",
       icon: (
-        <svg className="w-5 h-5 fill-none stroke-current stroke-2 text-white" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+        <svg className="w-4 h-4 sm:w-4.5 sm:h-4.5 fill-none stroke-current stroke-2 text-white" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
           <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
         </svg>
       )
     },
     {
-      href: "https://www.idn.app/",
+      href: "https://www.idn.app/jkt48_intan",
       ariaLabel: "IDN Live",
       tooltip: "IDN Live",
       color: "#E1251B",
       icon: (
-        <span className="font-bold text-xs tracking-wider text-white select-none">IDN</span>
+        <span className="font-bold text-[10px] sm:text-xs tracking-wider text-white select-none">IDN</span>
       )
     },
     {
-      href: "https://www.showroom-live.com/",
+      href: "https://www.showroom-live.com/r/JKT48_Intan",
       ariaLabel: "Showroom",
       tooltip: "Showroom",
       color: "#111111",
       icon: (
-        <div className="flex flex-col items-center leading-none text-[8px] font-black tracking-tight select-none text-white">
+        <div className="flex flex-col items-center leading-none text-[7px] sm:text-[8px] font-black tracking-tight select-none text-white">
           <span>SHOW</span>
           <span>ROOM</span>
         </div>
@@ -144,17 +154,8 @@ export default function HomePage() {
 
     fetchData();
   }, []);
-
   return (
     <div className="relative min-h-screen">
-      {/* Decorative blue floral vine repeating background pattern */}
-      <div
-        className="fixed inset-0 pointer-events-none z-0"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%234A7ABF' opacity='0.22'%3E%3Ccircle cx='60' cy='60' r='4' stroke-width='1.2'/%3E%3Ccircle cx='60' cy='60' r='8' stroke-width='0.8'/%3E%3Cpath d='M60 52 C56 48,56 40,60 36 C64 40,64 48,60 52' stroke-width='1'/%3E%3Cpath d='M60 68 C56 72,56 80,60 84 C64 80,64 72,60 68' stroke-width='1'/%3E%3Cpath d='M52 60 C48 56,40 56,36 60 C40 64,48 64,52 60' stroke-width='1'/%3E%3Cpath d='M68 60 C72 56,80 56,84 60 C80 64,72 64,68 60' stroke-width='1'/%3E%3Cpath d='M54 54 C50 50,44 50,42 42 C50 44,50 50,54 54' stroke-width='0.8'/%3E%3Cpath d='M66 54 C70 50,76 50,78 42 C70 44,70 50,66 54' stroke-width='0.8'/%3E%3Cpath d='M54 66 C50 70,44 70,42 78 C50 76,50 70,54 66' stroke-width='0.8'/%3E%3Cpath d='M66 66 C70 70,76 70,78 78 C70 76,70 70,66 66' stroke-width='0.8'/%3E%3Cpath d='M0 60 Q15 50,30 58 Q40 62,50 58' stroke-width='0.8'/%3E%3Cpath d='M70 62 Q80 58,90 62 Q105 70,120 60' stroke-width='0.8'/%3E%3Cpath d='M60 0 Q50 15,58 30 Q62 40,58 50' stroke-width='0.8'/%3E%3Cpath d='M62 70 Q58 80,62 90 Q70 105,60 120' stroke-width='0.8'/%3E%3Cpath d='M20 56 C18 52,20 48,24 50 C22 52,20 54,20 56Z' stroke-width='0.6' fill='%234A7ABF' fill-opacity='0.12'/%3E%3Cpath d='M96 58 C98 54,100 50,104 52 C102 54,100 56,96 58Z' stroke-width='0.6' fill='%234A7ABF' fill-opacity='0.12'/%3E%3Cpath d='M56 20 C52 18,48 20,50 24 C52 22,54 20,56 20Z' stroke-width='0.6' fill='%234A7ABF' fill-opacity='0.12'/%3E%3Cpath d='M58 96 C54 98,50 100,52 104 C54 102,56 100,58 96Z' stroke-width='0.6' fill='%234A7ABF' fill-opacity='0.12'/%3E%3Ccircle cx='0' cy='0' r='2' stroke-width='0.8'/%3E%3Ccircle cx='120' cy='0' r='2' stroke-width='0.8'/%3E%3Ccircle cx='0' cy='120' r='2' stroke-width='0.8'/%3E%3Ccircle cx='120' cy='120' r='2' stroke-width='0.8'/%3E%3C/g%3E%3C/svg%3E")`,
-          backgroundSize: '120px 120px',
-        }}
-      />
       <div className="relative z-10 space-y-12 animate-fade-in max-w-6xl mx-auto">
         {/* ================= HERO INTRO SECTION ================= */}
         <ContainerScroll className="text-center text-[var(--text-primary)] pt-4 pb-12">
@@ -238,7 +239,7 @@ export default function HomePage() {
               </Button>
               <Link to={ROUTES.ABOUT_INTANIUM}>
                 <Button variant="outline" size="md" className="group gap-2 border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white transition-all duration-300 hover:scale-105 shadow-sm hover:shadow-[var(--neon-glow-primary)]">
-                  Gabung Komunitas <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                  Tentang Kami <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                 </Button>
               </Link>
             </ContainerAnimated>
@@ -304,8 +305,8 @@ export default function HomePage() {
 
                   {/* Social Media Section */}
                   <div className="pt-2 w-full flex flex-col items-center lg:items-start gap-3">
-                    <span className="text-[11px] sm:text-xs tracking-[0.15em] text-white/70 uppercase font-extrabold select-none">
-                      temukan nur intan di:
+                    <span className="text-[11px] sm:text-xs tracking-[0.15em] text-white/70 font-semibold select-none">
+                      Temukan Nur Intan di:
                     </span>
                     <SocialTooltip items={socialLinks} />
                   </div>
