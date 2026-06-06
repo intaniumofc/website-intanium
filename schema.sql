@@ -51,7 +51,8 @@ CREATE TABLE IF NOT EXISTS mading_notes (
   message TEXT NOT NULL,
   theme_color TEXT NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW(),
-  is_admin BOOLEAN DEFAULT false
+  is_admin BOOLEAN DEFAULT false,
+  is_approved BOOLEAN DEFAULT false
 );
 
 CREATE TABLE IF NOT EXISTS recaps (
@@ -111,12 +112,25 @@ ALTER TABLE gallery ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public read on gallery" ON gallery FOR SELECT USING (true);
 CREATE POLICY "Allow admin all on gallery" ON gallery FOR ALL USING (auth.role() = 'authenticated');
 
--- 6. Mading Notes (Public Read, Public Insert, Admin Delete/Update)
+-- 6. Mading Notes (Public Approved Read, Public Insert, Admin Delete/Update/Select)
 ALTER TABLE mading_notes ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Allow public read on mading_notes" ON mading_notes FOR SELECT USING (true);
+CREATE POLICY "Allow public read on mading_notes" ON mading_notes FOR SELECT USING (is_approved = true OR auth.role() = 'authenticated');
 CREATE POLICY "Allow public insert on mading_notes" ON mading_notes FOR INSERT WITH CHECK (true);
 CREATE POLICY "Allow admin update/delete on mading_notes" ON mading_notes FOR UPDATE USING (auth.role() = 'authenticated');
 CREATE POLICY "Allow admin delete on mading_notes" ON mading_notes FOR DELETE USING (auth.role() = 'authenticated');
+-- 1. Tambahkan kolom is_approved dengan default false
+ALTER TABLE mading_notes ADD COLUMN IF NOT EXISTS is_approved BOOLEAN DEFAULT false;
+
+-- 2. Migrasikan data lama agar pesan yang sudah ada tetap tayang
+UPDATE mading_notes SET is_approved = true WHERE is_approved IS NULL;
+
+-- 3. Perbarui kebijakan Row Level Security (RLS) agar tamu hanya membaca data ter-approve
+DROP POLICY IF EXISTS "Allow public read on mading_notes" ON mading_notes;
+CREATE POLICY "Allow public read on mading_notes" 
+ON mading_notes 
+FOR SELECT 
+USING (is_approved = true OR auth.role() = 'authenticated');
+
 
 -- 7. Orders & Payments (Public Insert, Admin Read/Update/Delete)
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;

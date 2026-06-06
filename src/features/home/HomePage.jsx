@@ -26,7 +26,7 @@ import HomeNewsSection from '../news/HomeNewsSection';
 import HomeMerchandiseSection from '../merchandise/HomeMerchandiseSection';
 import HomeGallerySection from '../gallery/HomeGallerySection';
 import HomeHashtagsSection from '../hashtags/HomeHashtagsSection';
-import HomeTestimonialsSection from '../mading/HomeTestimonialsSection';
+import MadingPreviewSection from '../mading/MadingPreviewSection';
 import intan1 from '../../assets/images/intan-01.jpg';
 import intan2 from '../../assets/images/intan-02.jpg';
 import intan3 from '../../assets/images/intan-03.jpg';
@@ -382,14 +382,14 @@ export default function HomePage() {
           <HomeGallerySection />
         </motion.div>
 
-        {/* ================= FAN TESTIMONIALS SCROLLING BOARD ================= */}
+        {/* ================= MADING PREVIEW SECTION ================= */}
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.15 }}
           variants={scrollRevealVariants}
         >
-          <HomeTestimonialsSection />
+          <MadingPreviewSection />
         </motion.div>
       </div>
     </div>

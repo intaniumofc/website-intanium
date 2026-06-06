@@ -1,0 +1,285 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Gochi+Hand&family=Patrick+Hand:wght@400;700&display=swap');
+
+/* Main layout styling */
+.mading-page-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* Custom bottom divider line matching homepage style */
+.mading-divider-line {
+  position: relative;
+  height: 4px;
+  background: gradient-to-r;
+  background-image: linear-gradient(to right, var(--color-primary), var(--color-primary-hover));
+  border-radius: 9999px;
+  box-shadow: 0 0 10px rgba(23, 12, 121, 0.2);
+  margin-top: 1.5rem;
+  width: 100%;
+}
+
+/* Hero section stats badge */
+.hero-stats-badge {
+  background-color: var(--color-primary-light);
+  border: 1px solid var(--border-color);
+  color: var(--color-primary);
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Search and filter toolbar styles */
+.search-input-wrapper {
+  position: relative;
+  flex: 1;
+  min-width: 280px;
+}
+
+.search-input-field {
+  width: 100%;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  border-radius: 9999px;
+  padding: 0.625rem 1rem 0.625rem 2.5rem;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.search-input-field:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(23, 12, 121, 0.08);
+}
+
+.filter-chip-button {
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.4375rem 1rem;
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.filter-chip-button:hover {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.filter-chip-button.active {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #ffffff;
+  box-shadow: 0 4px 6px -1px rgba(23, 12, 121, 0.15);
+}
+
+.sort-select-field {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.4375rem 2.25rem 0.4375rem 1rem;
+  border-radius: 9999px;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234a4a62' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+}
+
+.sort-select-field:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(23, 12, 121, 0.08);
+}
+
+/* Outer Wooden Frame of Corkboard */
+.corkboard-outer {
+  border-radius: 24px;
+  background-color: #5c2c04; /* Rich natural frame wood */
+  padding: 16px; /* Thick framing block */
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.35),
+    inset 0 3px 6px rgba(255, 255, 255, 0.2),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(0,0,0,0.25);
+  position: relative;
+}
+
+/* Inner wood bevel shading */
+.corkboard-bevel-frame {
+  border: 7px solid #4a2202; /* inner dark recess shadow */
+  border-radius: 12px;
+  background: #3a1a01;
+  box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.9);
+}
+
+/* Corkboard surface background with dotted texture overlay */
+.corkboard-surface {
+  background-color: #cb9b6c; /* Warm cork board base */
+  background-image: 
+    radial-gradient(rgba(92, 44, 4, 0.2) 12%, transparent 16%),
+    radial-gradient(rgba(92, 44, 4, 0.15) 15%, transparent 16%),
+    radial-gradient(rgba(255, 255, 255, 0.3) 15%, transparent 20%);
+  background-size: 14px 14px, 10px 10px, 12px 12px;
+  background-position: 0 0, 5px 5px, 6px 3px;
+  min-height: 580px;
+  box-shadow: inset 0 8px 32px rgba(0, 0, 0, 0.45);
+}
+
+/* Sticky note styling */
+.sticky-note-item {
+  box-shadow: 3px 4px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  background: #ffffff;
+}
+
+/* Color palettes overrides */
+.pastel-pink {
+  background-color: #ffe5ec;
+  border-left: 2px solid rgba(255, 77, 109, 0.2);
+}
+.pastel-lavender {
+  background-color: #f3e8ff;
+  border-left: 2px solid rgba(168, 85, 247, 0.2);
+}
+.pastel-yellow {
+  background-color: #fef9c3;
+  border-left: 2px solid rgba(234, 179, 8, 0.2);
+}
+.pastel-blue {
+  background-color: #e0f2fe;
+  border-left: 2px solid rgba(14, 165, 233, 0.2);
+}
+.pastel-peach {
+  background-color: #ffedd5;
+  border-left: 2px solid rgba(249, 115, 22, 0.2);
+}
+
+/* Note typography */
+.note-text {
+  font-family: 'Patrick Hand', 'Caveat', cursive, sans-serif;
+  font-size: 0.9375rem;
+  color: #1e293b;
+}
+
+.note-author {
+  font-family: 'Patrick Hand', 'Caveat', cursive, sans-serif;
+  font-size: 0.8125rem;
+}
+
+/* Push pin styling */
+.note-push-pin {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  box-shadow: 
+    0 3px 4px rgba(0, 0, 0, 0.4),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.4),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.7);
+  z-index: 15;
+}
+
+.note-push-pin::after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 4px;
+  height: 4px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+}
+
+.note-push-pin.pink { background-color: #ec4899; }
+.note-push-pin.blue { background-color: #0ea5e9; }
+.note-push-pin.yellow { background-color: #eab308; }
+
+/* Note Washi Tape styling */
+.note-washi-tape {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 16px;
+  background-color: rgba(245, 222, 179, 0.7);
+  backdrop-filter: blur(0.5px);
+  border-left: 1px dashed rgba(0, 0, 0, 0.1);
+  border-right: 1px dashed rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  z-index: 10;
+}
+
+.note-washi-tape.washi {
+  top: -10px;
+  transform: translateX(-50%) rotate(-3deg);
+}
+
+.note-washi-tape.washi-bottom {
+  bottom: -8px;
+  top: auto;
+  transform: translateX(-50%) rotate(2deg);
+  background-color: rgba(212, 163, 115, 0.65);
+}
+
+/* Sidebar cards container */
+.sidebar-panel-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 10px rgba(23, 12, 121, 0.02);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sidebar-panel-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(23, 12, 121, 0.05);
+}
+
+/* Pin of the day card highlights */
+.pin-of-day-card {
+  background: linear-gradient(135deg, #fff6f6 0%, #fffbfb 100%);
+  border: 2px dashed rgba(23, 12, 121, 0.2);
+}
+
+/* Doodle items */
+.note-doodle {
+  font-size: 1.125rem;
+}
+
+/* Decorative background elements */
+.decorative-sparkle-mading {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Responsive grid overrides for corkboard */
+@media (max-width: 640px) {
+  .corkboard-surface {
+    grid-template-columns: 1fr;
+    padding: 1.5rem 1rem;
+    min-height: auto;
+  }
+  
+  .search-input-wrapper {
+    width: 100%;
+  }
+}
