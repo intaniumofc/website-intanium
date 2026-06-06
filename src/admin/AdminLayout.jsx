@@ -70,7 +70,7 @@ export default function AdminLayout({ children }) {
   const toggleCollapse = () => setIsCollapsed(!isCollapsed);
 
   return (
-    <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] flex overflow-x-hidden">
+    <div className="min-h-screen text-[var(--text-primary)] flex overflow-x-hidden">
       
       {/* ================= MOBILE DRAWER OVERLAY ================= */}
       {isMobileOpen && (

@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { PortfolioGallery } from '../../components/ui/portfolio-gallery';
 import { ROUTES } from '../../lib/constants';
+import { galleryService } from './galleryService';
 
 const GALLERY_PHOTOS = [
   {
@@ -50,7 +51,21 @@ const GALLERY_PHOTOS = [
 ];
 
 export default function HomeGallerySection() {
+  const [photos, setPhotos] = useState(GALLERY_PHOTOS);
   const [activePhotoIdx, setActivePhotoIdx] = useState(null);
+
+  useEffect(() => {
+    galleryService.getGalleryPhotos()
+      .then((data) => {
+        const showcasePhotos = data.filter(p => p.display_type === 'showcase' || p.display_type === 'both');
+        if (showcasePhotos.length > 0) {
+          setPhotos(showcasePhotos);
+        }
+      })
+      .catch((err) => {
+        console.error('Gagal memuat showcase photos:', err);
+      });
+  }, []);
 
   const openLightbox = (index) => {
     setActivePhotoIdx(index);
@@ -62,16 +77,16 @@ export default function HomeGallerySection() {
 
   const nextPhoto = (e) => {
     e.stopPropagation();
-    setActivePhotoIdx((prev) => (prev + 1) % GALLERY_PHOTOS.length);
+    setActivePhotoIdx((prev) => (prev + 1) % photos.length);
   };
 
   const prevPhoto = (e) => {
     e.stopPropagation();
-    setActivePhotoIdx((prev) => (prev - 1 + GALLERY_PHOTOS.length) % GALLERY_PHOTOS.length);
+    setActivePhotoIdx((prev) => (prev - 1 + photos.length) % photos.length);
   };
 
   // Map to format required by PortfolioGallery
-  const mappedImages = GALLERY_PHOTOS.map(photo => ({
+  const mappedImages = photos.map(photo => ({
     src: photo.url,
     alt: photo.title,
     title: photo.title
@@ -125,7 +140,7 @@ export default function HomeGallerySection() {
               </button>
 
               <motion.div
-                key={GALLERY_PHOTOS[activePhotoIdx].id}
+                key={photos[activePhotoIdx].id}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
@@ -133,8 +148,8 @@ export default function HomeGallerySection() {
                 className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl max-w-full"
               >
                 <img
-                  src={GALLERY_PHOTOS[activePhotoIdx].url}
-                  alt={GALLERY_PHOTOS[activePhotoIdx].title}
+                  src={photos[activePhotoIdx].url}
+                  alt={photos[activePhotoIdx].title}
                   className="max-w-full max-h-[70vh] object-contain rounded-2xl block"
                 />
 
@@ -142,14 +157,14 @@ export default function HomeGallerySection() {
                 <div className="absolute inset-x-0 bottom-0 bg-black/60 backdrop-blur-sm p-4 text-white flex justify-between items-center select-none">
                   <div>
                     <span className="text-[9px] uppercase font-black tracking-widest text-[var(--color-primary-light)]">
-                      {GALLERY_PHOTOS[activePhotoIdx].category}
+                      {photos[activePhotoIdx].category || 'Showcase'}
                     </span>
                     <h5 className="font-extrabold text-sm sm:text-base leading-tight mt-0.5">
-                      {GALLERY_PHOTOS[activePhotoIdx].title}
+                      {photos[activePhotoIdx].title}
                     </h5>
                   </div>
                   <span className="text-xs text-white/75 bg-white/10 px-3 py-1 rounded-full font-bold">
-                    {activePhotoIdx + 1} / {GALLERY_PHOTOS.length}
+                    {activePhotoIdx + 1} / {photos.length}
                   </span>
                 </div>
               </motion.div>

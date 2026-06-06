@@ -180,17 +180,8 @@ export default function DengerIntanPage() {
   if (isLoading || !activePlaylist) {
     return <Loading message="Mengunduh daftar putar musik..." />;
   }
-
   return (
     <div className="space-y-16 max-w-7xl mx-auto py-6 relative">
-      {/* Decorative blue floral vine repeating background pattern with ambient drift */}
-      <div
-        className="fixed inset-0 pointer-events-none z-0 animate-floral-drift"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%234A7ABF' opacity='0.22'%3E%3Ccircle cx='60' cy='60' r='4' stroke-width='1.2'/%3E%3Ccircle cx='60' cy='60' r='8' stroke-width='0.8'/%3E%3Cpath d='M60 52 C56 48,56 40,60 36 C64 40,64 48,60 52' stroke-width='1'/%3E%3Cpath d='M60 68 C56 72,56 80,60 84 C64 80,64 72,60 68' stroke-width='1'/%3E%3Cpath d='M52 60 C48 56,40 56,36 60 C40 64,48 64,52 60' stroke-width='1'/%3E%3Cpath d='M68 60 C72 56,80 56,84 60 C80 64,72 64,68 60' stroke-width='1'/%3E%3Cpath d='M54 54 C50 50,44 50,42 42 C50 44,50 50,54 54' stroke-width='0.8'/%3E%3Cpath d='M66 54 C70 50,76 50,78 42 C70 44,70 50,66 54' stroke-width='0.8'/%3E%3Cpath d='M54 66 C50 70,44 70,42 78 C50 76,50 70,54 66' stroke-width='0.8'/%3E%3Cpath d='M66 66 C70 70,76 70,78 78 C70 76,70 70,66 66' stroke-width='0.8'/%3E%3Cpath d='M0 60 Q15 50,30 58 Q40 62,50 58' stroke-width='0.8'/%3E%3Cpath d='M70 62 Q80 58,90 62 Q105 70,120 60' stroke-width='0.8'/%3E%3Cpath d='M60 0 Q50 15,58 30 Q62 40,58 50' stroke-width='0.8'/%3E%3Cpath d='M62 70 Q58 80,62 90 Q70 105,60 120' stroke-width='0.8'/%3E%3Cpath d='M20 56 C18 52,20 48,24 50 C22 52,20 54,20 56Z' stroke-width='0.6' fill='%234A7ABF' fill-opacity='0.12'/%3E%3Cpath d='M96 58 C98 54,100 50,104 52 C102 54,100 56,96 58Z' stroke-width='0.6' fill='%234A7ABF' fill-opacity='0.12'/%3E%3Cpath d='M56 20 C52 18,48 20,50 24 C52 22,54 20,56 20Z' stroke-width='0.6' fill='%234A7ABF' fill-opacity='0.12'/%3E%3Cpath d='M58 96 C54 98,50 100,52 104 C54 102,56 100,58 96Z' stroke-width='0.6' fill='%234A7ABF' fill-opacity='0.12'/%3E%3Ccircle cx='0' cy='0' r='2' stroke-width='0.8'/%3E%3Ccircle cx='120' cy='0' r='2' stroke-width='0.8'/%3E%3Ccircle cx='0' cy='120' r='2' stroke-width='0.8'/%3E%3Ccircle cx='120' cy='120' r='2' stroke-width='0.8'/%3E%3C/g%3E%3C/svg%3E")`,
-          backgroundSize: '120px 120px',
-        }}
-      />
 
       {/* Centered Premium Editorial Hero Section with 3D Scroll Perspective */}
       <ContainerScroll
@@ -341,17 +332,6 @@ export default function DengerIntanPage() {
                   opacity: 0.7;
                   transform: scale(1.002);
                 }
-              }
-              @keyframes floral-drift {
-                0%, 100% {
-                  transform: translate(0, 0);
-                }
-                50% {
-                  transform: translate(-12px, 8px);
-                }
-              }
-              .animate-floral-drift {
-                animation: floral-drift 18s ease-in-out infinite;
               }
             `}</style>
           </div>

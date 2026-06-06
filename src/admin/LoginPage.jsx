@@ -297,7 +297,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-2 bg-[#FFF6F6]">
+    <div className="min-h-screen grid lg:grid-cols-2">
       {/* Left Content Section */}
       <div className="relative hidden lg:flex flex-col justify-between bg-gradient-to-br from-[#170C79] via-[#2112a3] to-[#0e074e] p-12 text-white overflow-hidden">
         <div className="relative z-20">

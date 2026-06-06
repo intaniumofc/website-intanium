@@ -11,7 +11,10 @@ export const galleryService = {
       return [];
     }
     
-    return data;
+    return data.map(item => ({
+      ...item,
+      display_type: item.display_type || 'gallery'
+    }));
   },
 
   createGalleryPhoto: async (photoData) => {

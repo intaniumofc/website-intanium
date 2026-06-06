@@ -74,7 +74,8 @@ CREATE TABLE IF NOT EXISTS gallery (
   id TEXT PRIMARY KEY,
   title TEXT NOT NULL,
   description TEXT,
-  url TEXT NOT NULL
+  url TEXT NOT NULL,
+  display_type TEXT DEFAULT 'gallery'
 );
 
 -- ==========================================

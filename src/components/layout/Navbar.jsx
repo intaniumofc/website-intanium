@@ -40,13 +40,13 @@ export default function Navbar() {
   const NAV_ITEMS = [
     {
       id: 1,
-      label: "Tentang Kami",
+      label: "About",
       subMenus: [
         {
-          title: "Profil & Karakter",
+          title: "Profile & Character",
           items: [
             {
-              label: "Tentang Intan",
+              label: "About Nur Intan",
               description: "Profil lengkap, biodata, dan fakta menarik seputar Intan",
               icon: User,
               link: ROUTES.ABOUT_INTAN,
@@ -63,7 +63,7 @@ export default function Navbar() {
           title: "Lore Komunitas",
           items: [
             {
-              label: "Intanium Lore",
+              label: "About Intanium",
               description: "Asal usul, filosofi, pedoman, dan cara gabung Discord server",
               icon: Globe,
               link: ROUTES.ABOUT_INTANIUM,

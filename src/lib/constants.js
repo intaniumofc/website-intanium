@@ -20,7 +20,7 @@ export const ROUTES = {
   NEWS: '/news',
   NEWS_DETAIL: '/news/:id',
   GALLERY: '/gallery',
-  
+
   // Admin Routes
   ADMIN_LOGIN: '/admin/login',
   ADMIN_DASHBOARD: '/admin/dashboard',
@@ -34,12 +34,11 @@ export const ROUTES = {
 };
 
 export const SOCIALS = {
-  TWITTER: 'https://twitter.com/intan',
-  INSTAGRAM: 'https://instagram.com/intan',
-  YOUTUBE: 'https://youtube.com/intan',
-  TIKTOK: 'https://tiktok.com/@intan',
-  DISCORD: 'https://discord.gg/intanium',
-  GITHUB: 'https://github.com/intaniumofc',
+  TWITTER: 'https://x.com/intanium_ofc',
+  INSTAGRAM: 'https://instagram.com/intanium_ofc',
+  TIKTOK: 'https://tiktok.com/@intanium_ofc',
+  EMAIL: 'mailto:intaniumofc@gmail.com',
+  THREADS: 'https://www.threads.net/@intanium_ofc',
 };
 
 export const MERCH_CATEGORIES = {

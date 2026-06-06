@@ -8,6 +8,11 @@
   }
   body {
     background-color: var(--bg-primary);
+    background-image: url("/bg-web.webp");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     color: var(--text-primary);
     font-family: var(--font-sans);
     transition: background-color 0.3s ease, color 0.3s ease;
@@ -36,6 +41,21 @@
   border-color: rgba(139, 92, 246, 0.45);
   box-shadow: var(--box-shadow-lg);
   transform: translateY(-2px);
+}
+
+.logo-philosophy-card {
+  transition:
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    background-color 220ms ease;
+}
+
+.logo-philosophy-card:hover {
+  border-color: var(--color-primary) !important;
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--color-primary) 72%, transparent),
+    0 16px 40px rgba(23, 12, 121, 0.18),
+    var(--box-shadow-sm) !important;
 }
 
 /* Neon Text and Border Glow Effects */

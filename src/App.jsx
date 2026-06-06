@@ -23,6 +23,8 @@ export default function App() {
       infinite: false,
     });
 
+    window.lenis = lenis;
+
     // Synchronize Lenis scrolling updates with GSAP ScrollTrigger
     lenis.on('scroll', ScrollTrigger.update);
 
@@ -37,6 +39,7 @@ export default function App() {
     // Clean up connections on unmount
     return () => {
       lenis.destroy();
+      window.lenis = null;
       gsap.ticker.remove(tickHandler);
     };
   }, []);
