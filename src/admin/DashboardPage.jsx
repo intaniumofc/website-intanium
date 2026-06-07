@@ -66,7 +66,7 @@ export default function DashboardPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-[var(--text-primary)]">
-            Halo, Super Admin! 👋
+            Halo, Super Admin!
           </h1>
           <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-1">
             Selamat datang kembali di panel administrasi portal Website Intanium. Berikut rangkuman data Anda hari ini.

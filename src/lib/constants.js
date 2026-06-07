@@ -2,6 +2,7 @@
 
 export const SITE_NAME = 'Intanium';
 export const SITE_TAGLINE = 'The Official Portal for Intanium Community & Intan';
+export const ADMIN_WHATSAPP_NUMBER = '6281386701549';
 
 export const ROUTES = {
   HOME: '/',
@@ -25,6 +26,8 @@ export const ROUTES = {
   ADMIN_LOGIN: '/admin/login',
   ADMIN_DASHBOARD: '/admin/dashboard',
   ADMIN_MERCHANDISE: '/admin/merchandise',
+  ADMIN_CATEGORIES: '/admin/merchandise/categories',
+  ADMIN_ORDERS: '/admin/merchandise/orders',
   ADMIN_RECAPS: '/admin/recaps',
   ADMIN_SCHEDULE: '/admin/schedule',
   ADMIN_NEWS: '/admin/news',

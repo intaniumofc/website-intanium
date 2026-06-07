@@ -28,6 +28,8 @@ import AdminLayout from '../admin/AdminLayout';
 import LoginPage from '../admin/LoginPage';
 import DashboardPage from '../admin/DashboardPage';
 import AdminMerchandise from '../admin/merchandise';
+import AdminCategories from '../admin/merchandise/categories';
+import AdminOrders from '../admin/orders';
 import AdminRecaps from '../admin/recaps';
 import AdminSchedule from '../admin/schedule';
 import AdminNews from '../admin/news';
@@ -191,6 +193,22 @@ export default function AppRoutes() {
         element={
           <AdminGuard>
             <AdminMerchandise />
+          </AdminGuard>
+        }
+      />
+      <Route
+        path={ROUTES.ADMIN_CATEGORIES}
+        element={
+          <AdminGuard>
+            <AdminCategories />
+          </AdminGuard>
+        }
+      />
+      <Route
+        path={ROUTES.ADMIN_ORDERS}
+        element={
+          <AdminGuard>
+            <AdminOrders />
           </AdminGuard>
         }
       />

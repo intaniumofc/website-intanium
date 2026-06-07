@@ -15,9 +15,11 @@ import {
   X, 
   ChevronLeft, 
   ChevronRight,
+  ChevronDown,
   Search,
   ExternalLink,
-  Headphones
+  Headphones,
+  ClipboardList
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import logoNobg from '../assets/logos/logo-nobg.png';
@@ -30,6 +32,17 @@ export default function AdminLayout({ children }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Dropdown menus states
+  const isPathMerch = location.pathname.startsWith('/admin/merchandise') || location.pathname.startsWith('/admin/orders') || location.pathname.startsWith('/admin/categories');
+  const [isMerchOpen, setIsMerchOpen] = useState(isPathMerch);
+
+  // Sync state if pathname changes
+  useEffect(() => {
+    if (location.pathname.startsWith('/admin/merchandise') || location.pathname.includes('/admin/merchandise')) {
+      setIsMerchOpen(true);
+    }
+  }, [location.pathname]);
 
   // Auth checking logic
   useEffect(() => {
@@ -51,7 +64,16 @@ export default function AdminLayout({ children }) {
 
   const adminLinks = [
     { id: 'dashboard', name: 'Dashboard', href: ROUTES.ADMIN_DASHBOARD, icon: LayoutDashboard },
-    { id: 'merchandise', name: 'Merchandise', href: ROUTES.ADMIN_MERCHANDISE, icon: ShoppingBag },
+    { 
+      id: 'merchandise_group', 
+      name: 'Merchandise', 
+      icon: ShoppingBag,
+      subLinks: [
+        { name: 'Daftar Produk', href: ROUTES.ADMIN_MERCHANDISE },
+        { name: 'Kategori Produk', href: ROUTES.ADMIN_CATEGORIES },
+        { name: 'Kelola Order', href: ROUTES.ADMIN_ORDERS }
+      ]
+    },
     { id: 'recaps', name: 'Recap & Zine', href: ROUTES.ADMIN_RECAPS, icon: BookOpen },
     { id: 'schedule', name: 'Jadwal Stream', href: ROUTES.ADMIN_SCHEDULE, icon: Calendar },
     { id: 'news', name: 'Berita & News', href: ROUTES.ADMIN_NEWS, icon: Newspaper },
@@ -62,9 +84,11 @@ export default function AdminLayout({ children }) {
 
 
   // Filter links based on sidebar search input
-  const filteredLinks = adminLinks.filter(link => 
-    link.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredLinks = adminLinks.filter(link => {
+    if (link.name.toLowerCase().includes(searchQuery.toLowerCase())) return true;
+    if (link.subLinks && link.subLinks.some(sub => sub.name.toLowerCase().includes(searchQuery.toLowerCase()))) return true;
+    return false;
+  });
 
   const toggleSidebar = () => setIsMobileOpen(!isMobileOpen);
   const toggleCollapse = () => setIsCollapsed(!isCollapsed);
@@ -163,6 +187,109 @@ export default function AdminLayout({ children }) {
           <ul className="space-y-1">
             {filteredLinks.map((item) => {
               const Icon = item.icon;
+
+              if (item.subLinks) {
+                const isSubActive = item.subLinks.some(sub => location.pathname === sub.href);
+                
+                return (
+                  <li key={item.id} className="relative">
+                    {!isCollapsed ? (
+                      <div>
+                        <button
+                          type="button"
+                          onClick={() => setIsMerchOpen(!isMerchOpen)}
+                          className={`
+                            w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-left transition-all duration-200 group cursor-pointer
+                            ${isSubActive
+                              ? "bg-white/10 text-white font-bold"
+                              : "text-white/70 hover:bg-white/5 hover:text-white font-medium"
+                            }
+                          `}
+                        >
+                          <div className="flex items-center justify-center min-w-[24px]">
+                            <Icon
+                              className={`
+                                h-5 w-5 flex-shrink-0 transition-transform group-hover:scale-105
+                                ${isSubActive ? "text-white" : "text-white/50 group-hover:text-white/80"}
+                              `}
+                            />
+                          </div>
+                          
+                          <div className="flex items-center justify-between w-full min-w-0">
+                            <span className="text-xs truncate">{item.name}</span>
+                            <ChevronDown
+                              className={`h-3.5 w-3.5 transition-transform text-white/40 group-hover:text-white/70 ${
+                                isMerchOpen ? "rotate-180 text-white" : ""
+                              }`}
+                            />
+                          </div>
+                        </button>
+
+                        {isMerchOpen && (
+                          <ul className="mt-1 ml-6 pl-2.5 border-l border-white/10 space-y-1 animate-fade-in select-none">
+                            {item.subLinks.map((sub) => {
+                              const isSubItemActive = location.pathname === sub.href;
+                              return (
+                                <li key={sub.name}>
+                                  <Link
+                                    to={sub.href}
+                                    onClick={() => setIsMobileOpen(false)}
+                                    className={`
+                                      block px-3.5 py-2 text-[11px] rounded-lg transition-all duration-150
+                                      ${isSubItemActive
+                                        ? "bg-white/15 text-white font-extrabold shadow-xs"
+                                        : "text-white/60 hover:text-white hover:bg-white/5 font-bold"
+                                      }
+                                    `}
+                                  >
+                                    {sub.name}
+                                  </Link>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        )}
+                      </div>
+                    ) : (
+                      // Collapsed Sidebar Sub-links Hover Popover
+                      <div className="relative group/popover flex justify-center">
+                        <button
+                          type="button"
+                          className={`
+                            w-full flex items-center justify-center px-3.5 py-3 rounded-xl transition-all duration-200
+                            ${isSubActive ? "bg-white/15 text-white shadow-sm" : "text-white/70 hover:bg-white/5 hover:text-white"}
+                          `}
+                        >
+                          <div className="flex items-center justify-center min-w-[24px]">
+                            <Icon className={`h-5 w-5 flex-shrink-0 transition-transform group-hover:scale-105 ${isSubActive ? "text-white" : "text-white/50"}`} />
+                          </div>
+                        </button>
+
+                        <div className="absolute left-full ml-3 bg-slate-800 text-white text-[10px] rounded-xl opacity-0 invisible group-hover/popover:opacity-100 group-hover/popover:visible transition-all duration-200 z-50 shadow-lg border border-white/5 py-1.5 min-w-[140px] text-left">
+                          <p className="px-3.5 py-1.5 text-[9px] font-black uppercase text-white/50 tracking-wider border-b border-white/5 mb-1">{item.name}</p>
+                          {item.subLinks.map((sub) => {
+                            const isSubItemActive = location.pathname === sub.href;
+                            return (
+                              <Link
+                                key={sub.name}
+                                to={sub.href}
+                                onClick={() => setIsMobileOpen(false)}
+                                className={`block px-3.5 py-2 hover:bg-white/10 transition-colors font-bold ${
+                                  isSubItemActive ? "text-white bg-white/5" : "text-white/70"
+                                }`}
+                              >
+                                {sub.name}
+                              </Link>
+                            );
+                          })}
+                          <div className="absolute left-0 top-6 transform -translate-y-1/2 -translate-x-1 w-1.5 h-1.5 bg-slate-800 rotate-45" />
+                        </div>
+                      </div>
+                    )}
+                  </li>
+                );
+              }
+
               const isActive = location.pathname === item.href;
 
               return (
@@ -311,7 +438,7 @@ export default function AdminLayout({ children }) {
         </header>
 
         {/* Content Viewport */}
-        <main className="flex-1 p-6 sm:p-8 max-w-7xl w-full mx-auto animate-fade-in overflow-y-auto">
+        <main data-lenis-prevent className="flex-1 p-6 sm:p-8 max-w-7xl w-full mx-auto animate-fade-in overflow-y-auto">
           {children}
         </main>
       </div>

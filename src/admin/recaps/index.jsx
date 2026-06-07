@@ -4,7 +4,7 @@ import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
 import { recapService } from '../../features/recaps/recapService';
 import Loading from '../../components/common/Loading';
-import { Plus, Edit, Trash2, Calendar, FileText, Search, PlusCircle, Trash } from 'lucide-react';
+import { Plus, Edit, Trash2, Calendar, FileText, Search, PlusCircle, Trash, BookOpen } from 'lucide-react';
 
 export default function AdminRecaps() {
   const [items, setItems] = useState([]);
@@ -146,7 +146,9 @@ export default function AdminRecaps() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-[var(--border-color)]">
         <div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-[var(--text-primary)]">📖 Arsip Recap & Zine</h1>
+          <h1 className="text-xl sm:text-2xl font-extrabold text-[var(--text-primary)] flex items-center gap-2">
+            <BookOpen className="h-5.5 w-5.5 text-[var(--color-primary)] shrink-0" /> Arsip Recap & Zine
+          </h1>
           <p className="text-xs text-[var(--text-secondary)] mt-1">
             Unggah majalah komik digital Zine baru atau log komik recap mingguan.
           </p>

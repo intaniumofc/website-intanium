@@ -135,10 +135,12 @@ USING (is_approved = true OR auth.role() = 'authenticated');
 -- 7. Orders & Payments (Public Insert, Admin Read/Update/Delete)
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public insert on orders" ON orders FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow public select on orders" ON orders FOR SELECT USING (true);
 CREATE POLICY "Allow admin all on orders" ON orders FOR ALL USING (auth.role() = 'authenticated');
 
 ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public insert on payments" ON payments FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow public select on payments" ON payments FOR SELECT USING (true);
 CREATE POLICY "Allow admin all on payments" ON payments FOR ALL USING (auth.role() = 'authenticated');
 
 -- 8. Playlists (Public Read, Admin All)

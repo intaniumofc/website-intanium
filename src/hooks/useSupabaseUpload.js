@@ -3,6 +3,55 @@ import { supabase } from '../lib/supabaseClient';
 import { generateId } from '../lib/helpers';
 
 /**
+ * Converts an image file to WebP format on the client side.
+ * @param {File} file 
+ * @param {number} quality 
+ * @returns {Promise<File>}
+ */
+const convertImageToWebP = (file, quality = 0.8) => {
+  return new Promise((resolve, reject) => {
+    if (!file.type.startsWith('image/')) {
+      return resolve(file);
+    }
+    
+    const imageURL = URL.createObjectURL(file);
+    const img = new Image();
+    
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      
+      canvas.toBlob((blob) => {
+        URL.revokeObjectURL(imageURL);
+        
+        if (!blob) {
+          return reject(new Error('Canvas to blob conversion failed'));
+        }
+        
+        const nameWithoutExt = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+        const webpFile = new File([blob], `${nameWithoutExt}.webp`, {
+          type: 'image/webp',
+          lastModified: Date.now()
+        });
+        
+        resolve(webpFile);
+      }, 'image/webp', quality);
+    };
+    
+    img.onerror = (err) => {
+      URL.revokeObjectURL(imageURL);
+      reject(err);
+    };
+    
+    img.src = imageURL;
+  });
+};
+
+/**
  * Custom hook for handling media uploads directly to Supabase Storage.
  * Includes simulated fallbacks for mock environments without active Supabase credentials.
  */
@@ -13,15 +62,26 @@ export function useSupabaseUpload() {
 
   /**
    * Upload file to bucket
-   * @param {File} file 
+   * @param {File} rawFile 
    * @param {string} bucketName 
    * @param {string} folderPath 
    * @returns {Promise<string>} Public URL of uploaded asset
    */
-  const uploadFile = async (file, bucketName = 'assets', folderPath = 'media') => {
+  const uploadFile = async (rawFile, bucketName = 'assets', folderPath = 'media') => {
     setIsUploading(true);
     setError(null);
-    setProgress(10);
+    setProgress(5);
+
+    let file = rawFile;
+    if (rawFile.type.startsWith('image/')) {
+      setProgress(15);
+      try {
+        file = await convertImageToWebP(rawFile);
+      } catch (webpErr) {
+        console.warn('WebP conversion failed, uploading raw file:', webpErr);
+      }
+    }
+    setProgress(25);
 
     try {
       // Validate credentials exist; if not, do mock local simulation
@@ -30,10 +90,10 @@ export function useSupabaseUpload() {
         import.meta.env.VITE_SUPABASE_URL.includes('placeholder')
       ) {
         // Simulate progress bar and mock base64/local URL upload
-        setProgress(40);
-        await new Promise((r) => setTimeout(r, 600));
-        setProgress(80);
+        setProgress(50);
         await new Promise((r) => setTimeout(r, 400));
+        setProgress(80);
+        await new Promise((r) => setTimeout(r, 300));
         setProgress(100);
         setIsUploading(false);
 

@@ -221,7 +221,9 @@ export default function AdminGallery() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-[var(--border-color)]">
         <div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-[var(--text-primary)]">🖼️ Album Galeri Foto</h1>
+          <h1 className="text-xl sm:text-2xl font-extrabold text-[var(--text-primary)] flex items-center gap-2">
+            <ImageIcon className="h-5.5 w-5.5 text-[var(--color-primary)] shrink-0" /> Album Galeri Foto
+          </h1>
           <p className="text-xs text-[var(--text-secondary)] mt-1">
             Unggah poster visual kegiatan, fanart terverifikasi, atau tangkapan layar keseruan live stream.
           </p>

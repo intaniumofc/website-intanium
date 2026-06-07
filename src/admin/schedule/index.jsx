@@ -4,7 +4,7 @@ import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
 import { scheduleService } from '../../features/schedule/scheduleService';
 import Loading from '../../components/common/Loading';
-import { Plus, Edit, Trash2, Calendar, Link as LinkIcon, Search, ExternalLink } from 'lucide-react';
+import { Plus, Edit, Trash2, Calendar, Link as LinkIcon, Search, ExternalLink, Clock } from 'lucide-react';
 
 export default function AdminSchedule() {
   const [items, setItems] = useState([]);
@@ -147,7 +147,9 @@ export default function AdminSchedule() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-[var(--border-color)]">
         <div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-[var(--text-primary)]">📅 Jadwal Streaming</h1>
+          <h1 className="text-xl sm:text-2xl font-extrabold text-[var(--text-primary)] flex items-center gap-2">
+            <Calendar className="h-5.5 w-5.5 text-[var(--color-primary)] shrink-0" /> Jadwal Streaming
+          </h1>
           <p className="text-xs text-[var(--text-secondary)] mt-1">
             Kelola agenda live streaming mingguan Intan, atur platform, waktu, dan link siaran.
           </p>
@@ -225,7 +227,9 @@ export default function AdminSchedule() {
                           {item.platform}
                         </span>
                         {item.duration && (
-                          <span className="text-[10px] text-[var(--text-muted)] font-semibold">🕒 {item.duration}</span>
+                          <span className="text-[10px] text-[var(--text-muted)] font-semibold flex items-center gap-1">
+                            <Clock className="h-3 w-3 shrink-0" /> {item.duration}
+                          </span>
                         )}
                       </div>
                     </td>

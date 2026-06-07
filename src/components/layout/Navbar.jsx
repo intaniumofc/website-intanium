@@ -148,14 +148,14 @@ export default function Navbar() {
           title: "Merchandise Shop",
           items: [
             {
-              label: "Beli Merchandise",
-              description: "Miliki kaos limited anniversary, tumbler, standee akrilik",
+              label: "Pre-Order Merchandise",
+              description: "Miliki merchandise intanium sekarang!",
               icon: ShoppingBag,
               link: ROUTES.MERCHANDISE,
             },
             {
-              label: "Konfirmasi Bayar",
-              description: "Formulir konfirmasi pengiriman bukti transfer transaksi",
+              label: "Cek Pesanan",
+              description: "Pantau status pesanan merchandise",
               icon: CreditCard,
               link: ROUTES.PAYMENT_CONFIRM,
             },
