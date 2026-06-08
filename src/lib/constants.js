@@ -25,6 +25,7 @@ export const ROUTES = {
   // Admin Routes
   ADMIN_LOGIN: '/admin/login',
   ADMIN_DASHBOARD: '/admin/dashboard',
+  ADMIN_ABOUT_INTAN: '/admin/about-intan',
   ADMIN_MERCHANDISE: '/admin/merchandise',
   ADMIN_CATEGORIES: '/admin/merchandise/categories',
   ADMIN_ORDERS: '/admin/merchandise/orders',

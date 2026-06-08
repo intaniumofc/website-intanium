@@ -56,7 +56,7 @@ export default function DashboardPage() {
   const quickActions = [
     { label: 'Tambah Merchandise', link: ROUTES.ADMIN_MERCHANDISE, icon: ShoppingBag, color: 'hover:border-blue-500/50 hover:bg-blue-50/30 text-blue-600' },
     { label: 'Unggah Zine Baru', link: ROUTES.ADMIN_RECAPS, icon: BookOpen, color: 'hover:border-purple-500/50 hover:bg-purple-50/30 text-purple-600' },
-    { label: 'Update Jadwal Stream', link: ROUTES.ADMIN_SCHEDULE, icon: Calendar, color: 'hover:border-emerald-500/50 hover:bg-emerald-50/30 text-emerald-600' },
+    { label: 'Update Schedule', link: ROUTES.ADMIN_SCHEDULE, icon: Calendar, color: 'hover:border-emerald-500/50 hover:bg-emerald-50/30 text-emerald-600' },
     { label: 'Tulis Pengumuman', link: ROUTES.ADMIN_NEWS, icon: Newspaper, color: 'hover:border-amber-500/50 hover:bg-amber-50/30 text-amber-600' },
   ];
 

@@ -1,12 +1,14 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { merchandiseService } from '../../features/merchandise/merchandiseService';
 import { formatCurrency } from '../../lib/helpers';
 import { 
   Search, Trash2, Eye, FileText, X, ChevronLeft, ChevronRight, 
   Download, RefreshCw, Check, Clock, AlertTriangle, AlertCircle,
-  MoreVertical, ClipboardCheck, ArrowLeft, ExternalLink, Package, Truck
+  MoreVertical, ClipboardCheck, ArrowLeft, ExternalLink, Package, Truck, Info
 } from 'lucide-react';
 import { StatusBadge } from '../../components/ui/status-badge';
+import ConfirmDialog from '../../components/common/ConfirmDialog';
+import { useAdminToast } from '../../components/common/useAdminToast';
 
 const orderStatusOptions = [
   'pending',
@@ -77,6 +79,7 @@ function formatAuditActor(name, email) {
 }
 
 export default function AdminOrdersPage() {
+  const notify = useAdminToast();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -111,6 +114,21 @@ export default function AdminOrdersPage() {
   const [trackingNumber, setTrackingNumber] = useState('');
   const [trackingUrl, setTrackingUrl] = useState('');
   const [markShipped, setMarkShipped] = useState(true);
+
+  // Unified confirm dialog state
+  const [confirmState, setConfirmState] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'danger',
+    confirmText: 'Ya, Lanjutkan',
+    actionType: null, // 'singleStatus' | 'bulkStatus' | 'deleteOrder'
+    payload: null,
+  });
+
+  const closeConfirm = useCallback(() => {
+    setConfirmState(prev => ({ ...prev, isOpen: false }));
+  }, []);
 
   async function fetchOrders() {
     setLoading(true);
@@ -226,15 +244,25 @@ export default function AdminOrdersPage() {
     );
   }
 
-  async function handleSingleStatusUpdate(order, nextStatus) {
+  function handleSingleStatusUpdate(order, nextStatus) {
     if (nextStatus === order.status) return;
     const isFinalStatus = nextStatus === 'completed' || nextStatus === 'cancelled';
     if (isFinalStatus) {
-      const confirmed = window.confirm(
-        `Ubah status ${order.order_number} ke "${nextStatus}"? Ini status final.`,
-      );
-      if (!confirmed) return;
+      setConfirmState({
+        isOpen: true,
+        title: 'Ubah Status Order?',
+        message: `Status order ${order.order_number} akan diubah ke "${nextStatus}". Ini adalah status final dan tidak bisa dikembalikan.`,
+        type: 'warning',
+        confirmText: 'Ya, Ubah Status',
+        actionType: 'singleStatus',
+        payload: { order, nextStatus },
+      });
+      return;
     }
+    executeSingleStatusUpdate(order, nextStatus);
+  }
+
+  async function executeSingleStatusUpdate(order, nextStatus) {
     setRowSavingIds((current) => [...current, order.id]);
     setFeedback('');
     setError('');
@@ -244,29 +272,40 @@ export default function AdminOrdersPage() {
         current.map((item) => (item.id === updated.id ? updated : item)),
       );
       setFeedback(`Status order ${updated.order_number} berhasil diperbarui.`);
+      notify.success('Status order diperbarui', `Order ${updated.order_number} sekarang berstatus ${nextStatus}.`);
       if (detailData?.order.id === updated.id) void handleOpenDetail(updated.id);
       setStatusAuditNote('');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Gagal memperbarui status order');
+      const message = err instanceof Error ? err.message : 'Gagal memperbarui status order';
+      setError(message);
+      notify.error('Gagal memperbarui status order', message);
     } finally {
       setRowSavingIds((current) => current.filter((id) => id !== order.id));
     }
   }
 
-  async function handleBulkStatusUpdate() {
+  function handleBulkStatusUpdate() {
     if (selectedOrderIds.length === 0) return;
-    const confirmed = window.confirm(
-      `Update ${selectedOrderIds.length} order ke status "${bulkStatus}"?`,
-    );
-    if (!confirmed) return;
+    setConfirmState({
+      isOpen: true,
+      title: 'Update Status Massal?',
+      message: `${selectedOrderIds.length} order yang dipilih akan diubah ke status "${bulkStatus}". Pastikan perubahan ini sudah sesuai.`,
+      type: 'warning',
+      confirmText: 'Ya, Terapkan',
+      actionType: 'bulkStatus',
+      payload: { orderIds: [...selectedOrderIds], status: bulkStatus },
+    });
+  }
+
+  async function executeBulkStatusUpdate(orderIds, status) {
     setBulkSaving(true);
     setFeedback('');
     setError('');
-    setRowSavingIds((current) => [...new Set([...current, ...selectedOrderIds])]);
+    setRowSavingIds((current) => [...new Set([...current, ...orderIds])]);
     try {
       const results = await Promise.all(
-        selectedOrderIds.map(async (orderId) =>
-          merchandiseService.updateAdminOrderStatus(orderId, bulkStatus, statusAuditNote),
+        orderIds.map(async (orderId) =>
+          merchandiseService.updateAdminOrderStatus(orderId, status, statusAuditNote),
         ),
       );
       setOrders((current) =>
@@ -275,18 +314,21 @@ export default function AdminOrdersPage() {
           return updated ?? order;
         }),
       );
-      setFeedback(`${results.length} order berhasil diperbarui ke status "${bulkStatus}".`);
+      setFeedback(`${results.length} order berhasil diperbarui ke status "${status}".`);
+      notify.success('Status massal diperbarui', `${results.length} order berhasil diperbarui ke status ${status}.`);
       setSelectedOrderIds([]);
-      if (detailData?.order.id && selectedOrderIds.includes(detailData.order.id)) {
+      if (detailData?.order.id && orderIds.includes(detailData.order.id)) {
         void handleOpenDetail(detailData.order.id);
       }
       setStatusAuditNote('');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Gagal bulk update status order');
+      const message = err instanceof Error ? err.message : 'Gagal bulk update status order';
+      setError(message);
+      notify.error('Gagal update status massal', message);
     } finally {
       setBulkSaving(false);
       setRowSavingIds((current) =>
-        current.filter((id) => !selectedOrderIds.includes(id)),
+        current.filter((id) => !orderIds.includes(id)),
       );
     }
   }
@@ -329,20 +371,31 @@ export default function AdminOrdersPage() {
         current.map((order) => (order.id === updated.id ? updated : order)),
       );
       setFeedback(`Resi order ${updated.order_number} berhasil disimpan.`);
+      notify.success('Resi disimpan', `Info pengiriman order ${updated.order_number} berhasil disimpan.`);
       await handleOpenDetail(updated.id);
       setStatusAuditNote('');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Gagal menyimpan data pengiriman.');
+      const message = err instanceof Error ? err.message : 'Gagal menyimpan data pengiriman.';
+      setError(message);
+      notify.error('Gagal menyimpan resi', message);
     } finally {
       setFulfillmentSaving(false);
     }
   }
 
-  async function handleDeleteOrder(order) {
-    const confirmed = window.confirm(
-      `Hapus order ${order.order_number}? Tindakan ini tidak dapat dibatalkan.`,
-    )
-    if (!confirmed) return;
+  function handleDeleteOrder(order) {
+    setConfirmState({
+      isOpen: true,
+      title: 'Hapus Order?',
+      message: `Order ${order.order_number} akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan.`,
+      type: 'danger',
+      confirmText: 'Ya, Hapus',
+      actionType: 'deleteOrder',
+      payload: { order },
+    });
+  }
+
+  async function executeDeleteOrder(order) {
     setDeletingIds((current) => [...current, order.id]);
     setError('');
     setFeedback('');
@@ -355,12 +408,31 @@ export default function AdminOrdersPage() {
         setDetailData(null);
       }
       setFeedback(`Order ${order.order_number} berhasil dihapus.`);
+      notify.success('Order dihapus', `Order ${order.order_number} berhasil dihapus.`);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Gagal menghapus order.',
-      );
+      const message = err instanceof Error ? err.message : 'Gagal menghapus order.';
+      setError(message);
+      notify.error('Gagal menghapus order', message);
     } finally {
       setDeletingIds((current) => current.filter((id) => id !== order.id));
+    }
+  }
+
+  function executeConfirmAction() {
+    const { actionType, payload } = confirmState;
+    closeConfirm();
+    switch (actionType) {
+      case 'singleStatus':
+        executeSingleStatusUpdate(payload.order, payload.nextStatus);
+        break;
+      case 'bulkStatus':
+        executeBulkStatusUpdate(payload.orderIds, payload.status);
+        break;
+      case 'deleteOrder':
+        executeDeleteOrder(payload.order);
+        break;
+      default:
+        break;
     }
   }
 
@@ -418,6 +490,7 @@ export default function AdminOrdersPage() {
     const w = window.open('', '_blank', 'width=1200,height=800');
     if (!w) {
       setError('Popup diblokir browser. Izinkan popup untuk export PDF.');
+      notify.warning('Popup diblokir', 'Izinkan popup untuk export PDF.');
       return;
     }
     w.document.open();
@@ -1081,6 +1154,18 @@ export default function AdminOrdersPage() {
           </div>
         </div>
       ) : null}
+
+      {/* ================= CONFIRM DIALOG ================= */}
+      <ConfirmDialog
+        isOpen={confirmState.isOpen}
+        title={confirmState.title}
+        message={confirmState.message}
+        confirmText={confirmState.confirmText}
+        cancelText="Batal"
+        type={confirmState.type}
+        onConfirm={executeConfirmAction}
+        onCancel={closeConfirm}
+      />
     </div>
   );
 }

@@ -4,9 +4,12 @@ import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
 import { recapService } from '../../features/recaps/recapService';
 import Loading from '../../components/common/Loading';
+import ConfirmDialog from '../../components/common/ConfirmDialog';
+import { useAdminToast } from '../../components/common/useAdminToast';
 import { Plus, Edit, Trash2, Calendar, FileText, Search, PlusCircle, Trash, BookOpen } from 'lucide-react';
 
 export default function AdminRecaps() {
+  const notify = useAdminToast();
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -16,6 +19,7 @@ export default function AdminRecaps() {
   const [modalMode, setModalMode] = useState('add'); // 'add' | 'edit'
   const [editingId, setEditingId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState({ isOpen: false, id: null });
 
   const [formData, setFormData] = useState({
     title: '',
@@ -63,14 +67,19 @@ export default function AdminRecaps() {
     setIsModalOpen(true);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Yakin ingin menghapus recap ini beserta halamannya?')) {
-      const res = await recapService.deleteRecap(id);
-      if (res.success) {
-        setItems(items.filter(item => item.id !== id));
-      } else {
-        alert('Gagal menghapus: ' + res.error);
-      }
+  const handleDelete = (id) => {
+    setConfirmDelete({ isOpen: true, id });
+  };
+
+  const confirmDeleteAction = async () => {
+    const id = confirmDelete.id;
+    setConfirmDelete({ isOpen: false, id: null });
+    const res = await recapService.deleteRecap(id);
+    if (res.success) {
+      setItems(items.filter(item => item.id !== id));
+      notify.success('Zine dihapus', 'Data recap dan zine berhasil dihapus.');
+    } else {
+      notify.error('Gagal menghapus zine', res.error);
     }
   };
 
@@ -98,7 +107,7 @@ export default function AdminRecaps() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.title.trim()) {
-      alert('Judul recap zine harus diisi!');
+      notify.warning('Data belum lengkap', 'Judul recap zine harus diisi.');
       return;
     }
 
@@ -131,8 +140,12 @@ export default function AdminRecaps() {
     if (result.success) {
       setIsModalOpen(false);
       fetchData();
+      notify.success(
+        modalMode === 'add' ? 'Zine dibuat' : 'Zine diperbarui',
+        'Perubahan recap dan zine berhasil disimpan.'
+      );
     } else {
-      alert('Gagal menyimpan data: ' + result.error);
+      notify.error('Gagal menyimpan zine', result.error);
     }
   };
 
@@ -396,6 +409,18 @@ export default function AdminRecaps() {
           </div>
         </form>
       </Modal>
+
+      {/* ================= CONFIRM DELETE DIALOG ================= */}
+      <ConfirmDialog
+        isOpen={confirmDelete.isOpen}
+        title="Hapus Edisi Zine?"
+        message="Data edisi zine ini akan dihapus secara permanen beserta semua halamannya. Tindakan ini tidak bisa dibatalkan."
+        confirmText="Ya, Hapus"
+        cancelText="Batal"
+        type="danger"
+        onConfirm={confirmDeleteAction}
+        onCancel={() => setConfirmDelete({ isOpen: false, id: null })}
+      />
     </div>
   );
 }

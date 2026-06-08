@@ -19,10 +19,12 @@ import {
   Search,
   ExternalLink,
   Headphones,
-  ClipboardList
+  ClipboardList,
+  User
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import logoNobg from '../assets/logos/logo-nobg.png';
+import { AdminToastProvider } from '../components/common/AdminToastProvider';
 
 
 export default function AdminLayout({ children }) {
@@ -35,14 +37,42 @@ export default function AdminLayout({ children }) {
 
   // Dropdown menus states
   const isPathMerch = location.pathname.startsWith('/admin/merchandise') || location.pathname.startsWith('/admin/orders') || location.pathname.startsWith('/admin/categories');
-  const [isMerchOpen, setIsMerchOpen] = useState(isPathMerch);
+  const isPathProfile = location.pathname.startsWith('/admin/about-intan') || location.pathname.startsWith('/admin/schedule');
+
+  const [openDropdowns, setOpenDropdowns] = useState({
+    merchandise_group: isPathMerch,
+    'about-intan_group': isPathProfile,
+  });
 
   // Sync state if pathname changes
   useEffect(() => {
     if (location.pathname.startsWith('/admin/merchandise') || location.pathname.includes('/admin/merchandise')) {
-      setIsMerchOpen(true);
+      setOpenDropdowns(prev => ({ ...prev, merchandise_group: true }));
+    }
+    if (location.pathname.startsWith('/admin/about-intan') || location.pathname.startsWith('/admin/schedule')) {
+      setOpenDropdowns(prev => ({ ...prev, 'about-intan_group': true }));
     }
   }, [location.pathname]);
+
+  const toggleDropdown = (id) => {
+    setOpenDropdowns(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
+
+  const isSubLinkActive = (subHref) => {
+    const [subPath, subSearch] = subHref.split('?');
+    if (location.pathname !== subPath) return false;
+    
+    if (subPath === '/admin/about-intan') {
+      const activeTab = new URLSearchParams(location.search).get('tab') || 'stats';
+      const subTab = new URLSearchParams(subSearch).get('tab') || 'stats';
+      return activeTab === subTab;
+    }
+    
+    return true;
+  };
 
   // Auth checking logic
   useEffect(() => {
@@ -74,8 +104,19 @@ export default function AdminLayout({ children }) {
         { name: 'Kelola Order', href: ROUTES.ADMIN_ORDERS }
       ]
     },
+    {
+      id: 'about-intan_group',
+      name: 'Profil Intan',
+      icon: User,
+      subLinks: [
+        { name: 'Statistik', href: `${ROUTES.ADMIN_ABOUT_INTAN}?tab=stats` },
+        { name: 'Setlist & Unit Songs', href: `${ROUTES.ADMIN_ABOUT_INTAN}?tab=setlists` },
+        { name: 'Video Highlights', href: `${ROUTES.ADMIN_ABOUT_INTAN}?tab=videos` },
+        { name: 'Trivia & Fakta', href: `${ROUTES.ADMIN_ABOUT_INTAN}?tab=trivia` },
+        { name: 'Schedule', href: ROUTES.ADMIN_SCHEDULE }
+      ]
+    },
     { id: 'recaps', name: 'Recap & Zine', href: ROUTES.ADMIN_RECAPS, icon: BookOpen },
-    { id: 'schedule', name: 'Jadwal Stream', href: ROUTES.ADMIN_SCHEDULE, icon: Calendar },
     { id: 'news', name: 'Berita & News', href: ROUTES.ADMIN_NEWS, icon: Newspaper },
     { id: 'playlists', name: 'Denger Intan', href: ROUTES.ADMIN_PLAYLISTS, icon: Headphones },
     { id: 'gallery', name: 'Galeri Album', href: ROUTES.ADMIN_GALLERY, icon: ImageIcon },
@@ -94,6 +135,7 @@ export default function AdminLayout({ children }) {
   const toggleCollapse = () => setIsCollapsed(!isCollapsed);
 
   return (
+    <AdminToastProvider>
     <div className="min-h-screen text-[var(--text-primary)] flex overflow-x-hidden">
       
       {/* ================= MOBILE DRAWER OVERLAY ================= */}
@@ -189,7 +231,8 @@ export default function AdminLayout({ children }) {
               const Icon = item.icon;
 
               if (item.subLinks) {
-                const isSubActive = item.subLinks.some(sub => location.pathname === sub.href);
+                const isSubActive = item.subLinks.some(sub => isSubLinkActive(sub.href));
+                const isOpen = openDropdowns[item.id];
                 
                 return (
                   <li key={item.id} className="relative">
@@ -197,7 +240,7 @@ export default function AdminLayout({ children }) {
                       <div>
                         <button
                           type="button"
-                          onClick={() => setIsMerchOpen(!isMerchOpen)}
+                          onClick={() => toggleDropdown(item.id)}
                           className={`
                             w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-left transition-all duration-200 group cursor-pointer
                             ${isSubActive
@@ -219,16 +262,16 @@ export default function AdminLayout({ children }) {
                             <span className="text-xs truncate">{item.name}</span>
                             <ChevronDown
                               className={`h-3.5 w-3.5 transition-transform text-white/40 group-hover:text-white/70 ${
-                                isMerchOpen ? "rotate-180 text-white" : ""
+                                isOpen ? "rotate-180 text-white" : ""
                               }`}
                             />
                           </div>
                         </button>
 
-                        {isMerchOpen && (
+                        {isOpen && (
                           <ul className="mt-1 ml-6 pl-2.5 border-l border-white/10 space-y-1 animate-fade-in select-none">
                             {item.subLinks.map((sub) => {
-                              const isSubItemActive = location.pathname === sub.href;
+                              const isSubItemActive = isSubLinkActive(sub.href);
                               return (
                                 <li key={sub.name}>
                                   <Link
@@ -268,7 +311,7 @@ export default function AdminLayout({ children }) {
                         <div className="absolute left-full ml-3 bg-slate-800 text-white text-[10px] rounded-xl opacity-0 invisible group-hover/popover:opacity-100 group-hover/popover:visible transition-all duration-200 z-50 shadow-lg border border-white/5 py-1.5 min-w-[140px] text-left">
                           <p className="px-3.5 py-1.5 text-[9px] font-black uppercase text-white/50 tracking-wider border-b border-white/5 mb-1">{item.name}</p>
                           {item.subLinks.map((sub) => {
-                            const isSubItemActive = location.pathname === sub.href;
+                            const isSubItemActive = isSubLinkActive(sub.href);
                             return (
                               <Link
                                 key={sub.name}
@@ -443,5 +486,6 @@ export default function AdminLayout({ children }) {
         </main>
       </div>
     </div>
+    </AdminToastProvider>
   );
 }

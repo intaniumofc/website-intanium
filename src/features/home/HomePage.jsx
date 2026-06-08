@@ -292,8 +292,19 @@ export default function HomePage() {
 
                 {/* Left Side: Details */}
                 <div className="w-full lg:flex-1 lg:max-w-xl space-y-6 text-center lg:text-left flex flex-col items-center lg:items-start">
-                  <h3 className="text-5xl sm:text-6xl font-playfair font-black tracking-wide text-white uppercase leading-none">
-                    NUR <br className="hidden lg:block" /> INTAN
+                  <h3 className="text-5xl sm:text-6xl font-playfair font-black tracking-wide uppercase leading-none">
+                    <motion.span
+                      className="inline-block bg-[linear-gradient(110deg,#ffffff,28%,#dbeafe,40%,#ffffff,50%,#7dd3fc,58%,#ffe285,68%,#ffffff)] bg-[length:240%_100%] bg-clip-text text-transparent drop-shadow-[0_3px_14px_rgba(255,255,255,0.24)]"
+                      initial={{ backgroundPosition: '200% 0' }}
+                      animate={{ backgroundPosition: '-200% 0' }}
+                      transition={{
+                        repeat: Infinity,
+                        duration: 3.2,
+                        ease: 'linear',
+                      }}
+                    >
+                      NUR <br className="hidden lg:block" /> INTAN
+                    </motion.span>
                   </h3>
 
                   <div className="w-16 h-[2px] bg-white/40 my-1" />

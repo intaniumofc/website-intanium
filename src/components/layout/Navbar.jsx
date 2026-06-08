@@ -30,7 +30,7 @@ export default function Navbar() {
     { name: 'Intanium', path: ROUTES.ABOUT_INTANIUM },
     { name: 'Merchandise', path: ROUTES.MERCHANDISE },
     { name: 'News', path: ROUTES.NEWS },
-    { name: 'Jadwal', path: ROUTES.SCHEDULE },
+    { name: 'Schedule', path: ROUTES.SCHEDULE },
     { name: 'Mading', path: ROUTES.MADING },
     { name: 'Galeri', path: ROUTES.GALLERY },
     { name: '#dengerINTAN', path: ROUTES.DENGER_INTAN },
@@ -80,8 +80,8 @@ export default function Navbar() {
           title: "Kalender & Logs",
           items: [
             {
-              label: "Jadwal Stream",
-              description: "Jadwal mingguan siaran langsung streaming Intan",
+              label: "Schedule",
+              description: "Jadwal theater, video call, birthday, dan event Nur Intan",
               icon: Calendar,
               link: ROUTES.SCHEDULE,
             },

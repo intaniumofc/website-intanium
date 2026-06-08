@@ -1,4 +1,3 @@
-import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { ROUTES } from '../lib/constants';
 
@@ -36,6 +35,7 @@ import AdminNews from '../admin/news';
 import AdminGallery from '../admin/gallery';
 import AdminMading from '../admin/mading';
 import AdminPlaylists from '../admin/playlists';
+import AdminAboutIntan from '../admin/about-intan';
 
 // Reusable Admin Guard Route
 const AdminGuard = ({ children }) => {
@@ -185,6 +185,14 @@ export default function AppRoutes() {
         element={
           <AdminGuard>
             <DashboardPage />
+          </AdminGuard>
+        }
+      />
+      <Route
+        path={ROUTES.ADMIN_ABOUT_INTAN}
+        element={
+          <AdminGuard>
+            <AdminAboutIntan />
           </AdminGuard>
         }
       />

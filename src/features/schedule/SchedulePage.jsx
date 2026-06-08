@@ -29,8 +29,8 @@ export default function SchedulePage() {
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
       <PageHeader
-        title="Jadwal Streaming & Aktivitas"
-        subtitle="Pantau kalender jadwal streaming mingguan Intan agar Anda tidak ketinggalan momen seru. Dilengkapi tombol pengingat notifikasi!"
+        title="Schedule & Kegiatan"
+        subtitle="Pantau kalender jadwal teater, video call, birthday, dan event Nur Intan agar Anda tidak ketinggalan momen seru."
       />
 
       {/* Interactive Filters Panel */}
@@ -43,11 +43,11 @@ export default function SchedulePage() {
 
       {/* Calendar List layout */}
       {isLoading ? (
-        <Loading message="Memuat jadwal streaming..." />
+        <Loading message="Memuat schedule..." />
       ) : events.length === 0 ? (
         <EmptyState
           title="Tidak Ada Jadwal Aktivitas"
-          description="Saat ini belum ada jadwal streaming yang terdaftar untuk filter ini. Coba ganti filter status atau platform lainnya."
+          description="Saat ini belum ada jadwal yang terdaftar untuk filter ini. Coba ganti filter status atau kategori lainnya."
           icon={Calendar}
         />
       ) : (

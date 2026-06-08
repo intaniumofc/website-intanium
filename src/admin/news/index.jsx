@@ -4,9 +4,12 @@ import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
 import { newsService } from '../../features/news/newsService';
 import Loading from '../../components/common/Loading';
+import ConfirmDialog from '../../components/common/ConfirmDialog';
+import { useAdminToast } from '../../components/common/useAdminToast';
 import { Plus, Edit, Trash2, Calendar, Search, Newspaper } from 'lucide-react';
 
 export default function AdminNews() {
+  const notify = useAdminToast();
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -17,6 +20,7 @@ export default function AdminNews() {
   const [modalMode, setModalMode] = useState('add'); // 'add' | 'edit'
   const [editingId, setEditingId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState({ isOpen: false, id: null });
 
   const [formData, setFormData] = useState({
     title: '',
@@ -66,14 +70,19 @@ export default function AdminNews() {
     setIsModalOpen(true);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Yakin ingin menghapus berita/pengumuman ini?')) {
-      const res = await newsService.deleteNews(id);
-      if (res.success) {
-        setItems(items.filter(item => item.id !== id));
-      } else {
-        alert('Gagal menghapus: ' + res.error);
-      }
+  const handleDelete = (id) => {
+    setConfirmDelete({ isOpen: true, id });
+  };
+
+  const confirmDeleteAction = async () => {
+    const id = confirmDelete.id;
+    setConfirmDelete({ isOpen: false, id: null });
+    const res = await newsService.deleteNews(id);
+    if (res.success) {
+      setItems(items.filter(item => item.id !== id));
+      notify.success('Berita dihapus', 'Berita atau pengumuman berhasil dihapus.');
+    } else {
+      notify.error('Gagal menghapus berita', res.error);
     }
   };
 
@@ -85,7 +94,7 @@ export default function AdminNews() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.title.trim() || !formData.date) {
-      alert('Judul dan Tanggal pengumuman harus diisi!');
+      notify.warning('Data belum lengkap', 'Judul dan tanggal pengumuman harus diisi.');
       return;
     }
 
@@ -107,8 +116,12 @@ export default function AdminNews() {
     if (result.success) {
       setIsModalOpen(false);
       fetchData();
+      notify.success(
+        modalMode === 'add' ? 'Berita dibuat' : 'Berita diperbarui',
+        'Perubahan berita berhasil disimpan.'
+      );
     } else {
-      alert('Gagal menyimpan data: ' + result.error);
+      notify.error('Gagal menyimpan berita', result.error);
     }
   };
 
@@ -360,6 +373,14 @@ export default function AdminNews() {
           </div>
         </form>
       </Modal>
+
+      <ConfirmDialog
+        isOpen={confirmDelete.isOpen}
+        title="Hapus Berita / Pengumuman"
+        message="Apakah Anda yakin ingin menghapus berita atau pengumuman ini secara permanen?"
+        onConfirm={confirmDeleteAction}
+        onCancel={() => setConfirmDelete({ isOpen: false, id: null })}
+      />
     </div>
   );
 }

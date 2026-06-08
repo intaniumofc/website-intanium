@@ -4,6 +4,7 @@ import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
 import { merchandiseService } from '../../features/merchandise/merchandiseService';
 import Loading from '../../components/common/Loading';
+import { useAdminToast } from '../../components/common/useAdminToast';
 import { useSupabaseUpload } from '../../hooks/useSupabaseUpload';
 import { 
   Plus, Edit, Trash2, Check, X, Search, Image as ImageIcon, 
@@ -33,6 +34,7 @@ const initialForm = {
 };
 
 export default function AdminMerchandise() {
+  const notify = useAdminToast();
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeWorkspace, setActiveWorkspace] = useState('inventory'); // 'inventory' | 'editor'
@@ -115,11 +117,13 @@ export default function AdminMerchandise() {
       if (res.success) {
         setItems(items.filter(item => item.id !== itemToDelete.id));
         if (editingId === itemToDelete.id) resetForm();
+        notify.success('Produk dihapus', 'Produk berhasil dihapus dari katalog.');
       } else {
-        alert('Gagal menghapus: ' + res.error);
+        notify.error('Gagal menghapus produk', res.error);
       }
     } catch (err) {
       console.error(err);
+      notify.error('Gagal menghapus produk', err.message);
     } finally {
       setDeleteModalOpen(false);
       setItemToDelete(null);
@@ -154,8 +158,10 @@ export default function AdminMerchandise() {
       // Uploading to standard merchandise receipts bucket, or fallback assets folder
       const publicUrl = await uploadFile(file, 'assets', 'products');
       setFormData(prev => ({ ...prev, [key]: publicUrl }));
+      notify.success('Foto berhasil diunggah', 'URL foto produk sudah dimasukkan ke form.');
     } catch (err) {
       console.error('File upload failed:', err);
+      notify.error('Gagal mengunggah foto', err.message);
     } finally {
       setUploadingKey(null);
     }
@@ -169,16 +175,23 @@ export default function AdminMerchandise() {
       });
       if (res.success) {
         setItems(current => current.map(item => item.id === product.id ? { ...item, is_available: nextAvailable } : item));
+        notify.success(
+          nextAvailable ? 'Produk diaktifkan' : 'Produk dinonaktifkan',
+          `${product.name} sekarang ${nextAvailable ? 'tersedia' : 'habis/tidak tersedia'}.`
+        );
+      } else {
+        notify.error('Gagal mengubah status produk', res.error);
       }
     } catch (err) {
       console.error(err);
+      notify.error('Gagal mengubah status produk', err.message);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.price) {
-      alert('Nama dan Harga produk harus diisi!');
+      notify.warning('Data belum lengkap', 'Nama dan harga produk harus diisi.');
       return;
     }
 
@@ -219,11 +232,16 @@ export default function AdminMerchandise() {
         resetForm();
         setActiveWorkspace('inventory');
         fetchData();
+        notify.success(
+          editingId ? 'Produk diperbarui' : 'Produk ditambahkan',
+          'Perubahan produk berhasil disimpan.'
+        );
       } else {
-        alert('Gagal menyimpan data: ' + result.error);
+        notify.error('Gagal menyimpan produk', result.error);
       }
     } catch (err) {
       console.error(err);
+      notify.error('Gagal menyimpan produk', err.message);
     } finally {
       setIsSubmitting(false);
     }
