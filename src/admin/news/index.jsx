@@ -219,28 +219,22 @@ export default function AdminNews() {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-semibold">
-                      {item.id.includes('theater') ? (
-                        <span className="text-[10px] text-[var(--text-muted)] font-bold bg-gray-100 px-2 py-1 rounded border border-gray-200">
-                          Otomatis API
-                        </span>
-                      ) : (
-                        <div className="flex items-center justify-end gap-2">
-                          <button 
-                            onClick={() => handleOpenEditModal(item)} 
-                            className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-all"
-                            title="Ubah Berita"
-                          >
-                            <Edit className="h-4 w-4" />
-                          </button>
-                          <button 
-                            onClick={() => handleDelete(item.id)} 
-                            className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-all"
-                            title="Hapus Berita"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </div>
-                      )}
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => handleOpenEditModal(item)}
+                          className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-all"
+                          title="Ubah Berita"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(item.id)}
+                          className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-all"
+                          title="Hapus Berita"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
