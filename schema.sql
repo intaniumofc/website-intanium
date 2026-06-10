@@ -172,6 +172,8 @@ CREATE TABLE IF NOT EXISTS most_played_songs (
   play_count TEXT NOT NULL,
   mood TEXT,
   note TEXT,
+  audio_url TEXT,
+  cover_url TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

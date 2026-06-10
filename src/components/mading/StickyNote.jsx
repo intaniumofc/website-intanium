@@ -45,7 +45,7 @@ export default function StickyNote({ note, index = 0, onClick, onDelete, classNa
         transition: { duration: 0.2, ease: "easeOut" }
       }}
       onClick={() => onClick && onClick(note)}
-      className={`sticky-note-item pastel-${color || 'yellow'} ${hasTape ? 'has-tape' : ''} cursor-pointer relative p-4 flex flex-col justify-between rounded shadow transition-shadow select-none h-full min-h-[170px] ${className}`}
+      className={`sticky-note-item pastel-${color || 'yellow'} ${hasTape ? 'has-tape' : ''} cursor-pointer relative p-4 flex flex-col justify-between rounded shadow transition-shadow select-none w-full max-w-[280px] mx-auto aspect-square h-auto min-h-[170px] ${className}`}
     >
       {/* Decorative Washi Tape or Push Pin */}
       {hasTape ? (
