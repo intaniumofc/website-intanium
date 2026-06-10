@@ -137,6 +137,61 @@ export const recapService = {
       return { success: false, error: error.message };
     }
     return { success: true };
+  },
+
+  getMonthlyRecaps: async () => {
+    const { data, error } = await supabase
+      .from('monthly_recaps')
+      .select('*')
+      .order('id', { ascending: true });
+      
+    if (error) {
+      console.error('Error fetching monthly recaps:', error);
+      return [];
+    }
+    return data;
+  },
+
+  createMonthlyRecap: async (recap) => {
+    const { data, error } = await supabase
+      .from('monthly_recaps')
+      .insert([recap])
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error creating monthly recap:', error);
+      return { success: false, error: error.message };
+    }
+    return { success: true, data };
+  },
+
+  updateMonthlyRecap: async (id, recap) => {
+    const { data, error } = await supabase
+      .from('monthly_recaps')
+      .update(recap)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error updating monthly recap:', error);
+      return { success: false, error: error.message };
+    }
+    return { success: true, data };
+  },
+
+  deleteMonthlyRecap: async (id) => {
+    const { error } = await supabase
+      .from('monthly_recaps')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error deleting monthly recap:', error);
+      return { success: false, error: error.message };
+    }
+    return { success: true };
   }
 };
 

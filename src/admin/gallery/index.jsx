@@ -4,10 +4,13 @@ import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
 import { galleryService } from '../../features/gallery/galleryService';
 import Loading from '../../components/common/Loading';
+import ConfirmDialog from '../../components/common/ConfirmDialog';
+import { useAdminToast } from '../../components/common/useAdminToast';
 import { Plus, Edit, Trash2, Search, ImageIcon, Upload, Loader } from 'lucide-react';
 import { useSupabaseUpload } from '../../hooks/useSupabaseUpload';
 
 export default function AdminGallery() {
+  const notify = useAdminToast();
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -24,6 +27,7 @@ export default function AdminGallery() {
   const [modalMode, setModalMode] = useState('add'); // 'add' | 'edit'
   const [editingId, setEditingId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState({ isOpen: false, id: null });
 
   const [formData, setFormData] = useState({
     title: '',
@@ -115,14 +119,19 @@ export default function AdminGallery() {
     setIsModalOpen(true);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Yakin ingin menghapus foto galeri ini?')) {
-      const res = await galleryService.deleteGalleryPhoto(id);
-      if (res.success) {
-        setItems(items.filter(item => item.id !== id));
-      } else {
-        alert('Gagal menghapus: ' + res.error);
-      }
+  const handleDelete = (id) => {
+    setConfirmDelete({ isOpen: true, id });
+  };
+
+  const confirmDeleteAction = async () => {
+    const id = confirmDelete.id;
+    setConfirmDelete({ isOpen: false, id: null });
+    const res = await galleryService.deleteGalleryPhoto(id);
+    if (res.success) {
+      setItems(items.filter(item => item.id !== id));
+      notify.success('Foto dihapus', 'Foto galeri berhasil dihapus.');
+    } else {
+      notify.error('Gagal menghapus foto', res.error);
     }
   };
 
@@ -136,7 +145,7 @@ export default function AdminGallery() {
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      alert('Hanya diperbolehkan mengunggah berkas gambar!');
+      notify.warning('Berkas tidak valid', 'Hanya diperbolehkan mengunggah berkas gambar.');
       return;
     }
 
@@ -147,12 +156,12 @@ export default function AdminGallery() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.title.trim()) {
-      alert('Judul foto harus diisi!');
+      notify.warning('Data belum lengkap', 'Judul foto harus diisi.');
       return;
     }
 
     if (!selectedFile && !formData.url.trim()) {
-      alert('Pilih berkas gambar untuk diunggah atau masukkan URL gambar!');
+      notify.warning('Gambar belum dipilih', 'Pilih berkas gambar untuk diunggah atau masukkan URL gambar.');
       return;
     }
 
@@ -186,12 +195,16 @@ export default function AdminGallery() {
       if (result.success) {
         setIsModalOpen(false);
         fetchData();
+        notify.success(
+          modalMode === 'add' ? 'Foto ditambahkan' : 'Foto diperbarui',
+          'Perubahan foto galeri berhasil disimpan.'
+        );
       } else {
-        alert('Gagal menyimpan data: ' + result.error);
+        notify.error('Gagal menyimpan foto', result.error);
       }
     } catch (err) {
       console.error(err);
-      alert('Gagal mengunggah berkas: ' + err.message);
+      notify.error('Gagal mengunggah berkas', err.message);
     } finally {
       setIsSubmitting(false);
       setIsConverting(false);
@@ -221,7 +234,9 @@ export default function AdminGallery() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-[var(--border-color)]">
         <div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-[var(--text-primary)]">🖼️ Album Galeri Foto</h1>
+          <h1 className="text-xl sm:text-2xl font-extrabold text-[var(--text-primary)] flex items-center gap-2">
+            <ImageIcon className="h-5.5 w-5.5 text-[var(--color-primary)] shrink-0" /> Album Galeri Foto
+          </h1>
           <p className="text-xs text-[var(--text-secondary)] mt-1">
             Unggah poster visual kegiatan, fanart terverifikasi, atau tangkapan layar keseruan live stream.
           </p>
@@ -471,6 +486,14 @@ export default function AdminGallery() {
           </div>
         </form>
       </Modal>
+
+      <ConfirmDialog
+        isOpen={confirmDelete.isOpen}
+        title="Hapus Foto Galeri"
+        message="Apakah Anda yakin ingin menghapus foto galeri ini secara permanen?"
+        onConfirm={confirmDeleteAction}
+        onCancel={() => setConfirmDelete({ isOpen: false, id: null })}
+      />
     </div>
   );
 }

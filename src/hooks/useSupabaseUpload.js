@@ -3,6 +3,61 @@ import { supabase } from '../lib/supabaseClient';
 import { generateId } from '../lib/helpers';
 
 /**
+ * Converts an image file to WebP format on the client side.
+ * @param {File} file 
+ * @param {number} quality 
+ * @returns {Promise<File>}
+ */
+export const convertImageToWebP = (file, quality = 0.82, maxDimension = 2000) => {
+  return new Promise((resolve, reject) => {
+    if (!file.type.startsWith('image/')) {
+      return resolve(file);
+    }
+    
+    const imageURL = URL.createObjectURL(file);
+    const img = new Image();
+    
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const scale = Math.min(1, maxDimension / Math.max(img.width, img.height));
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        URL.revokeObjectURL(imageURL);
+        reject(new Error('Browser tidak mendukung konversi gambar.'));
+        return;
+      }
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      
+      canvas.toBlob((blob) => {
+        URL.revokeObjectURL(imageURL);
+        
+        if (!blob) {
+          return reject(new Error('Konversi gambar ke WebP gagal.'));
+        }
+        
+        const nameWithoutExt = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+        const webpFile = new File([blob], `${nameWithoutExt}.webp`, {
+          type: 'image/webp',
+          lastModified: Date.now()
+        });
+        
+        resolve(webpFile);
+      }, 'image/webp', quality);
+    };
+    
+    img.onerror = (err) => {
+      URL.revokeObjectURL(imageURL);
+      reject(err);
+    };
+    
+    img.src = imageURL;
+  });
+};
+
+/**
  * Custom hook for handling media uploads directly to Supabase Storage.
  * Includes simulated fallbacks for mock environments without active Supabase credentials.
  */
@@ -13,15 +68,28 @@ export function useSupabaseUpload() {
 
   /**
    * Upload file to bucket
-   * @param {File} file 
+   * @param {File} rawFile 
    * @param {string} bucketName 
    * @param {string} folderPath 
    * @returns {Promise<string>} Public URL of uploaded asset
    */
-  const uploadFile = async (file, bucketName = 'assets', folderPath = 'media') => {
+  const uploadFile = async (rawFile, bucketName = 'assets', folderPath = 'media') => {
     setIsUploading(true);
     setError(null);
-    setProgress(10);
+    setProgress(5);
+
+    let file = rawFile;
+    if (rawFile.type.startsWith('image/')) {
+      setProgress(15);
+      try {
+        file = await convertImageToWebP(rawFile);
+      } catch (conversionError) {
+        setError(conversionError.message);
+        setIsUploading(false);
+        throw conversionError;
+      }
+    }
+    setProgress(25);
 
     try {
       // Validate credentials exist; if not, do mock local simulation
@@ -30,10 +98,10 @@ export function useSupabaseUpload() {
         import.meta.env.VITE_SUPABASE_URL.includes('placeholder')
       ) {
         // Simulate progress bar and mock base64/local URL upload
-        setProgress(40);
-        await new Promise((r) => setTimeout(r, 600));
-        setProgress(80);
+        setProgress(50);
         await new Promise((r) => setTimeout(r, 400));
+        setProgress(80);
+        await new Promise((r) => setTimeout(r, 300));
         setProgress(100);
         setIsUploading(false);
 
@@ -48,7 +116,7 @@ export function useSupabaseUpload() {
       setProgress(40);
 
       // Perform upload
-      const { error: uploadError, data } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from(bucketName)
         .upload(filePath, file, {
           cacheControl: '3600',

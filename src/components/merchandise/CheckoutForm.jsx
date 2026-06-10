@@ -163,7 +163,7 @@ export default function CheckoutForm({
 
           <div className="flex items-center gap-4 mb-6">
             <img
-              src={product.imageUrl}
+              src={product.image_url ?? product.imageUrl}
               alt={product.name}
               className="w-16 h-16 object-cover rounded-lg border border-[var(--border-color)]"
             />

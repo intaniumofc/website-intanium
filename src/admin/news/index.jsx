@@ -4,9 +4,12 @@ import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
 import { newsService } from '../../features/news/newsService';
 import Loading from '../../components/common/Loading';
+import ConfirmDialog from '../../components/common/ConfirmDialog';
+import { useAdminToast } from '../../components/common/useAdminToast';
 import { Plus, Edit, Trash2, Calendar, Search, Newspaper } from 'lucide-react';
 
 export default function AdminNews() {
+  const notify = useAdminToast();
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -17,6 +20,7 @@ export default function AdminNews() {
   const [modalMode, setModalMode] = useState('add'); // 'add' | 'edit'
   const [editingId, setEditingId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState({ isOpen: false, id: null });
 
   const [formData, setFormData] = useState({
     title: '',
@@ -66,14 +70,19 @@ export default function AdminNews() {
     setIsModalOpen(true);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Yakin ingin menghapus berita/pengumuman ini?')) {
-      const res = await newsService.deleteNews(id);
-      if (res.success) {
-        setItems(items.filter(item => item.id !== id));
-      } else {
-        alert('Gagal menghapus: ' + res.error);
-      }
+  const handleDelete = (id) => {
+    setConfirmDelete({ isOpen: true, id });
+  };
+
+  const confirmDeleteAction = async () => {
+    const id = confirmDelete.id;
+    setConfirmDelete({ isOpen: false, id: null });
+    const res = await newsService.deleteNews(id);
+    if (res.success) {
+      setItems(items.filter(item => item.id !== id));
+      notify.success('Berita dihapus', 'Berita atau pengumuman berhasil dihapus.');
+    } else {
+      notify.error('Gagal menghapus berita', res.error);
     }
   };
 
@@ -85,7 +94,7 @@ export default function AdminNews() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.title.trim() || !formData.date) {
-      alert('Judul dan Tanggal pengumuman harus diisi!');
+      notify.warning('Data belum lengkap', 'Judul dan tanggal pengumuman harus diisi.');
       return;
     }
 
@@ -107,8 +116,12 @@ export default function AdminNews() {
     if (result.success) {
       setIsModalOpen(false);
       fetchData();
+      notify.success(
+        modalMode === 'add' ? 'Berita dibuat' : 'Berita diperbarui',
+        'Perubahan berita berhasil disimpan.'
+      );
     } else {
-      alert('Gagal menyimpan data: ' + result.error);
+      notify.error('Gagal menyimpan berita', result.error);
     }
   };
 
@@ -125,7 +138,9 @@ export default function AdminNews() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-[var(--border-color)]">
         <div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-[var(--text-primary)]">📰 Berita & Pengumuman</h1>
+          <h1 className="text-xl sm:text-2xl font-extrabold text-[var(--text-primary)] flex items-center gap-2">
+            <Newspaper className="h-5.5 w-5.5 text-[var(--color-primary)] shrink-0" /> Berita & Pengumuman
+          </h1>
           <p className="text-xs text-[var(--text-secondary)] mt-1">
             Buat pengumuman resmi terbaru, kabar event komunitas, atau berita penting lainnya.
           </p>
@@ -150,7 +165,7 @@ export default function AdminNews() {
 
         {/* Category Filters */}
         <div className="flex flex-wrap gap-1.5">
-          {['All', 'Announcement', 'Event', 'Community', 'Release'].map((cat) => (
+          {['All', 'Announcement', 'Schedule', 'Event', 'Merch', 'Project', 'Media', 'Important'].map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
@@ -204,28 +219,22 @@ export default function AdminNews() {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-semibold">
-                      {item.id.includes('theater') ? (
-                        <span className="text-[10px] text-[var(--text-muted)] font-bold bg-gray-100 px-2 py-1 rounded border border-gray-200">
-                          Otomatis API
-                        </span>
-                      ) : (
-                        <div className="flex items-center justify-end gap-2">
-                          <button 
-                            onClick={() => handleOpenEditModal(item)} 
-                            className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-all"
-                            title="Ubah Berita"
-                          >
-                            <Edit className="h-4 w-4" />
-                          </button>
-                          <button 
-                            onClick={() => handleDelete(item.id)} 
-                            className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-all"
-                            title="Hapus Berita"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </div>
-                      )}
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => handleOpenEditModal(item)}
+                          className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-all"
+                          title="Ubah Berita"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(item.id)}
+                          className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-all"
+                          title="Hapus Berita"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -287,7 +296,7 @@ export default function AdminNews() {
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
               >
-                {['Announcement', 'Event', 'Community', 'Release'].map(cat => (
+                {['Announcement', 'Schedule', 'Event', 'Merch', 'Project', 'Media', 'Important'].map(cat => (
                   <option key={cat} value={cat}>{cat}</option>
                 ))}
               </select>
@@ -358,6 +367,14 @@ export default function AdminNews() {
           </div>
         </form>
       </Modal>
+
+      <ConfirmDialog
+        isOpen={confirmDelete.isOpen}
+        title="Hapus Berita / Pengumuman"
+        message="Apakah Anda yakin ingin menghapus berita atau pengumuman ini secara permanen?"
+        onConfirm={confirmDeleteAction}
+        onCancel={() => setConfirmDelete({ isOpen: false, id: null })}
+      />
     </div>
   );
 }

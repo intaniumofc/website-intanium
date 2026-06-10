@@ -1,4 +1,3 @@
-import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { ROUTES } from '../lib/constants';
 
@@ -28,12 +27,16 @@ import AdminLayout from '../admin/AdminLayout';
 import LoginPage from '../admin/LoginPage';
 import DashboardPage from '../admin/DashboardPage';
 import AdminMerchandise from '../admin/merchandise';
+import AdminCategories from '../admin/merchandise/categories';
+import AdminOrders from '../admin/orders';
 import AdminRecaps from '../admin/recaps';
 import AdminSchedule from '../admin/schedule';
 import AdminNews from '../admin/news';
 import AdminGallery from '../admin/gallery';
 import AdminMading from '../admin/mading';
 import AdminPlaylists from '../admin/playlists';
+import AdminAboutIntan from '../admin/about-intan';
+import AdminIntanShiningStar from '../admin/intan-shining-star';
 
 // Reusable Admin Guard Route
 const AdminGuard = ({ children }) => {
@@ -187,10 +190,42 @@ export default function AppRoutes() {
         }
       />
       <Route
+        path={ROUTES.ADMIN_ABOUT_INTAN}
+        element={
+          <AdminGuard>
+            <AdminAboutIntan />
+          </AdminGuard>
+        }
+      />
+      <Route
+        path={ROUTES.ADMIN_SHINING_STAR}
+        element={
+          <AdminGuard>
+            <AdminIntanShiningStar />
+          </AdminGuard>
+        }
+      />
+      <Route
         path={ROUTES.ADMIN_MERCHANDISE}
         element={
           <AdminGuard>
             <AdminMerchandise />
+          </AdminGuard>
+        }
+      />
+      <Route
+        path={ROUTES.ADMIN_CATEGORIES}
+        element={
+          <AdminGuard>
+            <AdminCategories />
+          </AdminGuard>
+        }
+      />
+      <Route
+        path={ROUTES.ADMIN_ORDERS}
+        element={
+          <AdminGuard>
+            <AdminOrders />
           </AdminGuard>
         }
       />

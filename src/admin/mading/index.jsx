@@ -2,6 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { madingService } from '../../features/mading/madingService';
 import Card from '../../components/common/Card';
 import Loading from '../../components/common/Loading';
+import ConfirmDialog from '../../components/common/ConfirmDialog';
+import { useAdminToast } from '../../components/common/useAdminToast';
 import {
   Check,
   X,
@@ -17,12 +19,14 @@ import {
 } from 'lucide-react';
 
 export default function AdminMading() {
+  const notify = useAdminToast();
   const [notes, setNotes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'pending' | 'approved'
   const [actionLoading, setActionLoading] = useState(null); // track loading of currently clicked note ID
   const [sort, setSort] = useState({ key: 'date', order: 'desc' });
+  const [confirmDelete, setConfirmDelete] = useState({ isOpen: false, id: null });
 
   const fetchNotes = () => {
     setIsLoading(true);
@@ -70,9 +74,13 @@ export default function AdminMading() {
         setNotes((prev) =>
           prev.map((note) => (note.id === id ? { ...note, isApproved: true } : note))
         );
+        notify.success('Pesan disetujui', 'Pesan mading sekarang tampil di halaman publik.');
+      } else {
+        notify.error('Gagal menyetujui pesan', res.error || 'Silakan coba lagi.');
       }
     } catch (err) {
       console.error(err);
+      notify.error('Gagal menyetujui pesan', err.message);
     } finally {
       setActionLoading(null);
     }
@@ -86,25 +94,35 @@ export default function AdminMading() {
         setNotes((prev) =>
           prev.map((note) => (note.id === id ? { ...note, isApproved: false } : note))
         );
+        notify.success('Approval dibatalkan', 'Pesan mading kembali ke status pending.');
+      } else {
+        notify.error('Gagal membatalkan approval', res.error || 'Silakan coba lagi.');
       }
     } catch (err) {
       console.error(err);
+      notify.error('Gagal membatalkan approval', err.message);
     } finally {
       setActionLoading(null);
     }
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Apakah Anda yakin ingin menghapus pesan mading ini secara permanen dari server?')) {
-      setActionLoading(id);
-      try {
-        await madingService.deleteNote(id);
-        setNotes((prev) => prev.filter((note) => note.id !== id));
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setActionLoading(null);
-      }
+  const handleDelete = (id) => {
+    setConfirmDelete({ isOpen: true, id });
+  };
+
+  const confirmDeleteAction = async () => {
+    const id = confirmDelete.id;
+    setConfirmDelete({ isOpen: false, id: null });
+    setActionLoading(id);
+    try {
+      await madingService.deleteNote(id);
+      setNotes((prev) => prev.filter((note) => note.id !== id));
+      notify.success('Pesan dihapus', 'Pesan mading berhasil dihapus.');
+    } catch (err) {
+      console.error(err);
+      notify.error('Gagal menghapus pesan', err.message);
+    } finally {
+      setActionLoading(null);
     }
   };
 
@@ -428,6 +446,13 @@ export default function AdminMading() {
           </p>
         </div>
       </div>
+      <ConfirmDialog
+        isOpen={confirmDelete.isOpen}
+        title="Hapus Pesan Mading"
+        message="Apakah Anda yakin ingin menghapus pesan mading ini secara permanen dari server?"
+        onConfirm={confirmDeleteAction}
+        onCancel={() => setConfirmDelete({ isOpen: false, id: null })}
+      />
     </div>
   );
 }

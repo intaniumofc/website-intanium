@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
+import ConfirmDialog from '../../components/common/ConfirmDialog';
+import { useAdminToast } from '../../components/common/useAdminToast';
 import { playlistService } from '../../features/denger-intan/playlistService';
 import Loading from '../../components/common/Loading';
 import {
@@ -17,6 +19,7 @@ import {
 } from 'lucide-react';
 
 export default function AdminPlaylists() {
+  const notify = useAdminToast();
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -27,6 +30,8 @@ export default function AdminPlaylists() {
   const [modalMode, setModalMode] = useState('add'); // 'add' | 'edit'
   const [editingId, setEditingId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [confirmPlaylistDelete, setConfirmPlaylistDelete] = useState({ isOpen: false, id: null });
+  const [confirmSongDelete, setConfirmSongDelete] = useState({ isOpen: false, id: null });
 
   const [formData, setFormData] = useState({
     title: '',
@@ -108,14 +113,19 @@ export default function AdminPlaylists() {
     setIsModalOpen(true);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Yakin ingin menghapus playlist #DengerINTAN ini?')) {
-      const res = await playlistService.deletePlaylist(id);
-      if (res.success) {
-        setItems(items.filter(item => item.id !== id));
-      } else {
-        alert('Gagal menghapus: ' + res.error);
-      }
+  const handleDelete = (id) => {
+    setConfirmPlaylistDelete({ isOpen: true, id });
+  };
+
+  const confirmPlaylistDeleteAction = async () => {
+    const id = confirmPlaylistDelete.id;
+    setConfirmPlaylistDelete({ isOpen: false, id: null });
+    const res = await playlistService.deletePlaylist(id);
+    if (res.success) {
+      setItems(items.filter(item => item.id !== id));
+      notify.success('Playlist dihapus', 'Playlist #DengerINTAN berhasil dihapus.');
+    } else {
+      notify.error('Gagal menghapus playlist', res.error);
     }
   };
 
@@ -160,7 +170,7 @@ export default function AdminPlaylists() {
   const handleSongSubmit = async (e) => {
     e.preventDefault();
     if (!songFormData.title.trim() || !songFormData.artist.trim() || !songFormData.note.trim()) {
-      alert('Judul, Artis, dan Catatan Kurator harus diisi!');
+      notify.warning('Data lagu belum lengkap', 'Judul, artis, dan catatan kurator harus diisi.');
       return;
     }
 
@@ -176,19 +186,28 @@ export default function AdminPlaylists() {
     if (result.success) {
       setIsSongModalOpen(false);
       fetchSongs();
+      notify.success(
+        songModalMode === 'add' ? 'Lagu ditambahkan' : 'Lagu diperbarui',
+        'Perubahan most played song berhasil disimpan.'
+      );
     } else {
-      alert('Gagal menyimpan data lagu: ' + result.error);
+      notify.error('Gagal menyimpan lagu', result.error);
     }
   };
 
-  const handleSongDelete = async (id) => {
-    if (window.confirm('Yakin ingin menghapus lagu ini dari daftar terpopuler?')) {
-      const res = await playlistService.deleteMostPlayedSong(id);
-      if (res.success) {
-        setSongs(songs.filter(song => song.id !== id));
-      } else {
-        alert('Gagal menghapus: ' + res.error);
-      }
+  const handleSongDelete = (id) => {
+    setConfirmSongDelete({ isOpen: true, id });
+  };
+
+  const confirmSongDeleteAction = async () => {
+    const id = confirmSongDelete.id;
+    setConfirmSongDelete({ isOpen: false, id: null });
+    const res = await playlistService.deleteMostPlayedSong(id);
+    if (res.success) {
+      setSongs(songs.filter(song => song.id !== id));
+      notify.success('Lagu dihapus', 'Lagu berhasil dihapus dari most played songs.');
+    } else {
+      notify.error('Gagal menghapus lagu', res.error);
     }
   };
 
@@ -220,13 +239,13 @@ export default function AdminPlaylists() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.title.trim() || !formData.spotifyUrl.trim()) {
-      alert('Judul dan Tautan Spotify harus diisi!');
+      notify.warning('Data playlist belum lengkap', 'Judul dan tautan Spotify harus diisi.');
       return;
     }
 
     const playlistId = extractSpotifyPlaylistId(formData.spotifyUrl);
     if (!playlistId) {
-      alert('Tautan Spotify tidak valid! Format harus menyertakan /playlist/{id}');
+      notify.warning('Tautan Spotify tidak valid', 'Format tautan harus menyertakan /playlist/{id}.');
       return;
     }
 
@@ -251,8 +270,12 @@ export default function AdminPlaylists() {
     if (result.success) {
       setIsModalOpen(false);
       fetchData();
+      notify.success(
+        modalMode === 'add' ? 'Playlist ditambahkan' : 'Playlist diperbarui',
+        'Perubahan playlist berhasil disimpan.'
+      );
     } else {
-      alert('Gagal menyimpan data: ' + result.error);
+      notify.error('Gagal menyimpan playlist', result.error);
     }
   };
 
@@ -828,6 +851,27 @@ export default function AdminPlaylists() {
           </div>
         </form>
       </Modal>
+      {/* ================= CONFIRM DELETE DIALOGS ================= */}
+      <ConfirmDialog
+        isOpen={confirmPlaylistDelete.isOpen}
+        title="Hapus Playlist?"
+        message="Playlist #DengerINTAN ini akan dihapus secara permanen. Tindakan ini tidak bisa dibatalkan."
+        confirmText="Ya, Hapus"
+        cancelText="Batal"
+        type="danger"
+        onConfirm={confirmPlaylistDeleteAction}
+        onCancel={() => setConfirmPlaylistDelete({ isOpen: false, id: null })}
+      />
+      <ConfirmDialog
+        isOpen={confirmSongDelete.isOpen}
+        title="Hapus Lagu?"
+        message="Lagu ini akan dihapus dari daftar most played songs. Tindakan ini tidak bisa dibatalkan."
+        confirmText="Ya, Hapus"
+        cancelText="Batal"
+        type="danger"
+        onConfirm={confirmSongDeleteAction}
+        onCancel={() => setConfirmSongDelete({ isOpen: false, id: null })}
+      />
     </div>
   );
 }

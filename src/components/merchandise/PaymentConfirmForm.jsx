@@ -7,14 +7,25 @@ import { Camera } from 'lucide-react';
 export default function PaymentConfirmForm({
   onSubmit,
   isSubmitting = false,
+  initialInvoice = '',
+  initialAmount = '',
 }) {
   const [formData, setFormData] = useState({
-    invoiceNumber: '',
+    invoiceNumber: initialInvoice,
     senderBank: '',
     senderName: '',
-    paymentAmount: '',
+    paymentAmount: initialAmount,
     receiptUrl: '',
   });
+
+  React.useEffect(() => {
+    setFormData(prev => ({
+      ...prev,
+      invoiceNumber: initialInvoice || prev.invoiceNumber,
+      paymentAmount: initialAmount || prev.paymentAmount,
+    }));
+  }, [initialInvoice, initialAmount]);
+
   const [file, setFile] = useState(null);
   const [errors, setErrors] = useState({});
   const { uploadFile, isUploading, progress } = useSupabaseUpload();

@@ -4,9 +4,12 @@ import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
 import { scheduleService } from '../../features/schedule/scheduleService';
 import Loading from '../../components/common/Loading';
-import { Plus, Edit, Trash2, Calendar, Link as LinkIcon, Search, ExternalLink } from 'lucide-react';
+import ConfirmDialog from '../../components/common/ConfirmDialog';
+import { useAdminToast } from '../../components/common/useAdminToast';
+import { Plus, Edit, Trash2, Calendar, Link as LinkIcon, Search, ExternalLink, Clock } from 'lucide-react';
 
 export default function AdminSchedule() {
+  const notify = useAdminToast();
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -17,12 +20,13 @@ export default function AdminSchedule() {
   const [modalMode, setModalMode] = useState('add'); // 'add' | 'edit'
   const [editingId, setEditingId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState({ isOpen: false, id: null });
 
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     time: '',
-    platform: 'YouTube',
+    platform: 'Show Theater',
     link: '',
     duration: '2 Jam',
     thumbnail: ''
@@ -51,7 +55,7 @@ export default function AdminSchedule() {
       title: '',
       description: '',
       time: defaultDateTime,
-      platform: 'YouTube',
+      platform: 'Show Theater',
       link: '',
       duration: '2 Jam',
       thumbnail: ''
@@ -75,7 +79,7 @@ export default function AdminSchedule() {
       title: item.title,
       description: item.description || '',
       time: localTime,
-      platform: item.platform || 'YouTube',
+      platform: item.platform || 'Show Theater',
       link: item.link || '',
       duration: item.duration || '2 Jam',
       thumbnail: item.thumbnail || ''
@@ -83,14 +87,19 @@ export default function AdminSchedule() {
     setIsModalOpen(true);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Yakin ingin menghapus jadwal stream ini?')) {
-      const res = await scheduleService.deleteEvent(id);
-      if (res.success) {
-        setItems(items.filter(item => item.id !== id));
-      } else {
-        alert('Gagal menghapus: ' + res.error);
-      }
+  const handleDelete = (id) => {
+    setConfirmDelete({ isOpen: true, id });
+  };
+
+  const confirmDeleteAction = async () => {
+    const id = confirmDelete.id;
+    setConfirmDelete({ isOpen: false, id: null });
+    const res = await scheduleService.deleteEvent(id);
+    if (res.success) {
+      setItems(items.filter(item => item.id !== id));
+      notify.success('Schedule dihapus', 'Jadwal berhasil dihapus dari daftar.');
+    } else {
+      notify.error('Gagal menghapus schedule', res.error);
     }
   };
 
@@ -102,7 +111,7 @@ export default function AdminSchedule() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.title.trim() || !formData.time) {
-      alert('Judul stream dan Waktu harus diisi!');
+      notify.warning('Data belum lengkap', 'Judul acara dan waktu harus diisi.');
       return;
     }
 
@@ -129,8 +138,12 @@ export default function AdminSchedule() {
     if (result.success) {
       setIsModalOpen(false);
       fetchData();
+      notify.success(
+        modalMode === 'add' ? 'Schedule dibuat' : 'Schedule diperbarui',
+        'Perubahan jadwal berhasil disimpan.'
+      );
     } else {
-      alert('Gagal menyimpan data: ' + result.error);
+      notify.error('Gagal menyimpan schedule', result.error);
     }
   };
 
@@ -147,9 +160,11 @@ export default function AdminSchedule() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-[var(--border-color)]">
         <div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-[var(--text-primary)]">📅 Jadwal Streaming</h1>
+          <h1 className="text-xl sm:text-2xl font-extrabold text-[var(--text-primary)] flex items-center gap-2">
+            <Calendar className="h-5.5 w-5.5 text-[var(--color-primary)] shrink-0" /> Schedule
+          </h1>
           <p className="text-xs text-[var(--text-secondary)] mt-1">
-            Kelola agenda live streaming mingguan Intan, atur platform, waktu, dan link siaran.
+            Kelola agenda kegiatan Intan, mulai dari Show Theater, Video Call, Birthday, hingga event lainnya.
           </p>
         </div>
         <Button variant="primary" size="sm" className="flex items-center gap-1.5 shadow-md cursor-pointer" onClick={handleOpenAddModal}>
@@ -163,7 +178,7 @@ export default function AdminSchedule() {
           <Search className="h-4 w-4 text-[var(--text-muted)]" />
           <input 
             type="text" 
-            placeholder="Cari acara streaming..." 
+            placeholder="Cari jadwal..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="bg-transparent border-none outline-none flex-1 text-[var(--text-primary)] placeholder-[var(--text-muted)]"
@@ -172,7 +187,7 @@ export default function AdminSchedule() {
 
         {/* Platform selection filters */}
         <div className="flex flex-wrap gap-1.5">
-          {['All', 'YouTube', 'IDN Live', 'Showroom', 'TikTok', 'Twitter / X'].map((plat) => (
+          {['All', 'Show Theater', 'Video Call', 'Birthday', 'Other Events'].map((plat) => (
             <button
               key={plat}
               onClick={() => setSelectedPlatform(plat)}
@@ -191,7 +206,7 @@ export default function AdminSchedule() {
       {/* Main Table Card */}
       <Card hoverEffect={false} className="border border-[var(--border-color)] bg-white overflow-hidden rounded-2xl shadow-sm" padding="none">
         {isLoading ? (
-          <div className="p-12"><Loading message="Memuat kalender jadwal..." /></div>
+          <div className="p-12"><Loading message="Memuat schedule..." /></div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm text-[var(--text-secondary)]">
@@ -199,7 +214,7 @@ export default function AdminSchedule() {
                 <tr>
                   <th className="px-6 py-4">Thumbnail</th>
                   <th className="px-6 py-4">Judul Acara / Topik</th>
-                  <th className="px-6 py-4">Waktu Streaming</th>
+                  <th className="px-6 py-4">Waktu Acara</th>
                   <th className="px-6 py-4">Tautan</th>
                   <th className="px-6 py-4 text-right">Aksi</th>
                 </tr>
@@ -218,14 +233,17 @@ export default function AdminSchedule() {
                       <div className="font-bold text-[var(--text-primary)] text-sm">{item.title}</div>
                       <div className="flex items-center gap-2 mt-1.5">
                         <span className={`px-2 py-0.5 text-[9px] font-extrabold rounded uppercase tracking-wider ${
-                          item.platform === 'YouTube' ? 'bg-red-50 text-red-600 border border-red-200' :
-                          item.platform === 'IDN Live' ? 'bg-orange-50 text-orange-600 border border-orange-200' :
+                          item.platform === 'Show Theater' ? 'bg-rose-50 text-rose-600 border border-rose-200' :
+                          item.platform === 'Video Call' ? 'bg-sky-50 text-sky-600 border border-sky-200' :
+                          item.platform === 'Birthday' ? 'bg-amber-50 text-amber-600 border border-amber-200' :
                           'bg-purple-50 text-purple-600 border border-purple-200'
                         }`}>
                           {item.platform}
                         </span>
                         {item.duration && (
-                          <span className="text-[10px] text-[var(--text-muted)] font-semibold">🕒 {item.duration}</span>
+                          <span className="text-[10px] text-[var(--text-muted)] font-semibold flex items-center gap-1">
+                            <Clock className="h-3 w-3 shrink-0" /> {item.duration}
+                          </span>
                         )}
                       </div>
                     </td>
@@ -248,7 +266,7 @@ export default function AdminSchedule() {
                           rel="noopener noreferrer" 
                           className="inline-flex items-center gap-1 text-xs font-bold text-[var(--color-primary)] hover:underline"
                         >
-                          <LinkIcon className="h-3.5 w-3.5" /> Buka Siaran <ExternalLink className="h-3 w-3" />
+                          <LinkIcon className="h-3.5 w-3.5" /> Buka Detail <ExternalLink className="h-3 w-3" />
                         </a>
                       ) : (
                         <span className="text-xs text-[var(--text-muted)] italic">Tidak ada link</span>
@@ -277,7 +295,7 @@ export default function AdminSchedule() {
                 {filteredItems.length === 0 && (
                   <tr>
                     <td colSpan="5" className="px-6 py-12 text-center text-[var(--text-muted)] text-sm">
-                      Belum ada jadwal streaming yang terdaftar.
+                      Belum ada jadwal yang terdaftar.
                     </td>
                   </tr>
                 )}
@@ -291,17 +309,17 @@ export default function AdminSchedule() {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={modalMode === 'add' ? 'Buat Jadwal Siaran Baru' : 'Ubah Detail Jadwal Siaran'}
+        title={modalMode === 'add' ? 'Buat Schedule Baru' : 'Ubah Detail Schedule'}
         size="md"
       >
         <form onSubmit={handleSubmit} className="space-y-4 text-sm text-[var(--text-primary)]">
           {/* Title */}
           <div className="flex flex-col gap-1.5">
-            <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Judul Siaran / Topik Game</label>
+            <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Judul Acara / Topik</label>
             <input 
               type="text" 
               name="title"
-              placeholder="Misal: Collab Minecraft Server Intanium!"
+              placeholder="Misal: JKT48 13th Anniversary Theater Show"
               value={formData.title}
               onChange={handleInputChange}
               className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
@@ -312,7 +330,7 @@ export default function AdminSchedule() {
           {/* Time & Duration */}
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Waktu Siaran</label>
+              <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Waktu Acara</label>
               <input 
                 type="datetime-local" 
                 name="time"
@@ -335,31 +353,32 @@ export default function AdminSchedule() {
             </div>
           </div>
 
-          {/* Platform & Stream Link */}
+          {/* Platform & Link */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="flex flex-col gap-1.5 sm:col-span-1">
-              <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Platform</label>
+              <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Kategori</label>
               <select 
                 name="platform"
                 value={formData.platform}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
               >
-                {['YouTube', 'IDN Live', 'Showroom', 'TikTok', 'Twitter / X'].map(plat => (
+                {['Show Theater', 'Video Call', 'Birthday', 'Other Events'].map(plat => (
                   <option key={plat} value={plat}>{plat}</option>
                 ))}
               </select>
             </div>
             <div className="flex flex-col gap-1.5 sm:col-span-2">
-              <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Link Siaran Langsung (URL)</label>
+              <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Link Acara / Website (URL)</label>
               <input 
                 type="text" 
                 name="link"
-                placeholder="https://youtube.com/watch?v=..."
+                placeholder="Misal: https://jkt48.com/... atau link lainnya"
                 value={formData.link}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
               />
+              <p className="text-[10px] text-[var(--text-muted)]">Bisa berupa link pembelian tiket, link web JKT48, detail show, dll.</p>
             </div>
           </div>
 
@@ -369,21 +388,21 @@ export default function AdminSchedule() {
             <input 
               type="text" 
               name="thumbnail"
-              placeholder="Masukkan URL banner/thumbnail stream..."
+              placeholder="Masukkan URL banner/thumbnail..."
               value={formData.thumbnail}
               onChange={handleInputChange}
               className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
             />
-            <p className="text-[10px] text-[var(--text-muted)]">Kosongkan jika ingin menggunakan gambar background streaming default.</p>
+            <p className="text-[10px] text-[var(--text-muted)]">Kosongkan jika ingin menggunakan gambar default.</p>
           </div>
 
-          {/* Description */}
+          {/* Description / Location */}
           <div className="flex flex-col gap-1.5">
-            <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Deskripsi / Detail Acara</label>
+            <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Lokasi / Detail Tambahan</label>
             <textarea 
               name="description"
               rows="3"
-              placeholder="Tulis list game, judul setlist lagu, bintang tamu kolaborasi..."
+              placeholder="Contoh lokasi: JKT48 Theater, fX Sudirman. Atau detail tambahan acara."
               value={formData.description}
               onChange={handleInputChange}
               className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all resize-none"
@@ -408,11 +427,19 @@ export default function AdminSchedule() {
               disabled={isSubmitting}
               className="cursor-pointer"
             >
-              {isSubmitting ? 'Menyimpan...' : 'Simpan Jadwal'}
+              {isSubmitting ? 'Menyimpan...' : 'Simpan Schedule'}
             </Button>
           </div>
         </form>
       </Modal>
+
+      <ConfirmDialog
+        isOpen={confirmDelete.isOpen}
+        title="Hapus Schedule"
+        message="Apakah Anda yakin ingin menghapus jadwal ini secara permanen?"
+        onConfirm={confirmDeleteAction}
+        onCancel={() => setConfirmDelete({ isOpen: false, id: null })}
+      />
     </div>
   );
 }

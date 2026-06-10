@@ -186,6 +186,42 @@ const ScrollExpandMedia = ({
       : url;
   };
 
+  const handleAnimatedExpand = () => {
+    const duration = 800; // 800ms smooth animation
+    const startTime = performance.now();
+    const startProgress = scrollProgress;
+    const distance = 1 - startProgress;
+
+    // easeInOutQuad for smooth acceleration and deceleration
+    const easeInOutQuad = (t) => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+
+    const animateStep = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      let progress = elapsed / duration;
+      
+      if (progress >= 1) {
+        setScrollProgress(1);
+        setMediaFullyExpanded(true);
+        setShowContent(true);
+        
+        // Allow state to update layout, then scroll to profile
+        setTimeout(() => {
+          const profileSection = document.getElementById('profile');
+          if (profileSection) {
+            profileSection.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100);
+        return;
+      }
+      
+      const easedProgress = startProgress + distance * easeInOutQuad(progress);
+      setScrollProgress(easedProgress);
+      requestAnimationFrame(animateStep);
+    };
+    
+    requestAnimationFrame(animateStep);
+  };
+
   return (
     <div
       ref={sectionRef}
@@ -322,16 +358,19 @@ const ScrollExpandMedia = ({
                 </motion.h2>
               </div>
 
+              {/* Primary CTA to Skip Intro (Removed middle button, added action to bottom indicator) */}
+
               {scrollToExpand && (
                 <motion.div
                   style={{ opacity: Math.max(0, 1 - scrollProgress * 1.8) }}
-                  className="absolute bottom-8 z-20 flex flex-col items-center gap-2 text-white"
+                  className="absolute bottom-8 z-30 flex flex-col items-center gap-2 text-white cursor-pointer group"
+                  onClick={handleAnimatedExpand}
                 >
-                  <p className="text-sm font-semibold">{scrollToExpand}</p>
-                  <div className="flex h-10 w-6 justify-center rounded-full border border-white/50 pt-2">
+                  <p className="text-[10px] font-bold tracking-widest uppercase text-white/80 group-hover:text-white transition-colors">{scrollToExpand}</p>
+                  <div className="flex h-11 w-6 justify-center rounded-full border border-white/40 group-hover:border-white/80 pt-2 shadow-[0_0_15px_rgba(255,255,255,0.1)] transition-colors">
                     <motion.span
-                      animate={{ y: [0, 12, 0], opacity: [1, 0.35, 1] }}
-                      transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut' }}
+                      animate={{ y: [0, 14, 0], opacity: [1, 0.2, 1] }}
+                      transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
                       className="h-1.5 w-1.5 rounded-full bg-white"
                     />
                   </div>

@@ -135,10 +135,12 @@ USING (is_approved = true OR auth.role() = 'authenticated');
 -- 7. Orders & Payments (Public Insert, Admin Read/Update/Delete)
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public insert on orders" ON orders FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow public select on orders" ON orders FOR SELECT USING (true);
 CREATE POLICY "Allow admin all on orders" ON orders FOR ALL USING (auth.role() = 'authenticated');
 
 ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public insert on payments" ON payments FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow public select on payments" ON payments FOR SELECT USING (true);
 CREATE POLICY "Allow admin all on payments" ON payments FOR ALL USING (auth.role() = 'authenticated');
 
 -- 8. Playlists (Public Read, Admin All)
@@ -176,3 +178,32 @@ CREATE TABLE IF NOT EXISTS most_played_songs (
 ALTER TABLE most_played_songs ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public read on most_played_songs" ON most_played_songs FOR SELECT USING (true);
 CREATE POLICY "Allow admin all on most_played_songs" ON most_played_songs FOR ALL USING (auth.role() = 'authenticated');
+
+-- 10. #IntanShiningStar Achievements & Timeline
+CREATE TABLE IF NOT EXISTS intan_shining_star_achievements (
+  id TEXT PRIMARY KEY,
+  sort_date DATE NOT NULL,
+  title TEXT NOT NULL,
+  category TEXT NOT NULL CHECK (
+    category IN ('Milestone', 'Theater', 'Live', 'Video Call', 'Event', 'Content', 'Fan Project')
+  ),
+  description TEXT NOT NULL,
+  image_url TEXT,
+  is_major BOOLEAN NOT NULL DEFAULT false,
+  show_in_achievement BOOLEAN NOT NULL DEFAULT true,
+  show_in_timeline BOOLEAN NOT NULL DEFAULT true,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CHECK (show_in_achievement OR show_in_timeline)
+);
+
+CREATE INDEX IF NOT EXISTS intan_shining_star_sort_date_idx
+  ON intan_shining_star_achievements (sort_date DESC);
+
+ALTER TABLE intan_shining_star_achievements ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public read on intan_shining_star_achievements"
+  ON intan_shining_star_achievements FOR SELECT
+  USING (show_in_achievement OR show_in_timeline);
+CREATE POLICY "Allow admin all on intan_shining_star_achievements"
+  ON intan_shining_star_achievements FOR ALL TO authenticated
+  USING (true) WITH CHECK (true);

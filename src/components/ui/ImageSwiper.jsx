@@ -230,10 +230,10 @@ export const ImageSwiper = ({
               borderRadius: '14px',
               overflow: 'hidden',
               boxShadow: isFront
-                ? '0 8px 30px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.12)'
-                : `0 ${4 + displayIndex * 2}px ${12 + displayIndex * 4}px rgba(0,0,0,${0.10 + displayIndex * 0.04})`,
-              border: '3px solid rgba(255,255,255,0.85)',
-              background: '#fff',
+                ? '0 8px 30px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08)'
+                : `0 ${4 + displayIndex * 2}px ${12 + displayIndex * 4}px rgba(0,0,0,${0.05 + displayIndex * 0.03})`,
+              border: '1px solid rgba(23,12,121,0.1)',
+              background: '#ffffff',
               transform: isFront
                 ? `translateX(var(--swipe-x, 0px)) rotate(var(--swipe-rotate, 0deg))`
                 : `translateX(${stackX}px) translateY(${stackY}px) rotate(${stackRotate}deg) scale(${behindScale})`,

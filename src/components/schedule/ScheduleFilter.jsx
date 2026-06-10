@@ -15,7 +15,7 @@ export default function ScheduleFilter({
     { id: 'completed', name: 'Selesai' },
   ];
 
-  const platforms = ['All', 'YouTube', 'Twitch', 'TikTok', 'Discord'];
+  const platforms = ['All', 'Show Theater', 'Video Call', 'Birthday', 'Other Events'];
 
   return (
     <Card hoverEffect={false} padding="compact" className={`border border-[var(--border-color)] space-y-4 ${className}`}>
@@ -43,7 +43,7 @@ export default function ScheduleFilter({
         {/* Platform select dropdown */}
         <div className="flex items-center gap-3">
           <span className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">
-            Platform:
+            Kategori:
           </span>
           <div className="relative">
             <select
@@ -53,7 +53,7 @@ export default function ScheduleFilter({
             >
               {platforms.map((platform) => (
                 <option key={platform} value={platform}>
-                  {platform === 'All' ? 'Semua Platform' : platform}
+                  {platform === 'All' ? 'Semua Kategori' : platform}
                 </option>
               ))}
             </select>

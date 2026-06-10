@@ -1,33 +1,63 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
 import { merchandiseService } from '../../features/merchandise/merchandiseService';
 import Loading from '../../components/common/Loading';
-import { Plus, Edit, Trash2, Check, X, Search } from 'lucide-react';
+import { useAdminToast } from '../../components/common/useAdminToast';
+import { useSupabaseUpload } from '../../hooks/useSupabaseUpload';
+import { 
+  Plus, Edit, Trash2, Check, X, Search, Image as ImageIcon, 
+  Tag, ChevronLeft, ChevronRight, Sparkles, SlidersHorizontal, LayoutGrid,
+  Clock, ShoppingBag
+} from 'lucide-react';
 import { MERCH_CATEGORIES } from '../../lib/constants';
+import { formatCurrency } from '../../lib/helpers';
+
+const SORT_OPTIONS = [
+  { label: 'Terbaru', value: 'newest' },
+  { label: 'Harga: Rendah ke Tinggi', value: 'price_asc' },
+  { label: 'Harga: Tinggi ke Rendah', value: 'price_desc' },
+  { label: 'Nama: A-Z', value: 'name_asc' }
+];
+
+const initialForm = {
+  name: '',
+  price: '',
+  category: 'Clothing',
+  description: '',
+  image_url: '',
+  image_url_2: '',
+  image_url_3: '',
+  is_available: true,
+  sizesInput: 'M, L, XL'
+};
 
 export default function AdminMerchandise() {
+  const notify = useAdminToast();
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeWorkspace, setActiveWorkspace] = useState('inventory'); // 'inventory' | 'editor'
+
+  // Search & Filter state
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'active' | 'inactive'
+  const [sortValue, setSortValue] = useState('newest');
+  const [currentPage, setCurrentPage] = useState(1);
 
-  // Modal form states
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState('add'); // 'add' | 'edit'
+  // Editor states
   const [editingId, setEditingId] = useState(null);
+  const [formData, setFormData] = useState(initialForm);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  const [formData, setFormData] = useState({
-    name: '',
-    price: '',
-    category: 'Clothing',
-    description: '',
-    image_url: '',
-    is_available: true,
-    sizes: ['M', 'L', 'XL']
-  });
+
+  // Delete modal states
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
+
+  // Uploader hook
+  const { uploadFile, isUploading, progress } = useSupabaseUpload();
+  const [uploadingKey, setUploadingKey] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -35,61 +65,69 @@ export default function AdminMerchandise() {
 
   const fetchData = async () => {
     setIsLoading(true);
-    const data = await merchandiseService.getProducts();
-    setItems(data);
-    setIsLoading(false);
-  };
-
-  const handleOpenAddModal = () => {
-    setModalMode('add');
-    setEditingId(null);
-    setFormData({
-      name: '',
-      price: '',
-      category: 'Clothing',
-      description: '',
-      image_url: '',
-      is_available: true,
-      sizes: ['M', 'L', 'XL']
-    });
-    setIsModalOpen(true);
-  };
-
-  const handleOpenEditModal = (item) => {
-    setModalMode('edit');
-    setEditingId(item.id);
-    setFormData({
-      name: item.name,
-      price: item.price,
-      category: item.category || 'Clothing',
-      description: item.description || '',
-      image_url: item.image_url || '',
-      is_available: item.is_available ?? true,
-      sizes: item.sizes || []
-    });
-    setIsModalOpen(true);
-  };
-
-  const handleDelete = async (id) => {
-    if (window.confirm('Yakin ingin menghapus merchandise ini?')) {
-      const res = await merchandiseService.deleteProduct(id);
-      if (res.success) {
-        setItems(items.filter(item => item.id !== id));
-      } else {
-        alert('Gagal menghapus: ' + res.error);
-      }
+    try {
+      const data = await merchandiseService.getProducts();
+      setItems(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleSizeCheckboxChange = (size) => {
-    setFormData(prev => {
-      const currentSizes = [...prev.sizes];
-      if (currentSizes.includes(size)) {
-        return { ...prev, sizes: currentSizes.filter(s => s !== size) };
-      } else {
-        return { ...prev, sizes: [...currentSizes, size] };
-      }
+  // Reset Form
+  const resetForm = () => {
+    setEditingId(null);
+    setFormData(initialForm);
+  };
+
+  const handleOpenAddWorkspace = () => {
+    resetForm();
+    setActiveWorkspace('editor');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleOpenEditWorkspace = (product) => {
+    setEditingId(product.id);
+    const urls = product.image_urls ?? [];
+    setFormData({
+      name: product.name,
+      price: product.price.toString(),
+      category: product.category || 'Clothing',
+      description: product.description || '',
+      image_url: product.image_url || urls[0] || '',
+      image_url_2: urls[1] || '',
+      image_url_3: urls[2] || '',
+      is_available: product.is_available ?? true,
+      sizesInput: product.sizes ? product.sizes.join(', ') : 'M, L, XL',
     });
+    setActiveWorkspace('editor');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const requestDelete = (product) => {
+    setItemToDelete(product);
+    setDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirmed = async () => {
+    if (!itemToDelete) return;
+    try {
+      const res = await merchandiseService.deleteProduct(itemToDelete.id);
+      if (res.success) {
+        setItems(items.filter(item => item.id !== itemToDelete.id));
+        if (editingId === itemToDelete.id) resetForm();
+        notify.success('Produk dihapus', 'Produk berhasil dihapus dari katalog.');
+      } else {
+        notify.error('Gagal menghapus produk', res.error);
+      }
+    } catch (err) {
+      console.error(err);
+      notify.error('Gagal menghapus produk', err.message);
+    } finally {
+      setDeleteModalOpen(false);
+      setItemToDelete(null);
+    }
   };
 
   const handleInputChange = (e) => {
@@ -100,313 +138,698 @@ export default function AdminMerchandise() {
     }));
   };
 
+  const handleSizeQuickAdd = (size) => {
+    setFormData(prev => {
+      const current = prev.sizesInput 
+        ? prev.sizesInput.split(',').map(s => s.trim().toUpperCase()).filter(Boolean) 
+        : [];
+      if (!current.includes(size.toUpperCase())) {
+        const next = [...current, size.toUpperCase()].join(', ');
+        return { ...prev, sizesInput: next };
+      }
+      return prev;
+    });
+  };
+
+  const handleImageUpload = async (key, file) => {
+    if (!file) return;
+    setUploadingKey(key);
+    try {
+      // Uploading to standard merchandise receipts bucket, or fallback assets folder
+      const publicUrl = await uploadFile(file, 'assets', 'products');
+      setFormData(prev => ({ ...prev, [key]: publicUrl }));
+      notify.success('Foto berhasil diunggah', 'URL foto produk sudah dimasukkan ke form.');
+    } catch (err) {
+      console.error('File upload failed:', err);
+      notify.error('Gagal mengunggah foto', err.message);
+    } finally {
+      setUploadingKey(null);
+    }
+  };
+
+  const handleQuickToggleActive = async (product) => {
+    try {
+      const nextAvailable = !product.is_available;
+      const res = await merchandiseService.updateProduct(product.id, {
+        is_available: nextAvailable
+      });
+      if (res.success) {
+        setItems(current => current.map(item => item.id === product.id ? { ...item, is_available: nextAvailable } : item));
+        notify.success(
+          nextAvailable ? 'Produk diaktifkan' : 'Produk dinonaktifkan',
+          `${product.name} sekarang ${nextAvailable ? 'tersedia' : 'habis/tidak tersedia'}.`
+        );
+      } else {
+        notify.error('Gagal mengubah status produk', res.error);
+      }
+    } catch (err) {
+      console.error(err);
+      notify.error('Gagal mengubah status produk', err.message);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.price) {
-      alert('Nama dan Harga produk harus diisi!');
+      notify.warning('Data belum lengkap', 'Nama dan harga produk harus diisi.');
       return;
     }
 
     setIsSubmitting(true);
+    
+    // Parse sizes input
+    const parsedSizes = formData.sizesInput
+      ? formData.sizesInput.split(',').map(s => s.trim().toUpperCase()).filter(Boolean)
+      : [];
+
+    // Compile image URLs
+    const compiledImageUrls = [
+      formData.image_url.trim(),
+      formData.image_url_2.trim(),
+      formData.image_url_3.trim()
+    ].filter(Boolean);
+
     const payload = {
-      ...formData,
+      name: formData.name.trim(),
       price: parseFloat(formData.price),
-      image_url: formData.image_url.trim() || 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&auto=format&fit=crop&q=80',
-      image_urls: [formData.image_url.trim() || 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&auto=format&fit=crop&q=80']
+      category: formData.category,
+      description: formData.description.trim(),
+      image_url: formData.image_url.trim() || compiledImageUrls[0] || 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600',
+      image_urls: compiledImageUrls.length > 0 ? compiledImageUrls : ['https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600'],
+      is_available: formData.is_available,
+      sizes: parsedSizes
     };
 
-    let result;
-    if (modalMode === 'add') {
-      result = await merchandiseService.createProduct(payload);
-    } else {
-      result = await merchandiseService.updateProduct(editingId, payload);
-    }
+    try {
+      let result;
+      if (editingId) {
+        result = await merchandiseService.updateProduct(editingId, payload);
+      } else {
+        result = await merchandiseService.createProduct(payload);
+      }
 
-    setIsSubmitting(false);
-
-    if (result.success) {
-      setIsModalOpen(false);
-      fetchData();
-    } else {
-      alert('Gagal menyimpan data: ' + result.error);
+      if (result.success) {
+        resetForm();
+        setActiveWorkspace('inventory');
+        fetchData();
+        notify.success(
+          editingId ? 'Produk diperbarui' : 'Produk ditambahkan',
+          'Perubahan produk berhasil disimpan.'
+        );
+      } else {
+        notify.error('Gagal menyimpan produk', result.error);
+      }
+    } catch (err) {
+      console.error(err);
+      notify.error('Gagal menyimpan produk', err.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  // Filter items based on search and category
-  const filteredItems = items.filter(item => {
-    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesCategory = selectedCategory === 'All' || item.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  // Stats computation
+  const summary = useMemo(() => {
+    const total = items.length;
+    const active = items.filter(item => item.is_available).length;
+    const inactive = total - active;
+    return { total, active, inactive };
+  }, [items]);
+
+  // Filters & Search logic
+  const filteredItems = useMemo(() => {
+    return items.filter(item => {
+      const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                            (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()));
+      const matchesCategory = selectedCategory === 'All' || item.category === selectedCategory;
+      const matchesStatus = statusFilter === 'all' || 
+                            (statusFilter === 'active' ? item.is_available : !item.is_available);
+      return matchesSearch && matchesCategory && matchesStatus;
+    });
+  }, [items, searchQuery, selectedCategory, statusFilter]);
+
+  // Sort logic
+  const sortedItems = useMemo(() => {
+    const next = [...filteredItems];
+    if (sortValue === 'price_asc') {
+      return next.sort((a, b) => a.price - b.price);
+    }
+    if (sortValue === 'price_desc') {
+      return next.sort((a, b) => b.price - a.price);
+    }
+    if (sortValue === 'name_asc') {
+      return next.sort((a, b) => a.name.localeCompare(b.name));
+    }
+    return next.sort((a, b) => b.id.localeCompare(a.id)); // default newest
+  }, [filteredItems, sortValue]);
+
+  // Pagination logic
+  const INVENTORY_PAGE_SIZE = 10;
+  const totalPages = Math.max(1, Math.ceil(sortedItems.length / INVENTORY_PAGE_SIZE));
+  const visiblePage = Math.min(currentPage, totalPages);
+  const paginatedItems = useMemo(() => {
+    const start = (visiblePage - 1) * INVENTORY_PAGE_SIZE;
+    return sortedItems.slice(start, start + INVENTORY_PAGE_SIZE);
+  }, [sortedItems, visiblePage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedCategory, statusFilter, sortValue]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 select-none">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-[var(--border-color)]">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-[var(--border-color)]/60">
         <div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-[var(--text-primary)]">🛍️ Toko Merchandise</h1>
-          <p className="text-xs text-[var(--text-secondary)] mt-1">
-            Tambah, perbarui, atau kelola katalog produk merchandise official Intan.
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[var(--color-primary)]">
+            Admin Dashboard
           </p>
+          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-800 mt-1 flex items-center gap-2">
+            <ShoppingBag className="h-5.5 w-5.5 text-[var(--color-primary)] shrink-0" /> Katalog Merchandise
+          </h1>
         </div>
-        <Button variant="primary" size="sm" className="flex items-center gap-1.5 shadow-md cursor-pointer" onClick={handleOpenAddModal}>
-          <Plus className="h-4 w-4" /> Tambah Produk
+        <Button 
+          variant="primary" 
+          size="sm" 
+          className="flex items-center gap-1.5 shadow-sm cursor-pointer" 
+          onClick={handleOpenAddWorkspace}
+        >
+          <Plus className="h-4 w-4" /> Tambah Produk Baru
         </Button>
       </div>
 
-      {/* Filters & Search */}
-      <div className="flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center">
-        {/* Search */}
-        <div className="flex items-center gap-2 px-3 py-2 bg-white border border-[var(--border-color)] rounded-xl text-sm w-full md:w-80 shadow-sm">
-          <Search className="h-4 w-4 text-[var(--text-muted)]" />
-          <input 
-            type="text" 
-            placeholder="Cari produk..." 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="bg-transparent border-none outline-none flex-1 text-[var(--text-primary)] placeholder-[var(--text-muted)]"
-          />
-        </div>
-
-        {/* Category Filters */}
-        <div className="flex flex-wrap gap-1.5">
-          {['All', ...Object.values(MERCH_CATEGORIES).filter(c => c !== 'All')].map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${
-                selectedCategory === cat
-                  ? 'bg-[var(--color-primary)] border-[var(--color-primary)] text-white'
-                  : 'bg-white border-[var(--border-color)] text-[var(--text-secondary)] hover:bg-gray-50'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
+      {/* Tabs Menu Navigation */}
+      <div className="border-b border-slate-200">
+        <nav className="-mb-px flex gap-6 overflow-x-auto">
+          <button
+            type="button"
+            onClick={() => {
+              setActiveWorkspace('inventory');
+            }}
+            className={`whitespace-nowrap border-b-2 px-1 pb-3 text-xs font-bold uppercase tracking-wider transition cursor-pointer ${
+              activeWorkspace === 'inventory'
+                ? 'border-[var(--color-primary)] text-[var(--color-primary)] font-extrabold'
+                : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'
+            }`}
+          >
+            Database Inventory
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              if (activeWorkspace !== 'editor') resetForm();
+              setActiveWorkspace('editor');
+            }}
+            className={`whitespace-nowrap border-b-2 px-1 pb-3 text-xs font-bold uppercase tracking-wider transition cursor-pointer ${
+              activeWorkspace === 'editor'
+                ? 'border-[var(--color-primary)] text-[var(--color-primary)] font-extrabold'
+                : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'
+            }`}
+          >
+            {editingId ? 'Ubah Data Produk' : 'Input Produk Baru'}
+          </button>
+        </nav>
       </div>
 
-      {/* Main Table Card */}
-      <Card hoverEffect={false} className="border border-[var(--border-color)] bg-white overflow-hidden rounded-2xl shadow-sm" padding="none">
-        {isLoading ? (
-          <div className="p-12"><Loading message="Memuat katalog merchandise..." /></div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-[var(--text-secondary)]">
-              <thead className="text-xs uppercase bg-[var(--bg-primary)]/80 text-[var(--text-secondary)] font-bold border-b border-[var(--border-color)]">
-                <tr>
-                  <th className="px-6 py-4">Gambar</th>
-                  <th className="px-6 py-4">Nama Produk</th>
-                  <th className="px-6 py-4">Kategori</th>
-                  <th className="px-6 py-4">Harga</th>
-                  <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4 text-right">Aksi</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--border-color)]">
-                {filteredItems.map(item => (
-                  <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <img 
-                        src={item.image_url || 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=100'} 
-                        alt={item.name} 
-                        className="w-12 h-12 object-cover rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)]" 
-                      />
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="font-bold text-[var(--text-primary)] text-sm">{item.name}</div>
-                      {item.sizes && item.sizes.length > 0 && (
-                        <div className="text-[10px] text-[var(--text-muted)] mt-0.5">Ukuran: {item.sizes.join(', ')}</div>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="px-2.5 py-1 text-xs font-bold rounded-lg bg-[var(--color-primary-light)] text-[var(--color-primary)] border border-[var(--color-primary)]/10">
-                        {item.category || 'Clothing'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap font-bold text-[var(--text-primary)]">
-                      Rp {item.price.toLocaleString('id-ID')}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {item.is_available ? (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                          <Check className="h-3 w-3" /> Tersedia
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded-full border border-red-200">
-                          <X className="h-3 w-3" /> Habis
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-semibold">
-                      <div className="flex items-center justify-end gap-2">
-                        <button 
-                          onClick={() => handleOpenEditModal(item)} 
-                          className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-all"
-                          title="Ubah Produk"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </button>
-                        <button 
-                          onClick={() => handleDelete(item.id)} 
-                          className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-all"
-                          title="Hapus Produk"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-                {filteredItems.length === 0 && (
-                  <tr>
-                    <td colSpan="6" className="px-6 py-12 text-center text-[var(--text-muted)] text-sm">
-                      Belum ada merchandise yang sesuai dengan pencarian Anda.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Card>
-
-      {/* ================= ADD/EDIT FORM MODAL ================= */}
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title={modalMode === 'add' ? 'Tambah Merchandise Baru' : 'Ubah Detail Merchandise'}
-        size="md"
-      >
-        <form onSubmit={handleSubmit} className="space-y-4 text-sm text-[var(--text-primary)]">
-          {/* Product Name */}
-          <div className="flex flex-col gap-1.5">
-            <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Nama Produk</label>
-            <input 
-              type="text" 
-              name="name"
-              placeholder="Masukkan nama produk..."
-              value={formData.name}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
-              required
-            />
+      {/* ─────────────────── WORKSPACE: INVENTORY ─────────────────── */}
+      {activeWorkspace === 'inventory' && (
+        <div className="space-y-6 animate-fade-in">
+          {/* Summary Cards */}
+          <div className="grid grid-cols-3 gap-3 md:gap-4">
+            <Card hoverEffect={false} padding="compact" className="border border-[var(--border-color)] bg-white text-center">
+              <span className="text-[10px] font-bold text-slate-400 block uppercase">Total Produk</span>
+              <span className="text-xl sm:text-2xl font-black text-slate-800 mt-1 block">{summary.total}</span>
+            </Card>
+            <Card hoverEffect={false} padding="compact" className="border border-[var(--border-color)] bg-white text-center">
+              <span className="text-[10px] font-bold text-emerald-500 block uppercase">Tersedia</span>
+              <span className="text-xl sm:text-2xl font-black text-emerald-600 mt-1 block">{summary.active}</span>
+            </Card>
+            <Card hoverEffect={false} padding="compact" className="border border-[var(--border-color)] bg-white text-center">
+              <span className="text-[10px] font-bold text-red-500 block uppercase">Habis</span>
+              <span className="text-xl sm:text-2xl font-black text-red-600 mt-1 block">{summary.inactive}</span>
+            </Card>
           </div>
 
-          {/* Price & Category */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Harga (Rupiah)</label>
+          {/* Filtering and Search toolbar */}
+          <div className="flex flex-wrap items-center gap-3 p-4 bg-white border border-[var(--border-color)]/60 rounded-2xl shadow-sm">
+            {/* Search Input */}
+            <div className="flex items-center gap-2 px-3.5 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl text-xs w-full sm:w-64">
+              <Search className="h-4 w-4 text-slate-400 shrink-0" />
               <input 
-                type="number" 
-                name="price"
-                placeholder="Misal: 150000"
-                value={formData.price}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
-                required
+                type="text" 
+                placeholder="Cari nama atau deskripsi..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="bg-transparent border-none outline-none flex-1 text-[var(--text-primary)] font-semibold placeholder-slate-400"
               />
             </div>
-            <div className="flex flex-col gap-1.5">
-              <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Kategori</label>
-              <select 
-                name="category"
-                value={formData.category}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
-              >
-                {Object.values(MERCH_CATEGORIES).filter(c => c !== 'All').map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
+
+            {/* Category Select Filters */}
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="appearance-none bg-white border border-[var(--border-color)] rounded-xl px-3.5 py-2 text-xs font-bold text-slate-700 cursor-pointer focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]/20"
+            >
+              <option value="All">Semua Kategori</option>
+              {Object.values(MERCH_CATEGORIES).filter(c => c !== 'All').map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+
+            {/* Availability status Filter */}
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="appearance-none bg-white border border-[var(--border-color)] rounded-xl px-3.5 py-2 text-xs font-bold text-slate-700 cursor-pointer focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]/20"
+            >
+              <option value="all">Semua Status</option>
+              <option value="active">Tersedia</option>
+              <option value="inactive">Habis Terjual</option>
+            </select>
+
+            {/* Sort Selector */}
+            <select
+              value={sortValue}
+              onChange={(e) => setSortValue(e.target.value)}
+              className="appearance-none bg-white border border-[var(--border-color)] rounded-xl px-3.5 py-2 text-xs font-bold text-slate-700 cursor-pointer focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]/20"
+            >
+              {SORT_OPTIONS.map(opt => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+
+            {/* Total search result info */}
+            <div className="ml-auto text-[10px] font-bold text-slate-400">
+              {filteredItems.length} produk ditemukan
             </div>
           </div>
 
-          {/* Image URL */}
-          <div className="flex flex-col gap-1.5">
-            <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">URL Gambar Produk</label>
-            <input 
-              type="text" 
-              name="image_url"
-              placeholder="Masukkan URL foto produk dari internet..."
-              value={formData.image_url}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
-            />
-            <p className="text-[10px] text-[var(--text-muted)]">Kosongkan jika ingin menggunakan gambar placeholder bawaan.</p>
-          </div>
+          {/* DataTable Card */}
+          <Card hoverEffect={false} className="border border-[var(--border-color)] bg-white overflow-hidden rounded-3xl shadow-sm" padding="none">
+            {isLoading ? (
+              <div className="p-12"><Loading message="Memuat database katalog..." /></div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs text-[var(--text-secondary)]">
+                  <thead className="text-[10px] uppercase bg-[var(--bg-primary)]/60 text-slate-500 font-bold border-b border-[var(--border-color)]/60">
+                    <tr>
+                      <th className="px-6 py-4">Gambar & Nama</th>
+                      <th className="px-6 py-4">Kategori</th>
+                      <th className="px-6 py-4">Harga</th>
+                      <th className="px-6 py-4">Varian Size</th>
+                      <th className="px-6 py-4">Status</th>
+                      <th className="px-6 py-4 text-right">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[var(--border-color)]/60 bg-white">
+                    {paginatedItems.map(item => (
+                      <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center gap-3">
+                            <img 
+                              src={item.image_url || 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=100'} 
+                              alt={item.name} 
+                              className="w-11 h-11 object-cover rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)]" 
+                            />
+                            <div className="min-w-0">
+                              <div className="font-extrabold text-slate-800 text-xs truncate max-w-[200px]">{item.name}</div>
+                              <div className="font-mono text-[9px] text-slate-400 mt-0.5">{item.id}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className="px-2 py-0.5 text-[10px] font-bold rounded-lg bg-[var(--color-primary-light)] text-[var(--color-primary)] border border-[var(--color-primary)]/10">
+                            {item.category || 'Clothing'}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap font-black text-slate-800">
+                          {formatCurrency(item.price)}
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex flex-wrap gap-1 max-w-[150px]">
+                            {item.sizes && item.sizes.length > 0 ? (
+                              item.sizes.map(sz => (
+                                <span key={sz} className="px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded text-[9px] font-bold border border-slate-200">{sz}</span>
+                              ))
+                            ) : (
+                              <span className="text-[10px] text-slate-400 italic">No Size</span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <button
+                            onClick={() => handleQuickToggleActive(item)}
+                            className={`inline-flex items-center gap-1 text-[9px] font-extrabold px-2.5 py-0.5 rounded-full border transition cursor-pointer ${
+                              item.is_available 
+                                ? 'text-emerald-700 bg-emerald-50 border-emerald-200' 
+                                : 'text-red-700 bg-red-50 border-red-200'
+                            }`}
+                          >
+                            {item.is_available ? '✓ Tersedia' : '✕ Habis'}
+                          </button>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-semibold">
+                          <div className="flex items-center justify-end gap-1.5">
+                            <button 
+                              onClick={() => handleOpenEditWorkspace(item)} 
+                              className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-all cursor-pointer"
+                              title="Ubah Produk"
+                            >
+                              <Edit className="h-4 w-4" />
+                            </button>
+                            <button 
+                              onClick={() => requestDelete(item)} 
+                              className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-all cursor-pointer"
+                              title="Hapus Produk"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                    {paginatedItems.length === 0 && (
+                      <tr>
+                        <td colSpan="6" className="px-6 py-12 text-center text-slate-400 text-xs font-bold italic">
+                          Belum ada merchandise yang sesuai dengan pencarian Anda.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </Card>
 
-          {/* Description */}
-          <div className="flex flex-col gap-1.5">
-            <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Deskripsi Produk</label>
-            <textarea 
-              name="description"
-              rows="3"
-              placeholder="Detail deskripsi bahan, spesifikasi..."
-              value={formData.description}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all resize-none"
-            />
-          </div>
+          {/* Table Pagination */}
+          {!isLoading && totalPages > 1 && (
+            <div className="flex items-center justify-between text-xs text-slate-400 font-semibold">
+              <p>
+                Menampilkan{' '}
+                <span className="font-bold text-slate-700">{(visiblePage - 1) * INVENTORY_PAGE_SIZE + 1}–{Math.min(visiblePage * INVENTORY_PAGE_SIZE, filteredItems.length)}</span> dari{' '}
+                <span className="font-bold text-slate-700">{filteredItems.length}</span> produk
+              </p>
+              <div className="flex items-center gap-1 select-none">
+                <button
+                  type="button"
+                  className="rounded-lg border border-slate-200 bg-white p-1.5 transition hover:border-slate-400 disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={visiblePage === 1}
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                </button>
+                <span className="px-2">
+                  {visiblePage} / {totalPages}
+                </span>
+                <button
+                  type="button"
+                  className="rounded-lg border border-slate-200 bg-white p-1.5 transition hover:border-slate-400 disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={visiblePage >= totalPages}
+                >
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
-          {/* Sizes Options */}
-          <div className="flex flex-col gap-1.5">
-            <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Ukuran Tersedia</label>
-            <div className="flex flex-wrap gap-4 mt-1">
-              {['S', 'M', 'L', 'XL', 'XXL', 'All Size'].map((size) => (
-                <label key={size} className="flex items-center gap-2 cursor-pointer text-xs font-semibold">
+      {/* ─────────────────── WORKSPACE: EDITOR ─────────────────── */}
+      {activeWorkspace === 'editor' && (
+        <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl mx-auto animate-fade-in">
+          {/* Main Grid: Form details on the left, photo upload preview on the right */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+            {/* Left Column: Form Details */}
+            <div className="md:col-span-7 space-y-6">
+              {/* Product Basic Info */}
+              <Card hoverEffect={false} className="border border-[var(--border-color)] bg-white space-y-5 rounded-3xl p-5 shadow-sm">
+                <h3 className="text-xs font-bold text-[var(--color-primary)] uppercase tracking-wider border-b border-slate-100 pb-2">
+                  Informasi Dasar Produk
+                </h3>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Nama Produk</label>
+                    <input 
+                      type="text" 
+                      name="name"
+                      placeholder="Masukkan nama produk..."
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] font-semibold text-xs transition-all"
+                      required
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Harga (Rupiah)</label>
+                      <input 
+                        type="number" 
+                        name="price"
+                        placeholder="Misal: 150000"
+                        value={formData.price}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] font-semibold text-xs transition-all"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Kategori</label>
+                      <select 
+                        name="category"
+                        value={formData.category}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] font-bold text-xs cursor-pointer transition-all"
+                      >
+                        {Object.values(MERCH_CATEGORIES).filter(c => c !== 'All').map(cat => (
+                          <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Sizing Section */}
+              <Card hoverEffect={false} className="border border-[var(--border-color)] bg-white space-y-4 rounded-3xl p-5 shadow-sm">
+                <h3 className="text-xs font-bold text-[var(--color-primary)] uppercase tracking-wider border-b border-slate-100 pb-2">
+                  Varian & Ukuran Tersedia
+                </h3>
+                <p className="text-[10px] text-slate-500">
+                  Tulis opsi ukuran yang dipisahkan oleh tanda koma (Contoh: S, M, L, XL).
+                </p>
+
+                <div className="space-y-4">
+                  <input
+                    type="text"
+                    name="sizesInput"
+                    value={formData.sizesInput}
+                    onChange={handleInputChange}
+                    placeholder="S, M, L, XL"
+                    className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] font-semibold text-xs transition-all"
+                  />
+
+                  {/* Size Quick Add chips */}
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {['S', 'M', 'L', 'XL', 'XXL', 'All Size'].map((sz) => (
+                      <button
+                        key={sz}
+                        type="button"
+                        onClick={() => handleSizeQuickAdd(sz)}
+                        className="px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-wide border border-slate-200 bg-slate-50 rounded-full hover:border-[var(--color-primary)] hover:bg-white text-slate-600 transition cursor-pointer"
+                      >
+                        + {sz}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </Card>
+
+              {/* Description */}
+              <Card hoverEffect={false} className="border border-[var(--border-color)] bg-white space-y-4 rounded-3xl p-5 shadow-sm">
+                <h3 className="text-xs font-bold text-[var(--color-primary)] uppercase tracking-wider border-b border-slate-100 pb-2">
+                  Deskripsi & Spesifikasi Produk
+                </h3>
+                <textarea 
+                  name="description"
+                  rows="5"
+                  placeholder="Detail deskripsi bahan, spesifikasi ukuran..."
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] font-semibold text-xs transition-all resize-none"
+                />
+              </Card>
+            </div>
+
+            {/* Right Column: Photo Uploads & Status */}
+            <div className="md:col-span-5 space-y-6">
+              {/* Product Status (Availability Toggle) */}
+              <Card hoverEffect={false} className="border border-[var(--border-color)] bg-white rounded-3xl p-5 shadow-sm space-y-4">
+                <h3 className="text-xs font-bold text-[var(--color-primary)] uppercase tracking-wider border-b border-slate-100 pb-2">
+                  Status Ketersediaan
+                </h3>
+                <div className="flex items-center gap-3">
                   <input 
                     type="checkbox" 
-                    checked={formData.sizes.includes(size)}
-                    onChange={() => handleSizeCheckboxChange(size)}
+                    name="is_available"
+                    id="is_available"
+                    checked={formData.is_available}
+                    onChange={handleInputChange}
                     className="w-4.5 h-4.5 rounded border-[var(--border-color)] text-[var(--color-primary)] focus:ring-[var(--color-primary)] cursor-pointer"
                   />
-                  <span>{size}</span>
-                </label>
-              ))}
+                  <label htmlFor="is_available" className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)] cursor-pointer select-none">
+                    Produk Aktif / Tersedia
+                  </label>
+                </div>
+              </Card>
+
+              {/* Multiple Images Upload & Preview Panels */}
+              <Card hoverEffect={false} className="border border-[var(--border-color)] bg-white rounded-3xl p-5 shadow-sm space-y-5">
+                <h3 className="text-xs font-bold text-[var(--color-primary)] uppercase tracking-wider border-b border-slate-100 pb-2">
+                  Galeri Foto Produk (Max 3)
+                </h3>
+
+                <div className="space-y-5">
+                  {[
+                    { label: 'Gambar Utama (Cover)', key: 'image_url' },
+                    { label: 'Gambar Tambahan 1', key: 'image_url_2' },
+                    { label: 'Gambar Tambahan 2', key: 'image_url_3' }
+                  ].map((imgSlot, idx) => {
+                    const hasVal = Boolean(formData[imgSlot.key]);
+                    return (
+                      <div key={imgSlot.key} className="space-y-2 border-b border-slate-100/80 pb-4 last:border-b-0 last:pb-0">
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">{imgSlot.label}</span>
+                        
+                        {/* Image preview box */}
+                        <div className="aspect-[4/3] w-full rounded-2xl overflow-hidden bg-slate-50 border border-dashed border-slate-300 flex items-center justify-center relative shadow-inner">
+                          {hasVal ? (
+                            <img 
+                              src={formData[imgSlot.key]} 
+                              alt="" 
+                              className="w-full h-full object-cover" 
+                            />
+                          ) : (
+                            <div className="text-center text-slate-300 flex flex-col items-center">
+                              <ImageIcon className="h-6 w-6 stroke-1 mb-1" />
+                              <span className="text-[9px] font-bold tracking-wider uppercase">Belum Ada Foto</span>
+                            </div>
+                          )}
+                          {uploadingKey === imgSlot.key && (
+                            <div className="absolute inset-0 bg-white/85 flex flex-col items-center justify-center p-3">
+                              <Clock className="animate-spin h-5 w-5 text-[var(--color-primary)] mb-1" />
+                              <span className="text-[9px] font-bold text-slate-500">MENGUNGGAH ({progress}%)</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Image URL text input */}
+                        <input
+                          type="text"
+                          name={imgSlot.key}
+                          value={formData[imgSlot.key]}
+                          onChange={handleInputChange}
+                          placeholder="Paste URL foto dari internet..."
+                          className="w-full px-3.5 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] font-semibold text-[10px] transition-all"
+                        />
+
+                        {/* File Upload Selector Button */}
+                        <label className="flex cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white py-2 text-[10px] font-bold text-slate-700 hover:border-slate-400 transition select-none">
+                          <ImageIcon className="w-3.5 h-3.5 text-purple-400" />
+                          <span>Unggah File Foto</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => void handleImageUpload(imgSlot.key, e.target.files?.[0] || null)}
+                            className="hidden"
+                          />
+                        </label>
+                      </div>
+                    );
+                  })}
+                </div>
+              </Card>
             </div>
           </div>
 
-          {/* Availability */}
-          <div className="flex items-center gap-3 pt-2">
-            <input 
-              type="checkbox" 
-              name="is_available"
-              id="is_available"
-              checked={formData.is_available}
-              onChange={handleInputChange}
-              className="w-4.5 h-4.5 rounded border-[var(--border-color)] text-[var(--color-primary)] focus:ring-[var(--color-primary)] cursor-pointer"
-            />
-            <label htmlFor="is_available" className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)] cursor-pointer select-none">
-              Produk Tersedia (Stok Aktif)
-            </label>
-          </div>
-
-          {/* Submit Action */}
-          <div className="flex justify-end gap-2 pt-4 border-t border-[var(--border-color)]">
+          {/* Form Actions bottom bar */}
+          <div className="flex justify-end gap-3 pt-5 border-t border-[var(--border-color)]/60">
             <Button 
               type="button" 
               variant="outline" 
-              size="sm" 
-              onClick={() => setIsModalOpen(false)}
+              size="md" 
+              onClick={() => {
+                resetForm();
+                setActiveWorkspace('inventory');
+              }}
               disabled={isSubmitting}
+              className="rounded-xl font-bold text-xs uppercase"
             >
               Batal
             </Button>
             <Button 
               type="submit" 
               variant="primary" 
-              size="sm"
-              disabled={isSubmitting}
-              className="cursor-pointer"
+              size="md"
+              disabled={isSubmitting || isUploading}
+              isLoading={isSubmitting}
+              className="rounded-xl font-bold text-xs uppercase cursor-pointer"
             >
-              {isSubmitting ? 'Menyimpan...' : 'Simpan Produk'}
+              Simpan Produk
             </Button>
           </div>
         </form>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        title="Hapus Produk Merchandise"
+        size="md"
+      >
+        <div className="space-y-4 text-sm text-[var(--text-primary)]">
+          <div className="flex gap-3 items-start p-3 bg-red-50 border border-red-200 rounded-2xl">
+            <ShieldAlert className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
+            <div>
+              <h5 className="font-extrabold text-xs text-red-800 uppercase tracking-wide">Konfirmasi Penghapusan Permanen</h5>
+              <p className="text-[11px] text-red-700 leading-normal mt-1">
+                Apakah Anda benar-benar yakin ingin menghapus produk <strong className="font-bold">"{itemToDelete?.name}"</strong>? Aksi ini tidak dapat dibatalkan dan produk akan langsung terhapus dari database katalog toko.
+              </p>
+            </div>
+          </div>
+          <div className="flex justify-end gap-2 pt-3">
+            <Button 
+              type="button" 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setDeleteModalOpen(false)}
+            >
+              Batal
+            </Button>
+            <Button 
+              type="button" 
+              variant="danger" 
+              size="sm" 
+              onClick={handleDeleteConfirmed}
+              className="cursor-pointer"
+            >
+              Ya, Hapus Permanen
+            </Button>
+          </div>
+        </div>
       </Modal>
     </div>
   );
 }
 
+// Simple inline ShieldAlert icon
+function ShieldAlert({ className }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      <line x1="12" y1="8" x2="12" y2="12" />
+      <line x1="12" y1="16" x2="12.01" y2="16" />
+    </svg>
+  );
+}

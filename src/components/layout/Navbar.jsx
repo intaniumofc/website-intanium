@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ROUTES } from '../../lib/constants';
 import Button from '../common/Button';
@@ -15,8 +15,6 @@ import {
   Palette,
   ShoppingBag,
   CreditCard,
-  Music,
-  PlayCircle,
   ChevronDown
 } from "lucide-react";
 import logoNobg from '../../assets/logos/logo-nobg.png';
@@ -27,10 +25,11 @@ export default function Navbar() {
 
   const navLinks = [
     { name: 'Tentang Intan', path: ROUTES.ABOUT_INTAN },
+    { name: '#IntanShiningStar', path: ROUTES.SHINING_STAR },
     { name: 'Intanium', path: ROUTES.ABOUT_INTANIUM },
     { name: 'Merchandise', path: ROUTES.MERCHANDISE },
     { name: 'News', path: ROUTES.NEWS },
-    { name: 'Jadwal', path: ROUTES.SCHEDULE },
+    { name: 'Schedule', path: ROUTES.SCHEDULE },
     { name: 'Mading', path: ROUTES.MADING },
     { name: 'Galeri', path: ROUTES.GALLERY },
     { name: '#dengerINTAN', path: ROUTES.DENGER_INTAN },
@@ -52,8 +51,8 @@ export default function Navbar() {
               link: ROUTES.ABOUT_INTAN,
             },
             {
-              label: "Bintang Berkilau",
-              description: "Kilas balik milestone pencapaian bersejarah Intan",
+              label: "#IntanShiningStar",
+              description: "Arsip perjalanan dan milestone bersejarah Intan",
               icon: Sparkles,
               link: ROUTES.SHINING_STAR,
             },
@@ -80,8 +79,8 @@ export default function Navbar() {
           title: "Kalender & Logs",
           items: [
             {
-              label: "Jadwal Stream",
-              description: "Jadwal mingguan siaran langsung streaming Intan",
+              label: "Schedule",
+              description: "Jadwal theater, video call, birthday, dan event Nur Intan",
               icon: Calendar,
               link: ROUTES.SCHEDULE,
             },
@@ -148,14 +147,14 @@ export default function Navbar() {
           title: "Merchandise Shop",
           items: [
             {
-              label: "Beli Merchandise",
-              description: "Miliki kaos limited anniversary, tumbler, standee akrilik",
+              label: "Pre-Order Merchandise",
+              description: "Miliki merchandise intanium sekarang!",
               icon: ShoppingBag,
               link: ROUTES.MERCHANDISE,
             },
             {
-              label: "Konfirmasi Bayar",
-              description: "Formulir konfirmasi pengiriman bukti transfer transaksi",
+              label: "Cek Pesanan",
+              description: "Pantau status pesanan merchandise",
               icon: CreditCard,
               link: ROUTES.PAYMENT_CONFIRM,
             },

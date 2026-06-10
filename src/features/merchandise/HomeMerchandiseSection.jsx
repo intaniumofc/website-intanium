@@ -31,9 +31,9 @@ const cardVariants = {
 
 const ProductCard = ({ product }) => {
   const images = React.useMemo(() => {
-    const urls = (product.imageUrls ?? []).filter(Boolean);
-    return urls.length > 0 ? urls : [product.imageUrl].filter(Boolean);
-  }, [product.imageUrl, product.imageUrls]);
+    const urls = (product.image_urls ?? product.imageUrls ?? []).filter(Boolean);
+    return urls.length > 0 ? urls : [product.image_url ?? product.imageUrl].filter(Boolean);
+  }, [product.image_url, product.imageUrl, product.image_urls, product.imageUrls]);
 
   const [imgIndex, setImgIndex] = useState(0);
 
@@ -52,6 +52,8 @@ const ProductCard = ({ product }) => {
   const visibleThumbs = images.slice(0, 4);
   const extraCount = Math.max(0, images.length - visibleThumbs.length);
 
+  const isAvailable = product.is_available ?? product.isAvailable ?? true;
+
   return (
     <motion.div
       variants={cardVariants}
@@ -65,7 +67,7 @@ const ProductCard = ({ product }) => {
           className="flex flex-col border border-[var(--border-color)] overflow-hidden h-full shadow-sm bg-white hover:shadow-md transition-all rounded-[1.75rem] p-3.5 gap-3.5 relative"
         >
           {/* Out of Stock Ribbon */}
-          {!product.isAvailable ? (
+          {!isAvailable ? (
             <span className="absolute top-6 left-6 z-30 px-2 py-0.5 rounded bg-black/60 backdrop-blur-sm text-[8px] uppercase tracking-widest font-black text-white border border-white/10 select-none pointer-events-none">
               HABIS
             </span>
@@ -93,7 +95,7 @@ const ProductCard = ({ product }) => {
             ))}
 
             {/* LIHAT PRODUK hover button overlay */}
-            {product.isAvailable && (
+            {isAvailable && (
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center pb-4 z-20">
                 <div className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-extrabold text-[9px] sm:text-[10px] tracking-wider px-5 py-2.5 rounded-full flex items-center gap-2 shadow-lg transform translate-y-3 group-hover:translate-y-0 transition-transform duration-300 select-none">
                   LIHAT PRODUK
