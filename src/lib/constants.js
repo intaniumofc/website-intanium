@@ -26,6 +26,7 @@ export const ROUTES = {
   ADMIN_LOGIN: '/admin/login',
   ADMIN_DASHBOARD: '/admin/dashboard',
   ADMIN_ABOUT_INTAN: '/admin/about-intan',
+  ADMIN_SHINING_STAR: '/admin/intan-shining-star',
   ADMIN_MERCHANDISE: '/admin/merchandise',
   ADMIN_CATEGORIES: '/admin/merchandise/categories',
   ADMIN_ORDERS: '/admin/merchandise/orders',
@@ -41,6 +42,7 @@ export const SOCIALS = {
   TWITTER: 'https://x.com/intanium_ofc',
   INSTAGRAM: 'https://instagram.com/intanium_ofc',
   TIKTOK: 'https://tiktok.com/@intanium_ofc',
+  YOUTUBE: 'https://www.youtube.com/@IntaniumOfc',
   EMAIL: 'mailto:intaniumofc@gmail.com',
   THREADS: 'https://www.threads.net/@intanium_ofc',
 };

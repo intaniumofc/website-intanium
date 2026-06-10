@@ -165,7 +165,7 @@ export default function AdminNews() {
 
         {/* Category Filters */}
         <div className="flex flex-wrap gap-1.5">
-          {['All', 'Announcement', 'Event', 'Community', 'Release'].map((cat) => (
+          {['All', 'Announcement', 'Schedule', 'Event', 'Merch', 'Project', 'Media', 'Important'].map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
@@ -296,7 +296,7 @@ export default function AdminNews() {
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
               >
-                {['Announcement', 'Event', 'Community', 'Release'].map(cat => (
+                {['Announcement', 'Schedule', 'Event', 'Merch', 'Project', 'Media', 'Important'].map(cat => (
                   <option key={cat} value={cat}>{cat}</option>
                 ))}
               </select>

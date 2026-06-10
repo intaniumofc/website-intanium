@@ -36,6 +36,7 @@ import AdminGallery from '../admin/gallery';
 import AdminMading from '../admin/mading';
 import AdminPlaylists from '../admin/playlists';
 import AdminAboutIntan from '../admin/about-intan';
+import AdminIntanShiningStar from '../admin/intan-shining-star';
 
 // Reusable Admin Guard Route
 const AdminGuard = ({ children }) => {
@@ -193,6 +194,14 @@ export default function AppRoutes() {
         element={
           <AdminGuard>
             <AdminAboutIntan />
+          </AdminGuard>
+        }
+      />
+      <Route
+        path={ROUTES.ADMIN_SHINING_STAR}
+        element={
+          <AdminGuard>
+            <AdminIntanShiningStar />
           </AdminGuard>
         }
       />

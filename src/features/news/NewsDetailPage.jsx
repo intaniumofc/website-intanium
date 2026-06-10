@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { newsService } from './newsService';
 import Card from '../../components/common/Card';
@@ -6,6 +6,27 @@ import Button from '../../components/common/Button';
 import Loading from '../../components/common/Loading';
 import { formatDate } from '../../lib/formatDate';
 import { ROUTES } from '../../lib/constants';
+import bannerIntanium from '../../assets/logos/banner-nium.webp';
+import intanOne from '../../assets/images/intan-01.jpg';
+import intanTwo from '../../assets/images/intan-02.jpg';
+import intanThree from '../../assets/images/intan-03.jpg';
+import intanFour from '../../assets/images/intan-04.jpg';
+
+const CATEGORY_IMAGES = {
+  Announcement: bannerIntanium,
+  Schedule: intanOne,
+  Event: intanTwo,
+  Merch: bannerIntanium,
+  Project: intanThree,
+  Media: intanFour,
+  Stream: intanFour,
+  Important: bannerIntanium,
+};
+
+function getNewsImage(news) {
+  const isGenericImage = !news.imageUrl || news.imageUrl.includes('images.unsplash.com');
+  return isGenericImage ? CATEGORY_IMAGES[news.category] || bannerIntanium : news.imageUrl;
+}
 
 export default function NewsDetailPage() {
   const { id } = useParams();
@@ -13,16 +34,23 @@ export default function NewsDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setIsLoading(true);
+    let isActive = true;
+
     newsService.getNewsById(id)
       .then((data) => {
+        if (!isActive) return;
         setNews(data);
         setIsLoading(false);
       })
       .catch((err) => {
+        if (!isActive) return;
         console.error(err);
         setIsLoading(false);
       });
+
+    return () => {
+      isActive = false;
+    };
   }, [id]);
 
   if (isLoading) return <Loading message="Membuka artikel berita..." />;
@@ -48,32 +76,32 @@ export default function NewsDetailPage() {
         </Link>
       </div>
 
-      <Card hoverEffect={false} className="border border-[var(--border-color)] overflow-hidden bg-[var(--bg-secondary)]" padding="none">
+      <Card hoverEffect={false} className="overflow-hidden border border-indigo-100 bg-[#fffdfd] shadow-lg" padding="none">
         {/* Banner image */}
         <div className="aspect-[21/9] w-full bg-black/20 overflow-hidden border-b border-[var(--border-color)]">
           <img
-            src={news.imageUrl}
+            src={getNewsImage(news)}
             alt={news.title}
             className="w-full h-full object-cover"
           />
         </div>
 
         {/* Content Details */}
-        <div className="p-6 sm:p-10 space-y-6">
+        <div className="space-y-6 bg-gradient-to-b from-[#fffdfd] to-[#fff7fb] p-6 sm:p-10">
           <div className="flex items-center gap-3 text-xs">
-            <span className="px-2.5 py-1 rounded bg-purple-500/10 text-purple-300 border border-purple-500/20 font-bold uppercase tracking-wider">
+            <span className="rounded border border-purple-300 bg-purple-100 px-2.5 py-1 font-bold uppercase tracking-wider text-purple-800">
               {news.category}
             </span>
-            <span className="text-[var(--text-muted)] font-semibold">
+            <span className="font-semibold text-slate-500">
               Dipublikasi: {formatDate(news.date)}
             </span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[var(--text-primary)] leading-tight">
+          <h1 className="text-2xl font-extrabold leading-tight text-[#170C79] sm:text-3xl">
             {news.title}
           </h1>
 
-          <div className="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed whitespace-pre-wrap font-medium">
+          <div className="whitespace-pre-wrap border-t border-indigo-100 pt-5 text-sm font-medium leading-7 text-slate-700 sm:text-base sm:leading-8">
             {news.content}
           </div>
         </div>

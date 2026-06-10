@@ -37,7 +37,7 @@ export default function AdminLayout({ children }) {
 
   // Dropdown menus states
   const isPathMerch = location.pathname.startsWith('/admin/merchandise') || location.pathname.startsWith('/admin/orders') || location.pathname.startsWith('/admin/categories');
-  const isPathProfile = location.pathname.startsWith('/admin/about-intan') || location.pathname.startsWith('/admin/schedule');
+  const isPathProfile = location.pathname.startsWith('/admin/about-intan') || location.pathname.startsWith('/admin/schedule') || location.pathname.startsWith('/admin/intan-shining-star');
 
   const [openDropdowns, setOpenDropdowns] = useState({
     merchandise_group: isPathMerch,
@@ -49,7 +49,7 @@ export default function AdminLayout({ children }) {
     if (location.pathname.startsWith('/admin/merchandise') || location.pathname.includes('/admin/merchandise')) {
       setOpenDropdowns(prev => ({ ...prev, merchandise_group: true }));
     }
-    if (location.pathname.startsWith('/admin/about-intan') || location.pathname.startsWith('/admin/schedule')) {
+    if (location.pathname.startsWith('/admin/about-intan') || location.pathname.startsWith('/admin/schedule') || location.pathname.startsWith('/admin/intan-shining-star')) {
       setOpenDropdowns(prev => ({ ...prev, 'about-intan_group': true }));
     }
   }, [location.pathname]);
@@ -113,6 +113,7 @@ export default function AdminLayout({ children }) {
         { name: 'Setlist & Unit Songs', href: `${ROUTES.ADMIN_ABOUT_INTAN}?tab=setlists` },
         { name: 'Video Highlights', href: `${ROUTES.ADMIN_ABOUT_INTAN}?tab=videos` },
         { name: 'Trivia & Fakta', href: `${ROUTES.ADMIN_ABOUT_INTAN}?tab=trivia` },
+        { name: '#IntanShiningStar', href: ROUTES.ADMIN_SHINING_STAR },
         { name: 'Schedule', href: ROUTES.ADMIN_SCHEDULE }
       ]
     },

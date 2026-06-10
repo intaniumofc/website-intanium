@@ -8,7 +8,7 @@ import { generateId } from '../lib/helpers';
  * @param {number} quality 
  * @returns {Promise<File>}
  */
-const convertImageToWebP = (file, quality = 0.8) => {
+export const convertImageToWebP = (file, quality = 0.82, maxDimension = 2000) => {
   return new Promise((resolve, reject) => {
     if (!file.type.startsWith('image/')) {
       return resolve(file);
@@ -19,17 +19,23 @@ const convertImageToWebP = (file, quality = 0.8) => {
     
     img.onload = () => {
       const canvas = document.createElement('canvas');
-      canvas.width = img.width;
-      canvas.height = img.height;
+      const scale = Math.min(1, maxDimension / Math.max(img.width, img.height));
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
       
       const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0);
+      if (!ctx) {
+        URL.revokeObjectURL(imageURL);
+        reject(new Error('Browser tidak mendukung konversi gambar.'));
+        return;
+      }
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       
       canvas.toBlob((blob) => {
         URL.revokeObjectURL(imageURL);
         
         if (!blob) {
-          return reject(new Error('Canvas to blob conversion failed'));
+          return reject(new Error('Konversi gambar ke WebP gagal.'));
         }
         
         const nameWithoutExt = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
@@ -77,8 +83,10 @@ export function useSupabaseUpload() {
       setProgress(15);
       try {
         file = await convertImageToWebP(rawFile);
-      } catch (webpErr) {
-        console.warn('WebP conversion failed, uploading raw file:', webpErr);
+      } catch (conversionError) {
+        setError(conversionError.message);
+        setIsUploading(false);
+        throw conversionError;
       }
     }
     setProgress(25);
@@ -108,7 +116,7 @@ export function useSupabaseUpload() {
       setProgress(40);
 
       // Perform upload
-      const { error: uploadError, data } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from(bucketName)
         .upload(filePath, file, {
           cacheControl: '3600',

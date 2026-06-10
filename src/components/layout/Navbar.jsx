@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ROUTES } from '../../lib/constants';
 import Button from '../common/Button';
@@ -15,8 +15,6 @@ import {
   Palette,
   ShoppingBag,
   CreditCard,
-  Music,
-  PlayCircle,
   ChevronDown
 } from "lucide-react";
 import logoNobg from '../../assets/logos/logo-nobg.png';
@@ -27,6 +25,7 @@ export default function Navbar() {
 
   const navLinks = [
     { name: 'Tentang Intan', path: ROUTES.ABOUT_INTAN },
+    { name: '#IntanShiningStar', path: ROUTES.SHINING_STAR },
     { name: 'Intanium', path: ROUTES.ABOUT_INTANIUM },
     { name: 'Merchandise', path: ROUTES.MERCHANDISE },
     { name: 'News', path: ROUTES.NEWS },
@@ -52,8 +51,8 @@ export default function Navbar() {
               link: ROUTES.ABOUT_INTAN,
             },
             {
-              label: "Bintang Berkilau",
-              description: "Kilas balik milestone pencapaian bersejarah Intan",
+              label: "#IntanShiningStar",
+              description: "Arsip perjalanan dan milestone bersejarah Intan",
               icon: Sparkles,
               link: ROUTES.SHINING_STAR,
             },

@@ -4,26 +4,67 @@ import { motion, AnimatePresence, useReducedMotion, LayoutGroup } from 'framer-m
 import { BookmarkIcon, X, ArrowRight, Newspaper } from 'lucide-react';
 import { ROUTES } from '../../lib/constants';
 import Card from '../../components/common/Card';
+import bannerIntanium from '../../assets/logos/banner-nium.webp';
+import intanOne from '../../assets/images/intan-01.jpg';
+import intanTwo from '../../assets/images/intan-02.jpg';
+import intanThree from '../../assets/images/intan-03.jpg';
+import intanFour from '../../assets/images/intan-04.jpg';
 
 // Mapping categories to premium gradient glow color schemes
 const CATEGORY_THEMES = {
+  'Announcement': {
+    badgeClass: 'bg-indigo-100 text-indigo-800 border-indigo-300',
+    gradientColors: ['from-indigo-500/20', 'to-violet-500/20']
+  },
+  'Schedule': {
+    badgeClass: 'bg-sky-100 text-sky-800 border-sky-300',
+    gradientColors: ['from-sky-500/20', 'to-cyan-500/20']
+  },
   'Merch': {
-    badgeClass: 'bg-purple-100 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800',
-    gradientColors: ['from-purple-500/20', 'to-indigo-500/20']
+    badgeClass: 'bg-pink-100 text-pink-800 border-pink-300',
+    gradientColors: ['from-pink-500/20', 'to-purple-500/20']
   },
   'Event': {
-    badgeClass: 'bg-rose-100 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800',
-    gradientColors: ['from-rose-500/20', 'to-pink-500/20']
+    badgeClass: 'bg-violet-100 text-violet-800 border-violet-300',
+    gradientColors: ['from-violet-500/20', 'to-purple-500/20']
   },
   'Stream': {
-    badgeClass: 'bg-red-100 dark:bg-red-950/40 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800',
-    gradientColors: ['from-red-500/20', 'to-orange-500/20']
+    badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+    gradientColors: ['from-emerald-500/20', 'to-teal-500/20']
+  },
+  'Project': {
+    badgeClass: 'bg-amber-100 text-amber-800 border-amber-300',
+    gradientColors: ['from-amber-500/20', 'to-orange-500/20']
+  },
+  'Media': {
+    badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+    gradientColors: ['from-emerald-500/20', 'to-teal-500/20']
+  },
+  'Important': {
+    badgeClass: 'bg-red-100 text-red-800 border-red-300',
+    gradientColors: ['from-red-500/20', 'to-rose-500/20']
   },
   'Default': {
-    badgeClass: 'bg-blue-100 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800',
+    badgeClass: 'bg-blue-100 text-blue-800 border-blue-300',
     gradientColors: ['from-blue-500/20', 'to-cyan-500/20']
   }
 };
+
+const CATEGORY_IMAGES = {
+  Announcement: bannerIntanium,
+  Schedule: intanOne,
+  Event: intanTwo,
+  Merch: bannerIntanium,
+  Project: intanThree,
+  Media: intanFour,
+  Stream: intanFour,
+  Important: bannerIntanium,
+};
+
+function getArticleImage(article) {
+  const isGenericImage = !article.imageUrl || article.imageUrl.includes('images.unsplash.com');
+  return isGenericImage ? CATEGORY_IMAGES[article.category] || bannerIntanium : article.imageUrl;
+}
 
 export default function HomeNewsSection({ articles = [] }) {
   const [selectedArticle, setSelectedArticle] = useState(null);
@@ -57,7 +98,7 @@ export default function HomeNewsSection({ articles = [] }) {
     const theme = CATEGORY_THEMES[art.category] || CATEGORY_THEMES['Default'];
     return {
       ...art,
-      image: art.imageUrl,
+      image: getArticleImage(art),
       published: art.date ? new Date(art.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '1 Jan 2024',
       timeAgo: art.date ? 'Baru Rilis' : 'Baru saja',
       author: 'Official Admin',
@@ -240,7 +281,7 @@ export default function HomeNewsSection({ articles = [] }) {
               {/* Centered paper layout */}
               <motion.div
                 layoutId={`article-${selectedArticle.id}`}
-                className="fixed inset-4 md:inset-10 lg:inset-x-32 lg:inset-y-16 bg-white dark:bg-slate-900 border border-[var(--border-color)] rounded-2xl overflow-hidden shadow-2xl z-[1000] flex flex-col"
+                className="fixed inset-4 z-[1000] flex flex-col overflow-hidden rounded-2xl border border-indigo-100 bg-[#fffdfd] shadow-2xl md:inset-10 lg:inset-x-32 lg:inset-y-16"
               >
                 {/* Float close button */}
                 <motion.button
@@ -255,7 +296,10 @@ export default function HomeNewsSection({ articles = [] }) {
                   <X className="w-4 h-4 stroke-[2.5]" />
                 </motion.button>
 
-                <div className="h-full overflow-y-auto flex flex-col">
+                <div
+                  className="custom-scrollbar flex h-full flex-col overflow-y-auto overscroll-contain"
+                  data-lenis-prevent
+                >
                   {/* Hero banner inside modal */}
                   <motion.div
                     layoutId={`article-image-${selectedArticle.id}`}
@@ -287,26 +331,28 @@ export default function HomeNewsSection({ articles = [] }) {
                   </motion.div>
 
                   {/* Body Paragraph Content */}
-                  <div className="p-6 md:p-8 space-y-6 flex-grow">
-                    <motion.h1
-                      layoutId={`article-title-${selectedArticle.id}`}
-                      className="text-xl md:text-3xl font-black text-[#170C79] leading-tight"
-                    >
-                      {selectedArticle.title}
-                    </motion.h1>
+                  <div className="flex-grow bg-gradient-to-b from-[#fffdfd] to-[#fff7fb] px-6 py-7 md:px-10 md:py-9">
+                    <div className="mx-auto max-w-4xl space-y-6">
+                      <motion.h1
+                        layoutId={`article-title-${selectedArticle.id}`}
+                        className="text-xl font-black leading-tight text-[#170C79] md:text-3xl"
+                      >
+                        {selectedArticle.title}
+                      </motion.h1>
 
-                    <motion.div
-                      className="text-sm md:text-base text-[var(--text-secondary)] leading-relaxed space-y-4 max-w-none border-t border-[var(--border-color)]/60 pt-5"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.2, duration: 0.3 }}
-                    >
-                      {selectedArticle.contentParagraphs.map((paragraph, index) => (
-                        <p key={index} className="text-justify indent-4 leading-relaxed">
-                          {paragraph}
-                        </p>
-                      ))}
-                    </motion.div>
+                      <motion.div
+                        className="max-w-none space-y-4 border-t border-indigo-100 pt-5 text-sm leading-7 text-slate-700 md:text-base md:leading-8"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2, duration: 0.3 }}
+                      >
+                        {selectedArticle.contentParagraphs.map((paragraph, index) => (
+                          <p key={index}>
+                            {paragraph}
+                          </p>
+                        ))}
+                      </motion.div>
+                    </div>
                   </div>
                 </div>
               </motion.div>

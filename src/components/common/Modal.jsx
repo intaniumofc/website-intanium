@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
-import Card from './Card';
-import Button from './Button';
+import { X } from 'lucide-react';
 
 /**
- * Reusable modal overlay component using glassmorphic backdrops.
+ * Reusable modal overlay component with solid container and clean design.
  */
 export default function Modal({
   isOpen,
@@ -38,35 +37,33 @@ export default function Modal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm cursor-pointer"
+        className="absolute inset-0 bg-slate-900/60 backdrop-blur-md cursor-pointer transition-opacity duration-300"
         onClick={onClose}
       />
 
       {/* Modal Container */}
-      <Card
-        hoverEffect={false}
-        padding="none"
-        className={`relative z-10 w-full rounded-2xl shadow-2xl border border-[var(--border-color)] bg-[var(--bg-secondary)] overflow-hidden animate-fade-in ${sizeClasses[size]} ${className}`}
+      <div
+        className={`relative z-10 w-full rounded-2xl shadow-2xl border border-slate-100 bg-white overflow-hidden animate-modal-scale-in ${sizeClasses[size]} ${className}`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border-color)] bg-[var(--bg-primary)]/80">
-          <h3 className="text-lg font-bold text-[var(--text-primary)]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+          <h3 className="text-lg font-extrabold text-slate-800">
             {title}
           </h3>
           <button
             onClick={onClose}
-            className="text-[var(--text-secondary)] hover:text-[var(--color-primary-hover)] transition-colors p-1.5 rounded-lg hover:bg-[var(--border-color)]"
+            className="text-slate-400 hover:text-slate-600 transition-colors p-1.5 rounded-xl hover:bg-slate-100/80 cursor-pointer"
             aria-label="Close Modal"
           >
-            ✕
+            <X size={18} />
           </button>
         </div>
 
         {/* Content */}
-        <div className="px-6 py-5 max-h-[75vh] overflow-y-auto custom-scrollbar">
+        <div className="modal-body px-6 py-5 max-h-[75vh] overflow-y-auto custom-scrollbar">
           {children}
         </div>
-      </Card>
+      </div>
     </div>
   );
 }
