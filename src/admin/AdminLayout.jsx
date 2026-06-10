@@ -20,7 +20,8 @@ import {
   ExternalLink,
   Headphones,
   ClipboardList,
-  User
+  User,
+  Hash
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import logoNobg from '../assets/logos/logo-nobg.png';
@@ -122,6 +123,7 @@ export default function AdminLayout({ children }) {
     { id: 'playlists', name: 'Denger Intan', href: ROUTES.ADMIN_PLAYLISTS, icon: Headphones },
     { id: 'gallery', name: 'Galeri Album', href: ROUTES.ADMIN_GALLERY, icon: ImageIcon },
     { id: 'mading', name: 'Moderasi Mading', href: ROUTES.ADMIN_MADING, icon: Pin },
+    { id: 'hashtags', name: 'Kelola Tagar', href: ROUTES.ADMIN_HASHTAGS, icon: Hash },
   ];
 
 

@@ -209,3 +209,17 @@ CREATE POLICY "Allow public read on intan_shining_star_achievements"
 CREATE POLICY "Allow admin all on intan_shining_star_achievements"
   ON intan_shining_star_achievements FOR ALL TO authenticated
   USING (true) WITH CHECK (true);
+
+-- 11. Hashtags (Public Read, Admin All)
+CREATE TABLE IF NOT EXISTS hashtags (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  text TEXT NOT NULL,
+  count TEXT DEFAULT '0 Tweets',
+  explanation TEXT,
+  row_number INT DEFAULT 1,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE hashtags ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public read on hashtags" ON hashtags FOR SELECT USING (true);
+CREATE POLICY "Allow admin all on hashtags" ON hashtags FOR ALL USING (auth.role() = 'authenticated');

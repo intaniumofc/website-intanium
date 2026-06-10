@@ -36,6 +36,7 @@ export const ROUTES = {
   ADMIN_GALLERY: '/admin/gallery',
   ADMIN_MADING: '/admin/mading',
   ADMIN_PLAYLISTS: '/admin/denger-intan',
+  ADMIN_HASHTAGS: '/admin/hashtags',
 };
 
 export const SOCIALS = {

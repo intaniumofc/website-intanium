@@ -37,6 +37,7 @@ import AdminMading from '../admin/mading';
 import AdminPlaylists from '../admin/playlists';
 import AdminAboutIntan from '../admin/about-intan';
 import AdminIntanShiningStar from '../admin/intan-shining-star';
+import AdminHashtags from '../admin/hashtags';
 
 // Reusable Admin Guard Route
 const AdminGuard = ({ children }) => {
@@ -274,6 +275,14 @@ export default function AppRoutes() {
         element={
           <AdminGuard>
             <AdminPlaylists />
+          </AdminGuard>
+        }
+      />
+      <Route
+        path={ROUTES.ADMIN_HASHTAGS}
+        element={
+          <AdminGuard>
+            <AdminHashtags />
           </AdminGuard>
         }
       />
