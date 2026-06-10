@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { ChevronDown, Crown, Palette, Shield, Sparkles, Users } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion, useInView } from 'framer-motion';
+import { ChevronDown, Crown, LayoutGrid, Palette, Shield, Sparkles, Users } from 'lucide-react';
 
 const STRUCTURE = {
   leader: {
@@ -77,6 +77,20 @@ const getDivisionPreview = (branch, max = 3) => {
   return { preview: names.slice(0, max), extra: Math.max(0, names.length - max) };
 };
 
+// === Aggregate stats (untuk StatBar) ===
+const TOTAL_DIVISIONS = STRUCTURE.branches.reduce((sum, b) => sum + b.divisions.length, 0);
+const TOTAL_MEMBERS = STRUCTURE.branches.reduce((sum, b) => sum + getTotalMembers(b), 0);
+
+// === Filter tabs ===
+const FILTER_TABS = [
+  { id: 'all', label: 'Semua', icon: LayoutGrid },
+  ...STRUCTURE.branches.map((b) => ({
+    id: b.id,
+    label: BRANCH_VISUALS[b.id].eyebrow,
+    icon: BRANCH_VISUALS[b.id].icon
+  }))
+];
+
 // === Variants ===
 const staggerContainer = {
   hidden: { opacity: 0 },
@@ -135,6 +149,12 @@ const divisionItemVariants = {
   exit: { opacity: 0, y: 8, scale: 0.96, transition: { duration: 0.15 } }
 };
 
+const branchCardVariants = {
+  hidden: { opacity: 0, y: 28 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: PREMIUM_EASE } },
+  exit: { opacity: 0, y: 14, scale: 0.97, transition: { duration: 0.25, ease: 'easeInOut' } }
+};
+
 // === Konstanta objek inline (dipisah agar JSX tidak memakai kurawal ganda) ===
 const LEADER_HOVER = { y: -4, scale: 1.01 };
 const LEADER_SPRING = { type: 'spring', stiffness: 320, damping: 24 };
@@ -143,10 +163,41 @@ const CARD_SPRING = { type: 'spring', stiffness: 320, damping: 24 };
 const CARD_TAP = { scale: 0.985 };
 const CHEVRON_TRANSITION = { duration: 0.28, ease: PREMIUM_EASE };
 const SECTION_VIEWPORT = { once: true, amount: 0.18, margin: '-80px' };
+const COUNT_VIEWPORT = { once: true, amount: 0.6 };
 const DOTS_STYLE = {
   backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.65) 1px, transparent 1.6px)',
   backgroundSize: '26px 26px'
 };
+
+// === Animated count-up ===
+function useCountUp(end, inView, duration = 1.4) {
+  const [value, setValue] = useState(0);
+  useEffect(() => {
+    if (!inView) return undefined;
+    let frame;
+    const startTime = performance.now();
+    const step = (now) => {
+      const progress = Math.min(1, (now - startTime) / (duration * 1000));
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setValue(Math.round(eased * end));
+      if (progress < 1) frame = requestAnimationFrame(step);
+    };
+    frame = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frame);
+  }, [end, inView, duration]);
+  return value;
+}
+
+function CountUp({ end, duration, className }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, COUNT_VIEWPORT);
+  const value = useCountUp(end, inView, duration);
+  return (
+    <span ref={ref} className={className}>
+      {value}
+    </span>
+  );
+}
 
 // === Background dekoratif subtle ===
 function DecorativeStructureBackground() {
@@ -189,6 +240,56 @@ function DecorativeStructureBackground() {
   );
 }
 
+// === Aggregate stat bar dengan angka beranimasi ===
+function StatBar() {
+  const stats = [
+    { label: 'Koordinator', value: STRUCTURE.branches.length },
+    { label: 'Divisi', value: TOTAL_DIVISIONS },
+    { label: 'Anggota Aktif', value: TOTAL_MEMBERS }
+  ];
+  return (
+    <motion.div variants={fadeUp} className="mx-auto grid max-w-2xl grid-cols-3 gap-3 sm:gap-4">
+      {stats.map((stat) => (
+        <div
+          key={stat.label}
+          className="rounded-3xl border border-white/70 bg-white/65 px-3 py-4 text-center shadow-[0_18px_50px_-34px_rgba(28,15,132,0.4)] backdrop-blur-xl"
+        >
+          <CountUp end={stat.value} className="block text-3xl font-black text-(--color-primary) sm:text-4xl" />
+          <span className="mt-1 block text-[11px] font-bold uppercase tracking-widest text-(--text-secondary)">
+            {stat.label}
+          </span>
+        </div>
+      ))}
+    </motion.div>
+  );
+}
+
+// === Filter tabs ===
+function FilterTabs({ active, onChange }) {
+  return (
+    <motion.div variants={fadeUp} className="flex flex-wrap items-center justify-center gap-2">
+      {FILTER_TABS.map((tab) => {
+        const TabIcon = tab.icon;
+        const isActive = active === tab.id;
+        return (
+          <button
+            key={tab.id}
+            type="button"
+            onClick={() => onChange(tab.id)}
+            aria-pressed={isActive}
+            className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold transition-all duration-300 ${isActive
+              ? 'border-(--color-primary)/40 bg-(--color-primary) text-white shadow-[0_12px_30px_-14px_rgba(124,58,237,0.7)]'
+              : 'border-white/70 bg-white/60 text-(--text-secondary) hover:border-(--color-primary)/30 hover:text-(--color-primary)'}`}
+          >
+            <TabIcon className="h-3.5 w-3.5" />
+            {tab.label}
+          </button>
+        );
+      })}
+    </motion.div>
+  );
+}
+
 // === Branch stats row ===
 function BranchStats({ branch }) {
   const total = getTotalMembers(branch);
@@ -198,7 +299,7 @@ function BranchStats({ branch }) {
         {branch.divisions.length} Divisi
       </span>
       <span className="inline-flex items-center gap-1.5 rounded-full bg-white/70 px-2.5 py-1">
-        {total} Anggota
+        <CountUp end={total} duration={1} className="font-bold" /> Anggota
       </span>
     </div>
   );
@@ -250,7 +351,6 @@ function LeaderCard() {
           </span>
           <div>
             <h3 className="text-2xl font-black leading-tight text-(--color-primary)">{STRUCTURE.leader.name}</h3>
-            <p className="text-xs font-extrabold uppercase tracking-widest text-(--color-secondary)">{STRUCTURE.leader.role}</p>
           </div>
           <p className="text-sm leading-relaxed text-(--text-secondary)">{STRUCTURE.leader.description}</p>
         </div>
@@ -277,7 +377,7 @@ function BranchDetails({ branch }) {
             className="rounded-2xl border border-white/70 bg-white/70 p-3.5"
           >
             <div className="mb-2 flex items-center justify-between gap-3">
-              <span className="text-xs font-black uppercase tracking-widest text-(--color-primary)">{division.name}</span>
+              <span className="text-xs font-black text-(--color-primary)">{division.name}</span>
               <span className="shrink-0 text-[11px] font-semibold text-(--text-secondary)">{division.members.length} anggota</span>
             </div>
             <div className="flex flex-wrap gap-1.5">
@@ -305,12 +405,13 @@ function BranchCard({ branch, isActive, onToggle }) {
   return (
     <motion.article
       layout
-      variants={fadeUp}
+      variants={branchCardVariants}
+      exit="exit"
       whileHover={CARD_HOVER}
       transition={CARD_SPRING}
       className={`relative self-start rounded-4xl border bg-white/65 p-5 backdrop-blur-xl transition-[border-color,box-shadow,background-color] duration-300 ${isActive
-          ? 'border-(--color-primary)/35 bg-white/75 shadow-[0_24px_70px_-34px_rgba(124,58,237,0.5)]'
-          : 'border-white/70 shadow-[0_18px_50px_-34px_rgba(28,15,132,0.35)]'
+        ? 'border-(--color-primary)/35 bg-white/75 shadow-[0_24px_70px_-34px_rgba(124,58,237,0.5)]'
+        : 'border-white/70 shadow-[0_18px_50px_-34px_rgba(28,15,132,0.35)]'
         }`}
     >
       <button
@@ -327,9 +428,8 @@ function BranchCard({ branch, isActive, onToggle }) {
                 <BranchIcon className="h-5 w-5" />
               </div>
               <div className="min-w-0">
-                <p className={`text-xs font-black uppercase tracking-widest ${visual.accent}`}>{visual.eyebrow}</p>
+                <p className={`text-sm font-black ${visual.accent}`}>{visual.eyebrow}</p>
                 <h3 className="mt-1 truncate text-xl font-black leading-tight text-(--color-primary)">{branch.coordinator}</h3>
-                <p className="text-[11px] font-bold uppercase tracking-wider text-(--text-secondary)">{branch.role}</p>
               </div>
             </div>
             <motion.span
@@ -345,6 +445,10 @@ function BranchCard({ branch, isActive, onToggle }) {
 
           <BranchStats branch={branch} />
           <DivisionPreviewChips branch={branch} />
+
+          <span className={`inline-flex items-center gap-1 text-[11px] font-bold transition-colors duration-300 ${isActive ? 'text-(--color-primary)' : 'text-(--text-secondary)'}`}>
+            {isActive ? 'Tutup Detail' : 'Lihat Anggota'}
+          </span>
         </motion.div>
       </button>
 
@@ -377,10 +481,23 @@ function Connector() {
 
 export default function IntaniumStructureSection() {
   const [activeBranch, setActiveBranch] = useState(null);
+  const [filter, setFilter] = useState('all');
 
   const handleToggle = (branchId) => {
     setActiveBranch((current) => (current === branchId ? null : branchId));
   };
+
+  const handleFilter = (id) => {
+    setFilter(id);
+    setActiveBranch(id === 'all' ? null : id);
+  };
+
+  const visibleBranches =
+    filter === 'all'
+      ? STRUCTURE.branches
+      : STRUCTURE.branches.filter((branch) => branch.id === filter);
+
+  const isFiltered = filter !== 'all';
 
   return (
     <motion.section
@@ -403,18 +520,30 @@ export default function IntaniumStructureSection() {
           </p>
         </motion.div>
 
-        <LeaderCard />
-        <Connector />
+        <StatBar />
 
-        <motion.div variants={staggerContainer} className="grid items-start gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {STRUCTURE.branches.map((branch) => (
-            <BranchCard
-              key={branch.id}
-              branch={branch}
-              isActive={activeBranch === branch.id}
-              onToggle={() => handleToggle(branch.id)}
-            />
-          ))}
+        <LeaderCard />
+        {!isFiltered && <Connector />}
+
+        <FilterTabs active={filter} onChange={handleFilter} />
+
+        <motion.div
+          layout
+          variants={staggerContainer}
+          className={`grid items-start gap-5 ${isFiltered
+            ? 'mx-auto max-w-2xl grid-cols-1'
+            : 'sm:grid-cols-2 lg:grid-cols-3'}`}
+        >
+          <AnimatePresence mode="popLayout">
+            {visibleBranches.map((branch) => (
+              <BranchCard
+                key={branch.id}
+                branch={branch}
+                isActive={activeBranch === branch.id}
+                onToggle={() => handleToggle(branch.id)}
+              />
+            ))}
+          </AnimatePresence>
         </motion.div>
       </motion.div>
     </motion.section>

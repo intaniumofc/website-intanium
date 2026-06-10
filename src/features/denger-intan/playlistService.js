@@ -64,41 +64,6 @@ const MOCK_PLAYLISTS = [
   }
 ];
 
-const MOCK_MOST_PLAYED = [
-  {
-    id: 'song-1',
-    title: 'Untuk Selamanya',
-    artist: 'Kunto Aji',
-    playCount: 'Sering diputar',
-    mood: 'Chill / Calm',
-    note: 'Lagu favorit Intan untuk meredakan kecemasan, sering dinyanyikan saat acoustic live stream malam hari.'
-  },
-  {
-    id: 'song-2',
-    title: 'Hati-Hati di Jalan',
-    artist: 'Tulus',
-    playCount: 'Sering diputar',
-    mood: 'Nostalgic',
-    note: 'Lagu kebangsaan galau yang hampir selalu diputar saat ngobrol santai dengan fans.'
-  },
-  {
-    id: 'song-3',
-    title: 'Heavy Rotation',
-    artist: 'JKT48',
-    playCount: 'Sangat sering diputar',
-    mood: 'Hype / Energetic',
-    note: 'Lagu wajib pembuka stream perayaan debut atau pencapaian target subscriber.'
-  },
-  {
-    id: 'song-4',
-    title: 'Secukupnya',
-    artist: 'Hindia',
-    playCount: 'Sering diputar',
-    mood: 'Focus / Work',
-    note: 'Diputar sebagai musik latar belakang saat sesi streaming belajar bareng atau nugas malam.'
-  }
-];
-
 export const playlistService = {
   getPlaylists: async () => {
     // If Supabase URL is missing or placeholder, fallback immediately
@@ -217,7 +182,7 @@ export const playlistService = {
       !import.meta.env.VITE_SUPABASE_URL ||
       import.meta.env.VITE_SUPABASE_URL.includes('placeholder')
     ) {
-      return MOCK_MOST_PLAYED;
+      return [];
     }
 
     try {
@@ -228,7 +193,7 @@ export const playlistService = {
 
       if (error) {
         console.error('Error fetching most played songs, falling back to mock:', error);
-        return MOCK_MOST_PLAYED;
+        return [];
       }
 
       if (data && data.length > 0) {
@@ -239,13 +204,15 @@ export const playlistService = {
           playCount: s.play_count,
           mood: s.mood || '',
           note: s.note || '',
+          audioUrl: s.audio_url || '',
+          coverUrl: s.cover_url || '',
           createdAt: s.created_at
         }));
       }
-      return MOCK_MOST_PLAYED;
+      return [];
     } catch (err) {
       console.error('Failed to get most played songs, falling back to mock:', err);
-      return MOCK_MOST_PLAYED;
+      return [];
     }
   },
 
@@ -257,7 +224,9 @@ export const playlistService = {
         artist: songData.artist,
         play_count: songData.playCount,
         mood: songData.mood || '',
-        note: songData.note || ''
+        note: songData.note || '',
+        audio_url: songData.audioUrl || '',
+        cover_url: songData.coverUrl || ''
       }])
       .select()
       .single();
@@ -277,7 +246,9 @@ export const playlistService = {
         artist: songData.artist,
         play_count: songData.playCount,
         mood: songData.mood || '',
-        note: songData.note || ''
+        note: songData.note || '',
+        audio_url: songData.audioUrl || '',
+        cover_url: songData.coverUrl || ''
       })
       .eq('id', id)
       .select()

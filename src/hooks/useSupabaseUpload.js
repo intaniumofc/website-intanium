@@ -58,6 +58,101 @@ export const convertImageToWebP = (file, quality = 0.82, maxDimension = 2000) =>
 };
 
 /**
+ * Loads the lamejs library dynamically from CDN.
+ * @returns {Promise<any>}
+ */
+const loadLamejs = () => {
+  return new Promise((resolve, reject) => {
+    if (window.lamejs) {
+      resolve(window.lamejs);
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.all.min.js';
+    script.onload = () => resolve(window.lamejs);
+    script.onerror = () => reject(new Error('Gagal memuat pustaka kompresi audio (lamejs) dari CDN.'));
+    document.head.appendChild(script);
+  });
+};
+
+/**
+ * Decodes and compresses an audio file to low-bitrate MP3 client-side.
+ * @param {File} file 
+ * @param {number} targetBitrate
+ * @param {number} targetSampleRate
+ * @returns {Promise<File>}
+ */
+const compressAudioToMp3 = async (file, targetBitrate = 96, targetSampleRate = 22050) => {
+  const lamejs = await loadLamejs();
+  const arrayBuffer = await file.arrayBuffer();
+  
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) {
+    throw new Error('Browser tidak mendukung AudioContext untuk kompresi.');
+  }
+  
+  const audioCtx = new AudioContextClass();
+  let audioBuffer;
+  try {
+    audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+  } catch (err) {
+    audioCtx.close().catch(() => {});
+    throw err;
+  }
+  
+  const originalSampleRate = audioBuffer.sampleRate;
+  const originalSamples = audioBuffer.getChannelData(0); // Mono channel 0
+  
+  // Downsample PCM data if original rate is higher
+  let pcmData;
+  let sampleRate = originalSampleRate;
+  if (originalSampleRate > targetSampleRate) {
+    const ratio = originalSampleRate / targetSampleRate;
+    const newLength = Math.round(originalSamples.length / ratio);
+    pcmData = new Float32Array(newLength);
+    for (let i = 0; i < newLength; i++) {
+      pcmData[i] = originalSamples[Math.round(i * ratio)];
+    }
+    sampleRate = targetSampleRate;
+  } else {
+    pcmData = originalSamples;
+  }
+  
+  // Convert Float32Array (-1.0 to 1.0) to Int16Array (-32768 to 32767)
+  const int16Samples = new Int16Array(pcmData.length);
+  for (let i = 0; i < pcmData.length; i++) {
+    const s = Math.max(-1, Math.min(1, pcmData[i]));
+    int16Samples[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+  }
+  
+  const mp3encoder = new lamejs.Mp3Encoder(1, sampleRate, targetBitrate);
+  const mp3Data = [];
+  
+  const sampleBlockSize = 1152;
+  for (let i = 0; i < int16Samples.length; i += sampleBlockSize) {
+    const sampleChunk = int16Samples.subarray(i, i + sampleBlockSize);
+    const mp3buf = mp3encoder.encodeBuffer(sampleChunk);
+    if (mp3buf.length > 0) {
+      mp3Data.push(mp3buf);
+    }
+  }
+  
+  const mp3buf = mp3encoder.flush();
+  if (mp3buf.length > 0) {
+    mp3Data.push(mp3buf);
+  }
+  
+  audioCtx.close().catch(() => {});
+  
+  const blob = new Blob(mp3Data, { type: 'audio/mp3' });
+  const nameWithoutExt = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+  return new File([blob], `${nameWithoutExt}_optimized.mp3`, {
+    type: 'audio/mp3',
+    lastModified: Date.now()
+  });
+};
+
+/**
  * Custom hook for handling media uploads directly to Supabase Storage.
  * Includes simulated fallbacks for mock environments without active Supabase credentials.
  */
@@ -87,6 +182,13 @@ export function useSupabaseUpload() {
         setError(conversionError.message);
         setIsUploading(false);
         throw conversionError;
+      }
+    } else if (rawFile.type.startsWith('audio/') || rawFile.name.endsWith('.mp3')) {
+      setProgress(15);
+      try {
+        file = await compressAudioToMp3(rawFile);
+      } catch (audioError) {
+        console.warn('Audio compression failed, uploading original:', audioError);
       }
     }
     setProgress(25);

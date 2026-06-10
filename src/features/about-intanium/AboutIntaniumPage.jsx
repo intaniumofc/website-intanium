@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ROUTES } from '../../lib/constants';
@@ -220,7 +220,7 @@ const MISI_CLIP = { clipPath: 'polygon(50vw 0, 100% 0, 100% 100%, calc(50vw - 80
 
 function LogoPngViewer({ fallbackImage, className = 'w-72 h-72 sm:w-80 sm:h-80' }) {
   return (
-    <div className={`relative ${className} rounded-full bg-[radial-gradient(circle_at_30%_25%,#1C0F84_0%,#0E074A_45%,#07032D_100%)] border border-white/10 p-1 flex items-center justify-center shadow-[0_18px_60px_-25px_rgba(28,15,132,0.7)] overflow-hidden group select-none`}>
+    <div className={`relative ${className} rounded-full bg-[radial-gradient(circle_at_30%_25%,#737985_0%,#4B5563_45%,#272B33_100%)] border border-white/10 p-1 flex items-center justify-center shadow-[0_18px_60px_-25px_rgba(55,65,81,0.7)] overflow-hidden group select-none`}>
       {/* Soft pulsing rings — pearl/lavender, very low opacity */}
       <div className="absolute inset-4 rounded-full border border-white/10 animate-[pulse_4s_cubic-bezier(0.4,0,0.6,1)_infinite] z-0 pointer-events-none" />
       <div className="absolute inset-9 rounded-full border border-white/[0.06] animate-[pulse_5s_cubic-bezier(0.4,0,0.6,1)_infinite] z-0 pointer-events-none" />
@@ -255,27 +255,44 @@ function LogoPngViewer({ fallbackImage, className = 'w-72 h-72 sm:w-80 sm:h-80' 
   );
 }
 
-// Premium glass philosophy card (reusable: desktop absolute + mobile grid)
-function PhilosophyCard({ item, index, variants, className = '' }) {
+// Premium glass philosophy card (interaktif: hover/tap menyalakan konektor ke logo)
+function PhilosophyCard({ item, index, variants, className = '', activeId, onActivate, onDeactivate }) {
   const Icon = item.icon;
   const num = String(index + 1).padStart(2, '0');
+  const isActive = activeId === item.id;
+
+  const activate = () => onActivate && onActivate(item.id);
+  const deactivate = () => onDeactivate && onDeactivate();
+  const toggle = () => (isActive ? deactivate() : activate());
 
   return (
     <motion.div
       variants={variants}
       whileHover={CARD_HOVER}
       transition={CARD_SPRING}
-      className={`group relative cursor-default rounded-3xl border border-white/70 bg-white/55 backdrop-blur-xl p-5 shadow-[0_18px_50px_-28px_rgba(28,15,132,0.45)] hover:border-white/90 hover:shadow-[0_24px_60px_-26px_rgba(124,58,237,0.4)] transition-all duration-500 ${className}`}
+      onHoverStart={activate}
+      onHoverEnd={deactivate}
+      onFocus={activate}
+      onBlur={deactivate}
+      onClick={toggle}
+      tabIndex={0}
+      role="button"
+      aria-pressed={isActive}
+      className={`group relative cursor-pointer rounded-3xl border bg-white/55 backdrop-blur-xl p-5 outline-none transition-all duration-500 ${isActive
+        ? 'border-(--color-primary)/55 shadow-[0_26px_64px_-26px_rgba(124,58,237,0.55)] ring-1 ring-(--color-primary)/25'
+        : 'border-white/70 shadow-[0_18px_50px_-28px_rgba(28,15,132,0.45)] hover:border-white/90'} ${className}`}
     >
-      {/* Ambient glow yang menguat saat hover */}
-      <div className="pointer-events-none absolute inset-0 -z-10 rounded-3xl bg-[radial-gradient(circle_at_30%_0%,rgba(196,181,253,0.18),transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      {/* Ambient glow saat aktif/hover */}
+      <div className={`pointer-events-none absolute inset-0 -z-10 rounded-3xl bg-[radial-gradient(circle_at_30%_0%,rgba(196,181,253,0.22),transparent_70%)] transition-opacity duration-500 ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`} />
 
       <div className="flex gap-4 items-start">
         {/* Crystalline glass icon tile */}
         <div className="flex flex-col items-center gap-1.5 shrink-0">
           <span className="text-[10px] font-bold text-(--color-primary)/35 font-mono tracking-widest">{num}</span>
-          <span className="relative w-10 h-10 rounded-2xl bg-[linear-gradient(140deg,rgba(255,255,255,0.85),rgba(221,214,254,0.55))] border border-white/80 flex items-center justify-center text-(--color-primary) shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),0_6px_16px_-8px_rgba(124,58,237,0.5)] group-hover:scale-110 group-hover:text-white group-hover:bg-[linear-gradient(140deg,var(--color-primary),#7C3AED)] transition-all duration-500 overflow-hidden">
-            <span className="absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_35%_25%,rgba(255,255,255,0.8),transparent_60%)] opacity-70 group-hover:opacity-40 transition-opacity duration-500" />
+          <span className={`relative w-10 h-10 rounded-2xl border border-white/80 flex items-center justify-center shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),0_6px_16px_-8px_rgba(124,58,237,0.5)] transition-all duration-500 overflow-hidden ${isActive
+            ? 'scale-110 text-white bg-[linear-gradient(140deg,var(--color-primary),#7C3AED)]'
+            : 'text-(--color-primary) bg-[linear-gradient(140deg,rgba(255,255,255,0.85),rgba(221,214,254,0.55))] group-hover:scale-110'}`}>
+            <span className="absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_35%_25%,rgba(255,255,255,0.8),transparent_60%)] opacity-70" />
             <Icon className="relative size-4.5" />
           </span>
         </div>
@@ -290,8 +307,23 @@ function PhilosophyCard({ item, index, variants, className = '' }) {
   );
 }
 
-// Desktop-only SVG overlay: garis connector tipis (orbit rings dibuat via DOM agar tetap bulat)
-function OrbitConnectors() {
+// Mapping connector → philosophy id (untuk highlight interaktif)
+const CONNECTOR_PATHS = [
+  { id: 'logo-1', d: 'M315 115 Q405 200 455 260', cx: 455, cy: 260 },
+  { id: 'logo-2', d: 'M685 115 Q595 200 545 260', cx: 545, cy: 260 },
+  {
+    id: 'logo-3',
+    d: 'M500 520 Q500 395 500 335',
+    cx: 500,
+    cy: 335,
+    gradient: 'connectorGradVertical',
+    activeGradient: 'connectorGradVerticalActive'
+  }
+];
+const CIRCLE_TRANSITION_STYLE = { transition: 'fill 0.3s ease, fill-opacity 0.3s ease' };
+
+// Desktop-only SVG overlay: garis connector yang menyala saat kartu aktif
+function OrbitConnectors({ activeId }) {
   return (
     <svg
       viewBox="0 0 1000 620"
@@ -305,39 +337,59 @@ function OrbitConnectors() {
           <stop offset="50%" stopColor="#A78BFA" stopOpacity="0.5" />
           <stop offset="100%" stopColor="#818CF8" stopOpacity="0.12" />
         </linearGradient>
+        <linearGradient id="connectorGradActive" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#C4B5FD" stopOpacity="0.4" />
+          <stop offset="50%" stopColor="#7C3AED" stopOpacity="1" />
+          <stop offset="100%" stopColor="#A78BFA" stopOpacity="0.7" />
+        </linearGradient>
+        <linearGradient id="connectorGradVertical" gradientUnits="userSpaceOnUse" x1="500" y1="520" x2="500" y2="335">
+          <stop offset="0%" stopColor="#C4B5FD" stopOpacity="0.2" />
+          <stop offset="50%" stopColor="#A78BFA" stopOpacity="0.55" />
+          <stop offset="100%" stopColor="#818CF8" stopOpacity="0.2" />
+        </linearGradient>
+        <linearGradient id="connectorGradVerticalActive" gradientUnits="userSpaceOnUse" x1="500" y1="520" x2="500" y2="335">
+          <stop offset="0%" stopColor="#C4B5FD" stopOpacity="0.55" />
+          <stop offset="50%" stopColor="#7C3AED" stopOpacity="1" />
+          <stop offset="100%" stopColor="#A78BFA" stopOpacity="0.75" />
+        </linearGradient>
       </defs>
 
-      {/* Connector: Cahaya (kiri atas) menuju logo */}
-      <motion.path
-        variants={connectorReveal}
-        d="M300 170 Q400 235 455 285"
-        stroke="url(#connectorGrad)"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-      {/* Connector: Permata (kanan atas) menuju logo */}
-      <motion.path
-        variants={connectorReveal}
-        d="M700 170 Q600 235 545 285"
-        stroke="url(#connectorGrad)"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-      {/* Connector: Kupu-Kupu (bawah tengah) menuju logo */}
-      <motion.path
-        variants={connectorReveal}
-        d="M500 470 Q500 410 500 360"
-        stroke="url(#connectorGrad)"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
+      {CONNECTOR_PATHS.map((path) => {
+        const isActive = activeId === path.id;
+        const gradient = path.gradient || 'connectorGrad';
+        const activeGradient = path.activeGradient || 'connectorGradActive';
+        const pathStyle = {
+          strokeWidth: isActive ? 2.6 : 1.5,
+          filter: isActive ? 'drop-shadow(0 0 6px rgba(124,58,237,0.6))' : 'none',
+          transition: 'stroke-width 0.35s ease, filter 0.35s ease'
+        };
+        return (
+          <motion.path
+            key={path.id}
+            variants={connectorReveal}
+            d={path.d}
+            stroke={`url(#${isActive ? activeGradient : gradient})`}
+            strokeLinecap="round"
+            style={pathStyle}
+          />
+        );
+      })}
 
-      {/* Anchor dots di titik temu logo */}
-      <motion.g variants={connectorReveal}>
-        <circle cx="455" cy="285" r="2.5" fill="#C4B5FD" fillOpacity="0.6" />
-        <circle cx="545" cy="285" r="2.5" fill="#C4B5FD" fillOpacity="0.6" />
-        <circle cx="500" cy="360" r="2.5" fill="#C4B5FD" fillOpacity="0.6" />
-      </motion.g>
+      {CONNECTOR_PATHS.map((path) => {
+        const isActive = activeId === path.id;
+        return (
+          <motion.circle
+            key={`dot-${path.id}`}
+            variants={connectorReveal}
+            cx={path.cx}
+            cy={path.cy}
+            r={isActive ? 4 : 2.5}
+            fill={isActive ? '#7C3AED' : '#C4B5FD'}
+            fillOpacity={isActive ? 1 : 0.6}
+            style={CIRCLE_TRANSITION_STYLE}
+          />
+        );
+      })}
     </svg>
   );
 }
@@ -385,6 +437,9 @@ function DecorativeSparkles() {
 }
 
 export default function AboutIntaniumPage() {
+  const [activeId, setActiveId] = useState(null);
+  const handleDeactivatePhil = () => setActiveId(null);
+
   // Set document title on mount for SEO best practices
   useEffect(() => {
     document.title = 'Tentang Intanium | Official Community Space';
@@ -406,7 +461,7 @@ export default function AboutIntaniumPage() {
           whileInView="visible"
           viewport={FILOSOFI_VIEWPORT}
           variants={FILOSOFI_SECTION_VARIANTS}
-          className="relative space-y-10"
+          className="relative space-y-7"
         >
           {/* Section Title */}
           <motion.div variants={sectionReveal} className="text-center max-w-2xl mx-auto space-y-3">
@@ -421,10 +476,10 @@ export default function AboutIntaniumPage() {
           {/* --- DESKTOP: Constellation / Orbit Map --- */}
           <div className="relative hidden lg:block w-full max-w-6xl mx-auto min-h-[640px] overflow-visible">
             <DecorativeSparkles />
-            <OrbitConnectors />
+            <OrbitConnectors activeId={activeId} />
 
             {/* Center medallion wrapper: posisi di div biasa */}
-            <div className="absolute left-1/2 top-[54%] -translate-x-1/2 -translate-y-1/2 z-10 flex items-center justify-center">
+            <div className="absolute left-1/2 top-[50%] -translate-x-1/2 -translate-y-1/2 z-10 flex items-center justify-center">
               <motion.div
                 variants={logoMedallionReveal}
                 className="relative flex items-center justify-center"
@@ -440,22 +495,28 @@ export default function AboutIntaniumPage() {
             </div>
 
             {/* Card 1: Cahaya */}
-            <div className="absolute left-[6%] top-[10%] w-[320px] z-20">
+            <div className="absolute left-[10%] top-[3%] w-[320px] z-20">
               <PhilosophyCard
                 item={LOGO_PHILOSOPHY[0]}
                 index={0}
                 variants={philosophyCardReveal}
                 className="w-full"
+                activeId={activeId}
+                onActivate={setActiveId}
+                onDeactivate={handleDeactivatePhil}
               />
             </div>
 
             {/* Card 2: Permata */}
-            <div className="absolute right-[6%] top-[10%] w-[320px] z-20">
+            <div className="absolute right-[10%] top-[3%] w-[320px] z-20">
               <PhilosophyCard
                 item={LOGO_PHILOSOPHY[1]}
                 index={1}
                 variants={philosophyCardReveal}
                 className="w-full"
+                activeId={activeId}
+                onActivate={setActiveId}
+                onDeactivate={handleDeactivatePhil}
               />
             </div>
 
@@ -466,6 +527,9 @@ export default function AboutIntaniumPage() {
                 index={2}
                 variants={philosophyCardReveal}
                 className="w-full"
+                activeId={activeId}
+                onActivate={setActiveId}
+                onDeactivate={handleDeactivatePhil}
               />
             </div>
           </div>
@@ -496,6 +560,9 @@ export default function AboutIntaniumPage() {
                   index={index}
                   variants={philosophyCardReveal}
                   className="relative w-full"
+                  activeId={activeId}
+                  onActivate={setActiveId}
+                  onDeactivate={handleDeactivatePhil}
                 />
               ))}
             </motion.div>

@@ -5,6 +5,7 @@ import { VerticalCutReveal } from "@/components/ui/vertical-cut-reveal";
 import { ArrowRight } from "lucide-react";
 import bannerNium from "@/assets/logos/banner-nium.webp";
 import { SOCIALS } from "@/lib/constants";
+import { FaYoutube } from "react-icons/fa";
 import { FaXTwitter, FaInstagram, FaTiktok, FaEnvelope } from "react-icons/fa6";
 
 export default function AboutSection3() {
@@ -101,6 +102,20 @@ export default function AboutSection3() {
                 animationNum={3}
                 timelineRef={heroRef}
                 customVariants={revealVariants}
+                href={SOCIALS.YOUTUBE}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Kunjungi YouTube Intanium"
+                title="YouTube"
+                className="w-8 h-8 sm:w-10 sm:h-10 bg-transparent border border-(--border-color) rounded-full flex items-center justify-center cursor-pointer hover:bg-(--color-primary) hover:scale-105 active:scale-95 transition-all duration-300 group"
+              >
+                <FaYoutube className="w-4 h-4 sm:w-5 sm:h-5 text-(--color-primary) group-hover:text-white transition-colors duration-300" />
+              </TimelineContent>
+              <TimelineContent
+                as="a"
+                animationNum={4}
+                timelineRef={heroRef}
+                customVariants={revealVariants}
                 href={SOCIALS.EMAIL}
                 className="w-8 h-8 sm:w-10 sm:h-10 bg-transparent border border-(--border-color) rounded-full flex items-center justify-center cursor-pointer hover:bg-(--color-primary) hover:scale-105 active:scale-95 transition-all duration-300 group"
               >
@@ -111,7 +126,7 @@ export default function AboutSection3() {
 
           <TimelineContent
             as="figure"
-            animationNum={4}
+            animationNum={5}
             timelineRef={heroRef}
             customVariants={scaleVariants}
             className="relative group overflow-hidden rounded-3xl"

@@ -40,6 +40,14 @@ import intanProfile from '../../assets/images/Nur_Intan.jpg';
 import intan1 from '../../assets/images/intan-01.jpg';
 import intan3 from '../../assets/images/intan-03.jpg';
 import { ImageSwiper } from '../../components/ui/ImageSwiper';
+import {
+  CalendarBlank as PhCalendarBlank,
+  Drop as PhDrop,
+  Ruler as PhRuler,
+  MapPin as PhMapPin,
+  UsersThree as PhUsersThree,
+  ShootingStar as PhShootingStar
+} from '@phosphor-icons/react';
 
 const PREMIUM_EASE = [0.16, 1, 0.3, 1];
 
@@ -70,27 +78,49 @@ const scaleIn = {
   }
 };
 
-// Premium BioItem Component for symmetrical 3-column layout
-function BioItem({ icon: IconComp, label, value, delay = 0, direction = 'left' }) {
+// Reusable IconCrystalTile Component for crystal glass badges
+function IconCrystalTile({ icon: IconComp }) {
+  return (
+    <div className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-[1.35rem] border border-white/70 bg-white/65 text-[#17105F] shadow-[0_18px_40px_rgba(23,16,95,0.12),inset_0_1.5px_3px_rgba(255,255,255,0.85)] backdrop-blur-xl transition-all duration-300 group-hover:border-purple-200/50 group-hover:bg-white/75 group-hover:shadow-[0_22px_45px_rgba(124,58,237,0.18),inset_0_1.5px_3px_rgba(255,255,255,0.95)]">
+      {/* Radial Highlight */}
+      <span className="absolute inset-0 rounded-[1.35rem] bg-[radial-gradient(circle_at_35%_25%,rgba(255,255,255,0.95),transparent_58%)] opacity-80 pointer-events-none" />
+      
+      {/* Subtle Inner Glow */}
+      <span className="absolute inset-[1px] rounded-[1.28rem] border border-white/40 pointer-events-none" />
+
+      {/* Phosphor Icon with Duotone styling */}
+      <IconComp
+        size={30}
+        weight="duotone"
+        className="relative z-10 text-[#17105F] transition-transform duration-350 ease-out group-hover:scale-105 group-hover:rotate-[2deg] select-none"
+      />
+
+      {/* Hover Sparkle Accent */}
+      <Sparkles className="w-3.5 h-3.5 absolute -top-1 -right-1 text-(--color-secondary) opacity-60 scale-0 group-hover:scale-100 transition-transform duration-350" />
+    </div>
+  );
+}
+
+// Reusable ProfileFactItem Component for premium profile stats
+function ProfileFactItem({ fact, delay = 0 }) {
+  const { label, value, icon: IconComp, position } = fact;
+  const isRight = position === 'right';
+
   return (
     <motion.div
-      className={`flex items-center gap-4 group cursor-default ${direction === 'right' ? 'md:flex-row-reverse md:text-right' : ''}`}
+      className={`flex items-center gap-4.5 group cursor-default ${
+        isRight ? 'md:flex-row-reverse md:text-right' : 'text-left'
+      }`}
       variants={fadeUp}
       transition={{ delay }}
-      whileHover={{ y: -4, transition: { duration: 0.2 } }}
+      whileHover={{ y: -3, transition: { duration: 0.25 } }}
     >
-      <motion.div
-        className="flex items-center justify-center w-12 h-12 text-(--color-primary) bg-indigo-50/80 rounded-2xl transition-colors duration-300 group-hover:bg-(--color-primary) group-hover:text-white relative shadow-sm border border-indigo-100/50 shrink-0"
-        whileHover={{ rotate: [0, -8, 8, -4, 0], transition: { duration: 0.5 } }}
-      >
-        <IconComp className="w-5 h-5" />
-        <Sparkles className="w-3.5 h-3.5 absolute -top-1 -right-1 text-(--color-secondary) opacity-60 scale-0 group-hover:scale-100 transition-transform duration-300" />
-      </motion.div>
-      <div className="flex flex-col justify-center pt-0.5">
-        <h3 className="text-[11px] font-black text-(--text-muted) uppercase tracking-wider group-hover:text-(--color-primary) transition-colors duration-300 mb-0.5">
+      <IconCrystalTile icon={IconComp} />
+      <div className={`flex flex-col justify-center pt-0.5 ${isRight ? 'md:items-end' : 'items-start'}`}>
+        <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-widest transition-colors duration-300 group-hover:text-(--color-primary) mb-1">
           {label}
         </h3>
-        <p className="text-base sm:text-lg font-black text-(--color-primary) leading-tight">
+        <p className="text-base sm:text-lg font-black text-(--color-primary) leading-tight transition-colors duration-300 group-hover:text-indigo-950">
           {value}
         </p>
       </div>
@@ -750,6 +780,55 @@ export default function AboutIntanPage() {
   const rotate1 = useTransform(scrollYProgress, [0, 1], [0, 25]);
   const rotate2 = useTransform(scrollYProgress, [0, 1], [0, -25]);
 
+  // Profile facts structure mapping user-provided specs with dynamic database values
+  const PROFILE_FACTS = React.useMemo(() => {
+    if (!bio) return [];
+    return [
+      {
+        label: 'Tanggal Lahir',
+        value: bio.dateOfBirth,
+        icon: PhCalendarBlank,
+        position: 'left',
+        delay: 0
+      },
+      {
+        label: 'Golongan Darah',
+        value: `${bio.bloodType}`,
+        icon: PhDrop,
+        position: 'left',
+        delay: 0.2
+      },
+      {
+        label: 'Tinggi Badan',
+        value: bio.height,
+        icon: PhRuler,
+        position: 'left',
+        delay: 0.4
+      },
+      {
+        label: 'Asal Daerah',
+        value: bio.origin,
+        icon: PhMapPin,
+        position: 'right',
+        delay: 0.1
+      },
+      {
+        label: 'Generasi',
+        value: bio.generation,
+        icon: PhUsersThree,
+        position: 'right',
+        delay: 0.3
+      },
+      {
+        label: 'Zodiak',
+        value: bio.zodiac,
+        icon: PhShootingStar,
+        position: 'right',
+        delay: 0.5
+      }
+    ];
+  }, [bio]);
+
   // Set document title on mount for SEO best practices
   useEffect(() => {
     document.title = 'Tentang Nur Intan JKT48 | Fan Archive & Profile';
@@ -803,15 +882,7 @@ export default function AboutIntanPage() {
     ? bio.videos
     : bio.videos.filter(v => v.category === videoFilter);
 
-  // Icon maps for cards
-  const bioIcons = {
-    'Tanggal lahir': Calendar,
-    'Golongan darah': Droplet,
-    'Tinggi badan': Ruler,
-    'Asal daerah': MapPin,
-    'Generasi': Users,
-    'Zodiak': Star
-  };
+
 
   const statIcons = {
     'Total Show Teater': Ticket,
@@ -980,27 +1051,13 @@ export default function AboutIntanPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-10 lg:gap-16 items-center relative">
               {/* Left Column: Bio Details (3 items) */}
               <div className="space-y-6 md:space-y-12 order-2 md:order-1 flex-1 w-full max-w-sm">
-                <BioItem
-                  icon={Calendar}
-                  label="Tanggal lahir"
-                  value={bio.dateOfBirth}
-                  delay={0}
-                  direction="left"
-                />
-                <BioItem
-                  icon={Droplet}
-                  label="Golongan darah"
-                  value={`${bio.bloodType}`}
-                  delay={0.2}
-                  direction="left"
-                />
-                <BioItem
-                  icon={Ruler}
-                  label="Tinggi badan"
-                  value={bio.height}
-                  delay={0.4}
-                  direction="left"
-                />
+                {PROFILE_FACTS.filter(fact => fact.position === 'left').map((fact) => (
+                  <ProfileFactItem
+                    key={fact.label}
+                    fact={fact}
+                    delay={fact.delay}
+                  />
+                ))}
               </div>
 
               {/* Center Portrait Image Swiper Frame */}
@@ -1044,27 +1101,13 @@ export default function AboutIntanPage() {
 
               {/* Right Column: Bio Details (3 items) */}
               <div className="space-y-6 md:space-y-12 order-3 md:order-3 flex-1 w-full max-w-sm">
-                <BioItem
-                  icon={MapPin}
-                  label="Asal daerah"
-                  value={bio.origin}
-                  delay={0.1}
-                  direction="right"
-                />
-                <BioItem
-                  icon={Users}
-                  label="Generasi"
-                  value={bio.generation}
-                  delay={0.3}
-                  direction="right"
-                />
-                <BioItem
-                  icon={Star}
-                  label="Zodiak"
-                  value={bio.zodiac}
-                  delay={0.5}
-                  direction="right"
-                />
+                {PROFILE_FACTS.filter(fact => fact.position === 'right').map((fact) => (
+                  <ProfileFactItem
+                    key={fact.label}
+                    fact={fact}
+                    delay={fact.delay}
+                  />
+                ))}
               </div>
             </div>
 

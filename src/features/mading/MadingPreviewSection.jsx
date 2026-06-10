@@ -333,7 +333,7 @@ export default function MadingPreviewSection() {
         className="corkboard-outer shadow-2xl relative overflow-hidden"
       >
         <div className="corkboard-bevel-frame">
-          <div className="corkboard-surface p-6 md:p-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5 justify-center items-stretch relative">
+          <div className="corkboard-surface p-6 md:p-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5 justify-center items-start content-start justify-items-center relative">
 
             {/* Banner Tape di atas tengah */}
             <div className="corkboard-banner">
@@ -370,7 +370,7 @@ export default function MadingPreviewSection() {
                     rotate: note.rotate * 0.15, // Flatten slightly but natural
                     boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.15)"
                   }}
-                  className={`sticky-note-item pastel-${note.theme} ${note.tape ? 'has-tape' : ''}`}
+                  className={`sticky-note-item pastel-${note.theme} ${note.tape ? 'has-tape' : ''} w-full max-w-[280px] mx-auto aspect-square h-auto`}
                 >
                   {/* Render Pin or Washi tape */}
                   {note.tape ? (

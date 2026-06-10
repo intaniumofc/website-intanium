@@ -6,6 +6,7 @@ import ConfirmDialog from '../../components/common/ConfirmDialog';
 import { useAdminToast } from '../../components/common/useAdminToast';
 import { playlistService } from '../../features/denger-intan/playlistService';
 import Loading from '../../components/common/Loading';
+import { useSupabaseUpload } from '../../hooks/useSupabaseUpload';
 import {
   Plus,
   Edit,
@@ -15,7 +16,9 @@ import {
   Music,
   Clock,
   ListMusic,
-  ExternalLink
+  ExternalLink,
+  Upload,
+  Loader
 } from 'lucide-react';
 
 export default function AdminPlaylists() {
@@ -62,8 +65,17 @@ export default function AdminPlaylists() {
     artist: '',
     playCount: 'Sering diputar',
     mood: '',
-    note: ''
+    note: '',
+    audioUrl: '',
+    coverUrl: ''
   });
+
+  // Upload hook and file states
+  const { uploadFile, isUploading: isFileUploading, progress: uploadProgress } = useSupabaseUpload();
+  const [selectedAudioFile, setSelectedAudioFile] = useState(null);
+  const [selectedCoverFile, setSelectedCoverFile] = useState(null);
+  const [isAudioConverting, setIsAudioConverting] = useState(false);
+  const [isImageConverting, setIsImageConverting] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -144,8 +156,12 @@ export default function AdminPlaylists() {
       artist: '',
       playCount: 'Sering diputar',
       mood: '',
-      note: ''
+      note: '',
+      audioUrl: '',
+      coverUrl: ''
     });
+    setSelectedAudioFile(null);
+    setSelectedCoverFile(null);
     setIsSongModalOpen(true);
   };
 
@@ -157,9 +173,33 @@ export default function AdminPlaylists() {
       artist: song.artist,
       playCount: song.playCount || 'Sering diputar',
       mood: song.mood || '',
-      note: song.note || ''
+      note: song.note || '',
+      audioUrl: song.audioUrl || '',
+      coverUrl: song.coverUrl || ''
     });
+    setSelectedAudioFile(null);
+    setSelectedCoverFile(null);
     setIsSongModalOpen(true);
+  };
+
+  const handleAudioFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('audio/') && !file.name.endsWith('.mp3')) {
+      notify.warning('Berkas tidak valid', 'Hanya diperbolehkan mengunggah berkas audio MP3.');
+      return;
+    }
+    setSelectedAudioFile(file);
+  };
+
+  const handleCoverFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      notify.warning('Berkas tidak valid', 'Hanya diperbolehkan mengunggah berkas gambar.');
+      return;
+    }
+    setSelectedCoverFile(file);
   };
 
   const handleSongInputChange = (e) => {
@@ -174,24 +214,60 @@ export default function AdminPlaylists() {
       return;
     }
 
-    setIsSongSubmitting(true);
-    let result;
-    if (songModalMode === 'add') {
-      result = await playlistService.createMostPlayedSong(songFormData);
-    } else {
-      result = await playlistService.updateMostPlayedSong(editingSongId, songFormData);
+    if (!selectedAudioFile && !songFormData.audioUrl.trim()) {
+      notify.warning('File audio belum ditentukan', 'Pilih berkas audio untuk diunggah atau masukkan URL direct MP3.');
+      return;
     }
-    setIsSongSubmitting(false);
 
-    if (result.success) {
-      setIsSongModalOpen(false);
-      fetchSongs();
-      notify.success(
-        songModalMode === 'add' ? 'Lagu ditambahkan' : 'Lagu diperbarui',
-        'Perubahan most played song berhasil disimpan.'
-      );
-    } else {
-      notify.error('Gagal menyimpan lagu', result.error);
+    setIsSongSubmitting(true);
+    let finalAudioUrl = songFormData.audioUrl.trim();
+    let finalCoverUrl = songFormData.coverUrl.trim();
+
+    try {
+      // 1. Upload Cover Image (will convert to WebP inside useSupabaseUpload hook)
+      if (selectedCoverFile) {
+        setIsImageConverting(true);
+        finalCoverUrl = await uploadFile(selectedCoverFile, 'assets', 'covers');
+        setIsImageConverting(false);
+      }
+
+      // 2. Upload Audio File (will convert/compress to 96kbps mono MP3 inside useSupabaseUpload hook)
+      if (selectedAudioFile) {
+        setIsAudioConverting(true);
+        finalAudioUrl = await uploadFile(selectedAudioFile, 'assets', 'songs');
+        setIsAudioConverting(false);
+      }
+
+      const payload = {
+        ...songFormData,
+        audioUrl: finalAudioUrl,
+        coverUrl: finalCoverUrl
+      };
+
+      let result;
+      if (songModalMode === 'add') {
+        result = await playlistService.createMostPlayedSong(payload);
+      } else {
+        result = await playlistService.updateMostPlayedSong(editingSongId, payload);
+      }
+
+      if (result.success) {
+        setIsSongModalOpen(false);
+        fetchSongs();
+        notify.success(
+          songModalMode === 'add' ? 'Lagu ditambahkan' : 'Lagu diperbarui',
+          'Perubahan most played song berhasil disimpan.'
+        );
+      } else {
+        notify.error('Gagal menyimpan lagu', result.error);
+      }
+    } catch (err) {
+      console.error(err);
+      notify.error('Gagal menyimpan lagu', err.message || 'Terjadi kesalahan saat mengunggah berkas.');
+    } finally {
+      setIsSongSubmitting(false);
+      setIsAudioConverting(false);
+      setIsImageConverting(false);
     }
   };
 
@@ -503,7 +579,6 @@ export default function AdminPlaylists() {
                   <thead className="text-xs uppercase bg-[var(--bg-primary)]/80 text-[var(--text-secondary)] font-bold border-b border-[var(--border-color)]">
                     <tr>
                       <th className="px-6 py-4">Judul Lagu / Artis</th>
-                      <th className="px-6 py-4">Status Putar</th>
                       <th className="px-6 py-4">Mood</th>
                       <th className="px-6 py-4">Catatan Kurator</th>
                       <th className="px-6 py-4 text-right">Aksi</th>
@@ -522,11 +597,6 @@ export default function AdminPlaylists() {
                               <span className="text-xs text-[var(--text-muted)] mt-0.5 truncate">{song.artist}</span>
                             </div>
                           </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="bg-[var(--color-primary-light)] text-[var(--color-primary)] text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider border border-[var(--color-primary)]/5">
-                            {song.playCount}
-                          </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold text-[var(--text-primary)]">
                           {song.mood || '-'}
@@ -785,32 +855,113 @@ export default function AdminPlaylists() {
             </div>
           </div>
 
+          <div className="flex flex-col gap-1.5">
+            {/* Mood */}
+            <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Mood / Genre Vibes</label>
+            <input
+              type="text"
+              name="mood"
+              placeholder="Contoh: Chill / Calm, Nostalgic, Hype / Energetic"
+              value={songFormData.mood}
+              onChange={handleSongInputChange}
+              className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
+            />
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Play Count */}
+            {/* Audio File Upload */}
             <div className="flex flex-col gap-1.5">
-              <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Status Putar (Play Count)</label>
-              <input
-                type="text"
-                name="playCount"
-                placeholder="Contoh: Sering diputar, Sangat sering diputar"
-                value={songFormData.playCount}
-                onChange={handleSongInputChange}
-                className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
-                required
-              />
+              <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Unggah Berkas Audio (MP3)</label>
+              <div className="relative border-2 border-dashed border-[var(--border-color)] rounded-2xl p-4 bg-[var(--bg-primary)] hover:border-[var(--color-primary)] transition-all flex flex-col items-center justify-center text-center group cursor-pointer">
+                <input
+                  type="file"
+                  accept="audio/mp3,audio/*"
+                  onChange={handleAudioFileChange}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  disabled={isSongSubmitting || isFileUploading || isAudioConverting || isImageConverting}
+                />
+                <Upload className="h-6 w-6 text-[var(--text-muted)] group-hover:text-[var(--color-primary)] transition-colors mb-1" />
+                <span className="font-extrabold text-xs text-[var(--text-secondary)]">
+                  {selectedAudioFile ? selectedAudioFile.name : 'Pilih Berkas MP3'}
+                </span>
+                <span className="text-[9px] text-[var(--text-muted)] mt-0.5">
+                  Otomatis dikompresi menjadi ukuran optimal
+                </span>
+              </div>
             </div>
 
-            {/* Mood */}
+            {/* Cover Image Upload */}
             <div className="flex flex-col gap-1.5">
-              <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Mood / Genre Vibes</label>
+              <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Unggah Gambar Sampul</label>
+              <div className="relative border-2 border-dashed border-[var(--border-color)] rounded-2xl p-4 bg-[var(--bg-primary)] hover:border-[var(--color-primary)] transition-all flex flex-col items-center justify-center text-center group cursor-pointer">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleCoverFileChange}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  disabled={isSongSubmitting || isFileUploading || isAudioConverting || isImageConverting}
+                />
+                <Upload className="h-6 w-6 text-[var(--text-muted)] group-hover:text-[var(--color-primary)] transition-colors mb-1" />
+                <span className="font-extrabold text-xs text-[var(--text-secondary)]">
+                  {selectedCoverFile ? selectedCoverFile.name : 'Pilih Berkas Gambar'}
+                </span>
+                <span className="text-[9px] text-[var(--text-muted)] mt-0.5">
+                  Otomatis dikonversi ke format WebP (.webp)
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Progress / Status Indicators for Song Uploads */}
+          {(isAudioConverting || isImageConverting || isFileUploading) && (
+            <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl flex flex-col gap-2">
+              <div className="flex items-center gap-2 text-xs font-bold text-blue-700">
+                <Loader className="h-4 w-4 animate-spin text-blue-600" />
+                <span>
+                  {isAudioConverting
+                    ? 'Mengodekan & mengompres berkas audio (LameJS)...'
+                    : isImageConverting
+                    ? 'Mengonversi gambar sampul ke WebP...'
+                    : `Mengunggah berkas ke Supabase Storage (${uploadProgress}%)...`}
+                </span>
+              </div>
+              {isFileUploading && (
+                <div className="w-full bg-blue-200/50 h-1.5 rounded-full overflow-hidden">
+                  <div className="bg-blue-600 h-full transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
+                 </div>
+              )}
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Audio URL (Fallback / Manual) */}
+            <div className="flex flex-col gap-1.5">
+              <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">URL File Audio (Direct MP3 URL - Alternatif)</label>
               <input
                 type="text"
-                name="mood"
-                placeholder="Contoh: Chill / Calm, Nostalgic, Hype / Energetic"
-                value={songFormData.mood}
+                name="audioUrl"
+                placeholder="Masukkan link direct file audio (.mp3)..."
+                value={songFormData.audioUrl}
                 onChange={handleSongInputChange}
-                className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
+                className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all text-xs text-[var(--text-muted)] bg-slate-50"
+                disabled={isSongSubmitting || isFileUploading || isAudioConverting || isImageConverting}
               />
+              <p className="text-[10px] text-[var(--text-muted)]">Kosongkan jika mengunggah file MP3 di atas.</p>
+            </div>
+
+            {/* Cover Image URL (Fallback / Manual) */}
+            <div className="flex flex-col gap-1.5">
+              <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">URL Gambar Sampul (Cover Image URL - Alternatif)</label>
+              <input
+                type="text"
+                name="coverUrl"
+                placeholder="Masukkan link gambar cover..."
+                value={songFormData.coverUrl}
+                onChange={handleSongInputChange}
+                className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all text-xs text-[var(--text-muted)] bg-slate-50"
+                disabled={isSongSubmitting || isFileUploading || isAudioConverting || isImageConverting}
+              />
+              <p className="text-[10px] text-[var(--text-muted)]">Kosongkan jika mengunggah gambar sampul di atas.</p>
             </div>
           </div>
 
@@ -835,7 +986,7 @@ export default function AdminPlaylists() {
               variant="outline"
               size="sm"
               onClick={() => setIsSongModalOpen(false)}
-              disabled={isSongSubmitting}
+              disabled={isSongSubmitting || isFileUploading || isAudioConverting || isImageConverting}
             >
               Batal
             </Button>
@@ -843,10 +994,10 @@ export default function AdminPlaylists() {
               type="submit"
               variant="primary"
               size="sm"
-              disabled={isSongSubmitting}
+              disabled={isSongSubmitting || isFileUploading || isAudioConverting || isImageConverting}
               className="cursor-pointer"
             >
-              {isSongSubmitting ? 'Menyimpan...' : 'Simpan Lagu'}
+              {isSongSubmitting || isFileUploading || isAudioConverting || isImageConverting ? 'Memproses...' : 'Simpan Lagu'}
             </Button>
           </div>
         </form>

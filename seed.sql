@@ -70,9 +70,5 @@ INSERT INTO playlists (id, title, description, image_url, category, badge_text, 
 ('3ylSh5l2hqkakZqX09FAFL', 'Archive Playlist Vol. 6', 'Arsip keseruan dan memori lagu-lagu pilihan dari edisi #DengerINTAN sebelumnya.', 'https://images.unsplash.com/photo-1487180142328-054b783fc471?q=80&w=600&auto=format&fit=crop', 'Januari 2026', 'Archive Playlist', '1h 50m', '24 Tracks', 'https://www.youtube.com/embed/videoseries?list=PL3-sRM8xAzY-oQj01w4_mY6-x6H2bE3X1', 'https://open.spotify.com/playlist/3ylSh5l2hqkakZqX09FAFL', 'https://open.spotify.com/embed/playlist/3ylSh5l2hqkakZqX09FAFL?utm_source=generator', 'Koleksi tambahan arsip lagu kurasi pilihan untuk menemani waktu santaimu bersama #DengerINTAN. 🎶', NOW() - INTERVAL '5 months');
 
 
--- Most Played Songs
-INSERT INTO most_played_songs (title, artist, play_count, mood, note) VALUES
-('Untuk Selamanya', 'Kunto Aji', 'Sering diputar', 'Chill / Calm', 'Lagu favorit Intan untuk meredakan kecemasan, sering dinyanyikan saat acoustic live stream malam hari.'),
-('Hati-Hati di Jalan', 'Tulus', 'Sering diputar', 'Nostalgic', 'Lagu kebangsaan galau yang hampir selalu diputar saat ngobrol santai dengan fans.'),
-('Heavy Rotation', 'JKT48', 'Sangat sering diputar', 'Hype / Energetic', 'Lagu wajib pembuka stream perayaan debut atau pencapaian target subscriber.'),
-('Secukupnya', 'Hindia', 'Sering diputar', 'Focus / Work', 'Diputar sebagai musik latar belakang saat sesi streaming belajar bareng atau nugas malam.');
+-- Most Played Songs are now managed dynamically via the Admin panel.
+-- No seed data is needed.
