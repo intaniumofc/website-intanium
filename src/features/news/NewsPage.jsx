@@ -232,10 +232,6 @@ export default function NewsPage() {
               merchandise, hingga pengumuman penting.
             </p>
           </div>
-          <div className="flex items-center gap-2 text-xs font-bold text-[#170C79]">
-            <span className="size-2 rounded-full bg-pink-500 shadow-[0_0_0_4px_rgba(236,72,153,0.12)]" />
-            Official bulletin, diperbarui berkala
-          </div>
         </div>
       </section>
 
@@ -257,8 +253,8 @@ export default function NewsPage() {
               aria-selected={activeCategory === category}
               onClick={() => setActiveCategory(category)}
               className={`shrink-0 cursor-pointer rounded-full border px-4 py-2 text-xs font-black transition ${activeCategory === category
-                  ? 'border-[#170C79] bg-[#170C79] text-white shadow-md'
-                  : 'border-violet-100 bg-white/80 text-[#170C79] hover:bg-violet-50'
+                ? 'border-[#170C79] bg-[#170C79] text-white shadow-md'
+                : 'border-violet-100 bg-white/80 text-[#170C79] hover:bg-violet-50'
                 }`}
             >
               {category}

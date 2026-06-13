@@ -151,7 +151,16 @@ export default function AdminSchedule() {
   const filteredItems = items.filter(item => {
     const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesPlatform = selectedPlatform === 'All' || item.platform === selectedPlatform;
+    
+    let matchesPlatform = false;
+    if (selectedPlatform === 'All') {
+      matchesPlatform = true;
+    } else if (selectedPlatform === 'Other Events') {
+      matchesPlatform = !['Show Theater', 'Video Call', 'Birthday'].includes(item.platform);
+    } else {
+      matchesPlatform = item.platform === selectedPlatform;
+    }
+    
     return matchesSearch && matchesPlatform;
   });
 
@@ -363,7 +372,7 @@ export default function AdminSchedule() {
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
               >
-                {['Show Theater', 'Video Call', 'Birthday', 'Other Events'].map(plat => (
+                {['Show Theater', 'Video Call', 'Birthday', 'YouTube', 'IDN Live', 'Twitch', 'TikTok', 'Instagram', 'Discord', 'Other Events'].map(plat => (
                   <option key={plat} value={plat}>{plat}</option>
                 ))}
               </select>
