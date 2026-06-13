@@ -85,40 +85,37 @@ export default function SchedulePage() {
   return (
     <div className="relative space-y-12 max-w-5xl mx-auto py-6 overflow-visible">
 
-      {/* ========= PAGE HEADER SECTION (Aligned with other pages) ========= */}
+      {/* ========= PAGE HEADER & CONTROLS SECTION (Unified Row on Desktop) ========= */}
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: PREMIUM_EASE }}
       >
         <section className="border-b border-indigo-100/70 pb-5 text-left">
-          <div className="grid gap-5 md:grid-cols-[1fr_auto] md:items-end">
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-cyan-600">Kalender Aktivitas</p>
-              <h1 className="mt-2 text-3xl font-black tracking-tight text-[#170C79] sm:text-4xl">Jadwal & Kegiatan</h1>
-              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600 sm:text-base">
+          <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
+            <div className="space-y-2">
+              <div className="flex items-center gap-3">
+                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-cyan-600">Kalender Aktivitas</p>
+                <div className="flex items-center gap-1.5 text-[9px] font-bold text-[#170C79] bg-indigo-50/60 px-2 py-0.5 rounded-md border border-indigo-100/30">
+                  <span className="size-1.5 rounded-full bg-cyan-500 shadow-[0_0_0_3px_rgba(8,145,178,0.12)] animate-pulse" />
+                  Diperbarui berkala
+                </div>
+              </div>
+              <h1 className="text-3xl font-black tracking-tight text-[#170C79] sm:text-4xl">Jadwal & Kegiatan</h1>
+              <p className="max-w-xl text-sm leading-relaxed text-slate-600">
                 Pantau jadwal teater, video call, birthday, dan event streaming Nur Intan agar Anda tidak ketinggalan momen seru.
               </p>
             </div>
-            <div className="flex items-center gap-2 text-xs font-bold text-[#170C79]">
-              <span className="size-2 rounded-full bg-cyan-500 shadow-[0_0_0_4px_rgba(8,145,178,0.12)] animate-pulse" />
-              Official Schedule, diperbarui berkala
+            
+            {/* Category Filter aligned on the right in Desktop */}
+            <div className="relative z-10 w-full md:w-auto flex justify-start md:justify-end">
+              <ScheduleFilter
+                activePlatform={activePlatform}
+                onPlatformChange={setActivePlatform}
+              />
             </div>
           </div>
         </section>
-      </motion.div>
-
-      {/* ========= CONTROLS BAR (Filters Only) ========= */}
-      <motion.div
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: PREMIUM_EASE, delay: 0.15 }}
-        className="flex justify-between items-center gap-4 relative z-10"
-      >
-        <ScheduleFilter
-          activePlatform={activePlatform}
-          onPlatformChange={setActivePlatform}
-        />
       </motion.div>
 
       {/* ========= AMBIENT BACKGROUND ORBS ========= */}
@@ -155,7 +152,7 @@ export default function SchedulePage() {
             </motion.div>
           ) : (
             <div className="space-y-20 overflow-visible relative">
-              
+
               {/* ========= 1. LINIMASA JADWAL SECTION (Horizontal Scroll) ========= */}
               <motion.section
                 initial={{ opacity: 0, y: 20 }}
@@ -200,11 +197,10 @@ export default function SchedulePage() {
                           hidden: { opacity: 0, y: 25, filter: 'blur(4px)' },
                           visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.55, ease: PREMIUM_EASE } }
                         }}
-                        className={`relative shrink-0 ${
-                          index % 2 === 0
-                            ? 'md:-translate-y-16'
-                            : 'md:translate-y-16'
-                        }`}
+                        className={`relative shrink-0 ${index % 2 === 0
+                          ? 'md:-translate-y-16'
+                          : 'md:translate-y-16'
+                          }`}
                       >
                         <ScheduleCard event={event} isHorizontal={true} index={index} />
                       </motion.div>
