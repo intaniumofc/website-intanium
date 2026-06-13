@@ -2,7 +2,7 @@ import { motion, useMotionValue, useTransform } from 'framer-motion';
 import Card from '../common/Card';
 import Button from '../common/Button';
 import { formatEventTime, getEventStatus } from '../../lib/formatDate';
-import { Clock, PlayCircle, Bell, Smartphone, Video, MessageSquare, Gamepad2, Radio } from 'lucide-react';
+import { Clock, PlayCircle, Bell, Smartphone, Video, MessageSquare, Gamepad2, Radio, Calendar, Sparkles } from 'lucide-react';
 
 export default function ScheduleCard({ event, className = '', isHorizontal = false, index = 0 }) {
   const { title, description, time, platform, link, duration, thumbnail } = event;
@@ -52,6 +52,10 @@ export default function ScheduleCard({ event, className = '', isHorizontal = fal
     Instagram: { label: 'Instagram Live', icon: Smartphone, color: 'text-pink-600', bg: 'bg-pink-50 border border-pink-200/40', glow: 'shadow-[0_0_8px_rgba(219,39,119,0.1)]' },
     Discord: { label: 'Discord Stage', icon: MessageSquare, color: 'text-indigo-500', bg: 'bg-indigo-50 border border-indigo-200/40', glow: 'shadow-[0_0_8px_rgba(99,102,241,0.1)]' },
     'IDN Live': { label: 'IDN Live', icon: Radio, color: 'text-red-600', bg: 'bg-red-50 border border-red-200/40', glow: 'shadow-[0_0_8px_rgba(220,38,38,0.1)]' },
+    'Show Theater': { label: 'Show Theater', icon: Calendar, color: 'text-rose-500', bg: 'bg-rose-50 border border-rose-200/40', glow: 'shadow-[0_0_8px_rgba(244,63,94,0.1)]' },
+    'Video Call': { label: 'Video Call', icon: Video, color: 'text-cyan-500', bg: 'bg-cyan-50 border border-cyan-200/40', glow: 'shadow-[0_0_8px_rgba(6,182,212,0.1)]' },
+    'Birthday': { label: 'Birthday', icon: Sparkles, color: 'text-amber-500', bg: 'bg-amber-50 border border-amber-200/40', glow: 'shadow-[0_0_8px_rgba(245,158,11,0.1)]' },
+    'Other Events': { label: 'Other Events', icon: PlayCircle, color: 'text-purple-500', bg: 'bg-purple-50 border border-purple-200/40', glow: 'shadow-[0_0_8px_rgba(168,85,247,0.1)]' },
   };
 
   const plat = platformConfig[platform] || { label: platform, icon: Video, color: 'text-indigo-500', bg: 'bg-indigo-50 border border-indigo-200/40', glow: '' };

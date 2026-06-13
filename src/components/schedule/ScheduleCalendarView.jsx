@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight, Clock, MapPin, ArrowRight, Calendar as CalendarIcon, Sparkles, X, PlayCircle, Bell } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Button from '../common/Button';
 
 const PREMIUM_EASE = [0.16, 1, 0.3, 1];
 
@@ -66,11 +67,11 @@ export default function ScheduleCalendarView({ events }) {
 
   const getCellStyle = (dayEvents, todayMark) => {
     const baseTodayStyle = todayMark ? 'ring-2 ring-cyan-500/85 ring-offset-1 z-10' : '';
-    
+
     if (dayEvents.length === 0) {
       return `bg-white/60 hover:bg-slate-50/50 border-indigo-100/30 ${baseTodayStyle}`;
     }
-    
+
     if (dayEvents.length === 1) {
       const type = dayEvents[0].type;
       if (type === 'Show Theater') return `bg-rose-50/60 border-rose-200/60 hover:bg-rose-100/40 ${baseTodayStyle}`;
@@ -81,7 +82,7 @@ export default function ScheduleCalendarView({ events }) {
       }
       return `bg-purple-50/60 border-purple-200/60 hover:bg-purple-100/40 ${baseTodayStyle}`;
     }
-    
+
     // Multiple events: use a blended primary light style (e.g. violet)
     return `bg-violet-50/60 border-violet-200/60 hover:bg-violet-100/40 ${baseTodayStyle}`;
   };
@@ -131,16 +132,16 @@ export default function ScheduleCalendarView({ events }) {
           <span>{monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}</span>
         </h3>
         <div className="flex gap-2">
-          <button 
-            onClick={prevMonth} 
-            className="p-2.5 bg-white/85 border border-indigo-100/30 hover:bg-indigo-50 rounded-2xl transition-all duration-300 cursor-pointer text-slate-500 hover:text-[var(--color-primary)] hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]" 
+          <button
+            onClick={prevMonth}
+            className="p-2.5 bg-white/85 border border-indigo-100/30 hover:bg-indigo-50 rounded-2xl transition-all duration-300 cursor-pointer text-slate-500 hover:text-[var(--color-primary)] hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]"
             aria-label="Bulan sebelumnya"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
-          <button 
-            onClick={nextMonth} 
-            className="p-2.5 bg-white/85 border border-indigo-100/30 hover:bg-indigo-50 rounded-2xl transition-all duration-300 cursor-pointer text-slate-500 hover:text-[var(--color-primary)] hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]" 
+          <button
+            onClick={nextMonth}
+            className="p-2.5 bg-white/85 border border-indigo-100/30 hover:bg-indigo-50 rounded-2xl transition-all duration-300 cursor-pointer text-slate-500 hover:text-[var(--color-primary)] hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]"
             aria-label="Bulan berikutnya"
           >
             <ChevronRight className="w-5 h-5" />
@@ -161,11 +162,10 @@ export default function ScheduleCalendarView({ events }) {
           >
             {/* Days of week header */}
             {dayNamesShort.map((day, idx) => (
-              <div 
-                key={day} 
-                className={`border-r border-b border-indigo-100/30 py-3 text-center text-xs font-black uppercase tracking-[0.1em] bg-slate-50/50 ${
-                  idx === 0 || idx === 6 ? 'text-rose-500 bg-rose-50/20' : 'text-slate-500'
-                }`}
+              <div
+                key={day}
+                className={`border-r border-b border-indigo-100/30 py-3 text-center text-xs font-black uppercase tracking-[0.1em] bg-slate-50/50 ${idx === 0 || idx === 6 ? 'text-rose-500 bg-rose-50/20' : 'text-slate-500'
+                  }`}
               >
                 {day}
               </div>
@@ -183,20 +183,19 @@ export default function ScheduleCalendarView({ events }) {
               const dayEvents = getEventsForDate(date);
 
               return (
-                <div 
-                  key={i} 
+                <div
+                  key={i}
                   className={`border-r border-b border-indigo-100/30 p-2.5 min-h-[110px] flex flex-col justify-between transition-all duration-300 ${getCellStyle(dayEvents, todayMark)}`}
                 >
                   {/* Date Number */}
                   <div className="flex justify-between items-center mb-1">
-                    <span 
-                      className={`text-xs font-black flex items-center justify-center rounded-full w-6 h-6 ${
-                        todayMark 
-                          ? 'bg-gradient-to-br from-[var(--color-primary)] to-indigo-600 text-white shadow-sm' 
-                          : dayEvents.length > 0
+                    <span
+                      className={`text-xs font-black flex items-center justify-center rounded-full w-6 h-6 ${todayMark
+                        ? 'bg-gradient-to-br from-[var(--color-primary)] to-indigo-600 text-white shadow-sm'
+                        : dayEvents.length > 0
                           ? 'text-[var(--color-primary)] bg-white/60 border border-[var(--color-primary)]/10 shadow-[0_1px_3px_rgba(23,12,121,0.05)]'
                           : 'text-slate-500'
-                      }`}
+                        }`}
                     >
                       {i + 1}
                     </span>
@@ -239,10 +238,10 @@ export default function ScheduleCalendarView({ events }) {
             {mobileDaysWithEvents.map((dayObj, idx) => {
               const dayNum = dayObj.date.getDate();
               const dayStr = dayNames[dayObj.date.getDay()];
-              
+
               return (
-                <div 
-                  key={idx} 
+                <div
+                  key={idx}
                   className="bg-white/80 border border-[var(--border-color)] rounded-2xl p-4 shadow-sm text-left flex gap-4 items-start"
                 >
                   {/* Left Date indicator */}
@@ -278,7 +277,7 @@ export default function ScheduleCalendarView({ events }) {
 
       {/* ================= CALENDAR LEGEND ================= */}
       <div className="mt-6 border-t border-indigo-100/30 pt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2.5 text-xs font-black text-slate-500">
-        <span className="text-[10px] uppercase tracking-wider text-slate-400">Keterangan Warna:</span>
+        <span className="text-[10px] text-slate-800">Keterangan Warna:</span>
         <span className="inline-flex items-center gap-2">
           <span className="h-3 w-3 rounded-full bg-rose-450 border border-rose-300" />
           <span>Theater</span>
@@ -316,7 +315,7 @@ export default function ScheduleCalendarView({ events }) {
               className="bg-white border border-[var(--border-color)] overflow-hidden rounded-[2rem] max-w-sm w-full shadow-2xl relative z-10 text-left flex flex-col"
             >
               {/* Close Button */}
-              <button 
+              <button
                 onClick={() => setSelectedEventDetail(null)}
                 className="absolute top-4 right-4 z-20 p-2 bg-black/40 hover:bg-black/60 text-white rounded-full transition-all duration-200 shadow-md cursor-pointer border border-white/10"
               >
@@ -339,7 +338,7 @@ export default function ScheduleCalendarView({ events }) {
                     </div>
                   </div>
                 )}
-                
+
                 {/* Platform Badge absolute */}
                 <span className={`absolute bottom-3 left-3 px-3 py-1.5 text-[9px] uppercase font-black rounded-lg backdrop-blur-md bg-white/95 text-[var(--color-primary)] border border-indigo-100`}>
                   {selectedEventDetail.type}
@@ -374,10 +373,10 @@ export default function ScheduleCalendarView({ events }) {
                 {/* Event Actions */}
                 <div className="pt-2">
                   {selectedEventDetail.link ? (
-                    <a 
-                      href={selectedEventDetail.link} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
+                    <a
+                      href={selectedEventDetail.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="w-full inline-block"
                     >
                       <Button

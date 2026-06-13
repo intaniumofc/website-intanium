@@ -80,7 +80,8 @@ export default function AdminLayout({ children }) {
   useEffect(() => {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session && !localStorage.getItem('isAdminAuthenticated')) {
+      if (!session) {
+        localStorage.removeItem('isAdminAuthenticated');
         navigate(ROUTES.ADMIN_LOGIN);
       }
     };

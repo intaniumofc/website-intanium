@@ -5,7 +5,11 @@ export const scheduleService = {
     let query = supabase.from('events').select('*');
 
     if (platform !== 'All') {
-      query = query.eq('platform', platform);
+      if (platform === 'Other Events') {
+        query = query.not('platform', 'in', '("Show Theater","Video Call","Birthday")');
+      } else {
+        query = query.eq('platform', platform);
+      }
     }
     
     const { data, error } = await query;

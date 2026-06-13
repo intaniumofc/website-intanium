@@ -96,17 +96,13 @@ export default function SchedulePage() {
             <div className="space-y-2">
               <div className="flex items-center gap-3">
                 <p className="text-[10px] font-black uppercase tracking-[0.22em] text-cyan-600">Kalender Aktivitas</p>
-                <div className="flex items-center gap-1.5 text-[9px] font-bold text-[#170C79] bg-indigo-50/60 px-2 py-0.5 rounded-md border border-indigo-100/30">
-                  <span className="size-1.5 rounded-full bg-cyan-500 shadow-[0_0_0_3px_rgba(8,145,178,0.12)] animate-pulse" />
-                  Diperbarui berkala
-                </div>
               </div>
               <h1 className="text-3xl font-black tracking-tight text-[#170C79] sm:text-4xl">Jadwal & Kegiatan</h1>
               <p className="max-w-xl text-sm leading-relaxed text-slate-600">
                 Pantau jadwal teater, video call, birthday, dan event streaming Nur Intan agar Anda tidak ketinggalan momen seru.
               </p>
             </div>
-            
+
             {/* Category Filter aligned on the right in Desktop */}
             <div className="relative z-10 w-full md:w-auto flex justify-start md:justify-end">
               <ScheduleFilter
