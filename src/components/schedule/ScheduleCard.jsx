@@ -133,8 +133,8 @@ export default function ScheduleCard({ event, className = '', isHorizontal = fal
       </div>
 
       <Card
-        hoverEffect={true}
-        className={`group border border-[var(--border-color)] flex flex-col transition-all duration-400 hover:scale-[1.015] hover:border-[var(--color-primary)]/40 hover:shadow-[0_12px_40px_rgba(23,12,121,0.12)] ${
+        hoverEffect={false}
+        className={`group border border-[var(--border-color)] flex flex-col transition-all duration-400 hover:scale-[1.015] hover:bg-indigo-50/30 hover:border-[var(--color-primary)]/40 hover:shadow-[0_12px_40px_rgba(23,12,121,0.12)] ${
           status === 'live' ? 'border-red-500/40 bg-gradient-to-br from-[var(--bg-secondary)] via-white to-red-50/20 shadow-[0_0_24px_rgba(239,68,68,0.06)]' : 'bg-white/85 backdrop-blur-xl'
         } ${isHorizontal ? 'md:flex-col md:w-80 md:h-[410px] md:p-5' : 'md:flex-row'} ${className}`}
         padding="normal"
