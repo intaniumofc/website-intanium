@@ -64,6 +64,28 @@ export default function ScheduleCalendarView({ events }) {
     return 'bg-purple-50/90 text-purple-700 border-purple-200/60 hover:bg-purple-100/80';
   };
 
+  const getCellStyle = (dayEvents, todayMark) => {
+    const baseTodayStyle = todayMark ? 'ring-2 ring-cyan-500/85 ring-offset-1 z-10' : '';
+    
+    if (dayEvents.length === 0) {
+      return `bg-white/60 hover:bg-slate-50/50 border-indigo-100/30 ${baseTodayStyle}`;
+    }
+    
+    if (dayEvents.length === 1) {
+      const type = dayEvents[0].type;
+      if (type === 'Show Theater') return `bg-rose-50/60 border-rose-200/60 hover:bg-rose-100/40 ${baseTodayStyle}`;
+      if (type === 'Video Call') return `bg-cyan-50/65 border-cyan-200/60 hover:bg-cyan-100/40 ${baseTodayStyle}`;
+      if (type === 'Birthday') return `bg-amber-50/60 border-amber-200/60 hover:bg-amber-100/40 ${baseTodayStyle}`;
+      if (['YouTube', 'IDN Live', 'Showroom', 'TikTok', 'Twitch'].includes(type)) {
+        return `bg-indigo-50/60 border-indigo-200/60 hover:bg-indigo-100/40 ${baseTodayStyle}`;
+      }
+      return `bg-purple-50/60 border-purple-200/60 hover:bg-purple-100/40 ${baseTodayStyle}`;
+    }
+    
+    // Multiple events: use a blended primary light style (e.g. violet)
+    return `bg-violet-50/60 border-violet-200/60 hover:bg-violet-100/40 ${baseTodayStyle}`;
+  };
+
   const platformConfig = {
     YouTube: { label: 'YouTube', icon: PlayCircle, color: 'text-red-500', bg: 'bg-red-50 border-red-200/40' },
     Twitch: { label: 'Twitch', icon: PlayCircle, color: 'text-purple-500', bg: 'bg-purple-50 border-purple-200/40' },
@@ -163,9 +185,7 @@ export default function ScheduleCalendarView({ events }) {
               return (
                 <div 
                   key={i} 
-                  className={`border-r border-b border-indigo-100/30 p-2.5 min-h-[110px] flex flex-col justify-between transition-all duration-300 hover:bg-slate-50/50 ${
-                    todayMark ? 'bg-cyan-50/30 hover:bg-cyan-50/50' : 'bg-white/60'
-                  }`}
+                  className={`border-r border-b border-indigo-100/30 p-2.5 min-h-[110px] flex flex-col justify-between transition-all duration-300 ${getCellStyle(dayEvents, todayMark)}`}
                 >
                   {/* Date Number */}
                   <div className="flex justify-between items-center mb-1">
@@ -173,6 +193,8 @@ export default function ScheduleCalendarView({ events }) {
                       className={`text-xs font-black flex items-center justify-center rounded-full w-6 h-6 ${
                         todayMark 
                           ? 'bg-gradient-to-br from-[var(--color-primary)] to-indigo-600 text-white shadow-sm' 
+                          : dayEvents.length > 0
+                          ? 'text-[var(--color-primary)] bg-white/60 border border-[var(--color-primary)]/10 shadow-[0_1px_3px_rgba(23,12,121,0.05)]'
                           : 'text-slate-500'
                       }`}
                     >
