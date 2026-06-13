@@ -276,6 +276,31 @@ export default function ScheduleCalendarView({ events }) {
         )}
       </div>
 
+      {/* ================= CALENDAR LEGEND ================= */}
+      <div className="mt-6 border-t border-indigo-100/30 pt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2.5 text-xs font-black text-slate-500">
+        <span className="text-[10px] uppercase tracking-wider text-slate-400">Keterangan Warna:</span>
+        <span className="inline-flex items-center gap-2">
+          <span className="h-3 w-3 rounded-full bg-rose-450 border border-rose-300" />
+          <span>Theater</span>
+        </span>
+        <span className="inline-flex items-center gap-2">
+          <span className="h-3 w-3 rounded-full bg-cyan-450 border border-cyan-300" />
+          <span>Video Call</span>
+        </span>
+        <span className="inline-flex items-center gap-2">
+          <span className="h-3 w-3 rounded-full bg-amber-450 border border-amber-300" />
+          <span>Birthday</span>
+        </span>
+        <span className="inline-flex items-center gap-2">
+          <span className="h-3 w-3 rounded-full bg-indigo-450 border border-indigo-300" />
+          <span>Streaming Live</span>
+        </span>
+        <span className="inline-flex items-center gap-2">
+          <span className="h-3 w-3 rounded-full bg-purple-450 border border-purple-300" />
+          <span>Lainnya / Multiple</span>
+        </span>
+      </div>
+
       {/* ================= MODAL DETAIL POPOVER ================= */}
       <AnimatePresence>
         {selectedEventDetail && (
