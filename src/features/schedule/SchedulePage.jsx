@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { scheduleService } from './scheduleService';
 import ScheduleFilter from '../../components/schedule/ScheduleFilter';
 import ScheduleCard from '../../components/schedule/ScheduleCard';
@@ -6,7 +6,7 @@ import ScheduleCalendarView from '../../components/schedule/ScheduleCalendarView
 import Loading from '../../components/common/Loading';
 import EmptyState from '../../components/common/EmptyState';
 import { Calendar, CalendarDays, List, Sparkles } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 
 const PREMIUM_EASE = [0.16, 1, 0.3, 1];
 
@@ -18,6 +18,43 @@ const fadeUp = {
     transition: { duration: 0.7, ease: PREMIUM_EASE, delay: i * 0.1 }
   })
 };
+
+// Floating background particles for horizontal scroll parallax
+function TimelineParallaxBackground({ scrollX }) {
+  const particles = useMemo(() =>
+    Array.from({ length: 25 }, (_, i) => ({
+      id: i,
+      size: Math.random() * 4 + 2,
+      x: Math.random() * 300, // spreads across horizontal timeline area
+      y: Math.random() * 70 + 15,
+      speed: Math.random() * 0.22 + 0.08,
+      opacity: Math.random() * 0.35 + 0.1,
+    })),
+    []
+  );
+
+  return (
+    <div className="hidden md:block absolute inset-0 overflow-hidden pointer-events-none -z-10">
+      {particles.map((p) => {
+        const translationX = useTransform(scrollX, (val) => -val * p.speed);
+        return (
+          <motion.div
+            key={p.id}
+            className="absolute rounded-full bg-indigo-500/20"
+            style={{
+              width: p.size,
+              height: p.size,
+              left: `${p.x}%`,
+              top: `${p.y}%`,
+              opacity: p.opacity,
+              x: translationX,
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+}
 
 // Floating ambient particles for the hero
 function HeroParticles() {
@@ -69,6 +106,9 @@ export default function SchedulePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [activePlatform, setActivePlatform] = useState('All');
   const [viewMode, setViewMode] = useState('list');
+
+  const scrollContainerRef = useRef(null);
+  const { scrollX } = useScroll({ container: scrollContainerRef });
 
   useEffect(() => {
     document.title = 'Jadwal & Kegiatan | Official Website Intanium';
@@ -206,36 +246,48 @@ export default function SchedulePage() {
               />
             </motion.div>
           ) : viewMode === 'list' ? (
-            <motion.div
-              key="list"
-              initial="hidden"
-              animate="visible"
-              exit="hidden"
-              variants={{
-                visible: {
-                  transition: {
-                    staggerChildren: 0.06
-                  }
-                }
-              }}
-              className="relative border-l-2 border-indigo-100/40 ml-4 md:ml-36 pl-6 md:pl-10 space-y-12 py-6 text-left"
-            >
-              {/* Connecting gradient overlay on timeline line */}
-              <div className="absolute top-0 bottom-0 left-[-2px] w-[2px] bg-gradient-to-b from-[var(--color-primary)]/50 via-cyan-400/20 to-pink-400/10 pointer-events-none" />
+            <div className="relative overflow-visible">
+              {/* Parallax Background for Horizontal Timeline */}
+              <TimelineParallaxBackground scrollX={scrollX} />
 
-              {events.map((event) => (
-                <motion.div
-                  key={event.id}
-                  variants={{
-                    hidden: { opacity: 0, y: 25, filter: 'blur(4px)' },
-                    visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.55, ease: PREMIUM_EASE } }
-                  }}
-                  className="relative"
-                >
-                  <ScheduleCard event={event} />
-                </motion.div>
-              ))}
-            </motion.div>
+              <motion.div
+                key="list"
+                ref={scrollContainerRef}
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+                variants={{
+                  visible: {
+                    transition: {
+                      staggerChildren: 0.06
+                    }
+                  }
+                }}
+                className="relative flex flex-col md:flex-row md:overflow-x-auto md:overflow-y-hidden md:min-h-[500px] md:items-center md:gap-8 md:px-8 md:py-16 md:space-y-0 border-l-2 border-indigo-100/40 md:border-l-0 ml-4 md:ml-0 pl-6 md:pl-0 space-y-12 py-6 text-left"
+              >
+                {/* Horizontal central track line on desktop */}
+                <div className="hidden md:block absolute left-0 right-0 top-[50%] h-[3px] bg-gradient-to-r from-[var(--color-primary)] via-cyan-500 to-pink-500 pointer-events-none -translate-y-[50%] opacity-80" />
+                {/* Vertical track line on mobile */}
+                <div className="md:hidden absolute top-0 bottom-0 left-[-2px] w-[2px] bg-gradient-to-b from-[var(--color-primary)]/50 via-cyan-400/20 to-pink-400/10 pointer-events-none" />
+
+                {events.map((event, index) => (
+                  <motion.div
+                    key={event.id}
+                    variants={{
+                      hidden: { opacity: 0, y: 25, filter: 'blur(4px)' },
+                      visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.55, ease: PREMIUM_EASE } }
+                    }}
+                    className={`relative shrink-0 ${
+                      index % 2 === 0
+                        ? 'md:-translate-y-16'
+                        : 'md:translate-y-16'
+                    }`}
+                  >
+                    <ScheduleCard event={event} isHorizontal={true} index={index} />
+                  </motion.div>
+                ))}
+              </motion.div>
+            </div>
           ) : (
             <motion.div
               key="calendar"
