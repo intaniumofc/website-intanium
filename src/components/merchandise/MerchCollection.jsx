@@ -1,4 +1,4 @@
-import React from 'react';
+// No unused React import here
 import MerchCard from './MerchCard';
 import EmptyState from '../common/EmptyState';
 import { ShoppingBag } from 'lucide-react';

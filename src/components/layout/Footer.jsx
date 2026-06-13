@@ -21,6 +21,7 @@ const defaultSections = [
       { name: "Karya Seni Fanart", href: "/fanart" },
       { name: "Papan Mading", href: "/mading" },
       { name: "Recap Aktivitas", href: "/recaps" },
+      { name: "Arena Game Intanium", href: "/games" },
     ],
   },
   {

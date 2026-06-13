@@ -24,7 +24,7 @@ const reveal = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.58, ease: [0.22, 1, 0.36, 1] } },
 };
 
-function SectionHeading({ eyebrow, title, description, centered = false }) {
+function SectionHeading({ eyebrow, title, description, centered = false, headingLevel: Heading = 'h2' }) {
   return (
     <motion.div
       variants={reveal}
@@ -34,7 +34,7 @@ function SectionHeading({ eyebrow, title, description, centered = false }) {
       className={`shining-section-heading ${centered ? 'is-centered' : ''}`}
     >
       <p>{eyebrow}</p>
-      <h2>{title}</h2>
+      <Heading>{title}</Heading>
       {description && <span>{description}</span>}
     </motion.div>
   );
@@ -222,6 +222,7 @@ function AchievementCollection({ achievements }) {
   return (
     <section className="shining-achievements">
       <SectionHeading
+        headingLevel="h1"
         eyebrow="Achievement Intan"
         title="Pencapaian Selama di JKT48"
         description="Kumpulan milestone dan pencapaian yang Intan raih sejak resmi menjadi bagian dari JKT48."
@@ -262,6 +263,7 @@ export default function IntanShiningStarPage() {
   const reduceMotion = useReducedMotion();
 
   useEffect(() => {
+    document.title = 'Intan Shining Star | JKT48 Official Achievement & Journey';
     let mounted = true;
     achievementService.getAchievements().then((data) => {
       if (mounted) {

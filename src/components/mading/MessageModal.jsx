@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { X, Heart, Calendar } from 'lucide-react';
 
@@ -57,8 +57,9 @@ export default function MessageModal({ note, onClose, onLove }) {
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 p-1.5 rounded-full hover:bg-black/5 text-slate-700 transition-colors cursor-pointer"
+          aria-label="Tutup"
           title="Tutup"
+          className="absolute top-3 right-3 p-1.5 rounded-full hover:bg-black/5 text-slate-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2"
         >
           <X className="h-5 w-5" />
         </button>
@@ -88,7 +89,7 @@ export default function MessageModal({ note, onClose, onLove }) {
             <button
               onClick={handleLove}
               disabled={loved}
-              className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold shadow-sm border transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold shadow-sm border transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2 ${
                 loved
                   ? 'bg-red-500 border-red-500 text-white shadow-red-200'
                   : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700 hover:text-red-500'

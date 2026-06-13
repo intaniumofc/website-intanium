@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { X, Pin } from 'lucide-react';
 
@@ -99,7 +99,9 @@ export default function MessageFormModal({ isOpen, onClose, onSubmit }) {
           </h4>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+            aria-label="Tutup"
+            title="Tutup"
+            className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2"
           >
             <X className="h-5 w-5" />
           </button>
@@ -108,23 +110,24 @@ export default function MessageFormModal({ isOpen, onClose, onSubmit }) {
         <form onSubmit={handleSubmit} className="space-y-4 pt-4 text-left">
           {/* Name Input */}
           <div>
-            <label className="block text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-1.5">
+            <label htmlFor="mading-form-name" className="block text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-1.5 cursor-pointer">
               Nama / Username Panggilan
             </label>
             <input
               type="text"
               name="name"
+              id="mading-form-name"
               value={formData.name}
               onChange={handleChange}
               placeholder="Contoh: MatchaLover"
-              className="w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg px-4 py-2.5 text-sm text-[var(--text-primary)] focus:ring-1 focus:ring-[var(--color-primary)] focus:outline-none"
+              className="w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg px-4 py-2.5 text-sm text-[var(--text-primary)] focus:ring-1 focus:ring-[var(--color-primary)] focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2"
             />
             {errors.name && <p className="mt-1 text-xs text-red-500 font-semibold">{errors.name}</p>}
           </div>
 
           {/* Message Input */}
           <div>
-            <label className="block text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-1.5 flex justify-between">
+            <label htmlFor="mading-form-message" className="block text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-1.5 flex justify-between cursor-pointer">
               <span>Isi Pesan Dukungan</span>
               <span className="text-[10px] text-slate-400 lowercase font-medium">
                 {formData.message.length}/200 karakter
@@ -132,11 +135,12 @@ export default function MessageFormModal({ isOpen, onClose, onSubmit }) {
             </label>
             <textarea
               name="message"
+              id="mading-form-message"
               value={formData.message}
               onChange={handleChange}
               rows="3"
               placeholder="Tulis ucapan selamat, kata penyemangat, atau candaan hangat di sini..."
-              className="w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg px-4 py-2.5 text-sm text-[var(--text-primary)] focus:ring-1 focus:ring-[var(--color-primary)] focus:outline-none resize-none"
+              className="w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg px-4 py-2.5 text-sm text-[var(--text-primary)] focus:ring-1 focus:ring-[var(--color-primary)] focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 resize-none"
             />
             {errors.message && <p className="mt-1 text-xs text-red-500 font-semibold">{errors.message}</p>}
           </div>
@@ -154,10 +158,12 @@ export default function MessageFormModal({ isOpen, onClose, onSubmit }) {
                     key={color.id}
                     type="button"
                     onClick={() => selectColor(color.id)}
-                    className={`w-8 h-8 rounded-full ${color.bgClass} border transition-all cursor-pointer transform hover:scale-110 ${
+                    className={`w-8 h-8 rounded-full ${color.bgClass} border transition-all cursor-pointer transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 ${
                       isActive ? 'border-[var(--color-primary)] ring-2 ring-purple-300/40 scale-105 shadow-sm' : 'border-slate-300'
                     }`}
                     title={color.name}
+                    aria-label={`Warna ${color.name}`}
+                    aria-pressed={isActive}
                   />
                 );
               })}
@@ -186,13 +192,13 @@ export default function MessageFormModal({ isOpen, onClose, onSubmit }) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-2.5 border border-slate-200 text-slate-600 font-bold text-sm rounded-lg hover:bg-slate-50 transition-colors cursor-pointer text-center"
+              className="flex-1 py-2.5 border border-slate-200 text-slate-600 font-bold text-sm rounded-lg hover:bg-slate-50 transition-colors cursor-pointer text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2"
             >
               Batal
             </button>
             <button
               type="submit"
-              className="flex-1 py-2.5 bg-indigo-900 hover:bg-indigo-800 text-white font-bold text-sm rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+              className="flex-1 py-2.5 bg-indigo-900 hover:bg-indigo-800 text-white font-bold text-sm rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2"
             >
               <Pin className="h-4 w-4" />
               <span>Tempel Pesan</span>

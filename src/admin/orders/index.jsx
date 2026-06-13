@@ -11,15 +11,21 @@ import ConfirmDialog from '../../components/common/ConfirmDialog';
 import { useAdminToast } from '../../components/common/useAdminToast';
 
 const orderStatusOptions = [
-  'pending',
+  'pending_review',
+  'waiting_payment',
   'paid',
+  'processing',
+  'ready_for_pickup',
   'shipped',
   'completed',
   'cancelled',
 ];
 
 const bulkStatusOptions = [
+  'waiting_payment',
   'paid',
+  'processing',
+  'ready_for_pickup',
   'shipped',
   'completed',
 ];
@@ -28,19 +34,34 @@ const ORDER_PAGE_SIZE = 12;
 const HIGH_TOTAL_THRESHOLD = 1000000;
 
 const STATUS_STYLES = {
-  pending: {
+  pending_review: {
+    dot: 'bg-purple-500',
+    pill: 'border-purple-200 bg-purple-50 text-purple-700 dark:border-purple-800/40 dark:bg-purple-950/20 dark:text-purple-300',
+    label: 'Pending Review',
+  },
+  waiting_payment: {
     dot: 'bg-amber-500',
     pill: 'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800/40 dark:bg-amber-950/20 dark:text-amber-300',
-    label: 'Pending',
+    label: 'Waiting Payment',
   },
   paid: {
-    dot: 'bg-[var(--color-primary)]',
+    dot: 'bg-blue-500',
     pill: 'border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800/40 dark:bg-blue-950/20 dark:text-blue-300',
     label: 'Paid',
   },
-  shipped: {
+  processing: {
     dot: 'bg-indigo-500',
     pill: 'border-indigo-200 bg-indigo-50 text-indigo-700 dark:border-indigo-800/40 dark:bg-indigo-950/20 dark:text-indigo-300',
+    label: 'Processing',
+  },
+  ready_for_pickup: {
+    dot: 'bg-teal-500',
+    pill: 'border-teal-200 bg-teal-50 text-teal-700 dark:border-teal-800/40 dark:bg-teal-950/20 dark:text-teal-300',
+    label: 'Ready For Pickup',
+  },
+  shipped: {
+    dot: 'bg-pink-500',
+    pill: 'border-pink-200 bg-pink-50 text-pink-700 dark:border-pink-800/40 dark:bg-pink-950/20 dark:text-pink-300',
     label: 'Shipped',
   },
   completed: {
@@ -49,9 +70,15 @@ const STATUS_STYLES = {
     label: 'Completed',
   },
   cancelled: {
-    dot: 'bg-slate-400',
-    pill: 'border-slate-200 bg-slate-50 text-slate-500 dark:border-slate-800/40 dark:bg-slate-900/20 dark:text-slate-400',
+    dot: 'bg-rose-500',
+    pill: 'border-rose-200 bg-rose-50 text-rose-500 dark:border-rose-800/40 dark:bg-rose-950/20 dark:text-rose-400',
     label: 'Cancelled',
+  },
+  // Keep pending for fallback compatibility
+  pending: {
+    dot: 'bg-amber-500',
+    pill: 'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800/40 dark:bg-amber-950/20 dark:text-amber-300',
+    label: 'Pending',
   },
 };
 
@@ -69,7 +96,7 @@ function toDateInput(date) {
 }
 
 function isPendingOver24Hours(order) {
-  if (order.status !== 'pending') return false;
+  if (order.status !== 'pending' && order.status !== 'pending_review' && order.status !== 'waiting_payment') return false;
   const createdMs = new Date(order.created_at).getTime();
   return Date.now() - createdMs > 24 * 60 * 60 * 1000;
 }
@@ -114,6 +141,8 @@ export default function AdminOrdersPage() {
   const [trackingNumber, setTrackingNumber] = useState('');
   const [trackingUrl, setTrackingUrl] = useState('');
   const [markShipped, setMarkShipped] = useState(true);
+  const [correctedShippingCost, setCorrectedShippingCost] = useState('');
+  const [shippingCostSaving, setShippingCostSaving] = useState(false);
 
   // Unified confirm dialog state
   const [confirmState, setConfirmState] = useState({
@@ -348,10 +377,39 @@ export default function AdminOrdersPage() {
       setTrackingNumber(detail.order.tracking_number ?? '');
       setTrackingUrl(detail.order.tracking_url ?? '');
       setMarkShipped(detail.order.status === 'paid');
+      setCorrectedShippingCost(detail.order.shipping_cost?.toString() ?? '0');
     } catch (err) {
       setDetailError(err instanceof Error ? err.message : 'Gagal memuat detail order');
     } finally {
       setDetailLoading(false);
+    }
+  }
+
+  async function handleUpdateShippingCost() {
+    if (!detailData) return;
+    const cost = Number(correctedShippingCost);
+    if (isNaN(cost) || cost < 0) {
+      notify.error('Kesalahan Input', 'Ongkos kirim harus berupa angka positif.');
+      return;
+    }
+    
+    setShippingCostSaving(true);
+    try {
+      const updated = await merchandiseService.updateAdminOrderShippingCost(detailData.order.id, cost);
+      
+      // Update local orders list state
+      setOrders((current) =>
+        current.map((order) => (order.id === updated.id ? updated : order)),
+      );
+      
+      notify.success('Ongkir diperbarui', `Ongkos kirim order ${updated.order_number} berhasil diperbarui.`);
+      // Reload drawer details
+      await handleOpenDetail(updated.id);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Gagal memperbarui ongkos kirim.';
+      notify.error('Gagal memperbarui ongkir', message);
+    } finally {
+      setShippingCostSaving(false);
     }
   }
 
@@ -973,22 +1031,67 @@ export default function AdminOrdersPage() {
                     <dl className="grid gap-4 text-xs sm:grid-cols-2">
                       <DetailItem label="Nama Lengkap" value={detailData.order.shipping_name} />
                       <DetailItem label="Nomor WhatsApp" value={detailData.order.shipping_phone} />
-                      <DetailItem label="Kode Pos" value={detailData.order.shipping_postal_code} />
+                      <DetailItem label="ID Line" value={detailData.order.line_id || '-'} />
+                      <DetailItem label="ID Anggota Intanium" value={detailData.order.intanium_member_id || '-'} />
                       <DetailItem
                         label="Metode Pengiriman"
-                        value={`${detailData.order.shipping_courier} (${detailData.order.shipping_service})`}
+                        value={detailData.order.delivery_method === 'pickup_fx' ? 'Bertemu di FX Sudirman (Pickup)' : 'Ekspedisi J&T Express (EZ)'}
                       />
-                      <DetailItem
-                        label="Alamat Lengkap"
-                        value={detailData.order.shipping_address}
-                        className="sm:col-span-2"
-                      />
+                      
+                      {detailData.order.delivery_method === 'expedition_jnt' ? (
+                        <>
+                          <DetailItem label="Provinsi" value={detailData.order.province || '-'} />
+                          <DetailItem label="Kota / Kabupaten" value={detailData.order.shipping_city || '-'} />
+                          <DetailItem label="Kode Pos" value={detailData.order.shipping_postal_code || '-'} />
+                          <DetailItem
+                            label="Alamat Lengkap Pengiriman"
+                            value={detailData.order.shipping_address}
+                            className="sm:col-span-2"
+                          />
+                        </>
+                      ) : (
+                        <div className="sm:col-span-2 bg-indigo-50/50 rounded-xl p-3 border border-indigo-100 text-[11px] text-slate-600 leading-relaxed">
+                          <strong>Pengambilan di FX Sudirman:</strong> Alamat pengiriman tidak diperlukan. Admin/fanbase akan menghubungi pembeli menggunakan ID Line (<strong>{detailData.order.line_id || '-'}</strong>) untuk berkoordinasi.
+                        </div>
+                      )}
+                      
                       <DetailItem
                         label="Ongkos Kirim"
                         value={formatCurrency(Number(detailData.order.shipping_cost))}
                       />
                     </dl>
                   </DetailSection>
+
+                  {/* Koreksi Ongkos Kirim Form (Only show for pending_review and waiting_payment) */}
+                  {(detailData.order.status === 'pending_review' || detailData.order.status === 'waiting_payment') && (
+                    <DetailSection title="Koreksi Ongkos Kirim (Admin)">
+                      <div className="space-y-3">
+                        <p className="text-[11px] text-slate-500 leading-relaxed">
+                          Gunakan fitur ini untuk menyesuaikan nominal ongkos kirim J&T jika pembeli salah menginput tarif. Total nominal tagihan akan dihitung ulang otomatis.
+                        </p>
+                        <div className="flex gap-2">
+                          <div className="relative flex-1">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">Rp</span>
+                            <input
+                              type="number"
+                              value={correctedShippingCost}
+                              onChange={(e) => setCorrectedShippingCost(e.target.value)}
+                              className="w-full rounded-xl border border-slate-200 bg-white pl-8 pr-3 py-2 text-xs font-semibold focus:border-[var(--color-primary)] focus:outline-none"
+                              placeholder="Contoh: 15000"
+                            />
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => void handleUpdateShippingCost()}
+                            disabled={shippingCostSaving}
+                            className="rounded-xl bg-[var(--color-primary)] hover:bg-indigo-900 px-4 py-2 text-xs font-bold text-white transition disabled:opacity-50 cursor-pointer shadow-xs"
+                          >
+                            {shippingCostSaving ? 'Memproses...' : 'Perbarui Ongkir'}
+                          </button>
+                        </div>
+                      </div>
+                    </DetailSection>
+                  )}
 
                   {/* Fulfillment Resi Setup */}
                   <DetailSection title="Fulfillment & Input Resi">

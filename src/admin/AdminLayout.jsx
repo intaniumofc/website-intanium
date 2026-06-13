@@ -21,7 +21,8 @@ import {
   Headphones,
   ClipboardList,
   User,
-  Hash
+  Hash,
+  Gamepad2
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import logoNobg from '../assets/logos/logo-nobg.png';
@@ -124,6 +125,7 @@ export default function AdminLayout({ children }) {
     { id: 'gallery', name: 'Galeri Album', href: ROUTES.ADMIN_GALLERY, icon: ImageIcon },
     { id: 'mading', name: 'Moderasi Mading', href: ROUTES.ADMIN_MADING, icon: Pin },
     { id: 'hashtags', name: 'Kelola Tagar', href: ROUTES.ADMIN_HASHTAGS, icon: Hash },
+    { id: 'games', name: 'Kelola Game', href: ROUTES.ADMIN_GAMES, icon: Gamepad2 },
   ];
 
 

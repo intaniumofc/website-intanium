@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { merchandiseService } from './merchandiseService';
 import { formatCurrency } from '../../lib/helpers';
 import { ROUTES } from '../../lib/constants';
 import Button from '../../components/common/Button';
-import { CreditCard, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 
 const SORT_OPTIONS = [
   { label: 'Terbaru', value: 'newest' },
@@ -99,10 +99,28 @@ function buildProductsLink(options) {
 }
 
 export default function MerchandisePage() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get('q') ?? '';
   const category = searchParams.get('category') ?? '';
   const newOnly = searchParams.get('new') === '1';
+
+  const [searchVal, setSearchVal] = useState(query);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSearchVal(query);
+  }, [query]);
+
+  const handleSearchSubmit = (e) => {
+    if (e) e.preventDefault();
+    const nextParams = new URLSearchParams(searchParams);
+    if (searchVal.trim()) {
+      nextParams.set('q', searchVal.trim());
+    } else {
+      nextParams.delete('q');
+    }
+    setSearchParams(nextParams);
+  };
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -116,6 +134,8 @@ export default function MerchandisePage() {
 
   // Fetch products
   useEffect(() => {
+    document.title = 'Pre-Order Merchandise | Official Shop Intanium';
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     merchandiseService.getProducts('All', '')
       .then((data) => {
@@ -135,8 +155,8 @@ export default function MerchandisePage() {
 
     if (query.trim()) {
       const term = query.toLowerCase();
-      result = result.filter(p => 
-        p.name.toLowerCase().includes(term) || 
+      result = result.filter(p =>
+        p.name.toLowerCase().includes(term) ||
         (p.description && p.description.toLowerCase().includes(term))
       );
     }
@@ -173,6 +193,7 @@ export default function MerchandisePage() {
   }, [filteredProducts, sortValue]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCurrentPage(1);
   }, [category, newOnly, query]);
 
@@ -219,44 +240,168 @@ export default function MerchandisePage() {
   return (
     <>
       <div className="min-h-screen">
-        <motion.div
+        <motion.section
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
-          className="border-b border-[var(--border-color)] bg-white/60 backdrop-blur-md rounded-2xl p-6 mb-6 shadow-sm"
+          className="text-center space-y-4 max-w-4xl mx-auto mb-10 pt-4"
         >
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[var(--text-muted)]">
-                {resultLabel}
-              </p>
-              <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-[var(--color-primary)]">{heading}</h1>
-              <p className="text-xs text-[var(--text-secondary)] mt-1.5 max-w-2xl leading-relaxed">
-                Miliki koleksi produk eksklusif persembahan Intan & Komunitas Intanium. Seluruh keuntungan penjualan didedikasikan untuk mendukung kelangsungan aktivitas streaming Intan!
-              </p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[var(--text-muted)]">
+            {resultLabel}
+          </p>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-[var(--color-primary)] sm:text-5xl tracking-tight">
+            {heading}
+          </h1>
+          <p className="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed max-w-2xl mx-auto">
+            Miliki koleksi produk eksklusif persembahan Intan & Komunitas Intanium. Seluruh keuntungan penjualan didedikasikan untuk mendukung kelangsungan aktivitas streaming Intan!
+          </p>
+
+          <div className="flex justify-center items-center gap-3 pt-2">
+            {hasFilter ? (
+              <motion.div whileTap={{ scale: 0.98 }}>
+                <Link
+                  to="/merchandise"
+                  className="flex items-center gap-1.5 rounded-xl border border-[var(--border-color)] bg-white px-5 py-2.5 text-xs font-bold text-[var(--text-secondary)] transition hover:bg-slate-50 cursor-pointer shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2"
+                >
+                  <IconClose />
+                  Reset filter
+                </Link>
+              </motion.div>
+            ) : null}
+
+            <Link to={ROUTES.PAYMENT_CONFIRM} className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 rounded-lg">
+              <Button variant="primary" size="md" className="flex items-center gap-2 shadow-md font-bold px-6">
+                <Search className="h-4 w-4" /> Cek Pesanan
+              </Button>
+            </Link>
+          </div>
+        </motion.section>
+
+        {/* Controls bar: Search & Sort spanning full width */}
+        <motion.div
+          layout
+          className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white border border-[var(--border-color)] rounded-[1.25rem] p-3 shadow-xs"
+          transition={{ layout: { duration: 0.3, ease: 'easeInOut' } }}
+        >
+          {/* Left Side: Filter button (mobile only) + Search Input (long) */}
+          <div className="flex flex-1 items-center gap-2 w-full">
+            <motion.button
+              type="button"
+              onClick={() => setDrawerOpen(true)}
+              whileTap={{ scale: 0.97 }}
+              className="flex items-center gap-2 rounded-xl border border-[var(--border-color)] bg-slate-50 px-3.5 py-2.5 text-xs font-bold text-slate-700 shadow-xs transition hover:bg-slate-100 cursor-pointer xl:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 shrink-0 h-10"
+            >
+              <IconFilter />
+              Filter
+            </motion.button>
+
+            <form onSubmit={handleSearchSubmit} className="relative flex items-center flex-1 w-full max-w-xl md:max-w-2xl">
+              <label htmlFor="shop-search-input" className="sr-only">Cari Produk</label>
+              <input
+                type="text"
+                id="shop-search-input"
+                placeholder="Cari produk merch..."
+                value={searchVal}
+                onChange={(e) => setSearchVal(e.target.value)}
+                aria-label="Cari produk"
+                className="w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl pl-9 pr-4 py-2.5 text-xs text-[var(--text-primary)] font-bold shadow-xs transition hover:border-slate-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50 h-10"
+              />
+              <Search className="absolute left-3 w-4 h-4 text-slate-400 pointer-events-none" />
+            </form>
+          </div>
+
+          {/* Right Side: Results count, grid view switcher, sort select */}
+          <div className="flex flex-wrap items-center gap-2.5 justify-between md:justify-end w-full md:w-auto">
+            <p className="text-xs font-bold text-[var(--text-muted)]">
+              <span className="font-extrabold text-[var(--color-primary)] text-sm">{sortedProducts.length}</span> produk
+            </p>
+
+            <div className="hidden items-center gap-0.5 rounded-xl border border-[var(--border-color)] bg-slate-50 p-1 shadow-xs sm:flex h-10">
+              {[2, 3, 4].map((value) => (
+                <motion.button
+                  key={value}
+                  type="button"
+                  onClick={() => setGridCols(value)}
+                  title={`${value} kolom`}
+                  aria-label={`Tampilkan ${value} kolom`}
+                  whileTap={{ scale: 0.94 }}
+                  className={`flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] ${gridCols === value
+                    ? 'bg-[var(--color-primary)] text-white shadow-xs'
+                    : 'text-slate-400 hover:bg-slate-100 hover:text-slate-600'
+                    }`}
+                >
+                  {value === 2 ? <Grid2 /> : value === 3 ? <Grid3 /> : <Grid4 />}
+                </motion.button>
+              ))}
             </div>
 
-            <div className="flex items-center gap-2 self-start md:self-center ml-0 md:ml-auto">
-              {hasFilter ? (
-                <motion.div whileTap={{ scale: 0.98 }}>
-                  <Link
-                    to="/merchandise"
-                    className="flex items-center gap-1.5 rounded-xl border border-[var(--border-color)] bg-white px-4 py-2 text-xs font-bold text-[var(--text-secondary)] transition hover:bg-slate-50 cursor-pointer shadow-sm"
-                  >
-                    <IconClose />
-                    Reset filter
-                  </Link>
-                </motion.div>
-              ) : null}
-
-              <Link to={ROUTES.PAYMENT_CONFIRM}>
-                <Button variant="secondary" size="sm" className="flex items-center gap-1.5 shadow-sm">
-                  <Search className="h-4 w-4" /> Cek Pesanan
-                </Button>
-              </Link>
+            <div className="relative">
+              <select
+                value={sortValue}
+                onChange={(event) => {
+                  setSortValue(event.target.value);
+                  setCurrentPage(1);
+                }}
+                aria-label="Urutkan produk"
+                className="appearance-none cursor-pointer rounded-xl border border-[var(--border-color)] bg-slate-50 py-2.5 pl-4 pr-9 text-xs font-bold text-slate-700 shadow-xs transition hover:border-slate-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] h-10"
+              >
+                {SORT_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400">
+                <IconChevronDown open={false} />
+              </span>
             </div>
           </div>
         </motion.div>
+
+        {/* Filter pills under controls bar */}
+        {hasFilter && (
+          <div className="mb-6 flex flex-wrap gap-2 items-center">
+            <span className="text-[10px] uppercase font-bold tracking-wider text-[var(--text-muted)] mr-1">Filter aktif:</span>
+            <AnimatePresence mode="popLayout">
+              {newOnly && (
+                <motion.div
+                  key="pill-new"
+                  layout
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <FilterPill tone="amber">New Arrival</FilterPill>
+                </motion.div>
+              )}
+              {category && (
+                <motion.div
+                  key={`pill-category-${category}`}
+                  layout
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <FilterPill tone="primary">{getCategoryLabel(category)}</FilterPill>
+                </motion.div>
+              )}
+              {query && (
+                <motion.div
+                  key={`pill-query-${query}`}
+                  layout
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <FilterPill tone="slate">Kata kunci: {query}</FilterPill>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
 
         <div className="flex flex-col xl:flex-row gap-0 xl:gap-8 py-2">
           <aside className="hidden w-[260px] shrink-0 xl:block">
@@ -270,103 +415,6 @@ export default function MerchandisePage() {
           </aside>
 
           <main className="min-w-0 flex-1">
-            <motion.div
-              layout
-              className="mb-5 flex flex-wrap items-center gap-3"
-              transition={{ layout: { duration: 0.3, ease: 'easeInOut' } }}
-            >
-              <motion.button
-                type="button"
-                onClick={() => setDrawerOpen(true)}
-                whileTap={{ scale: 0.97 }}
-                className="flex items-center gap-2 rounded-xl border border-[var(--border-color)] bg-white px-4 py-2 text-xs font-bold text-slate-700 shadow-sm transition hover:bg-slate-50 cursor-pointer xl:hidden"
-              >
-                <IconFilter />
-                Filter & Cari
-              </motion.button>
-
-              <AnimatePresence mode="popLayout">
-                {newOnly ? (
-                  <motion.div
-                    key="pill-new"
-                    layout
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <FilterPill tone="amber">New Arrival</FilterPill>
-                  </motion.div>
-                ) : null}
-                {category ? (
-                  <motion.div
-                    key={`pill-category-${category}`}
-                    layout
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <FilterPill tone="primary">{getCategoryLabel(category)}</FilterPill>
-                  </motion.div>
-                ) : null}
-                {query ? (
-                  <motion.div
-                    key={`pill-query-${query}`}
-                    layout
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <FilterPill tone="slate">Kata kunci: {query}</FilterPill>
-                  </motion.div>
-                ) : null}
-              </AnimatePresence>
-
-              <p className="ml-auto text-xs font-bold text-[var(--text-secondary)]">
-                <span className="font-extrabold text-[var(--color-primary)] text-sm">{sortedProducts.length}</span> produk ditemukan
-              </p>
-
-              <div className="hidden items-center gap-0.5 rounded-xl border border-[var(--border-color)] bg-white p-1 shadow-sm sm:flex">
-                {[2, 3, 4].map((value) => (
-                  <motion.button
-                    key={value}
-                    type="button"
-                    onClick={() => setGridCols(value)}
-                    title={`${value} kolom`}
-                    whileTap={{ scale: 0.94 }}
-                    className={`flex items-center justify-center rounded-lg p-2 transition-all duration-150 cursor-pointer ${gridCols === value
-                        ? 'bg-[var(--color-primary)] text-white shadow-sm'
-                        : 'text-slate-400 hover:bg-slate-100 hover:text-slate-600'
-                      }`}
-                  >
-                    {value === 2 ? <Grid2 /> : value === 3 ? <Grid3 /> : <Grid4 />}
-                  </motion.button>
-                ))}
-              </div>
-
-              <div className="relative">
-                <select
-                  value={sortValue}
-                  onChange={(event) => {
-                    setSortValue(event.target.value);
-                    setCurrentPage(1);
-                  }}
-                  className="appearance-none cursor-pointer rounded-xl border border-[var(--border-color)] bg-white py-2 pl-4 pr-8 text-xs font-bold text-slate-700 shadow-sm transition hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/20"
-                >
-                  {SORT_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-                <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400">
-                  <IconChevronDown open={false} />
-                </span>
-              </div>
-            </motion.div>
-
             {loading ? (
               <ProductGridSkeleton cols={gridCols} />
             ) : error ? (
@@ -445,6 +493,7 @@ export default function MerchandisePage() {
                   onClick={() => setDrawerOpen(false)}
                   whileTap={{ scale: 0.92 }}
                   className="rounded-full p-1.5 text-slate-500 transition hover:bg-slate-100 cursor-pointer"
+                  aria-label="Tutup menu filter"
                 >
                   <IconClose />
                 </motion.button>
@@ -490,42 +539,8 @@ function SidebarContent({
   setCategoryExpanded,
   onLinkClick,
 }) {
-  const [searchVal, setSearchVal] = useState(query);
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  useEffect(() => {
-    setSearchVal(query);
-  }, [query]);
-
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    const nextParams = new URLSearchParams(searchParams);
-    if (searchVal.trim()) {
-      nextParams.set('q', searchVal.trim());
-    } else {
-      nextParams.delete('q');
-    }
-    setSearchParams(nextParams);
-    if (onLinkClick) onLinkClick();
-  };
-
   return (
     <div className="space-y-5">
-      {/* Search Input Panel */}
-      <div className="glass-panel rounded-2xl bg-white p-4.5 shadow-sm border border-[var(--border-color)]">
-        <h3 className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Cari Produk</h3>
-        <form onSubmit={handleSearchSubmit} className="mt-3 relative flex items-center">
-          <input
-            type="text"
-            placeholder="Cari..."
-            value={searchVal}
-            onChange={(e) => setSearchVal(e.target.value)}
-            className="w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl pl-9 pr-4 py-2 text-xs text-[var(--text-primary)] font-semibold focus:ring-2 focus:ring-[var(--color-primary)]/20 focus:outline-none"
-          />
-          <Search className="absolute left-3 w-4 h-4 text-slate-400 pointer-events-none" />
-        </form>
-      </div>
-
       <FilterSection
         title="Kategori Produk"
         expanded={categoryExpanded}
@@ -540,8 +555,8 @@ function SidebarContent({
               to={buildProductsLink({ query, category: option.value, newOnly })}
               onClick={onLinkClick}
               className={`flex items-center justify-between rounded-xl px-4 py-2.5 text-xs font-bold transition ${active
-                  ? 'bg-[var(--color-primary)] text-white shadow-sm'
-                  : 'text-slate-700 hover:bg-slate-100'
+                ? 'bg-[var(--color-primary)] text-white shadow-sm'
+                : 'text-slate-700 hover:bg-slate-100'
                 }`}
             >
               <span>{option.label}</span>
@@ -558,8 +573,8 @@ function SidebarContent({
             to={buildProductsLink({ query, category, newOnly: false })}
             onClick={onLinkClick}
             className={`flex items-center justify-between rounded-xl px-4 py-2.5 text-xs font-bold transition ${!newOnly
-                ? 'bg-[var(--color-primary)] text-white shadow-sm'
-                : 'text-slate-700 hover:bg-slate-100'
+              ? 'bg-[var(--color-primary)] text-white shadow-sm'
+              : 'text-slate-700 hover:bg-slate-100'
               }`}
           >
             <span>Semua Produk</span>
@@ -569,8 +584,8 @@ function SidebarContent({
             to={buildProductsLink({ query, category, newOnly: true })}
             onClick={onLinkClick}
             className={`flex items-center justify-between rounded-xl px-4 py-2.5 text-xs font-bold transition ${newOnly
-                ? 'bg-amber-500 text-white shadow-sm shadow-amber-200'
-                : 'text-slate-700 hover:bg-slate-100'
+              ? 'bg-amber-500 text-white shadow-sm shadow-amber-200'
+              : 'text-slate-700 hover:bg-slate-100'
               }`}
           >
             <span>New Arrival</span>
@@ -603,27 +618,6 @@ function SidebarContent({
             </div>
           </motion.div>
         ))}
-      </div>
-
-      <div className="glass-panel rounded-2xl bg-white p-4.5 shadow-sm border border-[var(--border-color)]">
-        <h3 className="mb-3.5 text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Ikuti Kami</h3>
-        <div className="flex gap-2">
-          {[
-            { label: 'Instagram', href: 'https://www.instagram.com/intan.jkt48' },
-            { label: 'X', href: 'https://x.com/N_IntanJKT48' },
-            { label: 'TikTok', href: 'https://www.tiktok.com/@jkt48.intan' }
-          ].map((social) => (
-            <SocialLink key={social.label} href={social.href} label={social.label}>
-              {social.label === 'Instagram' ? (
-                <InstagramIcon />
-              ) : social.label === 'TikTok' ? (
-                <TikTokIcon />
-              ) : (
-                <XIcon />
-              )}
-            </SocialLink>
-          ))}
-        </div>
       </div>
     </div>
   );
@@ -670,6 +664,7 @@ function ProductCard({ product }) {
   const [imgIndex, setImgIndex] = useState(0);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setImgIndex(0);
   }, [product.id]);
 
@@ -693,7 +688,7 @@ function ProductCard({ product }) {
       transition={{ duration: 0.3, ease: 'easeOut' }}
       className="group text-center [backface-visibility:hidden] h-full flex flex-col bg-white border border-[var(--border-color)] rounded-[1.75rem] p-3.5 shadow-sm hover:shadow-md transition-all relative"
     >
-      <Link to={`/merchandise/${product.id}`} className="block relative w-full">
+      <Link to={`/merchandise/${product.id}`} className="block relative w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 rounded-2xl">
         {/* Out of Stock Label */}
         {!isAvailable ? (
           <span className="absolute top-2.5 left-2.5 z-30 px-2 py-0.5 rounded bg-black/60 backdrop-blur-sm text-[8px] uppercase tracking-widest font-black text-white border border-white/10 select-none pointer-events-none">
@@ -767,9 +762,9 @@ function ProductCard({ product }) {
                     setImgIndex(index);
                   }}
                   whileTap={{ scale: 0.92 }}
-                  className={`flex h-6.5 w-6.5 items-center justify-center rounded-full border p-0.5 transition cursor-pointer ${index === imgIndex
-                      ? 'border-[var(--color-primary)] ring-1 ring-[var(--color-primary)] bg-white'
-                      : 'border-slate-200 bg-white hover:border-slate-400'
+                  className={`flex h-6.5 w-6.5 items-center justify-center rounded-full border p-0.5 transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] ${index === imgIndex
+                    ? 'border-[var(--color-primary)] ring-1 ring-[var(--color-primary)] bg-white'
+                    : 'border-slate-200 bg-white hover:border-slate-400'
                     }`}
                 >
                   <img src={src} alt="" className="h-full w-full rounded-full object-cover" />
@@ -818,7 +813,8 @@ function Pagination({ current, total, onChange }) {
         disabled={current === 1}
         onClick={() => onChange(current - 1)}
         whileTap={{ scale: 0.93 }}
-        className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer"
+        aria-label="Halaman sebelumnya"
+        className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2"
       >
         <ChevronLeftIcon />
       </motion.button>
@@ -834,9 +830,11 @@ function Pagination({ current, total, onChange }) {
             type="button"
             onClick={() => onChange(page)}
             whileTap={{ scale: 0.93 }}
-            className={`flex h-9 w-9 items-center justify-center rounded-full text-xs font-bold transition cursor-pointer ${current === page
-                ? 'bg-[var(--color-primary)] text-white shadow-md shadow-indigo-100'
-                : 'border border-slate-200 bg-white text-slate-700 hover:border-[var(--color-primary)]/40 hover:text-[var(--color-primary)]'
+            aria-label={`Halaman ${page}`}
+            aria-current={current === page ? 'page' : undefined}
+            className={`flex h-9 w-9 items-center justify-center rounded-full text-xs font-bold transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 ${current === page
+              ? 'bg-[var(--color-primary)] text-white shadow-md shadow-indigo-100'
+              : 'border border-slate-200 bg-white text-slate-700 hover:border-[var(--color-primary)]/40 hover:text-[var(--color-primary)]'
               }`}
           >
             {page}
@@ -849,7 +847,8 @@ function Pagination({ current, total, onChange }) {
         disabled={current === total}
         onClick={() => onChange(current + 1)}
         whileTap={{ scale: 0.93 }}
-        className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer"
+        aria-label="Halaman berikutnya"
+        className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2"
       >
         <ChevronRightIcon />
       </motion.button>
@@ -881,20 +880,7 @@ function ProductGridSkeleton({ cols }) {
   );
 }
 
-function SocialLink({ href, label, children }) {
-  return (
-    <motion.a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={label}
-      whileTap={{ scale: 0.94 }}
-      className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition hover:border-[var(--color-primary)]/40 hover:bg-[var(--color-primary-light)] hover:text-[var(--color-primary)]"
-    >
-      {children}
-    </motion.a>
-  );
-}
+
 
 const IconFilter = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -977,25 +963,7 @@ const Grid4 = () => (
   </svg>
 );
 
-const InstagramIcon = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-  </svg>
-);
 
-const XIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-  </svg>
-);
-
-const TikTokIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
-  </svg>
-);
 
 const EmptyImageIcon = () => (
   <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">

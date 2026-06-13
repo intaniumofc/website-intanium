@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { X, ImageIcon } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { galleryService } from './galleryService';
 import Loading from '../../components/common/Loading';
@@ -71,6 +71,7 @@ export default function GalleryPage() {
   const targetRef = useRef(null);
 
   useEffect(() => {
+    document.title = 'Galeri Foto Intanium | Album Memori Komunitas';
     galleryService.getGalleryPhotos()
       .then((data) => {
         const filtered = data.filter(p => p.display_type === 'gallery' || p.display_type === 'both');
@@ -117,20 +118,14 @@ export default function GalleryPage() {
     return () => window.removeEventListener("resize", calculateConstraints);
   }, [photos]);
 
-  // Framer Motion scroll animations
-  const { scrollYProgress } = useScroll({
-    target: targetRef,
-    offset: ["start end", "end start"],
-  });
-  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
-  const y = useTransform(scrollYProgress, [0, 0.2], [30, 0]);
+
 
   return (
     <div className="w-full animate-fade-in space-y-10">
       <div className="mx-auto max-w-3xl space-y-4 text-center">
-        <h2 className="text-3xl font-extrabold text-(--color-primary) sm:text-4xl">
+        <h1 className="text-3xl font-extrabold text-(--color-primary) sm:text-5xl tracking-tight">
           Galeri Foto Intanium
-        </h2>
+        </h1>
         <p className="text-sm leading-relaxed text-(--text-secondary) sm:text-base">
           Koleksi tangkapan layar momen-momen seru streaming, foto kenangan event bersama, poster visual utama, serta grafis promo resmi Intan.
         </p>
@@ -168,15 +163,21 @@ export default function GalleryPage() {
                     key={item.id}
                     variants={itemVariants}
                     className={cn(
-                      "group relative flex h-full min-h-[15rem] w-full min-w-[15rem] cursor-pointer items-end overflow-hidden rounded-xl border bg-card p-4 shadow-sm transition-shadow duration-300 ease-in-out hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                      "group relative flex h-full min-h-[15rem] w-full min-w-[15rem] cursor-pointer items-end overflow-hidden rounded-xl border bg-card p-4 shadow-sm transition-shadow duration-300 ease-in-out hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2",
                       item.span,
                     )}
                     whileHover={{ scale: 1.02 }}
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
                     onClick={() => setSelectedItem(item)}
-                    onKeyDown={(e) => e.key === "Enter" && setSelectedItem(item)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setSelectedItem(item);
+                      }
+                    }}
                     tabIndex={0}
-                    aria-label={`View ${item.title}`}
+                    role="button"
+                    aria-label={`Lihat foto: ${item.title}`}
                   >
                     <img
                       src={item.url}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { merchandiseService } from './merchandiseService';
 import Card from '../../components/common/Card';
@@ -7,7 +7,7 @@ import Loading from '../../components/common/Loading';
 import CheckoutForm from '../../components/merchandise/CheckoutForm';
 import Modal from '../../components/common/Modal';
 import { formatCurrency } from '../../lib/helpers';
-import { ROUTES } from '../../lib/constants';
+import { ROUTES, ADMIN_WHATSAPP_NUMBER } from '../../lib/constants';
 import { ShieldCheck, Truck, Clock } from 'lucide-react';
 
 export default function MerchDetailPage() {
@@ -19,10 +19,10 @@ export default function MerchDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState('');
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeImgIndex, setActiveImgIndex] = useState(0);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoading(true);
     merchandiseService.getProductById(id)
       .then((data) => {
@@ -37,6 +37,12 @@ export default function MerchDetailPage() {
         setIsLoading(false);
       });
   }, [id]);
+
+  useEffect(() => {
+    if (product) {
+      document.title = `${product.name} | Pre-Order Merchandise Intanium`;
+    }
+  }, [product]);
 
   const images = useMemo(() => {
     if (!product) return [];
@@ -62,19 +68,61 @@ export default function MerchDetailPage() {
   const isAvailable = product.is_available ?? product.isAvailable ?? true;
 
   const handleCheckoutSubmit = async (checkoutData) => {
-    setIsSubmitting(true);
     try {
       const order = await merchandiseService.createOrder({
         ...checkoutData,
         selectedSize,
       });
-      setIsSubmitting(false);
       setIsCheckoutOpen(false);
+ 
+      // WhatsApp Redirect logic
+      const waNumber = ADMIN_WHATSAPP_NUMBER || '6281386701549';
+      const invoiceNum = order.invoiceNumber;
+      const prodName = product.name;
+      const size = selectedSize || '-';
+      const qty = checkoutData.quantity || 1;
+      const total = order.totalAmount;
+      const buyerName = checkoutData.name || '-';
+      const buyerPhone = checkoutData.phone || '-';
+      const lineId = checkoutData.lineId || '-';
+      const memberId = checkoutData.intaniumMemberId || '-';
+      const deliveryMethod = checkoutData.deliveryMethod === 'pickup_fx' ? 'Ambil di FX Sudirman' : 'Ekspedisi J&T';
+      const buyerAddress = checkoutData.deliveryMethod === 'pickup_fx' 
+        ? 'Tidak diperlukan (Ambil di FX Sudirman)' 
+        : `${checkoutData.address || '-'}, ${checkoutData.city || ''}, ${checkoutData.province || ''} ${checkoutData.postalCode || ''}`;
+      
+      const shippingCostText = checkoutData.deliveryMethod === 'pickup_fx'
+        ? 'FREE ONGKIR'
+        : formatCurrency(checkoutData.shipping_cost || 0);
+ 
+      const notesText = checkoutData.notes ? `\n- *Catatan:* ${checkoutData.notes}` : '';
+      
+      const message = `Halo Admin Intanium! Saya sudah melakukan transfer untuk Pre-Order Merchandise. Berikut detail pesanan saya:
+ 
+*Rincian Pesanan:*
+- *Nomor Invoice:* ${invoiceNum}
+- *Produk:* ${prodName}
+- *Varian/Size:* ${size}
+- *Jumlah:* ${qty} pcs
+- *Metode Pengiriman:* ${deliveryMethod}
+- *Ongkos Kirim:* ${shippingCostText}
+- *Total Pembayaran:* ${formatCurrency(Number(total))}
+- *Nama Penerima:* ${buyerName}
+- *No. WhatsApp:* ${buyerPhone}
+- *ID Line:* ${lineId}
+- *ID Anggota:* ${memberId}
+- *Alamat:* ${buyerAddress}${notesText}
+ 
+Saya melampirkan bukti transfer pembayaran di bawah ini. Mohon segera diproses ya Min. Terima kasih!`;
+ 
+      const encodedMessage = encodeURIComponent(message);
+      const waUrl = `https://wa.me/${waNumber}?text=${encodedMessage}`;
+      window.open(waUrl, '_blank');
+ 
       // Navigate to confirm page with initial invoice parameters in query or state
       navigate(`${ROUTES.PAYMENT_CONFIRM}?inv=${order.invoiceNumber}&total=${order.totalAmount}`);
     } catch (err) {
       console.error(err);
-      setIsSubmitting(false);
     }
   };
 
@@ -123,7 +171,9 @@ export default function MerchDetailPage() {
                 <button
                   key={`${src}-${index}`}
                   onClick={() => setActiveImgIndex(index)}
-                  className={`w-14 h-14 rounded-xl overflow-hidden border-2 transition cursor-pointer ${activeImgIndex === index
+                  aria-label={`Lihat gambar detail ${index + 1}`}
+                  aria-pressed={activeImgIndex === index}
+                  className={`w-14 h-14 rounded-xl overflow-hidden border-2 transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 ${activeImgIndex === index
                       ? 'border-[var(--color-primary)] shadow-sm'
                       : 'border-[var(--border-color)] bg-white opacity-75 hover:opacity-100'
                     }`}
@@ -172,7 +222,9 @@ export default function MerchDetailPage() {
                       <button
                         key={size}
                         onClick={() => setSelectedSize(size)}
-                        className={`px-4.5 py-2 rounded-xl text-xs font-bold border transition duration-200 cursor-pointer ${isSelected
+                        aria-label={`Pilih ukuran ${size}`}
+                        aria-pressed={isSelected}
+                        className={`px-4.5 py-2 rounded-xl text-xs font-bold border transition duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 ${isSelected
                             ? 'border-[var(--color-primary)] bg-[var(--color-primary)] text-white shadow-sm'
                             : 'border-[var(--border-color)] bg-white text-slate-700 hover:border-slate-400'
                           }`}
@@ -194,7 +246,8 @@ export default function MerchDetailPage() {
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
-                    className="w-9 h-9 rounded-xl bg-[var(--bg-primary)] border border-[var(--border-color)] hover:border-slate-400 flex items-center justify-center font-bold text-sm cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                    aria-label="Kurangi jumlah"
+                    className="w-9 h-9 rounded-xl bg-[var(--bg-primary)] border border-[var(--border-color)] hover:border-slate-400 flex items-center justify-center font-bold text-sm cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]"
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     disabled={quantity <= 1}
                   >
@@ -203,7 +256,8 @@ export default function MerchDetailPage() {
                   <span className="text-sm font-bold w-6 text-center">{quantity}</span>
                   <button
                     type="button"
-                    className="w-9 h-9 rounded-xl bg-[var(--bg-primary)] border border-[var(--border-color)] hover:border-slate-400 flex items-center justify-center font-bold text-sm cursor-pointer"
+                    aria-label="Tambah jumlah"
+                    className="w-9 h-9 rounded-xl bg-[var(--bg-primary)] border border-[var(--border-color)] hover:border-slate-400 flex items-center justify-center font-bold text-sm cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]"
                     onClick={() => setQuantity(quantity + 1)}
                   >
                     +
@@ -256,7 +310,7 @@ export default function MerchDetailPage() {
         isOpen={isCheckoutOpen}
         onClose={() => setIsCheckoutOpen(false)}
         title="Formulir Checkout Pesanan"
-        size="xl"
+        size="3xl"
       >
         <CheckoutForm
           product={product}

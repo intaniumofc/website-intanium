@@ -277,7 +277,7 @@ function FilterTabs({ active, onChange }) {
             type="button"
             onClick={() => onChange(tab.id)}
             aria-pressed={isActive}
-            className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold transition-all duration-300 ${isActive
+            className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 ${isActive
               ? 'border-(--color-primary)/40 bg-(--color-primary) text-white shadow-[0_12px_30px_-14px_rgba(124,58,237,0.7)]'
               : 'border-white/70 bg-white/60 text-(--text-secondary) hover:border-(--color-primary)/30 hover:text-(--color-primary)'}`}
           >

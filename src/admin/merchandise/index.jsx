@@ -9,7 +9,7 @@ import { useSupabaseUpload } from '../../hooks/useSupabaseUpload';
 import { 
   Plus, Edit, Trash2, Check, X, Search, Image as ImageIcon, 
   Tag, ChevronLeft, ChevronRight, Sparkles, SlidersHorizontal, LayoutGrid,
-  Clock, ShoppingBag
+  Clock, ShoppingBag, CreditCard
 } from 'lucide-react';
 import { MERCH_CATEGORIES } from '../../lib/constants';
 import { formatCurrency } from '../../lib/helpers';
@@ -58,6 +58,75 @@ export default function AdminMerchandise() {
   // Uploader hook
   const { uploadFile, isUploading, progress } = useSupabaseUpload();
   const [uploadingKey, setUploadingKey] = useState(null);
+
+  // Payment settings state
+  const [paymentSettings, setPaymentSettings] = useState({
+    bank_name: '',
+    account_number: '',
+    account_holder: '',
+    qris_url: ''
+  });
+  const [isSavingSettings, setIsSavingSettings] = useState(false);
+  const [isSettingsLoading, setIsSettingsLoading] = useState(false);
+
+  const fetchPaymentSettings = async () => {
+    setIsSettingsLoading(true);
+    try {
+      const data = await merchandiseService.getPaymentSettings();
+      if (data) {
+        setPaymentSettings(data);
+      }
+    } catch (err) {
+      console.error(err);
+      notify.error('Gagal mengambil info pembayaran', err.message);
+    } finally {
+      setIsSettingsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeWorkspace === 'payment') {
+      fetchPaymentSettings();
+    }
+  }, [activeWorkspace]);
+
+  const handlePaymentSettingsSubmit = async (e) => {
+    e.preventDefault();
+    if (!paymentSettings.bank_name.trim() || !paymentSettings.account_number.trim() || !paymentSettings.account_holder.trim()) {
+      notify.warning('Data belum lengkap', 'Nama bank, nomor rekening, dan nama penerima harus diisi.');
+      return;
+    }
+
+    setIsSavingSettings(true);
+    try {
+      const res = await merchandiseService.updatePaymentSettings(paymentSettings);
+      if (res.success) {
+        notify.success('Pengaturan disimpan', 'Informasi pembayaran berhasil diperbarui.');
+      } else {
+        notify.error('Gagal menyimpan pengaturan', res.error);
+      }
+    } catch (err) {
+      console.error(err);
+      notify.error('Gagal menyimpan pengaturan', err.message);
+    } finally {
+      setIsSavingSettings(false);
+    }
+  };
+
+  const handleQrisUpload = async (file) => {
+    if (!file) return;
+    setUploadingKey('payment_qris');
+    try {
+      const publicUrl = await uploadFile(file, 'assets', 'payment');
+      setPaymentSettings(prev => ({ ...prev, qris_url: publicUrl }));
+      notify.success('QRIS berhasil diunggah', 'URL foto QRIS sudah dimasukkan.');
+    } catch (err) {
+      console.error('File upload failed:', err);
+      notify.error('Gagal mengunggah QRIS', err.message);
+    } finally {
+      setUploadingKey(null);
+    }
+  };
 
   useEffect(() => {
     fetchData();
@@ -346,6 +415,19 @@ export default function AdminMerchandise() {
             }`}
           >
             {editingId ? 'Ubah Data Produk' : 'Input Produk Baru'}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setActiveWorkspace('payment');
+            }}
+            className={`whitespace-nowrap border-b-2 px-1 pb-3 text-xs font-bold uppercase tracking-wider transition cursor-pointer flex items-center gap-1.5 ${
+              activeWorkspace === 'payment'
+                ? 'border-[var(--color-primary)] text-[var(--color-primary)] font-extrabold'
+                : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'
+            }`}
+          >
+            <CreditCard className="h-3.5 w-3.5" /> Informasi Pembayaran
           </button>
         </nav>
       </div>
@@ -778,6 +860,146 @@ export default function AdminMerchandise() {
               Simpan Produk
             </Button>
           </div>
+        </form>
+      )}
+
+      {/* ─────────────────── WORKSPACE: PAYMENT CONFIGURATION ─────────────────── */}
+      {activeWorkspace === 'payment' && (
+        <form onSubmit={handlePaymentSettingsSubmit} className="space-y-6 max-w-3xl mx-auto animate-fade-in">
+          {isSettingsLoading ? (
+            <div className="p-12"><Loading message="Memuat info pembayaran..." /></div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+              {/* Form Details */}
+              <div className="md:col-span-7 space-y-6">
+                <Card hoverEffect={false} className="border border-[var(--border-color)] bg-white space-y-5 rounded-3xl p-5 shadow-sm">
+                  <h3 className="text-xs font-bold text-[var(--color-primary)] uppercase tracking-wider border-b border-slate-100 pb-2">
+                    Detail Pengaturan Rekening & Bank
+                  </h3>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Nama Bank / Wallet</label>
+                      <input 
+                        type="text" 
+                        placeholder="Misal: BANK JAGO, OVO, DANA, BCA"
+                        value={paymentSettings.bank_name}
+                        onChange={(e) => setPaymentSettings(prev => ({ ...prev, bank_name: e.target.value }))}
+                        className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] font-semibold text-xs transition-all"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Nomor Rekening / HP</label>
+                      <input 
+                        type="text" 
+                        placeholder="Masukkan nomor rekening atau nomor HP e-wallet..."
+                        value={paymentSettings.account_number}
+                        onChange={(e) => setPaymentSettings(prev => ({ ...prev, account_number: e.target.value }))}
+                        className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] font-semibold text-xs transition-all"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Nama Penerima (Atas Nama)</label>
+                      <input 
+                        type="text" 
+                        placeholder="Masukkan nama lengkap pemilik rekening..."
+                        value={paymentSettings.account_holder}
+                        onChange={(e) => setPaymentSettings(prev => ({ ...prev, account_holder: e.target.value }))}
+                        className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] font-semibold text-xs transition-all"
+                        required
+                      />
+                    </div>
+                  </div>
+                </Card>
+              </div>
+
+              {/* QRIS Upload */}
+              <div className="md:col-span-5 space-y-6">
+                <Card hoverEffect={false} className="border border-[var(--border-color)] bg-white rounded-3xl p-5 shadow-sm space-y-5">
+                  <h3 className="text-xs font-bold text-[var(--color-primary)] uppercase tracking-wider border-b border-slate-100 pb-2">
+                    Foto QRIS Pembayaran
+                  </h3>
+                  
+                  <div className="space-y-4">
+                    {/* QRIS image preview */}
+                    <div className="aspect-[4/3] w-full rounded-2xl overflow-hidden bg-slate-50 border border-dashed border-slate-300 flex items-center justify-center relative shadow-inner">
+                      {paymentSettings.qris_url ? (
+                        <img 
+                          src={paymentSettings.qris_url} 
+                          alt="Preview QRIS" 
+                          className="w-full h-full object-contain" 
+                        />
+                      ) : (
+                        <div className="text-center text-slate-300 flex flex-col items-center">
+                          <ImageIcon className="h-6 w-6 stroke-1 mb-1" />
+                          <span className="text-[9px] font-bold tracking-wider uppercase">Menggunakan QRIS Default</span>
+                        </div>
+                      )}
+                      {uploadingKey === 'payment_qris' && (
+                        <div className="absolute inset-0 bg-white/85 flex flex-col items-center justify-center p-3">
+                          <Clock className="animate-spin h-5 w-5 text-[var(--color-primary)] mb-1" />
+                          <span className="text-[9px] font-bold text-slate-500">MENGUNGGAH ({progress}%)</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* QRIS URL input */}
+                    <input
+                      type="text"
+                      placeholder="Paste URL foto QRIS dari internet..."
+                      value={paymentSettings.qris_url}
+                      onChange={(e) => setPaymentSettings(prev => ({ ...prev, qris_url: e.target.value }))}
+                      className="w-full px-3.5 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] font-semibold text-[10px] transition-all"
+                    />
+
+                    {/* QRIS Upload Button */}
+                    <label className="flex cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white py-2 text-[10px] font-bold text-slate-700 hover:border-slate-400 transition select-none">
+                      <ImageIcon className="w-3.5 h-3.5 text-purple-400" />
+                      <span>Unggah Foto QRIS</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => void handleQrisUpload(e.target.files?.[0] || null)}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+                </Card>
+              </div>
+            </div>
+          )}
+
+          {/* Form Actions bottom bar */}
+          {!isSettingsLoading && (
+            <div className="flex justify-end gap-3 pt-5 border-t border-[var(--border-color)]/60">
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="md" 
+                onClick={() => {
+                  setActiveWorkspace('inventory');
+                }}
+                disabled={isSavingSettings}
+                className="rounded-xl font-bold text-xs uppercase"
+              >
+                Kembali
+              </Button>
+              <Button 
+                type="submit" 
+                variant="primary" 
+                size="md"
+                disabled={isSavingSettings || isUploading}
+                isLoading={isSavingSettings}
+                className="rounded-xl font-bold text-xs uppercase cursor-pointer"
+              >
+                Simpan Informasi Pembayaran
+              </Button>
+            </div>
+          )}
         </form>
       )}
 

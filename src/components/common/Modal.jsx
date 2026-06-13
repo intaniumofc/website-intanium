@@ -31,10 +31,12 @@ export default function Modal({
     md: 'max-w-lg',
     lg: 'max-w-2xl',
     xl: 'max-w-4xl',
+    '2xl': 'max-w-5xl',
+    '3xl': 'max-w-6xl',
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-24">
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-slate-900/60 backdrop-blur-md cursor-pointer transition-opacity duration-300"
@@ -43,11 +45,11 @@ export default function Modal({
 
       {/* Modal Container */}
       <div
-        className={`relative z-10 w-full rounded-2xl shadow-2xl border border-slate-100 bg-white overflow-hidden animate-modal-scale-in ${sizeClasses[size]} ${className}`}
+        className={`relative z-10 w-full rounded-2xl shadow-2xl border border-[var(--border-color)] bg-white overflow-hidden animate-modal-scale-in ${sizeClasses[size]} ${className}`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50">
-          <h3 className="text-lg font-extrabold text-slate-800">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border-color)] bg-[var(--bg-primary)]/50">
+          <h3 className="text-lg font-extrabold text-[var(--color-primary)]">
             {title}
           </h3>
           <button
@@ -60,7 +62,7 @@ export default function Modal({
         </div>
 
         {/* Content */}
-        <div className="modal-body px-6 py-5 max-h-[75vh] overflow-y-auto custom-scrollbar">
+        <div className="modal-body px-6 py-5 max-h-[70vh] overflow-y-auto custom-scrollbar">
           {children}
         </div>
       </div>

@@ -16,7 +16,19 @@ export const StatusBadge = ({
   const normalizedStatus = status.toLowerCase();
 
   switch (normalizedStatus) {
+    case "pending_review":
+    case "in_review":
+    case "in review":
+      return (
+        <div className={`w-fit min-w-[100px] h-[35px] px-3.5 inline-flex items-center justify-center bg-yellow-50 rounded-xl ${className}`}>
+          <span className="flex items-center text-[#F0B13D] font-bold text-xs">
+            <ScanSearch className="w-4 h-4 mr-1.5 shrink-0" strokeWidth={3} />
+            {customLabel || "In Review"}
+          </span>
+        </div>
+      );
     case "pending":
+    case "waiting_payment":
       return (
         <div className={`w-fit min-w-[100px] h-[35px] px-3.5 inline-flex items-center justify-center bg-orange-50 rounded-xl ${className}`}>
           <span className="flex items-center text-[#EAA65D] font-bold text-xs">
@@ -37,32 +49,24 @@ export const StatusBadge = ({
       );
     case "success":
     case "completed":
+    case "ready_for_pickup":
       return (
         <div className={`w-fit min-w-[100px] h-[35px] px-3.5 inline-flex items-center justify-center bg-emerald-50 rounded-xl ${className}`}>
           <span className="flex items-center text-[#57BC6C] font-bold text-xs">
             <CircleCheck className="w-4 h-4 mr-1.5 shrink-0" strokeWidth={3} />
-            {customLabel || (normalizedStatus === "completed" ? "Selesai" : "Success")}
+            {customLabel || (normalizedStatus === "ready_for_pickup" ? "Siap Diambil" : "Selesai")}
           </span>
         </div>
       );
     case "in_progress":
     case "in progress":
+    case "processing":
     case "shipped":
       return (
         <div className={`w-fit min-w-[100px] h-[35px] px-3.5 inline-flex items-center justify-center bg-sky-100 rounded-xl ${className}`}>
           <span className="flex items-center text-[#008AF5] font-bold text-xs">
             <CircleDashed className="w-4 h-4 mr-1.5 shrink-0" strokeWidth={3} />
             {customLabel || (normalizedStatus === "shipped" ? "Dalam Pengiriman" : "In Progress")}
-          </span>
-        </div>
-      );
-    case "in_review":
-    case "in review":
-      return (
-        <div className={`w-fit min-w-[100px] h-[35px] px-3.5 inline-flex items-center justify-center bg-yellow-50 rounded-xl ${className}`}>
-          <span className="flex items-center text-[#F0B13D] font-bold text-xs">
-            <ScanSearch className="w-4 h-4 mr-1.5 shrink-0" strokeWidth={3} />
-            {customLabel || "In Review"}
           </span>
         </div>
       );

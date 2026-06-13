@@ -1,69 +1,48 @@
-import React from 'react';
-import Card from '../common/Card';
+import { motion } from 'framer-motion';
+import { ChevronDown } from 'lucide-react';
 
 export default function ScheduleFilter({
-  activeFilter,
-  onFilterChange,
   activePlatform,
   onPlatformChange,
   className = '',
 }) {
-  const statusFilters = [
-    { id: 'all', name: 'Semua Aktivitas' },
-    { id: 'live', name: '● Live Sekarang' },
-    { id: 'upcoming', name: 'Akan Datang' },
-    { id: 'completed', name: 'Selesai' },
-  ];
-
   const platforms = ['All', 'Show Theater', 'Video Call', 'Birthday', 'Other Events'];
 
   return (
-    <Card hoverEffect={false} padding="compact" className={`border border-[var(--border-color)] space-y-4 ${className}`}>
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        {/* Status filtering buttons */}
-        <div className="flex flex-wrap gap-2">
-          {statusFilters.map((filter) => {
-            const isActive = activeFilter === filter.id;
-            return (
-              <button
-                key={filter.id}
-                onClick={() => onFilterChange(filter.id)}
-                className={`px-4 py-2 rounded-lg text-xs font-semibold tracking-wide uppercase transition-all duration-200 cursor-pointer ${
-                  isActive
-                    ? 'bg-[var(--color-primary)] text-white shadow-sm'
-                    : 'bg-[var(--bg-primary)] border border-[var(--border-color)] text-[var(--text-secondary)] hover:bg-[var(--border-color)]'
-                }`}
-              >
-                {filter.name}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Platform select dropdown */}
-        <div className="flex items-center gap-3">
-          <span className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">
-            Kategori:
-          </span>
-          <div className="relative">
-            <select
-              value={activePlatform}
-              onChange={(e) => onPlatformChange(e.target.value)}
-              className="bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg px-3 py-1.5 text-xs text-[var(--text-primary)] focus:ring-1 focus:ring-[var(--color-primary)] focus:outline-none cursor-pointer pr-8 appearance-none"
-            >
-              {platforms.map((platform) => (
-                <option key={platform} value={platform}>
-                  {platform === 'All' ? 'Semua Kategori' : platform}
-                </option>
-              ))}
-            </select>
-            {/* Custom dropdown caret */}
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[var(--text-secondary)]">
-              ▼
-            </div>
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+      className={`w-full lg:w-auto backdrop-blur-xl bg-white/65 border border-[var(--border-color)] p-2.5 rounded-2xl shadow-[0_4px_24px_rgba(23,12,121,0.06)] flex items-center gap-3 relative z-10 ${className}`}
+    >
+      {/* Category select dropdown */}
+      <div className="flex items-center gap-3 px-3.5 py-2 bg-white/60 border border-indigo-100/30 rounded-xl w-full lg:w-auto transition-all duration-300 hover:border-[var(--color-primary)]/20 hover:shadow-sm group">
+        <label 
+          htmlFor="schedule-category-select"
+          className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] cursor-pointer select-none whitespace-nowrap"
+        >
+          Kategori
+        </label>
+        <div className="relative flex items-center flex-1">
+          <select
+            id="schedule-category-select"
+            value={activePlatform}
+            onChange={(e) => onPlatformChange(e.target.value)}
+            aria-label="Filter berdasarkan kategori kegiatan"
+            className="w-full bg-transparent border-none py-0.5 pl-1.5 pr-7 text-sm font-black text-[var(--color-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-1 focus-visible:ring-offset-white rounded-lg cursor-pointer appearance-none relative z-10"
+          >
+            {platforms.map((platform) => (
+              <option key={platform} value={platform} className="font-bold bg-white text-slate-800">
+                {platform === 'All' ? 'Semua Kategori' : platform}
+              </option>
+            ))}
+          </select>
+          {/* Custom animated dropdown caret */}
+          <div className="pointer-events-none absolute right-0 flex items-center text-[var(--color-primary)] transition-transform duration-300 group-hover:translate-y-0.5">
+            <ChevronDown className="w-4 h-4" />
           </div>
         </div>
       </div>
-    </Card>
+    </motion.div>
   );
 }
