@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import StickyNote from './StickyNote';
 import EmptyState from '../common/EmptyState';

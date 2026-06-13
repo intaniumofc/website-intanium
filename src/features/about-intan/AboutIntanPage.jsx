@@ -2,16 +2,9 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, useReducedMotion, useScroll, useTransform, useInView } from 'framer-motion';
 import {
-  Heart,
   Play,
-  Star,
-  User,
-  Zap,
   Calendar,
-  Droplet,
-  Ruler,
   MapPin,
-  Users,
   Clock,
   ListMusic,
   Mic2,
@@ -20,13 +13,11 @@ import {
   PlayCircle,
   Video,
   Award,
-  BookOpen,
-  ArrowDown,
   ArrowRight,
-  ExternalLink,
   Plus,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Music
 } from 'lucide-react';
 import { aboutIntanService } from './aboutIntanService';
 import { scheduleService } from '../schedule/scheduleService';
@@ -38,7 +29,6 @@ import intanPoster from '../../assets/images/intan-02.jpg';
 import intanBg from '../../assets/images/intan-04.jpg';
 import intanProfile from '../../assets/images/Nur_Intan.jpg';
 import intan1 from '../../assets/images/intan-01.jpg';
-import intan3 from '../../assets/images/intan-03.jpg';
 import { ImageSwiper } from '../../components/ui/ImageSwiper';
 import {
   CalendarBlank as PhCalendarBlank,
@@ -69,14 +59,7 @@ const staggerContainer = {
   }
 };
 
-const scaleIn = {
-  hidden: { opacity: 0, scale: 0.94 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: { duration: 0.9, ease: PREMIUM_EASE }
-  }
-};
+// scaleIn removed as it was unused
 
 // Reusable IconCrystalTile Component for crystal glass badges
 function IconCrystalTile({ icon: IconComp }) {
@@ -137,6 +120,7 @@ function StatCounter({ icon: IconComp, value, label, description, delay = 0 }) {
 
   useEffect(() => {
     if (isInView && !hasAnimated) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setHasAnimated(true);
       const endNum = parseInt(value.replace(/\D/g, '')) || 0;
       let startTime = null;
@@ -166,6 +150,7 @@ function StatCounter({ icon: IconComp, value, label, description, delay = 0 }) {
       ref={elementRef}
       className="bg-(--bg-card) border border-(--border-color) p-6 rounded-3xl flex flex-col items-center text-center group hover:bg-white hover:border-(--color-primary)/20 transition-all duration-300 shadow-(--box-shadow-sm) relative"
       variants={fadeUp}
+      transition={{ delay }}
       whileHover={{ y: -6, transition: { duration: 0.2 } }}
     >
       <motion.div
@@ -269,9 +254,15 @@ const FlipCard = React.forwardRef(({ className, flipDirection = "horizontal", is
     <FlipCardContext.Provider value={contextValue}>
       <div
         ref={ref}
-        className={`relative border-none bg-none shadow-none ${disabled ? "pointer-events-none" : ""} ${className || ""}`}
+        className={`relative border-none bg-none shadow-none rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary) focus-visible:ring-offset-2 ${disabled ? "pointer-events-none" : ""} ${className || ""}`}
         style={{ ...TRANSFORM_STYLES, ...props.style }}
         onClick={() => !disabled && onFlip?.(!isFlipped)}
+        onKeyDown={(e) => {
+          if (!disabled && (e.key === "Enter" || e.key === " ")) {
+            e.preventDefault();
+            onFlip?.(!isFlipped);
+          }
+        }}
         role="button"
         tabIndex={disabled ? -1 : 0}
         aria-pressed={isFlipped}
@@ -372,7 +363,7 @@ const SetlistPosterCard = ({ setlist }) => {
       <FlipCard
         isFlipped={isFlipped}
         onFlip={setIsFlipped}
-        className="w-full aspect-[3/3.8] rounded-sm"
+        className="w-full aspect-[3/3.8] rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary) focus-visible:ring-offset-2"
       >
         {/* ================= FRONT SIDE (Polaroid) ================= */}
         <FlipCardFront className="p-3 pb-20 bg-[#fdfcf8] rounded-sm border border-black/5 shadow-md flex flex-col justify-between">
@@ -400,7 +391,7 @@ const SetlistPosterCard = ({ setlist }) => {
             <span className="text-slate-800 font-serif italic text-xl md:text-2xl tracking-tight leading-none text-center opacity-90" style={{ transform: 'rotate(-2deg)' }}>
               {setlist.name}
             </span>
-            <span className="text-slate-400 font-mono text-[9px] mt-1.5 uppercase tracking-widest flex items-center gap-1">
+            <span className="text-slate-600 font-mono text-[9px] mt-1.5 uppercase tracking-widest flex items-center gap-1">
               Tap untuk unit songs
             </span>
           </div>
@@ -446,6 +437,7 @@ const SetlistPosterCard = ({ setlist }) => {
 
 const TriviaItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const uniqueId = React.useId();
 
   return (
     <motion.div
@@ -457,7 +449,9 @@ const TriviaItem = ({ question, answer }) => {
     >
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex w-full items-center justify-between gap-4 py-3.5 px-4.5 text-left cursor-pointer group"
+        aria-expanded={isOpen}
+        aria-controls={`trivia-panel-${uniqueId}`}
+        className="flex w-full items-center justify-between gap-4 py-3.5 px-4.5 text-left cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary) focus-visible:ring-offset-2 rounded-2xl"
       >
         <span
           className={`text-sm sm:text-base font-bold transition-colors duration-300 ${isOpen ? "text-(--color-primary)" : "text-(--text-primary) group-hover:text-(--color-secondary)"
@@ -478,6 +472,8 @@ const TriviaItem = ({ question, answer }) => {
         </motion.span>
       </button>
       <motion.div
+        id={`trivia-panel-${uniqueId}`}
+        role="region"
         initial={false}
         animate={{
           height: isOpen ? "auto" : "0px",
@@ -498,7 +494,6 @@ const ScheduleSection = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [scheduleData, setScheduleData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
@@ -522,13 +517,47 @@ const ScheduleSection = () => {
         }
       } catch (error) {
         console.error('Failed to fetch schedules:', error);
-      } finally {
-        if (isMounted) setIsLoading(false);
       }
     };
     fetchSchedules();
     return () => { isMounted = false; };
   }, []);
+
+  const getDayEventStyle = (events, isSelected) => {
+    if (isSelected) {
+      if (events.length > 0) {
+        const firstType = events[0].type;
+        let ringColor;
+        if (firstType === 'Show Theater') ringColor = 'ring-rose-500';
+        else if (firstType === 'Video Call') ringColor = 'ring-sky-500';
+        else if (firstType === 'Birthday') ringColor = 'ring-amber-500';
+        else if (['YouTube', 'IDN Live', 'Showroom', 'TikTok'].includes(firstType)) ringColor = 'ring-indigo-500';
+        else ringColor = 'ring-purple-500';
+
+        return `bg-slate-100 text-slate-800 ring-2 ${ringColor} scale-105 shadow-md`;
+      }
+      return 'bg-[#170C79] text-white shadow-md scale-105 ring-2 ring-indigo-300';
+    }
+
+    if (events.length === 0) {
+      return 'text-slate-600 hover:bg-indigo-50 hover:text-[#170C79]';
+    }
+
+    const firstType = events[0].type;
+    if (firstType === 'Show Theater') {
+      return 'bg-rose-400 text-white hover:bg-rose-500 shadow-xs';
+    }
+    if (firstType === 'Video Call') {
+      return 'bg-sky-400 text-white hover:bg-sky-500 shadow-xs';
+    }
+    if (firstType === 'Birthday') {
+      return 'bg-amber-400 text-slate-900 hover:bg-amber-500 shadow-xs';
+    }
+    if (['YouTube', 'IDN Live', 'Showroom', 'TikTok'].includes(firstType)) {
+      return 'bg-indigo-400 text-white hover:bg-indigo-500 shadow-xs';
+    }
+    return 'bg-purple-400 text-white hover:bg-purple-500 shadow-xs';
+  };
 
   const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
   const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
@@ -554,13 +583,7 @@ const ScheduleSection = () => {
 
   const upcomingEvents = scheduleData.filter(e => e.date !== selectedDateStr).slice(0, selectedEvents.length <= 1 ? 3 : 0);
 
-  const getDotColor = (type) => {
-    if (type === 'Show Theater') return 'bg-rose-400';
-    if (type === 'Video Call') return 'bg-sky-400';
-    if (type === 'Birthday') return 'bg-amber-400';
-    if (['YouTube', 'IDN Live', 'Showroom', 'TikTok'].includes(type)) return 'bg-indigo-400';
-    return 'bg-purple-400';
-  };
+
 
   const getTypeStyle = (type) => {
     if (type === 'Show Theater') return 'bg-rose-50 text-rose-600 border-rose-100';
@@ -607,10 +630,10 @@ const ScheduleSection = () => {
               {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
             </h3>
             <div className="flex gap-1.5">
-              <button onClick={prevMonth} className="p-1.5 hover:bg-slate-100 rounded-full transition-colors cursor-pointer text-slate-500 hover:text-(--color-primary)" aria-label="Bulan sebelumnya">
+              <button onClick={prevMonth} className="p-1.5 hover:bg-slate-100 rounded-full transition-colors cursor-pointer text-slate-500 hover:text-(--color-primary) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary)" aria-label="Bulan sebelumnya">
                 <ChevronLeft className="w-4.5 h-4.5" />
               </button>
-              <button onClick={nextMonth} className="p-1.5 hover:bg-slate-100 rounded-full transition-colors cursor-pointer text-slate-500 hover:text-(--color-primary)" aria-label="Bulan berikutnya">
+              <button onClick={nextMonth} className="p-1.5 hover:bg-slate-100 rounded-full transition-colors cursor-pointer text-slate-500 hover:text-(--color-primary) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary)" aria-label="Bulan berikutnya">
                 <ChevronRight className="w-4.5 h-4.5" />
               </button>
             </div>
@@ -635,24 +658,20 @@ const ScheduleSection = () => {
               const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), i + 1);
               const isSelected = isSameDate(date, selectedDate);
               const dayEvents = getEventsForDate(date);
+              const formattedDateLabel = `${i + 1} ${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
 
               return (
                 <div key={i} className="flex flex-col items-center justify-center">
                   <button
                     onClick={() => setSelectedDate(date)}
-                    className={`w-7.5 h-7.5 flex items-center justify-center rounded-full text-[12px] font-black transition-all duration-300 cursor-pointer ${isSelected
-                        ? 'bg-(--color-primary) text-white shadow-md scale-105'
-                        : 'text-slate-600 hover:bg-indigo-50 hover:text-(--color-primary)'
-                      }`}
+                    aria-label={formattedDateLabel}
+                    aria-pressed={isSelected}
+                    className={`w-7.5 h-7.5 flex items-center justify-center rounded-full text-[12px] font-black transition-all duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary) ${
+                      getDayEventStyle(dayEvents, isSelected)
+                    }`}
                   >
                     {i + 1}
                   </button>
-                  {/* Subtle Event Dot Indicators */}
-                  <div className="flex gap-0.5 mt-0.75 h-1.5 items-center justify-center">
-                    {dayEvents.length > 0 && [...new Set(dayEvents.map(e => e.type))].map((type, idx) => (
-                      <div key={idx} className={`w-1.25 h-1.25 rounded-full ${getDotColor(type)}`}></div>
-                    ))}
-                  </div>
                 </div>
               );
             })}
@@ -733,7 +752,19 @@ const ScheduleSection = () => {
                   const day = evt.date.split('-')[2];
                   const monthIdx = parseInt(evt.date.split('-')[1]) - 1;
                   return (
-                    <div key={idx} onClick={() => setSelectedDate(new Date(evt.date))} className="flex items-center justify-between group cursor-pointer bg-white/45 hover:bg-white/75 p-3 rounded-xl border border-transparent hover:border-(--border-color) transition-all duration-300">
+                    <div
+                      key={idx}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => setSelectedDate(new Date(evt.date))}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          setSelectedDate(new Date(evt.date));
+                        }
+                      }}
+                      className="flex items-center justify-between group cursor-pointer bg-white/45 hover:bg-white/75 p-3 rounded-xl border border-transparent hover:border-(--border-color) transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary)"
+                    >
                       <div className="flex items-center gap-3 min-w-0">
                         <div className="w-10 h-10 shrink-0 rounded-xl bg-indigo-50 flex flex-col items-center justify-center text-(--color-primary)">
                           <span className="text-[10px] font-bold leading-none">{day}</span>
@@ -846,34 +877,7 @@ export default function AboutIntanPage() {
       });
   }, []);
 
-  // Smooth scroll handler
-  const scrollToSection = (id) => {
-    const element = document.getElementById(id);
-    if (element) {
-      const headerOffset = 90;
-      const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-      const startPosition = window.scrollY;
-      const distance = elementPosition - startPosition - headerOffset;
 
-      let startTime = null;
-      const duration = 900;
-      const easeOutQuart = (x) => 1 - Math.pow(1 - x, 4);
-
-      const step = (currentTime) => {
-        if (startTime === null) startTime = currentTime;
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-
-        window.scrollTo(0, startPosition + distance * easeOutQuart(progress));
-
-        if (elapsed < duration) {
-          requestAnimationFrame(step);
-        }
-      };
-
-      requestAnimationFrame(step);
-    }
-  };
 
   if (isLoading) return <Loading fullPage={false} message="Membaca biodata Intan..." />;
 
@@ -1231,13 +1235,13 @@ export default function AboutIntanPage() {
               description="Kurasi video dokumentasi pilihan seputar aktivitas panggung, vlog keseharian, serta performa menarik Nur Intan."
             />
 
-            {/* Highlight Filter Tabs */}
             <motion.div variants={fadeUp} className="flex flex-wrap gap-2 justify-center sm:justify-start border-b border-(--border-color) pb-3">
               {['All', 'Profile', 'Vlog', 'Jahat-Jahatan', 'Last Content', 'Temen Main', 'Secret Cam'].map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setVideoFilter(cat)}
-                  className={`px-4 py-2 rounded-xl text-xs font-black transition-all duration-300 cursor-pointer ${videoFilter === cat
+                  aria-pressed={videoFilter === cat}
+                  className={`px-4 py-2 rounded-xl text-xs font-black transition-all duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary) ${videoFilter === cat
                     ? 'bg-(--color-primary) text-white shadow-sm'
                     : 'text-(--text-secondary) hover:bg-(--color-primary-light)'
                     }`}
@@ -1262,8 +1266,16 @@ export default function AboutIntanPage() {
                     exit={{ opacity: 0, scale: 0.97 }}
                     transition={{ duration: 0.45 }}
                     whileHover={{ y: -4, scale: 1.02 }}
+                    role="button"
+                    tabIndex={0}
                     onClick={() => setActiveVideo(video)}
-                    className="group flex flex-col justify-between overflow-hidden rounded-3xl border border-(--border-color) bg-(--bg-card) shadow-(--box-shadow-sm) hover:shadow-(--box-shadow-md) transition-all duration-300 cursor-pointer"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setActiveVideo(video);
+                      }
+                    }}
+                    className="group flex flex-col justify-between overflow-hidden rounded-3xl border border-(--border-color) bg-(--bg-card) shadow-(--box-shadow-sm) hover:shadow-(--box-shadow-md) transition-all duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary) focus-visible:ring-offset-2"
                   >
                     <div>
                       {/* Image Thumbnail wrapper with Zoom and Play overlay */}

@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Heart, Search, Plus, Calendar, Tag, Info, ShieldCheck, HeartHandshake, CheckCircle } from 'lucide-react';
+import { Heart, Search, Plus, Info, ShieldCheck, CheckCircle } from 'lucide-react';
 import { madingService } from './madingService';
 import MadingBoard from '../../components/mading/MadingBoard';
-import StickyNote from '../../components/mading/StickyNote';
 import MessageModal from '../../components/mading/MessageModal';
 import MessageFormModal from '../../components/mading/MessageFormModal';
 import Loading from '../../components/common/Loading';
@@ -72,6 +71,8 @@ export default function MadingPage() {
   };
 
   useEffect(() => {
+    document.title = 'Mading Intanium | Ruang Dukungan Komunitas';
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadNotes();
   }, []);
 
@@ -110,6 +111,7 @@ export default function MadingPage() {
       } catch (dbErr) {
         console.warn('Database post failed, falling back to local simulation:', dbErr);
         // Offline / not configured fallback
+        // eslint-disable-next-line react-hooks/purity
         const localId = `local-${Date.now()}`;
 
         const savedLoves = JSON.parse(localStorage.getItem('mading_loves') || '{}');
@@ -268,14 +270,14 @@ export default function MadingPage() {
           <div className="flex justify-center gap-4 pt-4">
             <button
               onClick={() => setIsFormOpen(true)}
-              className="px-6 py-2.5 bg-[#170C79] hover:bg-indigo-800 text-white font-extrabold text-xs uppercase tracking-widest rounded-lg shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer flex items-center gap-2"
+              className="px-6 py-2.5 bg-[#170C79] hover:bg-indigo-800 text-white font-extrabold text-xs uppercase tracking-widest rounded-lg shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#170C79] focus-visible:ring-offset-2"
             >
               <Plus className="h-4 w-4" />
               <span>Tulis Pesan Baru</span>
             </button>
             <button
               onClick={scrollToMading}
-              className="px-6 py-2.5 bg-white border border-[var(--border-color)] text-[#170C79] font-extrabold text-xs uppercase tracking-widest rounded-lg hover:bg-slate-50 transition-all cursor-pointer"
+              className="px-6 py-2.5 bg-white border border-[var(--border-color)] text-[#170C79] font-extrabold text-xs uppercase tracking-widest rounded-lg hover:bg-slate-50 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#170C79] focus-visible:ring-offset-2"
             >
               Lihat Papan Mading
             </button>
@@ -299,13 +301,15 @@ export default function MadingPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="search-input-field"
+              aria-label="Cari pesan atau kata dukungan"
             />
           </div>
 
           {/* Sort Dropdown */}
           <div className="flex items-center gap-2 shrink-0">
-            <span className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wide">Sort:</span>
+            <label htmlFor="mading-sort-select" className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wide cursor-pointer">Sort:</label>
             <select
+              id="mading-sort-select"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
               className="sort-select-field"
@@ -353,7 +357,7 @@ export default function MadingPage() {
           </p>
           <button
             onClick={() => setIsFormOpen(true)}
-            className="w-full py-2.5 bg-[#170C79] hover:bg-indigo-800 text-white font-extrabold text-xs uppercase tracking-widest rounded-lg shadow transition-all flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full py-2.5 bg-[#170C79] hover:bg-indigo-800 text-white font-extrabold text-xs uppercase tracking-widest rounded-lg shadow transition-all flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#170C79] focus-visible:ring-offset-2"
           >
             <Plus className="h-4 w-4" />
             <span>Tulis Pesan Sekarang</span>
@@ -369,8 +373,16 @@ export default function MadingPage() {
 
             {/* Render small inline mockup note layout for visual beauty */}
             <div
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setSelectedNote(pinOfTheDay);
+                }
+              }}
               onClick={() => setSelectedNote(pinOfTheDay)}
-              className={`sticky-note-item pastel-${pinOfTheDay.color} p-4 rounded shadow border border-black/5 cursor-pointer transform hover:scale-[1.02] transition-transform`}
+              className={`sticky-note-item pastel-${pinOfTheDay.color} p-4 rounded shadow border border-black/5 cursor-pointer transform hover:scale-[1.02] transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2`}
             >
               <p className="note-text text-xs font-bold text-slate-800 leading-relaxed line-clamp-4 mt-2">
                 {pinOfTheDay.message}

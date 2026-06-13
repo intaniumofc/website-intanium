@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { TimelineContent } from "@/components/ui/timeline-animation";
 import { VerticalCutReveal } from "@/components/ui/vertical-cut-reveal";
 import { ArrowRight } from "lucide-react";
@@ -69,7 +69,9 @@ export default function AboutSection3() {
                 href={SOCIALS.TWITTER}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8 h-8 sm:w-10 sm:h-10 bg-transparent border border-(--border-color) rounded-full flex items-center justify-center cursor-pointer hover:bg-(--color-primary) hover:scale-105 active:scale-95 transition-all duration-300 group"
+                aria-label="Kunjungi Twitter Intanium"
+                title="Twitter"
+                className="w-8 h-8 sm:w-10 sm:h-10 bg-transparent border border-(--border-color) rounded-full flex items-center justify-center cursor-pointer hover:bg-(--color-primary) hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 transition-all duration-300 group"
               >
                 <FaXTwitter className="w-4 h-4 sm:w-5 sm:h-5 text-(--color-primary) group-hover:text-white transition-colors duration-300" />
               </TimelineContent>
@@ -81,7 +83,9 @@ export default function AboutSection3() {
                 href={SOCIALS.INSTAGRAM}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8 h-8 sm:w-10 sm:h-10 bg-transparent border border-(--border-color) rounded-full flex items-center justify-center cursor-pointer hover:bg-(--color-primary) hover:scale-105 active:scale-95 transition-all duration-300 group"
+                aria-label="Kunjungi Instagram Intanium"
+                title="Instagram"
+                className="w-8 h-8 sm:w-10 sm:h-10 bg-transparent border border-(--border-color) rounded-full flex items-center justify-center cursor-pointer hover:bg-(--color-primary) hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 transition-all duration-300 group"
               >
                 <FaInstagram className="w-4 h-4 sm:w-5 sm:h-5 text-(--color-primary) group-hover:text-white transition-colors duration-300" />
               </TimelineContent>
@@ -93,7 +97,9 @@ export default function AboutSection3() {
                 href={SOCIALS.TIKTOK}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8 h-8 sm:w-10 sm:h-10 bg-transparent border border-(--border-color) rounded-full flex items-center justify-center cursor-pointer hover:bg-(--color-primary) hover:scale-105 active:scale-95 transition-all duration-300 group"
+                aria-label="Kunjungi TikTok Intanium"
+                title="TikTok"
+                className="w-8 h-8 sm:w-10 sm:h-10 bg-transparent border border-(--border-color) rounded-full flex items-center justify-center cursor-pointer hover:bg-(--color-primary) hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 transition-all duration-300 group"
               >
                 <FaTiktok className="w-4 h-4 sm:w-5 sm:h-5 text-(--color-primary) group-hover:text-white transition-colors duration-300" />
               </TimelineContent>
@@ -107,7 +113,7 @@ export default function AboutSection3() {
                 rel="noopener noreferrer"
                 aria-label="Kunjungi YouTube Intanium"
                 title="YouTube"
-                className="w-8 h-8 sm:w-10 sm:h-10 bg-transparent border border-(--border-color) rounded-full flex items-center justify-center cursor-pointer hover:bg-(--color-primary) hover:scale-105 active:scale-95 transition-all duration-300 group"
+                className="w-8 h-8 sm:w-10 sm:h-10 bg-transparent border border-(--border-color) rounded-full flex items-center justify-center cursor-pointer hover:bg-(--color-primary) hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 transition-all duration-300 group"
               >
                 <FaYoutube className="w-4 h-4 sm:w-5 sm:h-5 text-(--color-primary) group-hover:text-white transition-colors duration-300" />
               </TimelineContent>
@@ -117,7 +123,9 @@ export default function AboutSection3() {
                 timelineRef={heroRef}
                 customVariants={revealVariants}
                 href={SOCIALS.EMAIL}
-                className="w-8 h-8 sm:w-10 sm:h-10 bg-transparent border border-(--border-color) rounded-full flex items-center justify-center cursor-pointer hover:bg-(--color-primary) hover:scale-105 active:scale-95 transition-all duration-300 group"
+                aria-label="Kirim Email ke Intanium"
+                title="Email"
+                className="w-8 h-8 sm:w-10 sm:h-10 bg-transparent border border-(--border-color) rounded-full flex items-center justify-center cursor-pointer hover:bg-(--color-primary) hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 transition-all duration-300 group"
               >
                 <FaEnvelope className="w-4 h-4 sm:w-5 sm:h-5 text-(--color-primary) group-hover:text-white transition-colors duration-300" />
               </TimelineContent>
@@ -296,7 +304,7 @@ export default function AboutSection3() {
                 href={SOCIALS.DISCORD}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex bg-(--color-primary) hover:bg-(--color-primary-hover) shadow-md hover:shadow-[var(--neon-glow-primary)] flex-row w-fit items-center gap-2 hover:gap-4 transition-all duration-300 ease-in-out text-white px-5 py-3 rounded-2xl cursor-pointer text-xs font-semibold tracking-wider"
+                className="inline-flex bg-(--color-primary) hover:bg-(--color-primary-hover) shadow-md hover:shadow-[var(--neon-glow-primary)] flex-row w-fit items-center gap-2 hover:gap-4 transition-all duration-300 ease-in-out text-white px-5 py-3 rounded-2xl cursor-pointer text-xs font-semibold tracking-wider focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2"
               >
                 Join Komunitas <ArrowRight className="w-4 h-4" />
               </TimelineContent>

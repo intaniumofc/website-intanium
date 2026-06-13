@@ -25,6 +25,7 @@ const ScrollExpandMedia = ({
   const sectionRef = useRef(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setScrollProgress(0);
     setShowContent(false);
     setMediaFullyExpanded(false);

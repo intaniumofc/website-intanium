@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Card from '../common/Card';
 import Button from '../common/Button';
 import { useSupabaseUpload } from '../../hooks/useSupabaseUpload';
@@ -18,7 +18,8 @@ export default function PaymentConfirmForm({
     receiptUrl: '',
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setFormData(prev => ({
       ...prev,
       invoiceNumber: initialInvoice || prev.invoiceNumber,

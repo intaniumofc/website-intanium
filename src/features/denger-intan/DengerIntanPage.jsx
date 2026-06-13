@@ -9,14 +9,10 @@ import {
   Sparkles,
   ExternalLink,
   Play,
-  Pause,
-  VolumeX,
-  Volume1,
-  Volume2
+  Pause
 } from 'lucide-react';
 import Loading from '../../components/common/Loading';
 import { ContainerScroll } from '../../components/ui/container-scroll-animation';
-import { Button } from '../../components/ui/button';
 
 const staggerContainer = {
   hidden: { opacity: 0 },
@@ -59,22 +55,17 @@ const staggerSection = {
 // Most Played Song — Helpers & Components
 // ============================================================================
 
-const spotifySearch = function (s) { return 'https://open.spotify.com/search/' + encodeURIComponent(s.title + ' ' + s.artist); };
-const MOOD_META = { 'chill / calm': { label: 'Chill', color: '#4F46E5' }, nostalgic: { label: 'Nostalgic', color: '#7C3AED' }, 'hype / energetic': { label: 'Hype', color: '#EA580C' }, 'focus / work': { label: 'Focus', color: '#059669' } };
-const getMood = function (m) { return MOOD_META[(m || '').trim().toLowerCase()] || { label: 'Vibe', color: '#4F46E5' }; };
-
 const paperTex = { background: 'radial-gradient(circle at 20% 50%, rgba(139,92,246,0.03) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(59,130,246,0.03) 0%, transparent 50%)' };
 const vp1 = { once: true, amount: 0.15, margin: '-40px' };
 const containerV = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.12, delayChildren: 0.05 } } };
-const headerV = { hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } } };
-const storyV = { hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } } };
-const rowV = { hidden: { opacity: 0, x: -12 }, visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } } };
 
 /* ------------------------------------------------------------- useRafLoop */
 
 function useRafLoop(cb) {
   const cbRef = useRef(cb);
-  cbRef.current = cb;
+  useEffect(() => {
+    cbRef.current = cb;
+  });
   useEffect(() => {
     let raf = 0;
     let last = performance.now();
@@ -126,7 +117,7 @@ function useTransitionSound() {
       osc.connect(gain).connect(ctx.destination);
       osc.start(now);
       osc.stop(now + 0.18);
-    } catch (e) {
+    } catch {
       /* Web Audio unavailable */
     }
   }, []);
@@ -162,7 +153,7 @@ function useAudioAnalyser(audioRef) {
       dataRef.current = new Uint8Array(analyser.frequencyBinCount);
       connectedRef.current = true;
       if (ctx.state === 'suspended') ctx.resume().catch(() => { });
-    } catch (e) {
+    } catch {
       /* unavailable or already connected */
     }
   }, [audioRef]);
@@ -405,6 +396,7 @@ function useAudioPlayer(tracks) {
     audio.volume = volume;
     audio.muted = isMuted;
     audio.load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tracks]);
 
   return {
@@ -754,9 +746,10 @@ function Controls({
   return (
     <div className="controls">
       <button
-        className={`ctrl ctrl-toggle ${shuffled ? 'is-active' : ''}`}
+        className={`ctrl ctrl-toggle ${shuffled ? 'is-active' : ''} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500`}
         onClick={onShuffle}
         aria-label="Shuffle"
+        aria-pressed={shuffled}
       >
         <svg
           viewBox="0 0 24 24"
@@ -776,15 +769,19 @@ function Controls({
           <path d="M3 3l7 7" />
         </svg>
       </button>
-      <button className="ctrl" onClick={onPrev} aria-label="Previous">
+      <button
+        className="ctrl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+        onClick={onPrev}
+        aria-label="Sebelumnya"
+      >
         <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
           <path d="M19 5L8 12l11 7zM5 5h2v14H5z" />
         </svg>
       </button>
       <button
-        className="ctrl ctrl-play"
+        className="ctrl ctrl-play focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
         onClick={onToggle}
-        aria-label={isPlaying ? 'Pause' : 'Play'}
+        aria-label={isPlaying ? 'Jeda' : 'Putar'}
       >
         {isPlaying ? (
           <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
@@ -796,16 +793,22 @@ function Controls({
           </svg>
         )}
       </button>
-      <button className="ctrl" onClick={onNext} aria-label="Next">
+      <button
+        className="ctrl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+        onClick={onNext}
+        aria-label="Berikutnya"
+      >
         <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
           <path d="M5 5l11 7L5 19zM17 5h2v14h-2z" />
         </svg>
       </button>
       <button
-        className={`ctrl ctrl-toggle ctrl-loop ${loopMode !== 'off' ? 'is-active' : ''
-          } ${loopMode === 'one' ? 'mode-one' : ''}`}
+        className={`ctrl ctrl-toggle ctrl-loop ${
+          loopMode !== 'off' ? 'is-active' : ''
+        } ${loopMode === 'one' ? 'mode-one' : ''} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500`}
         onClick={onLoop}
         aria-label="Loop"
+        aria-pressed={loopMode !== 'off'}
       >
         <svg
           viewBox="0 0 24 24"
@@ -831,7 +834,21 @@ function Controls({
 /* ----------------------------------------------------- MusicPlayer root */
 
 export function MusicPlayer({ tracks, crossOrigin = 'anonymous' }) {
-  const player = useAudioPlayer(tracks);
+  const {
+    audioRef,
+    state: playerState,
+    currentTime,
+    duration,
+    currentTrack,
+    toggle,
+    next,
+    prev,
+    seek,
+    toggleShuffle,
+    cycleLoop,
+    getFrequencyData,
+    loadTrack,
+  } = useAudioPlayer(tracks);
   const [isZoomed, setIsZoomed] = useState(false);
 
   const [layers, setLayers] = useState(() => [
@@ -841,50 +858,50 @@ export function MusicPlayer({ tracks, crossOrigin = 'anonymous' }) {
   const idRef = useRef(1);
 
   useEffect(() => {
-    if (player.state.currentIndex === lastIndex.current) return;
-    lastIndex.current = player.state.currentIndex;
+    if (playerState.currentIndex === lastIndex.current) return;
+    lastIndex.current = playerState.currentIndex;
     const id = idRef.current++;
     setLayers((prev) => [
       ...prev,
-      { id, track: player.currentTrack, dir: player.state.direction },
+      { id, track: currentTrack, dir: playerState.direction },
     ]);
     const t = setTimeout(() => {
       setLayers((prev) => prev.filter((l) => l.id === id));
     }, 760);
     return () => clearTimeout(t);
   }, [
-    player.state.currentIndex,
-    player.currentTrack,
-    player.state.direction,
+    playerState.currentIndex,
+    currentTrack,
+    playerState.direction,
   ]);
 
   const seekForward = useCallback(() => {
-    const a = player.audioRef.current;
+    const a = audioRef.current;
     if (a) a.currentTime = Math.min(a.duration || 0, a.currentTime + 5);
-  }, [player.audioRef]);
+  }, [audioRef]);
   const seekBackward = useCallback(() => {
-    const a = player.audioRef.current;
+    const a = audioRef.current;
     if (a) a.currentTime = Math.max(0, a.currentTime - 5);
-  }, [player.audioRef]);
+  }, [audioRef]);
 
   const shortcuts = useMemo(
     () => ({
-      toggle: player.toggle,
-      next: player.next,
-      prev: player.prev,
+      toggle,
+      next,
+      prev,
       seekForward,
       seekBackward,
-      toggleShuffle: player.toggleShuffle,
-      cycleLoop: player.cycleLoop,
+      toggleShuffle,
+      cycleLoop,
     }),
     [
-      player.toggle,
-      player.next,
-      player.prev,
+      toggle,
+      next,
+      prev,
       seekForward,
       seekBackward,
-      player.toggleShuffle,
-      player.cycleLoop,
+      toggleShuffle,
+      cycleLoop,
     ]
   );
   useKeyboardShortcuts(shortcuts);
@@ -894,7 +911,7 @@ export function MusicPlayer({ tracks, crossOrigin = 'anonymous' }) {
       {/* Left Column: Music Player Widget */}
       <div className="w-full lg:w-[45%] flex flex-col justify-start">
         <div
-          className={`card ${player.state.isPlaying ? 'is-playing' : ''} ${isZoomed ? 'is-zoomed' : ''
+          className={`card ${playerState.isPlaying ? 'is-playing' : ''} ${isZoomed ? 'is-zoomed' : ''
             } !mr-0 !ml-0 w-full relative`}
           onClick={(e) => {
             if (!e.target.closest('.mask'))
@@ -903,43 +920,43 @@ export function MusicPlayer({ tracks, crossOrigin = 'anonymous' }) {
         >
           {/* Absolute positioned Now Playing badge */}
           <div className="absolute top-4 left-4 z-20 flex items-center gap-1.5 text-[9px] uppercase font-extrabold tracking-widest text-sky-400 bg-sky-500/10 px-2.5 py-1 rounded-full select-none border border-sky-500/20">
-            <span className={`w-1.5 h-1.5 rounded-full bg-sky-400 ${player.state.isPlaying ? 'animate-pulse' : ''}`} />
+            <span className={`w-1.5 h-1.5 rounded-full bg-sky-400 ${playerState.isPlaying ? 'animate-pulse' : ''}`} />
             <span>Now Playing</span>
           </div>
 
           <audio
-            ref={player.audioRef}
+            ref={audioRef}
             preload="metadata"
             crossOrigin={crossOrigin}
           />
           <Disc
             layers={layers}
-            isPlaying={player.state.isPlaying}
+            isPlaying={playerState.isPlaying}
             isZoomed={isZoomed}
-            trackKey={player.state.currentIndex}
-            direction={player.state.direction}
+            trackKey={playerState.currentIndex}
+            direction={playerState.direction}
             onZoomToggle={() => setIsZoomed((z) => !z)}
           />
           <div className="info">
             <ScalesMixer
-              isPlaying={player.state.isPlaying}
-              getFrequencyData={player.getFrequencyData}
+              isPlaying={playerState.isPlaying}
+              getFrequencyData={getFrequencyData}
             />
             <TrackInfo layers={layers} />
             <ProgressBar
-              currentTime={player.currentTime}
-              duration={player.duration}
-              onSeek={player.seek}
+              currentTime={currentTime}
+              duration={duration}
+              onSeek={seek}
             />
             <Controls
-              isPlaying={player.state.isPlaying}
-              shuffled={player.state.shuffled}
-              loopMode={player.state.loopMode}
-              onToggle={player.toggle}
-              onNext={player.next}
-              onPrev={player.prev}
-              onShuffle={player.toggleShuffle}
-              onLoop={player.cycleLoop}
+              isPlaying={playerState.isPlaying}
+              shuffled={playerState.shuffled}
+              loopMode={playerState.loopMode}
+              onToggle={toggle}
+              onNext={next}
+              onPrev={prev}
+              onShuffle={toggleShuffle}
+              onLoop={cycleLoop}
             />
           </div>
         </div>
@@ -954,19 +971,32 @@ export function MusicPlayer({ tracks, crossOrigin = 'anonymous' }) {
           </h3>
           <div className="space-y-3 max-h-[360px] overflow-y-auto pr-2 hide-scrollbar">
             {tracks.map((track, index) => {
-              const isCurrent = player.state.currentIndex === index;
-              const isPlaying = isCurrent && player.state.isPlaying;
+              const isCurrent = playerState.currentIndex === index;
+              const isPlaying = isCurrent && playerState.isPlaying;
               return (
                 <div
                   key={track.id || index}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`Putar lagu ${track.title} oleh ${track.artist}`}
                   onClick={() => {
                     if (isCurrent) {
-                      player.toggle();
+                      toggle();
                     } else {
-                      player.loadTrack(index, true, index > player.state.currentIndex ? 'next' : 'prev');
+                      loadTrack(index, true, index > playerState.currentIndex ? 'next' : 'prev');
                     }
                   }}
-                  className={`flex items-center justify-between p-3.5 rounded-2xl border transition-all duration-300 cursor-pointer group/row ${isCurrent
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      if (isCurrent) {
+                        toggle();
+                      } else {
+                        loadTrack(index, true, index > playerState.currentIndex ? 'next' : 'prev');
+                      }
+                    }
+                  }}
+                  className={`flex items-center justify-between p-3.5 rounded-2xl border transition-all duration-300 cursor-pointer group/row focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 ${isCurrent
                     ? 'active-music-card border-indigo-400/40 ring-1 ring-indigo-400/20'
                     : 'bg-transparent border-slate-200/40 hover:bg-white/30 hover:border-slate-350'
                     }`}
@@ -1138,13 +1168,12 @@ export default function DengerIntanPage() {
   return (
     <div className="space-y-16 max-w-7xl mx-auto py-6 relative">
 
-      {/* Centered Premium Editorial Hero Section with 3D Scroll Perspective */}
       <ContainerScroll
         titleComponent={
           <div className="flex flex-col items-center select-none pt-1">
-            <h2 className="text-4xl sm:text-6xl md:text-7xl font-extrabold text-[var(--color-primary)] leading-none tracking-tight relative mb-8">
+            <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold text-[var(--color-primary)] leading-none tracking-tight relative mb-8">
               #DengerINTAN
-            </h2>
+            </h1>
           </div>
         }
       >
@@ -1220,22 +1249,24 @@ export default function DengerIntanPage() {
                   </div>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex gap-2.5">
                   <button
                     onClick={sharePlaylist}
-                    className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-white flex items-center justify-center transition-all cursor-pointer border border-white/5"
+                    className="w-11 h-11 rounded-full bg-white/5 hover:bg-white/10 text-white flex items-center justify-center transition-all cursor-pointer border border-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]"
                     title="Bagikan Tautan Playlist"
+                    aria-label="Bagikan Tautan Playlist"
                   >
-                    <Share2 className="w-3.5 h-3.5" />
+                    <Share2 className="w-4.5 h-4.5" />
                   </button>
                   <a
                     href={activePlaylist.spotifyUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-white flex items-center justify-center transition-all cursor-pointer border border-white/5"
+                    className="w-11 h-11 rounded-full bg-white/5 hover:bg-white/10 text-white flex items-center justify-center transition-all cursor-pointer border border-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]"
                     title="Buka di Spotify"
+                    aria-label="Buka di Spotify"
                   >
-                    <ExternalLink className="w-3.5 h-3.5" />
+                    <ExternalLink className="w-4.5 h-4.5" />
                   </a>
                 </div>
               </div>
@@ -1530,13 +1561,15 @@ export default function DengerIntanPage() {
                 border: none;
                 color: rgba(255, 255, 255, 0.5);
                 cursor: pointer;
-                padding: 0.6rem;
+                width: 44px;
+                height: 44px;
                 border-radius: 50%;
                 transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 position: relative;
+                flex-shrink: 0;
               }
               .ctrl:hover {
                 color: #fff;
@@ -1666,18 +1699,20 @@ export default function DengerIntanPage() {
             </p>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <button
               onClick={() => scrollContainer('left')}
-              className="w-10 h-10 rounded-full border border-[var(--color-primary)]/25 flex items-center justify-center text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white transition-all shadow-sm cursor-pointer active:scale-95"
+              className="w-11 h-11 rounded-full border border-[var(--color-primary)]/25 flex items-center justify-center text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white transition-all shadow-sm cursor-pointer active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2"
               title="Scroll Kiri"
+              aria-label="Scroll Kiri"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
             <button
               onClick={() => scrollContainer('right')}
-              className="w-10 h-10 rounded-full border border-[var(--color-primary)]/25 flex items-center justify-center text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white transition-all shadow-sm cursor-pointer active:scale-95"
-              title="Scroll Rujukan"
+              className="w-11 h-11 rounded-full border border-[var(--color-primary)]/25 flex items-center justify-center text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white transition-all shadow-sm cursor-pointer active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2"
+              title="Scroll Kanan"
+              aria-label="Scroll Kanan"
             >
               <ArrowRight className="w-4 h-4" />
             </button>

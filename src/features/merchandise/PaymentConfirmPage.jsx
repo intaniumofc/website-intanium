@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { merchandiseService } from './merchandiseService';
-import PageHeader from '../../components/layout/PageHeader';
 import Card from '../../components/common/Card';
 import { formatCurrency } from '../../lib/helpers';
 import { ROUTES, ADMIN_WHATSAPP_NUMBER } from '../../lib/constants';
 import { 
-  CheckCircle, Search, ArrowLeft, Package, Clock, 
-  FileText, Check, ShieldAlert, Truck, Copy, 
-  ExternalLink, ShieldCheck 
+  Search, ArrowLeft, Clock, 
+  Check, ShieldAlert, Truck, Copy, 
+  ExternalLink
 } from 'lucide-react';
+import qrisImage from '../../assets/images/qris-intanium.png';
 import { StatusBadge } from '../../components/ui/status-badge';
 import { OrderStatus } from '../../components/ui/order-status-tracker';
 
@@ -21,9 +21,31 @@ export default function PaymentConfirmPage() {
   const invoiceParam = searchParams.get('inv') || '';
   const amountParam = searchParams.get('total') || '';
 
-  const [invoice, setInvoice] = useState('');
-  const [amount, setAmount] = useState('');
   const [copied, setCopied] = useState(false);
+  const [copiedBank, setCopiedBank] = useState(false);
+  const [paymentSettings, setPaymentSettings] = useState({
+    bank_name: 'BANK JAGO',
+    account_number: '107287946603',
+    account_holder: 'Muhammad Fauzan Casimira',
+    qris_url: '',
+  });
+
+  useEffect(() => {
+    document.title = 'Lacak & Cek Pesanan | Official Shop Intanium';
+    merchandiseService.getPaymentSettings()
+      .then((settings) => {
+        if (settings) {
+          setPaymentSettings(settings);
+        }
+      })
+      .catch((err) => console.error('Error fetching settings in confirm page:', err));
+  }, []);
+
+  const handleCopyBank = () => {
+    navigator.clipboard.writeText(paymentSettings.account_number);
+    setCopiedBank(true);
+    setTimeout(() => setCopiedBank(false), 2000);
+  };
 
   // Invoice / Order lookup states
   const [orderDetail, setOrderDetail] = useState(null);
@@ -32,22 +54,24 @@ export default function PaymentConfirmPage() {
   const [isPaymentSubmitted, setIsPaymentSubmitted] = useState(false);
   const [lookupInvoiceInput, setLookupInvoiceInput] = useState('');
 
-  useEffect(() => {
-    if (invoiceParam) setInvoice(invoiceParam);
-    if (amountParam) setAmount(amountParam);
-  }, [invoiceParam, amountParam]);
-
   // Fetch order details
   useEffect(() => {
+    let active = true;
+
     if (!invoiceParam) {
-      setOrderDetail(null);
-      setOrderedProduct(null);
-      setIsPaymentSubmitted(false);
+      Promise.resolve().then(() => {
+        if (active) {
+          setOrderDetail(null);
+          setOrderedProduct(null);
+          setIsPaymentSubmitted(false);
+        }
+      });
       return;
     }
 
-    let active = true;
-    setLoadingOrder(true);
+    Promise.resolve().then(() => {
+      if (active) setLoadingOrder(true);
+    });
 
     async function loadOrder() {
       try {
@@ -56,9 +80,6 @@ export default function PaymentConfirmPage() {
         
         if (orderData) {
           setOrderDetail(orderData);
-          if (orderData.order_data?.totalAmount) {
-            setAmount(orderData.order_data.totalAmount.toString());
-          }
           
           // Fetch product
           if (orderData.order_data?.productId) {
@@ -81,7 +102,7 @@ export default function PaymentConfirmPage() {
       }
     }
 
-    loadOrder();
+    void loadOrder();
 
     return () => {
       active = false;
@@ -96,25 +117,39 @@ export default function PaymentConfirmPage() {
     const prodName = orderedProduct ? orderedProduct.name : 'Merchandise';
     const size = orderDetail.order_data?.selectedSize || '-';
     const qty = orderDetail.order_data?.quantity || 1;
-    const total = orderDetail.order_data?.totalAmount || amount;
+    const total = orderDetail.order_data?.totalAmount || amountParam;
     const buyerName = orderDetail.order_data?.name || '-';
     const buyerPhone = orderDetail.order_data?.phone || '-';
-    const buyerAddress = orderDetail.order_data?.address || '-';
+    const lineId = orderDetail.order_data?.lineId || '-';
+    const memberId = orderDetail.order_data?.intaniumMemberId || '-';
+    const deliveryMethod = orderDetail.order_data?.deliveryMethod === 'pickup_fx' ? 'Ambil di FX Sudirman' : 'Ekspedisi J&T';
+    const buyerAddress = orderDetail.order_data?.deliveryMethod === 'pickup_fx' 
+      ? 'Tidak diperlukan (Ambil di FX Sudirman)' 
+      : `${orderDetail.order_data?.address || '-'}, ${orderDetail.order_data?.city || ''}, ${orderDetail.order_data?.province || ''} ${orderDetail.order_data?.postalCode || ''}`;
+    
+    const shippingCostText = orderDetail.order_data?.deliveryMethod === 'pickup_fx'
+      ? 'FREE ONGKIR'
+      : formatCurrency(orderDetail.order_data?.shipping_cost || 0);
+
     const notesText = orderDetail.order_data?.notes ? `\n- *Catatan:* ${orderDetail.order_data.notes}` : '';
     
-    const message = `Halo Admin Intanium! Saya ingin melakukan konfirmasi pembayaran Pre-Order Merchandise.
+    const message = `Halo Admin Intanium! Saya ingin melakukan konfirmasi/tanya status Pre-Order Merchandise.
 
 *Rincian Pesanan:*
 - *Nomor Invoice:* ${invoiceNum}
 - *Produk:* ${prodName}
 - *Varian/Size:* ${size}
 - *Jumlah:* ${qty} pcs
+- *Metode Pengiriman:* ${deliveryMethod}
+- *Ongkos Kirim:* ${shippingCostText}
 - *Total Nominal:* ${formatCurrency(Number(total))}
 - *Nama Penerima:* ${buyerName}
 - *No. WhatsApp:* ${buyerPhone}
+- *ID Line:* ${lineId}
+- *ID Anggota:* ${memberId}
 - *Alamat:* ${buyerAddress}${notesText}
 
-*(Saya melampirkan foto bukti transfer di bawah ini)*`;
+*(Saya melampirkan foto bukti transfer jika status pesanan saya sudah 'Menunggu Pembayaran')*`;
 
     const encodedMessage = encodeURIComponent(message);
     const waUrl = `https://wa.me/${waNumber}?text=${encodedMessage}`;
@@ -137,14 +172,18 @@ export default function PaymentConfirmPage() {
   };
 
   const getTimelineSteps = () => {
-    const status = orderDetail?.order_data?.status || 'pending';
+    const status = orderDetail?.order_data?.status || 'pending_review';
+    const deliveryMethod = orderDetail?.order_data?.deliveryMethod || 'expedition_jnt';
+    const isFx = deliveryMethod === 'pickup_fx';
     
     let step1 = 'done'; // Pesanan Dibuat
-    let step2 = 'upcoming'; // Bukti Diunggah
-    let step3 = 'upcoming'; // Verifikasi Admin
-    let step4 = 'upcoming'; // Pesanan Dikirim
+    let step2 = 'upcoming'; // Pembayaran
+    let step3 = 'upcoming'; // Sedang Diproses
+    let step4 = 'upcoming'; // Siap Diambil / Pengiriman
 
-    if (status === 'pending') {
+    if (status === 'pending_review') {
+      step2 = 'current';
+    } else if (status === 'waiting_payment') {
       if (isPaymentSubmitted) {
         step2 = 'done';
         step3 = 'current';
@@ -153,9 +192,12 @@ export default function PaymentConfirmPage() {
       }
     } else if (status === 'paid') {
       step2 = 'done';
+      step3 = 'current';
+    } else if (status === 'processing') {
+      step2 = 'done';
       step3 = 'done';
       step4 = 'current';
-    } else if (status === 'shipped') {
+    } else if (status === 'ready_for_pickup' || status === 'shipped') {
       step2 = 'done';
       step3 = 'done';
       step4 = 'done';
@@ -169,38 +211,34 @@ export default function PaymentConfirmPage() {
       step4 = 'upcoming';
     }
 
-    return [
-      { label: 'Pesanan Dibuat', state: step1, desc: 'Pemesanan pre-order masuk sistem' },
-      { label: 'Bukti Diunggah', state: step2, desc: 'Kirim struk bukti bayar via WhatsApp' },
-      { label: 'Verifikasi Admin', state: step3, desc: 'Pembayaran divalidasi oleh admin fanbase' },
-      { label: 'Pesanan Dikirim', state: step4, desc: 'Merchandise dikirim menggunakan nomor resi' },
-    ];
-  };
-
-  const timelineSteps = getTimelineSteps();
-  const orderStatus = orderDetail?.order_data?.status || 'pending';
-
-  const getStatusBadgeClass = (status) => {
-    switch (status) {
-      case 'pending':
-        return 'bg-amber-50 text-amber-700 border-amber-200/60 dark:bg-amber-950/20 dark:text-amber-300';
-      case 'paid':
-        return 'bg-blue-50 text-blue-700 border-blue-200/60 dark:bg-blue-950/20 dark:text-blue-300';
-      case 'shipped':
-        return 'bg-indigo-50 text-indigo-700 border-indigo-200/60 dark:bg-indigo-950/20 dark:text-indigo-300';
-      case 'completed':
-        return 'bg-emerald-50 text-emerald-700 border-emerald-200/60 dark:bg-emerald-950/20 dark:text-emerald-300';
-      case 'cancelled':
-        return 'bg-rose-50 text-rose-700 border-rose-200/60 dark:bg-rose-950/20 dark:text-rose-300';
-      default:
-        return 'bg-slate-50 text-slate-700 border-slate-200/60 dark:bg-slate-900/20 dark:text-slate-400';
+    if (isFx) {
+      return [
+        { label: 'Pesanan Dibuat', state: step1, desc: 'Pemesanan pre-order masuk sistem' },
+        { label: 'Pembayaran', state: step2, desc: 'Kirim struk bukti bayar via WhatsApp' },
+        { label: 'Sedang Diproses', state: step3, desc: 'Kaos/item diproduksi atau dikemas' },
+        { label: 'Siap Diambil', state: step4, desc: 'Merchandise siap diambil di FX Sudirman' },
+      ];
+    } else {
+      return [
+        { label: 'Pesanan Dibuat', state: step1, desc: 'Pemesanan pre-order masuk sistem' },
+        { label: 'Pembayaran', state: step2, desc: 'Kirim struk bukti bayar via WhatsApp' },
+        { label: 'Sedang Diproses', state: step3, desc: 'Kaos/item diproduksi atau dikemas' },
+        { label: 'Pesanan Dikirim', state: step4, desc: 'Paket diserahkan ke J&T Express' },
+      ];
     }
   };
 
+  const timelineSteps = getTimelineSteps();
+  const orderStatus = orderDetail?.order_data?.status || 'pending_review';
+
+
   const getStatusLabel = (status) => {
     switch (status) {
-      case 'pending': return 'Menunggu Pembayaran';
+      case 'pending_review': return 'Menunggu Review Admin';
+      case 'waiting_payment': return 'Menunggu Pembayaran';
       case 'paid': return 'Pembayaran Terverifikasi';
+      case 'processing': return 'Sedang Diproses';
+      case 'ready_for_pickup': return 'Siap Diambil';
       case 'shipped': return 'Dalam Pengiriman';
       case 'completed': return 'Pesanan Selesai';
       case 'cancelled': return 'Dibatalkan';
@@ -209,18 +247,23 @@ export default function PaymentConfirmPage() {
   };
 
   const getStatusIllustration = (status, isSubmitted) => {
-    if (status === 'pending') {
-      return isSubmitted 
-        ? 'https://illustrations.popsy.co/violet/graphic-design.svg' 
-        : 'https://illustrations.popsy.co/violet/online-payment.svg';
-    }
     switch (status) {
+      case 'pending_review':
+        return 'https://illustrations.popsy.co/violet/graphic-design.svg';
+      case 'waiting_payment':
+        return isSubmitted 
+          ? 'https://illustrations.popsy.co/violet/graphic-design.svg' 
+          : 'https://illustrations.popsy.co/violet/online-payment.svg';
       case 'paid':
         return 'https://illustrations.popsy.co/violet/successful-purchase.svg';
+      case 'processing':
+        return 'https://illustrations.popsy.co/violet/concept-creative-idea.svg';
+      case 'ready_for_pickup':
+        return 'https://illustrations.popsy.co/violet/received-gift.svg';
       case 'shipped':
         return 'https://illustrations.popsy.co/violet/delivery-service.svg';
       case 'completed':
-        return 'https://illustrations.popsy.co/violet/received-gift.svg';
+        return 'https://illustrations.popsy.co/violet/happy-anniversary.svg';
       case 'cancelled':
         return 'https://illustrations.popsy.co/violet/server-status.svg';
       default:
@@ -229,20 +272,46 @@ export default function PaymentConfirmPage() {
   };
 
   const getStatusTitleAndDesc = (status, isSubmitted) => {
-    if (status === 'pending') {
-      return isSubmitted 
-        ? { title: "Menunggu Verifikasi", desc: "Bukti transfer telah Anda kirimkan. Tim admin sedang memverifikasi pembayaran Anda." }
-        : { title: "Menunggu Pembayaran", desc: "Silakan lakukan transfer bank dan konfirmasi pembayaran ke WhatsApp Admin." };
-    }
     switch (status) {
+      case 'pending_review':
+        return { 
+          title: "Menunggu Review Admin", 
+          desc: "Pesanan Anda sedang diperiksa oleh admin. Jika Anda menggunakan kurir J&T, admin akan memeriksa nominal ongkir Anda." 
+        };
+      case 'waiting_payment':
+        return isSubmitted 
+          ? { title: "Menunggu Verifikasi", desc: "Bukti transfer telah Anda kirimkan. Tim admin sedang memverifikasi pembayaran Anda." }
+          : { title: "Menunggu Pembayaran", desc: "Silakan lakukan transfer bank dan konfirmasi pembayaran ke WhatsApp Admin." };
       case 'paid':
-        return { title: "Pembayaran Terverifikasi", desc: "Pembayaran berhasil dikonfirmasi. Pesanan masuk antrean produksi pre-order." };
+        return { 
+          title: "Pembayaran Terverifikasi", 
+          desc: "Pembayaran berhasil dikonfirmasi. Pesanan masuk antrean produksi/pengerjaan pre-order." 
+        };
+      case 'processing':
+        return { 
+          title: "Sedang Diproses", 
+          desc: "Merchandise Anda sedang diproduksi atau dikemas oleh admin fanbase." 
+        };
+      case 'ready_for_pickup':
+        return { 
+          title: "Siap Diambil", 
+          desc: "Kabar baik! Merchandise Anda siap diambil di titik temu FX Sudirman Jakarta. Silakan hubungi admin via Line ID." 
+        };
       case 'shipped':
-        return { title: "Dalam Pengiriman", desc: "Kabar baik! Paket Anda telah dikirim oleh admin via kurir logistik." };
+        return { 
+          title: "Dalam Pengiriman", 
+          desc: "Kabar baik! Paket Anda telah diserahkan ke J&T Express dan dalam perjalanan ke alamat Anda." 
+        };
       case 'completed':
-        return { title: "Pesanan Selesai", desc: "Terima kasih! Paket merchandise pre-order Anda telah berhasil diterima." };
+        return { 
+          title: "Pesanan Selesai", 
+          desc: "Terima kasih! Paket merchandise pre-order Anda telah berhasil diterima." 
+        };
       case 'cancelled':
-        return { title: "Pesanan Dibatalkan", desc: "Transaksi pre-order dibatalkan. Hubungi admin via WhatsApp untuk detailnya." };
+        return { 
+          title: "Pesanan Dibatalkan", 
+          desc: "Transaksi pre-order dibatalkan. Hubungi admin via WhatsApp untuk detailnya." 
+        };
       default:
         return { title: "Status Tidak Diketahui", desc: "Detail pesanan Anda sedang disiapkan." };
     }
@@ -259,12 +328,25 @@ export default function PaymentConfirmPage() {
     priceFormatted: formatCurrency(orderedProduct?.price || 0)
   };
 
+  const isJnt = orderDetail?.order_data?.deliveryMethod === 'expedition_jnt';
+
   const trackingSummary = orderDetail ? [
     { label: "Nomor Invoice", value: orderDetail.invoice_number },
     { label: "Nama Penerima", value: orderDetail.order_data?.name || '-' },
     { label: "Nomor WhatsApp", value: orderDetail.order_data?.phone || '-' },
-    { label: "Alamat Pengiriman", value: `${orderDetail.order_data?.address || '-'}, ${orderDetail.order_data?.postalCode || ''}` },
-    { label: "Kurir Pengiriman", value: `${orderDetail.order_data?.courier || 'J&T'} (${orderDetail.order_data?.courierService || 'Reguler'})` },
+    ...(orderDetail.order_data?.lineId ? [{ label: "ID Line", value: orderDetail.order_data.lineId }] : []),
+    ...(orderDetail.order_data?.intaniumMemberId ? [{ label: "ID Anggota", value: orderDetail.order_data.intaniumMemberId }] : []),
+    { 
+      label: "Metode Pengiriman", 
+      value: isJnt ? "Ekspedisi J&T Express" : "Ambil di FX Sudirman" 
+    },
+    ...(isJnt 
+      ? [
+          { label: "Alamat Pengiriman", value: `${orderDetail.order_data?.address || '-'}, ${orderDetail.order_data?.city || ''}, ${orderDetail.order_data?.province || ''} ${orderDetail.order_data?.postalCode || ''}` },
+          { label: "Tarif Ongkir", value: formatCurrency(orderDetail.order_data?.shipping_cost || 0) }
+        ]
+      : []
+    ),
     { label: "Total Tagihan", value: formatCurrency(orderDetail.order_data?.totalAmount || 0) }
   ] : [];
 
@@ -273,7 +355,14 @@ export default function PaymentConfirmPage() {
   }
 
   const getButtonConfig = () => {
-    if (orderStatus === 'pending') {
+    if (orderStatus === 'pending_review') {
+      return {
+        label: "Hubungi Admin WhatsApp",
+        icon: <WhatsAppIcon className="h-4 w-4 fill-current" />,
+        action: handleWhatsAppRedirect
+      };
+    }
+    if (orderStatus === 'waiting_payment') {
       return {
         label: isPaymentSubmitted ? "Hubungi Admin WhatsApp" : "Kirim Bukti ke WhatsApp",
         icon: <WhatsAppIcon className="h-4 w-4 fill-current" />,
@@ -291,6 +380,17 @@ export default function PaymentConfirmPage() {
         }
       };
     }
+    if (orderStatus === 'ready_for_pickup') {
+      return {
+        label: "Koordinasi Ambil (Line / WA)",
+        icon: <ExternalLink className="h-4 w-4" />,
+        action: () => {
+          const lineId = orderDetail?.order_data?.lineId || '';
+          alert(`ID Line Anda: ${lineId}. Admin akan menghubungi Anda via Line. Anda juga bisa menanyakan status pengambilan via WhatsApp.`);
+          handleWhatsAppRedirect();
+        }
+      };
+    }
     return {
       label: "Cari Invoice Lain",
       icon: <Search className="h-4 w-4" />,
@@ -305,13 +405,22 @@ export default function PaymentConfirmPage() {
   const buttonConfig = getButtonConfig();
 
   const getFooterStatusText = () => {
-    if (orderStatus === 'pending') {
+    if (orderStatus === 'pending_review') {
+      return "Admin akan meninjau pesanan Anda sebelum mengubah status menjadi 'Menunggu Pembayaran'.";
+    }
+    if (orderStatus === 'waiting_payment') {
       return isPaymentSubmitted 
-        ? "Proses verifikasi biasanya memakan waktu maksimal 1x24 jam."
+        ? "Proses verifikasi bukti transfer biasanya memakan waktu maksimal 1x24 jam."
         : "Silakan transfer tepat senilai tagihan untuk menjamin slot pre-order Anda.";
     }
     if (orderStatus === 'paid') {
-      return "Status pengiriman akan diperbarui otomatis setelah nomor resi diinput oleh admin.";
+      return "Pembayaran telah kami terima. Slot pre-order Anda telah aman.";
+    }
+    if (orderStatus === 'processing') {
+      return "Barang sedang dipersiapkan. Status pengiriman/pickup akan di-update setelah siap.";
+    }
+    if (orderStatus === 'ready_for_pickup') {
+      return "Silakan berkoordinasi dengan admin melalui Line ID Anda untuk titik temu di FX Sudirman.";
     }
     if (orderStatus === 'shipped') {
       return `Estimasi pengiriman dapat dilacak dengan resi ${orderDetail?.order_data?.trackingNumber || '-'}.`;
@@ -320,7 +429,7 @@ export default function PaymentConfirmPage() {
       return "Terima kasih telah menjadi bagian dari Intanium!";
     }
     if (orderStatus === 'cancelled') {
-      return "Transaksi pre-order dibatalkan. Hubungi admin untuk pengembalian dana.";
+      return "Transaksi pre-order dibatalkan. Hubungi admin untuk informasi lebih lanjut.";
     }
     return "";
   };
@@ -386,21 +495,22 @@ export default function PaymentConfirmPage() {
                 </motion.div>
               )}
               <div className="space-y-2">
-                <label className="block text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                <label htmlFor="invoice-lookup-input" className="block text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                   Nomor Invoice Pesanan
                 </label>
                 <div className="relative flex items-center">
                   <Search className="absolute left-4 h-4.5 w-4.5 text-slate-400" />
                   <input
                     type="text"
+                    id="invoice-lookup-input"
                     placeholder="Masukkan nomor invoice (contoh: INV-123456)"
                     value={lookupInvoiceInput}
                     onChange={(e) => setLookupInvoiceInput(e.target.value)}
-                    className="w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-2xl pl-11 pr-32 py-3.5 text-sm font-bold placeholder-slate-400 text-slate-850 focus:ring-2 focus:ring-[var(--color-primary)]/20 focus:outline-none transition"
+                    className="w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-2xl pl-11 pr-32 py-3.5 text-sm font-bold placeholder-slate-400 text-slate-850 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] transition"
                   />
                   <button
                     type="submit"
-                    className="absolute right-2 px-5 py-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white text-xs font-bold rounded-xl shadow-md cursor-pointer transition active:scale-95"
+                    className="absolute right-2 px-5 py-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white text-xs font-bold rounded-xl shadow-md cursor-pointer transition active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2"
                   >
                     Cari Pesanan
                   </button>
@@ -422,16 +532,58 @@ export default function PaymentConfirmPage() {
             <p className="text-xs text-[var(--text-secondary)] leading-relaxed mb-4">
               Silakan lakukan pembayaran pre-order Anda dengan mentransfer tepat sesuai total tagihan ke rekening resmi berikut:
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="p-4 bg-[var(--bg-primary)] rounded-2xl border border-[var(--border-color)]">
-                <span className="text-[8px] font-extrabold text-[var(--text-muted)] block uppercase tracking-widest">BCA (Bank Central Asia)</span>
-                <span className="text-base font-black text-slate-850 tracking-wider block mt-1">8723-9482-12</span>
-                <span className="text-[10px] font-bold text-slate-500 block mt-0.5">a.n. Intan Merch Admin</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+              {/* Bank Transfer Details */}
+              <div className="p-4 bg-[var(--bg-primary)] rounded-2xl border border-[var(--border-color)] space-y-3">
+                <div>
+                  <span className="text-[8px] font-extrabold text-[var(--text-muted)] block uppercase tracking-widest">Metode Transfer</span>
+                  <span className="text-base font-black text-slate-850 tracking-wider block mt-0.5">{paymentSettings.bank_name}</span>
+                </div>
+                
+                <div className="flex items-center justify-between bg-white px-3 py-2 rounded-xl border border-[var(--border-color)]">
+                  <span className="font-mono text-sm font-bold text-slate-700">{paymentSettings.account_number}</span>
+                  <button
+                    type="button"
+                    onClick={handleCopyBank}
+                    aria-label="Salin nomor rekening bank"
+                    className="text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition flex items-center gap-1 text-xs font-bold cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 rounded-md px-1"
+                  >
+                    {copiedBank ? (
+                      <>
+                        <Check className="h-3.5 w-3.5 text-emerald-500" />
+                        <span className="text-emerald-500 text-[10px]">Tersalin</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-3.5 w-3.5" />
+                        <span className="text-[10px]">Salin Rekening</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+                
+                <div>
+                  <span className="text-[8px] font-bold text-[var(--text-muted)] block uppercase">Nama Penerima</span>
+                  <span className="text-xs font-bold text-slate-800">{paymentSettings.account_holder}</span>
+                </div>
               </div>
-              <div className="p-4 bg-[var(--bg-primary)] rounded-2xl border border-[var(--border-color)]">
-                <span className="text-[8px] font-extrabold text-[var(--text-muted)] block uppercase tracking-widest">GOPAY / OVO / DANA</span>
-                <span className="text-base font-black text-slate-850 tracking-wider block mt-1">0812-3456-7890</span>
-                <span className="text-[10px] font-bold text-slate-500 block mt-0.5">a.n. Intan Official Shop</span>
+
+              {/* QRIS Code */}
+              <div className="flex flex-col items-center justify-center p-4 rounded-2xl border border-[var(--border-color)] bg-slate-50 relative overflow-hidden">
+                <span className="text-[9px] font-extrabold text-[var(--text-muted)] block uppercase tracking-widest mb-2">Scan QRIS Intanium</span>
+                <div className="w-40 h-52 border border-slate-200 rounded-xl overflow-hidden bg-white shadow-xs p-2 flex items-center justify-center">
+                  <img
+                    src={paymentSettings.qris_url || qrisImage}
+                    alt="QRIS Pembayaran Intanium"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <span className="text-[9px] text-[var(--text-secondary)] text-center mt-2 font-semibold">
+                  A01 • ATHIF, COBLONG
+                </span>
+                <span className="text-[8px] text-[var(--text-muted)] text-center">
+                  NMID: ID1025370590016
+                </span>
               </div>
             </div>
           </Card>
@@ -450,6 +602,7 @@ export default function PaymentConfirmPage() {
         visible: { opacity: 1, transition: { staggerChildren: 0.12, delayChildren: 0.05 } }
       }}
     >
+      <h1 className="sr-only">Rincian Pesanan {orderDetail.invoice_number}</h1>
       {/* Top detailed navbar */}
       <motion.div
         className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-slate-100"
@@ -461,7 +614,7 @@ export default function PaymentConfirmPage() {
             setLookupInvoiceInput('');
             navigate(ROUTES.PAYMENT_CONFIRM);
           }}
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-[var(--color-primary)] transition cursor-pointer"
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-[var(--color-primary)] transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 rounded-lg"
         >
           <ArrowLeft className="h-4 w-4" /> Cari Invoice Lain
         </button>
@@ -473,8 +626,9 @@ export default function PaymentConfirmPage() {
             {orderDetail.invoice_number}
             <button 
               onClick={handleCopyInvoice} 
-              className="text-slate-400 hover:text-slate-700 transition cursor-pointer"
+              className="text-slate-400 hover:text-slate-700 transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 rounded-md"
               title="Salin Nomor Invoice"
+              aria-label="Salin Nomor Invoice"
             >
               {copied ? <Check className="h-3 w-3 text-emerald-500" /> : <Copy className="h-3 w-3" />}
             </button>

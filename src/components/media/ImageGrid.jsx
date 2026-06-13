@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Card from '../common/Card';
 import Modal from '../common/Modal';
 
@@ -19,8 +19,17 @@ export default function ImageGrid({
           <Card
             key={img.id || idx}
             padding="none"
-            className="group relative cursor-pointer overflow-hidden border border-[var(--border-color)] rounded-xl aspect-square"
+            className="group relative cursor-pointer overflow-hidden border border-[var(--border-color)] rounded-xl aspect-square focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2"
             onClick={() => setActiveImage(img)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setActiveImage(img);
+              }
+            }}
+            tabIndex={0}
+            role="button"
+            aria-label={`Lihat karya: ${img.title || 'Fanart'}${img.author ? ` oleh ${img.author}` : ''}`}
           >
             {/* Gallery Image */}
             <img

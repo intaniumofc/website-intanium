@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Heart, Trash2 } from 'lucide-react';
 
@@ -44,8 +43,16 @@ export default function StickyNote({ note, index = 0, onClick, onDelete, classNa
         zIndex: 30,
         transition: { duration: 0.2, ease: "easeOut" }
       }}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick && onClick(note);
+        }
+      }}
       onClick={() => onClick && onClick(note)}
-      className={`sticky-note-item pastel-${color || 'yellow'} ${hasTape ? 'has-tape' : ''} cursor-pointer relative p-4 flex flex-col justify-between rounded shadow transition-shadow select-none w-full max-w-[280px] mx-auto aspect-square h-auto min-h-[170px] ${className}`}
+      className={`sticky-note-item pastel-${color || 'yellow'} ${hasTape ? 'has-tape' : ''} cursor-pointer relative p-4 flex flex-col justify-between rounded shadow transition-shadow select-none w-full max-w-[280px] mx-auto aspect-square h-auto min-h-[170px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 ${className}`}
     >
       {/* Decorative Washi Tape or Push Pin */}
       {hasTape ? (

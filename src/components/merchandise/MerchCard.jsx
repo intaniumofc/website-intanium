@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import Card from '../common/Card';
 import Button from '../common/Button';
@@ -43,7 +42,7 @@ export default function MerchCard({ product, className = '' }) {
 
         {/* Action Button */}
         <div>
-          <Link to={`/merchandise/${id}`} className="block w-full">
+          <Link to={`/merchandise/${id}`} className="block w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 rounded-lg">
             <Button
               variant={isAvailable ? 'primary' : 'outline'}
               size="sm"

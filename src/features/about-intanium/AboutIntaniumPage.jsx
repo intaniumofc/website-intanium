@@ -1,19 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ROUTES } from '../../lib/constants';
 import logoNobg from '../../assets/logos/logo-nobg.png';
 import IntaniumStructureSection from './IntaniumStructureSection';
 import AboutSection3 from './AboutSection';
 import { PhotoGallery } from './PhotoGallery';
 import {
   Sparkles,
-  Users,
-  Heart,
-  Music,
-  Star,
-  Crown,
-  ArrowRight,
   Gem
 } from 'lucide-react';
 
@@ -264,7 +256,6 @@ function PhilosophyCard({ item, index, variants, className = '', activeId, onAct
   const activate = () => onActivate && onActivate(item.id);
   const deactivate = () => onDeactivate && onDeactivate();
   const toggle = () => (isActive ? deactivate() : activate());
-
   return (
     <motion.div
       variants={variants}
@@ -274,11 +265,17 @@ function PhilosophyCard({ item, index, variants, className = '', activeId, onAct
       onHoverEnd={deactivate}
       onFocus={activate}
       onBlur={deactivate}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggle();
+        }
+      }}
       onClick={toggle}
       tabIndex={0}
       role="button"
       aria-pressed={isActive}
-      className={`group relative cursor-pointer rounded-3xl border bg-white/55 backdrop-blur-xl p-5 outline-none transition-all duration-500 ${isActive
+      className={`group relative cursor-pointer rounded-3xl border bg-white/55 backdrop-blur-xl p-5 outline-none transition-all duration-500 focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 ${isActive
         ? 'border-(--color-primary)/55 shadow-[0_26px_64px_-26px_rgba(124,58,237,0.55)] ring-1 ring-(--color-primary)/25'
         : 'border-white/70 shadow-[0_18px_50px_-28px_rgba(28,15,132,0.45)] hover:border-white/90'} ${className}`}
     >

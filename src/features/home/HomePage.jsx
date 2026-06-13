@@ -3,12 +3,9 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaThreads } from 'react-icons/fa6';
 import Button from '../../components/common/Button';
-import { scheduleService } from '../schedule/scheduleService';
 import { newsService } from '../news/newsService';
 import { merchandiseService } from '../merchandise/merchandiseService';
-import { madingService } from '../mading/madingService';
-import { getEventStatus } from '../../lib/formatDate';
-import { ROUTES, SOCIALS } from '../../lib/constants';
+import { ROUTES } from '../../lib/constants';
 import {
   Sparkles,
   ArrowRight,
@@ -42,12 +39,9 @@ const scrollRevealVariants = {
 };
 
 export default function HomePage() {
-  const [nextEvent, setNextEvent] = useState(null);
   const [featuredNews, setFeaturedNews] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
-  const [recentNotes, setRecentNotes] = useState([]);
   const [bio, setBio] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
 
   const socialLinks = React.useMemo(() => [
     {
@@ -121,17 +115,11 @@ export default function HomePage() {
     const fetchData = async () => {
       try {
         // Fetch data parallelly from existing services
-        const [events, news, products, notes, bioData] = await Promise.all([
-          scheduleService.getEvents('all'),
+        const [news, products, bioData] = await Promise.all([
           newsService.getNews(),
           merchandiseService.getProducts('All'),
-          madingService.getNotes(),
           aboutIntanService.getBio(),
         ]);
-
-        // Pick the first upcoming/live stream event
-        const active = events.find(e => getEventStatus(e.time) !== 'completed') || events[0];
-        setNextEvent(active);
 
         // Pick top 4 news articles
         setFeaturedNews(news.slice(0, 4));
@@ -139,16 +127,10 @@ export default function HomePage() {
         // Keep all products for premium paginated carousel storefront
         setFeaturedProducts(products);
 
-        // Pick top 3 community mading notes
-        setRecentNotes(notes.slice(0, 3));
-
         // Set bio data
         setBio(bioData);
-
-        setIsLoading(false);
       } catch (err) {
         console.error(err);
-        setIsLoading(false);
       }
     };
 
@@ -259,6 +241,8 @@ export default function HomePage() {
               playsInline
               autoPlay
               muted
+              aria-label="Video profil Nur Intan JKT48"
+              title="Video profil Nur Intan"
               className="relative z-10 block h-auto max-h-full max-w-full object-contain align-middle"
             >
               <source
@@ -324,13 +308,14 @@ export default function HomePage() {
 
                   {/* CTA Button */}
                   <div className="pt-4">
-                    <Link to={ROUTES.ABOUT_INTAN}>
-                      <button className="inline-flex items-center gap-3.5 px-8 py-3.5 rounded-full bg-white text-[#4A7ABF] font-extrabold text-[10px] sm:text-xs uppercase tracking-[0.15em] shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-300">
-                        Yuk Kenali Lebih Lanjut
-                        <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[#4A7ABF]/10 text-[#4A7ABF]">
-                          <ChevronRight className="h-3.5 w-3.5 stroke-[3]" />
-                        </span>
-                      </button>
+                    <Link
+                      to={ROUTES.ABOUT_INTAN}
+                      className="inline-flex items-center gap-3.5 px-8 py-3.5 rounded-full bg-white text-[#4A7ABF] font-extrabold text-[10px] sm:text-xs uppercase tracking-[0.15em] shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#345B8B]"
+                    >
+                      Yuk Kenali Lebih Lanjut
+                      <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[#4A7ABF]/10 text-[#4A7ABF]">
+                        <ChevronRight className="h-3.5 w-3.5 stroke-[3]" />
+                      </span>
                     </Link>
                   </div>
                 </div>

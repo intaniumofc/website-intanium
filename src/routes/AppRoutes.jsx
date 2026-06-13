@@ -21,6 +21,9 @@ import MadingPage from '../features/mading/MadingPage';
 import NewsPage from '../features/news/NewsPage';
 import NewsDetailPage from '../features/news/NewsDetailPage';
 import GalleryPage from '../features/gallery/GalleryPage';
+import GamesPage from '../features/games/GamesPage';
+import MenangkapKecoaPage from '../features/games/menangkap-kecoa/MenangkapKecoaPage';
+import ScoreResultPage from '../features/games/menangkap-kecoa/ScoreResultPage';
 
 // Admin Layout & View Pages
 import AdminLayout from '../admin/AdminLayout';
@@ -38,6 +41,7 @@ import AdminPlaylists from '../admin/playlists';
 import AdminAboutIntan from '../admin/about-intan';
 import AdminIntanShiningStar from '../admin/intan-shining-star';
 import AdminHashtags from '../admin/hashtags';
+import AdminGames from '../admin/games';
 
 // Reusable Admin Guard Route
 const AdminGuard = ({ children }) => {
@@ -178,6 +182,30 @@ export default function AppRoutes() {
           </MainLayout>
         }
       />
+      <Route
+        path={ROUTES.GAMES}
+        element={
+          <MainLayout>
+            <GamesPage />
+          </MainLayout>
+        }
+      />
+      <Route
+        path={ROUTES.GAME_MENANGKAP_KECOA}
+        element={
+          <MainLayout>
+            <MenangkapKecoaPage />
+          </MainLayout>
+        }
+      />
+      <Route
+        path={ROUTES.GAME_MENANGKAP_KECOA_RESULT}
+        element={
+          <MainLayout>
+            <ScoreResultPage />
+          </MainLayout>
+        }
+      />
 
       {/* ================= ADMIN MANAGEMENT PORTAL ROUTES ================= */}
       <Route path={ROUTES.ADMIN_LOGIN} element={<LoginPage />} />
@@ -283,6 +311,14 @@ export default function AppRoutes() {
         element={
           <AdminGuard>
             <AdminHashtags />
+          </AdminGuard>
+        }
+      />
+      <Route
+        path={ROUTES.ADMIN_GAMES}
+        element={
+          <AdminGuard>
+            <AdminGames />
           </AdminGuard>
         }
       />

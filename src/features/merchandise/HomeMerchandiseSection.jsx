@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatCurrency } from '../../lib/helpers';
@@ -30,7 +30,7 @@ const cardVariants = {
 };
 
 const ProductCard = ({ product }) => {
-  const images = React.useMemo(() => {
+  const images = useMemo(() => {
     const urls = (product.image_urls ?? product.imageUrls ?? []).filter(Boolean);
     return urls.length > 0 ? urls : [product.image_url ?? product.imageUrl].filter(Boolean);
   }, [product.image_url, product.imageUrl, product.image_urls, product.imageUrls]);
@@ -39,7 +39,7 @@ const ProductCard = ({ product }) => {
 
   // imgIndex resets to 0 automatically when key changes, so useEffect is redundant
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (images.length <= 1) return;
 
     const intervalId = window.setInterval(() => {
@@ -60,7 +60,7 @@ const ProductCard = ({ product }) => {
       whileHover={{ y: -5, transition: { duration: 0.25 } }}
       className="group h-full select-none"
     >
-      <Link to={`/merchandise/${product.id}`} className="block h-full">
+      <Link to={`/merchandise/${product.id}`} className="block h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 rounded-[1.75rem]">
         <Card
           padding="none"
           hoverEffect={true}
@@ -138,7 +138,7 @@ const ProductCard = ({ product }) => {
                         setImgIndex(index);
                       }}
                       whileTap={{ scale: 0.92 }}
-                      className={`flex h-6.5 w-6.5 items-center justify-center rounded-full border p-0.5 cursor-pointer transition-all duration-200 ${
+                      className={`flex h-6.5 w-6.5 items-center justify-center rounded-full border p-0.5 cursor-pointer transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] ${
                         index === imgIndex
                           ? 'border-[var(--color-primary)] ring-1 ring-[var(--color-primary)] bg-white'
                           : 'border-slate-200 bg-white hover:border-slate-400'
@@ -169,7 +169,7 @@ const PaginationDots = ({ totalPages, activePage, labelPrefix, onChange }) => {
           key={index}
           onClick={() => onChange(index + 1)}
           aria-label={`Pindah ke halaman ${index + 1} ${labelPrefix}`}
-          className={`w-2.5 h-2.5 rounded-full transition-all duration-300 cursor-pointer ${activePage === index + 1
+          className={`w-2.5 h-2.5 rounded-full transition-all duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 ${activePage === index + 1
             ? "bg-[var(--color-primary)] w-6 shadow-[0_0_8px_rgba(74,122,191,0.4)]"
             : "bg-[var(--border-color)] hover:bg-[var(--color-primary-light)]"
             }`}

@@ -2,7 +2,7 @@ import { supabase } from '../../lib/supabaseClient';
 
 export const merchandiseService = {
   getProducts: async (category = 'All', search = '') => {
-    let query = supabase.from('merchandise').select('*');
+    let query = supabase.from('merchandise').select('*').neq('id', 'payment_settings');
     
     if (category !== 'All') {
       query = query.eq('category', category);
@@ -68,7 +68,7 @@ export const merchandiseService = {
   },
 
   confirmPayment: async (confirmData) => {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('payments')
       .insert([{ confirm_data: confirmData }])
       .select()
@@ -155,12 +155,12 @@ export const merchandiseService = {
       shipping_address: order.order_data?.address || '-',
       shipping_postal_code: order.order_data?.postalCode || '-',
       shipping_city: order.order_data?.city || '-',
-      shipping_courier: order.order_data?.courier || 'Free Shipping',
-      shipping_service: order.order_data?.service || 'Standard',
+      shipping_courier: order.order_data?.deliveryMethod === 'pickup_fx' ? 'Bertemu di FX' : (order.order_data?.courier || 'J&T'),
+      shipping_service: order.order_data?.deliveryMethod === 'pickup_fx' ? 'Pickup' : (order.order_data?.service || 'EZ'),
       shipping_cost: order.order_data?.shipping_cost || 0,
       total_amount: order.order_data?.totalAmount || 0,
-      subtotal_amount: order.order_data?.totalAmount || 0,
-      status: order.order_data?.status || 'pending',
+      subtotal_amount: order.order_data?.subtotal || order.order_data?.totalAmount || 0,
+      status: order.order_data?.status || 'pending_review',
       created_at: order.created_at,
       updated_at: order.order_data?.updated_at || order.created_at,
       tracking_number: order.order_data?.trackingNumber || null,
@@ -168,6 +168,11 @@ export const merchandiseService = {
       shipped_at: order.order_data?.shipped_at || null,
       productId: order.order_data?.productId || null,
       quantity: order.order_data?.quantity || 1,
+      line_id: order.order_data?.lineId || null,
+      intanium_member_id: order.order_data?.intaniumMemberId || null,
+      delivery_method: order.order_data?.deliveryMethod || 'expedition_jnt',
+      province: order.order_data?.province || null,
+      notes: order.order_data?.notes || null,
       order_data: order.order_data,
     }));
   },
@@ -206,20 +211,24 @@ export const merchandiseService = {
         shipping_address: order.order_data?.address || '-',
         shipping_postal_code: order.order_data?.postalCode || '-',
         shipping_city: order.order_data?.city || '-',
-        shipping_courier: order.order_data?.courier || 'Free Shipping',
-        shipping_service: order.order_data?.service || 'Standard',
+        shipping_courier: order.order_data?.deliveryMethod === 'pickup_fx' ? 'Bertemu di FX' : (order.order_data?.courier || 'J&T'),
+        shipping_service: order.order_data?.deliveryMethod === 'pickup_fx' ? 'Pickup' : (order.order_data?.service || 'EZ'),
         shipping_cost: order.order_data?.shipping_cost || 0,
         total_amount: totalAmount,
-        subtotal_amount: totalAmount,
+        subtotal_amount: order.order_data?.subtotal || totalAmount,
         discount_amount: order.order_data?.discount_amount || 0,
         discount_code: order.order_data?.discount_code || null,
-        status: order.order_data?.status || 'pending',
+        status: order.order_data?.status || 'pending_review',
         notes: order.order_data?.notes || '-',
         created_at: order.created_at,
         updated_at: order.order_data?.updated_at || order.created_at,
         tracking_number: order.order_data?.trackingNumber || null,
         tracking_url: order.order_data?.trackingUrl || null,
         shipped_at: order.order_data?.shipped_at || null,
+        line_id: order.order_data?.lineId || null,
+        intanium_member_id: order.order_data?.intaniumMemberId || null,
+        delivery_method: order.order_data?.deliveryMethod || 'expedition_jnt',
+        province: order.order_data?.province || null,
       },
       items: [
         {
@@ -227,7 +236,7 @@ export const merchandiseService = {
           product_name: product ? product.name : 'Unknown Product',
           selected_size: order.order_data?.selectedSize || null,
           quantity: order.order_data?.quantity || 1,
-          subtotal: totalAmount,
+          subtotal: order.order_data?.subtotal || totalAmount,
         }
       ],
       auditLogs
@@ -245,7 +254,7 @@ export const merchandiseService = {
       throw new Error(fetchErr.message);
     }
     
-    const prevStatus = order.order_data?.status || 'pending';
+    const prevStatus = order.order_data?.status || 'pending_review';
     const auditLogs = order.order_data?.auditLogs || [];
     
     const newLog = {
@@ -284,12 +293,12 @@ export const merchandiseService = {
       shipping_address: updated.order_data?.address || '-',
       shipping_postal_code: updated.order_data?.postalCode || '-',
       shipping_city: updated.order_data?.city || '-',
-      shipping_courier: updated.order_data?.courier || 'Free Shipping',
-      shipping_service: updated.order_data?.service || 'Standard',
+      shipping_courier: updated.order_data?.deliveryMethod === 'pickup_fx' ? 'Bertemu di FX' : (updated.order_data?.courier || 'J&T'),
+      shipping_service: updated.order_data?.deliveryMethod === 'pickup_fx' ? 'Pickup' : (updated.order_data?.service || 'EZ'),
       shipping_cost: updated.order_data?.shipping_cost || 0,
       total_amount: updated.order_data?.totalAmount || 0,
-      subtotal_amount: updated.order_data?.totalAmount || 0,
-      status: updated.order_data?.status || 'pending',
+      subtotal_amount: updated.order_data?.subtotal || updated.order_data?.totalAmount || 0,
+      status: updated.order_data?.status || 'pending_review',
       created_at: updated.created_at,
       updated_at: updated.order_data?.updated_at || updated.created_at,
       tracking_number: updated.order_data?.trackingNumber || null,
@@ -309,7 +318,7 @@ export const merchandiseService = {
       throw new Error(fetchErr.message);
     }
     
-    const prevStatus = order.order_data?.status || 'pending';
+    const prevStatus = order.order_data?.status || 'pending_review';
     const auditLogs = order.order_data?.auditLogs || [];
     const nextStatus = markShipped ? 'shipped' : prevStatus;
     
@@ -352,12 +361,12 @@ export const merchandiseService = {
       shipping_address: updated.order_data?.address || '-',
       shipping_postal_code: updated.order_data?.postalCode || '-',
       shipping_city: updated.order_data?.city || '-',
-      shipping_courier: updated.order_data?.courier || 'Free Shipping',
-      shipping_service: updated.order_data?.service || 'Standard',
+      shipping_courier: updated.order_data?.deliveryMethod === 'pickup_fx' ? 'Bertemu di FX' : (updated.order_data?.courier || 'J&T'),
+      shipping_service: updated.order_data?.deliveryMethod === 'pickup_fx' ? 'Pickup' : (updated.order_data?.service || 'EZ'),
       shipping_cost: updated.order_data?.shipping_cost || 0,
       total_amount: updated.order_data?.totalAmount || 0,
-      subtotal_amount: updated.order_data?.totalAmount || 0,
-      status: updated.order_data?.status || 'pending',
+      subtotal_amount: updated.order_data?.subtotal || updated.order_data?.totalAmount || 0,
+      status: updated.order_data?.status || 'pending_review',
       created_at: updated.created_at,
       updated_at: updated.order_data?.updated_at || updated.created_at,
       tracking_number: updated.order_data?.trackingNumber || null,
@@ -376,6 +385,135 @@ export const merchandiseService = {
       throw new Error(error.message);
     }
     return { success: true };
+  },
+
+  updateAdminOrderShippingCost: async (orderId, newCost) => {
+    const { data: order, error: fetchErr } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('id', orderId)
+      .single();
+      
+    if (fetchErr) throw new Error(fetchErr.message);
+    
+    const subtotal = order.order_data?.subtotal || order.order_data?.totalAmount || 0;
+    const totalAmount = Number(subtotal) + Number(newCost);
+    const prevStatus = order.order_data?.status || 'pending_review';
+    const auditLogs = order.order_data?.auditLogs || [];
+    
+    const newLog = {
+      id: Math.random().toString(36).substring(2, 9) + Date.now().toString(36),
+      previous_status: prevStatus,
+      next_status: prevStatus,
+      created_at: new Date().toISOString(),
+      actor_name: 'Admin',
+      actor_email: 'admin@intanium.com',
+      note: `Ongkos kirim disesuaikan dari Rp ${order.order_data?.shipping_cost || 0} menjadi Rp ${newCost}`
+    };
+    
+    const updatedOrderData = {
+      ...order.order_data,
+      shipping_cost: Number(newCost),
+      totalAmount: totalAmount,
+      updated_at: new Date().toISOString(),
+      auditLogs: [...auditLogs, newLog]
+    };
+    
+    const { data: updated, error: updateErr } = await supabase
+      .from('orders')
+      .update({ order_data: updatedOrderData })
+      .eq('id', orderId)
+      .select()
+      .single();
+      
+    if (updateErr) throw new Error(updateErr.message);
+    
+    return {
+      id: updated.id,
+      order_number: updated.invoice_number,
+      shipping_name: updated.order_data?.name || '-',
+      shipping_phone: updated.order_data?.phone || '-',
+      shipping_address: updated.order_data?.address || '-',
+      shipping_postal_code: updated.order_data?.postalCode || '-',
+      shipping_city: updated.order_data?.city || '-',
+      shipping_courier: updated.order_data?.deliveryMethod === 'pickup_fx' ? 'Bertemu di FX' : (updated.order_data?.courier || 'J&T'),
+      shipping_service: updated.order_data?.deliveryMethod === 'pickup_fx' ? 'Pickup' : (updated.order_data?.service || 'EZ'),
+      shipping_cost: updated.order_data?.shipping_cost || 0,
+      total_amount: updated.order_data?.totalAmount || 0,
+      subtotal_amount: updated.order_data?.subtotal || updated.order_data?.totalAmount || 0,
+      status: updated.order_data?.status || 'pending_review',
+      created_at: updated.created_at,
+      updated_at: updated.order_data?.updated_at || updated.created_at,
+      tracking_number: updated.order_data?.trackingNumber || null,
+      tracking_url: updated.order_data?.trackingUrl || null,
+      shipped_at: updated.order_data?.shipped_at || null,
+    };
+  },
+
+  getPaymentSettings: async () => {
+    const { data, error } = await supabase
+      .from('merchandise')
+      .select('*')
+      .eq('id', 'payment_settings')
+      .maybeSingle();
+
+    if (error) {
+      console.error('Error fetching payment settings:', error);
+      return null;
+    }
+
+    if (!data) {
+      return {
+        id: 'payment_settings',
+        bank_name: 'BANK JAGO',
+        account_number: '107287946603',
+        account_holder: 'Muhammad Fauzan Casimira',
+        qris_url: ''
+      };
+    }
+
+    let parsedDesc = {};
+    try {
+      parsedDesc = JSON.parse(data.description || '{}');
+    } catch (e) {
+      console.error('Error parsing settings description:', e);
+    }
+
+    return {
+      id: 'payment_settings',
+      bank_name: data.name,
+      account_number: parsedDesc.account_number || '',
+      account_holder: parsedDesc.account_holder || '',
+      qris_url: data.image_url || ''
+    };
+  },
+
+  updatePaymentSettings: async (settings) => {
+    const payload = {
+      id: 'payment_settings',
+      name: settings.bank_name,
+      price: 0,
+      category: 'Settings',
+      image_url: settings.qris_url || '',
+      description: JSON.stringify({
+        account_number: settings.account_number,
+        account_holder: settings.account_holder
+      }),
+      is_available: false,
+      sizes: []
+    };
+
+    const { data, error } = await supabase
+      .from('merchandise')
+      .upsert([payload])
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error updating payment settings:', error);
+      return { success: false, error: error.message };
+    }
+    return { success: true, data };
   }
 };
 

@@ -5,15 +5,8 @@ import { cva } from 'class-variance-authority';
 import { cn } from '../../lib/utils';
 import { Button } from '../../components/ui/button';
 import {
-  Sparkles,
-  Users,
   Heart,
-  Lock,
-  ShieldCheck,
-  ArrowRight,
-  Edit3,
   Info,
-  Compass,
   MessageSquare,
   X
 } from 'lucide-react';
@@ -197,28 +190,7 @@ const noteVariant = {
   })
 };
 
-const sparkleTwinkle = {
-  animate: {
-    opacity: [0.3, 1, 0.3],
-    scale: [0.85, 1.15, 0.85],
-    transition: {
-      duration: 3.5,
-      repeat: Infinity,
-      ease: "easeInOut"
-    }
-  }
-};
 
-const floatAnimation = {
-  animate: {
-    y: [-4, 4, -4],
-    transition: {
-      duration: 6,
-      repeat: Infinity,
-      ease: "easeInOut"
-    }
-  }
-};
 
 export default function MadingPreviewSection() {
   const [allNotes, setAllNotes] = useState([]);

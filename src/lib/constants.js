@@ -21,6 +21,9 @@ export const ROUTES = {
   NEWS: '/news',
   NEWS_DETAIL: '/news/:id',
   GALLERY: '/gallery',
+  GAMES: '/games',
+  GAME_MENANGKAP_KECOA: '/games/menangkap-kecoa',
+  GAME_MENANGKAP_KECOA_RESULT: '/games/menangkap-kecoa/result/:scoreId',
 
   // Admin Routes
   ADMIN_LOGIN: '/admin/login',
@@ -37,6 +40,7 @@ export const ROUTES = {
   ADMIN_MADING: '/admin/mading',
   ADMIN_PLAYLISTS: '/admin/denger-intan',
   ADMIN_HASHTAGS: '/admin/hashtags',
+  ADMIN_GAMES: '/admin/games',
 };
 
 export const SOCIALS = {

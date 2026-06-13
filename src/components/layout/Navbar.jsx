@@ -15,6 +15,7 @@ import {
   Palette,
   ShoppingBag,
   CreditCard,
+  Gamepad2,
   ChevronDown
 } from "lucide-react";
 import logoNobg from '../../assets/logos/logo-nobg.png';
@@ -33,6 +34,7 @@ export default function Navbar() {
     { name: 'Mading', path: ROUTES.MADING },
     { name: 'Galeri', path: ROUTES.GALLERY },
     { name: '#dengerINTAN', path: ROUTES.DENGER_INTAN },
+    { name: 'Game', path: ROUTES.GAMES },
   ];
 
   // Nested navigation schemas for custom hover dropdowns on desktop viewports
@@ -167,6 +169,12 @@ export default function Navbar() {
       label: "#dengerINTAN",
       link: ROUTES.DENGER_INTAN,
     },
+    {
+      id: 6,
+      label: "Game Corner",
+      link: ROUTES.GAMES,
+      icon: Gamepad2,
+    },
   ];
 
   return (
@@ -282,10 +290,16 @@ function DropdownNavigation({ navItems }) {
           className="relative"
           onMouseEnter={() => handleHover(navItem.label)}
           onMouseLeave={() => handleHover(null)}
+          onFocus={() => handleHover(navItem.label)}
+          onBlur={(e) => {
+            if (!e.currentTarget.contains(e.relatedTarget)) {
+              handleHover(null);
+            }
+          }}
         >
           {navItem.subMenus ? (
             <button
-              className="text-sm py-2 px-4 flex cursor-pointer group transition-colors duration-300 items-center justify-center gap-1 text-white/85 hover:text-white font-semibold relative rounded-full"
+              className="text-sm py-2 px-4 flex cursor-pointer group transition-colors duration-300 items-center justify-center gap-1 text-white/85 hover:text-white font-semibold relative rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#170C79]"
               onMouseEnter={() => setIsHover(navItem.id)}
               onMouseLeave={() => setIsHover(null)}
             >
@@ -305,7 +319,7 @@ function DropdownNavigation({ navItems }) {
           ) : (
             <Link
               to={navItem.link || "#"}
-              className="text-sm py-2 px-4 flex cursor-pointer group transition-colors duration-300 items-center justify-center gap-1 text-white/85 hover:text-white font-semibold relative rounded-full"
+              className="text-sm py-2 px-4 flex cursor-pointer group transition-colors duration-300 items-center justify-center gap-1 text-white/85 hover:text-white font-semibold relative rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#170C79]"
               onMouseEnter={() => setIsHover(navItem.id)}
               onMouseLeave={() => setIsHover(null)}
             >
@@ -344,7 +358,7 @@ function DropdownNavigation({ navItems }) {
                               <li key={item.label}>
                                 <Link
                                   to={item.link || "#"}
-                                  className="flex items-start gap-3 group/item p-1.5 rounded-xl hover:bg-purple-50/50 transition-all duration-200"
+                                  className="flex items-start gap-3 group/item p-1.5 rounded-xl hover:bg-purple-50/50 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#170C79] focus-visible:ring-offset-2"
                                 >
                                   <div className="border border-gray-200 text-gray-500 rounded-lg flex items-center justify-center size-9 shrink-0 group-hover/item:bg-[#170C79] group-hover/item:text-white group-hover/item:border-[#170C79] transition-colors duration-200">
                                     <Icon className="h-5 w-5 flex-none" />

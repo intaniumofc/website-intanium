@@ -143,7 +143,7 @@
 
 /* Modal Content area styling */
 .modal-body {
-  color: #191c24 !important; /* Slate-900 / High-contrast */
+  color: var(--text-primary) !important;
 }
 
 /* Input labels styling inside modal */
@@ -152,7 +152,7 @@
   font-weight: 700 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.05em !important;
-  color: #475569 !important; /* Slate-600 */
+  color: var(--color-primary) !important; /* Deep Blue Accent branding */
   margin-bottom: 0.45rem !important;
   display: block !important;
   transition: var(--transition-fast) !important;
@@ -164,9 +164,9 @@
 .modal-body textarea {
   width: 100% !important;
   padding: 0.625rem 1rem !important; /* Spacious padding */
-  background-color: #f8fafc !important; /* Slate-50 background for clean surface */
-  border: 1px solid #cbd5e1 !important; /* Slate-300 border for clean frame */
-  color: #1e293b !important; /* Slate-800 for readability */
+  background-color: var(--bg-primary) !important; /* Blends with primary theme */
+  border: 1px solid var(--border-color) !important; /* Themed border */
+  color: var(--text-primary) !important; /* Dark text for clean reading */
   border-radius: 0.75rem !important; /* rounded-xl (12px) */
   outline: none !important;
   font-size: 0.875rem !important; /* Text-sm */
@@ -178,8 +178,8 @@
 .modal-body input:hover,
 .modal-body select:hover,
 .modal-body textarea:hover {
-  border-color: #94a3b8 !important; /* Slate-400 */
-  background-color: #f1f5f9 !important; /* Slate-100/50 */
+  border-color: rgba(23, 12, 121, 0.35) !important; /* Darker theme border on hover */
+  background-color: rgba(23, 12, 121, 0.03) !important;
 }
 
 /* Focus states with custom branding color glow */
@@ -187,14 +187,14 @@
 .modal-body select:focus,
 .modal-body textarea:focus {
   background-color: #ffffff !important; /* Solid white background on focus */
-  border-color: var(--color-primary) !important; /* Biru Accent */
+  border-color: var(--color-primary) !important; /* Accent blue */
   box-shadow: 0 0 0 4px rgba(23, 12, 121, 0.08), 0 2px 4px 0 rgba(23, 12, 121, 0.04) !important; /* Premium focus ring */
 }
 
 /* Placeholders styling */
 .modal-body input::placeholder,
 .modal-body textarea::placeholder {
-  color: #94a3b8 !important; /* Slate-400 placeholder */
+  color: var(--text-muted) !important; /* Themed placeholder */
   font-style: normal !important;
   font-weight: 400 !important;
   opacity: 0.8 !important;

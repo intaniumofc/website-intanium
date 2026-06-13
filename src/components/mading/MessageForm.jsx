@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Card from '../common/Card';
 import Button from '../common/Button';
 import { MADING_COLOR_THEMES } from '../../lib/constants';
@@ -60,23 +60,24 @@ export default function MessageForm({ onSubmit, isSubmitting = false }) {
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Name input */}
         <div>
-          <label className="block text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1.5">
+          <label htmlFor="mading-side-name" className="block text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1.5 cursor-pointer">
             Nama / Nama Panggilan
           </label>
           <input
             type="text"
             name="name"
+            id="mading-side-name"
             value={formData.name}
             onChange={handleChange}
             placeholder="Contoh: FansSetiaIntan"
-            className="w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg px-4 py-2 text-sm text-[var(--text-primary)] focus:ring-1 focus:ring-[var(--color-primary)] focus:outline-none"
+            className="w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg px-4 py-2 text-sm text-[var(--text-primary)] focus:ring-1 focus:ring-[var(--color-primary)] focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2"
           />
           {errors.name && <p className="mt-1 text-xs text-red-500 font-medium">{errors.name}</p>}
         </div>
 
         {/* Message Input */}
         <div>
-          <label className="block text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1.5 flex justify-between">
+          <label htmlFor="mading-side-message" className="block text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1.5 flex justify-between cursor-pointer">
             <span>Isi Pesan Dukungan</span>
             <span className="text-[10px] text-[var(--text-muted)] lowercase">
               {formData.message.length}/200 karakter
@@ -84,11 +85,12 @@ export default function MessageForm({ onSubmit, isSubmitting = false }) {
           </label>
           <textarea
             name="message"
+            id="mading-side-message"
             value={formData.message}
             onChange={handleChange}
             rows="3"
             placeholder="Tulis pesan semangat, ucapan selamat, atau candaan hangat di sini..."
-            className="w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg px-4 py-2 text-sm text-[var(--text-primary)] focus:ring-1 focus:ring-[var(--color-primary)] focus:outline-none resize-none"
+            className="w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg px-4 py-2 text-sm text-[var(--text-primary)] focus:ring-1 focus:ring-[var(--color-primary)] focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 resize-none"
           />
           {errors.message && <p className="mt-1 text-xs text-red-500 font-medium">{errors.message}</p>}
         </div>
@@ -113,10 +115,12 @@ export default function MessageForm({ onSubmit, isSubmitting = false }) {
                   key={theme.id}
                   type="button"
                   onClick={() => selectTheme(theme.id)}
-                  className={`w-7 h-7 rounded-full ${circleColor} border-2 transition-all cursor-pointer transform hover:scale-110 ${
+                  className={`w-7 h-7 rounded-full ${circleColor} border-2 transition-all cursor-pointer transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 ${
                     isActive ? 'border-[var(--color-primary)] ring-2 ring-purple-300' : 'border-transparent'
                   }`}
                   title={theme.name}
+                  aria-label={`Warna ${theme.name}`}
+                  aria-pressed={isActive}
                 />
               );
             })}

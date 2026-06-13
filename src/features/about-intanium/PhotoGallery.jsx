@@ -186,7 +186,7 @@ export const PhotoGallery = () => {
       <div className="flex w-full justify-center mt-6">
         <Link
           to={ROUTES.GALLERY}
-          className="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white px-8 py-3.5 rounded-full font-extrabold uppercase tracking-wider text-xs transition-all duration-300 shadow-md hover:shadow-[var(--neon-glow-primary)] active:scale-95 group animate-fade-in"
+          className="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white px-8 py-3.5 rounded-full font-extrabold uppercase tracking-wider text-xs transition-all duration-300 shadow-md hover:shadow-[var(--neon-glow-primary)] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 group animate-fade-in"
         >
           <span>Buka Galeri Foto</span>
           <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
@@ -212,15 +212,11 @@ export const Photo = ({
   height,
   ...props
 }) => {
-  const [rotation, setRotation] = useState(0);
+  const [rotation] = useState(() =>
+    getRandomNumberInRange(1, 4) * (direction === "left" ? -1 : 1)
+  );
   const x = useMotionValue(200);
   const y = useMotionValue(200);
-
-  useEffect(() => {
-    const randomRotation =
-      getRandomNumberInRange(1, 4) * (direction === "left" ? -1 : 1);
-    setRotation(randomRotation);
-  }, [direction]);
 
   function handleMouse(event) {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -262,12 +258,14 @@ export const Photo = ({
       }}
       className={cn(
         className,
-        "relative mx-auto shrink-0 cursor-grab active:cursor-grabbing"
+        "relative mx-auto shrink-0 cursor-grab active:cursor-grabbing focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2"
       )}
       onMouseMove={handleMouse}
       onMouseLeave={resetMouse}
       draggable={false}
       tabIndex={0}
+      role="figure"
+      aria-label={`Foto interaktif: ${alt || "Intan JKT48"}`}
     >
       <div className="relative h-full w-full overflow-hidden rounded-3xl shadow-sm border border-[var(--border-color)] bg-white p-1">
         <motion.img
