@@ -367,7 +367,7 @@ export default function AdminGames() {
       <div className="flex border-b border-[var(--border-color)]">
         <button
           onClick={() => setActiveTab('scores')}
-          className={`px-5 py-3 font-bold text-sm border-b-2 transition-all flex items-center gap-2 cursor-pointer ${
+          className={`px-5 py-3 font-bold text-sm border-b-2 transition-colors flex items-center gap-2 cursor-pointer ${
             activeTab === 'scores'
               ? 'border-[var(--color-primary)] text-[var(--color-primary)] bg-[var(--color-primary-light)]/30'
               : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
@@ -378,7 +378,7 @@ export default function AdminGames() {
         </button>
         <button
           onClick={() => setActiveTab('settings')}
-          className={`px-5 py-3 font-bold text-sm border-b-2 transition-all flex items-center gap-2 cursor-pointer ${
+          className={`px-5 py-3 font-bold text-sm border-b-2 transition-colors flex items-center gap-2 cursor-pointer ${
             activeTab === 'settings'
               ? 'border-[var(--color-primary)] text-[var(--color-primary)] bg-[var(--color-primary-light)]/30'
               : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
@@ -471,24 +471,17 @@ export default function AdminGames() {
             {/* Search */}
             <div className="flex items-center gap-2 px-3 py-2 bg-white border border-[var(--border-color)] rounded-xl w-full md:w-80 shadow-sm">
               <Search className="h-4 w-4 text-[var(--text-muted)]" />
-              <input 
-                type="text" 
-                placeholder="Cari nama pemain..." 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-transparent border-none outline-none flex-1 text-[var(--text-primary)] placeholder-[var(--text-muted)] text-xs"
-              />
+              <input autoComplete="off" /* autocomplete="off" */ name="searchQuery" type="text" placeholder="Cari nama pemain…" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-transparent border-none focus:outline-none focus:ring-0 flex-1 text-[var(--text-primary)] placeholder-[var(--text-muted)] text-xs" />
             </div>
 
             {/* Filters */}
             <div className="flex flex-wrap gap-3">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-[var(--text-secondary)]">Periode:</span>
-                <select
-                  aria-label="Pilih filter periode"
+                <select aria-label="Pilih filter periode"
                   value={period}
                   onChange={(e) => setPeriod(e.target.value)}
-                  className="rounded-xl border border-[var(--border-color)] bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 outline-none shadow-xs cursor-pointer"
+                  className="rounded-xl border border-[var(--border-color)] bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] shadow-xs cursor-pointer"
                 >
                   <option value="all-time">Semua Waktu (All Time)</option>
                   <option value="weekly">Minggu Ini (Weekly)</option>
@@ -497,11 +490,10 @@ export default function AdminGames() {
 
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-[var(--text-secondary)]">Urutkan:</span>
-                <select
-                  aria-label="Pilih urutan data"
+                <select aria-label="Pilih urutan data"
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="rounded-xl border border-[var(--border-color)] bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 outline-none shadow-xs cursor-pointer"
+                  className="rounded-xl border border-[var(--border-color)] bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] shadow-xs cursor-pointer"
                 >
                   <option value="score_desc">Skor Tertinggi</option>
                   <option value="score_asc">Skor Terendah</option>
@@ -515,7 +507,7 @@ export default function AdminGames() {
           {/* Main Table Card */}
           <Card hoverEffect={false} className="border border-[var(--border-color)] bg-white overflow-hidden rounded-2xl shadow-sm" padding="none">
             {isLoadingScores ? (
-              <div className="p-12"><Loading message="Memuat riwayat skor game..." /></div>
+              <div className="p-12"><Loading message="Memuat riwayat skor game…" /></div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm text-[var(--text-secondary)]">
@@ -571,7 +563,7 @@ export default function AdminGames() {
                             <div className="flex items-center justify-end gap-2">
                               <button 
                                 onClick={() => handleOpenDelete(item)} 
-                                className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-all cursor-pointer"
+                                className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors cursor-pointer"
                                 title="Hapus Skor"
                               >
                                 <Trash2 className="h-4 w-4" />
@@ -623,7 +615,7 @@ export default function AdminGames() {
         // ================= GAME PORTAL CONFIGURATION TAB =================
         <form onSubmit={handleSaveSettings} className="space-y-6 animate-fade-in text-left">
           {isLoadingSettings ? (
-            <div className="p-12"><Loading message="Memuat pengaturan portal..." /></div>
+            <div className="p-12"><Loading message="Memuat pengaturan portal…" /></div>
           ) : (
             <>
               {/* Row 1: Featured Game & Challenge */}
@@ -642,8 +634,7 @@ export default function AdminGames() {
                     <label className="text-xs font-bold text-[var(--text-secondary)] block" htmlFor="select-featured-game">
                       Pilih Game Unggulan
                     </label>
-                    <select
-                      id="select-featured-game"
+                    <select id="select-featured-game"
                       value={gameSettings.featuredGameId}
                       onChange={(e) => setGameSettings(prev => ({ ...prev, featuredGameId: e.target.value }))}
                       className="w-full rounded-xl border border-[var(--border-color)] bg-white p-3 text-sm font-semibold outline-none focus:border-[var(--color-primary)] cursor-pointer"
@@ -667,13 +658,7 @@ export default function AdminGames() {
                   </h3>
                   
                   <div className="flex items-center gap-3 pb-2 border-b border-[var(--border-color)]">
-                    <input
-                      type="checkbox"
-                      id="challenge-active"
-                      checked={gameSettings.challengeActive}
-                      onChange={(e) => setGameSettings(prev => ({ ...prev, challengeActive: e.target.checked }))}
-                      className="h-4.5 w-4.5 rounded border-gray-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)] cursor-pointer"
-                    />
+                    <input name="file_input" type="checkbox" id="challenge-active" checked={gameSettings.challengeActive} onChange={(e) => setGameSettings(prev => ({ ...prev, challengeActive: e.target.checked }))} className="h-4.5 w-4.5 rounded border-gray-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)] cursor-pointer" />
                     <label htmlFor="challenge-active" className="text-xs font-bold text-[var(--text-primary)] cursor-pointer">
                       Aktifkan Spanduk Tantangan Komunitas
                     </label>
@@ -684,27 +669,13 @@ export default function AdminGames() {
                       <label className="text-xs font-bold text-[var(--text-secondary)] block" htmlFor="challenge-count">
                         Target Tangkapan Kecoa
                       </label>
-                      <input
-                        type="number"
-                        id="challenge-count"
-                        disabled={!gameSettings.challengeActive}
-                        value={gameSettings.challengeCount}
-                        onChange={(e) => setGameSettings(prev => ({ ...prev, challengeCount: Math.max(0, parseInt(e.target.value) || 0) }))}
-                        className="w-full rounded-xl border border-[var(--border-color)] bg-white p-2.5 text-xs outline-none focus:border-[var(--color-primary)] disabled:opacity-40"
-                      />
+                      <input autoComplete="off" /* autocomplete="off" */ name="challengeCount" type="number" id="challenge-count" disabled={!gameSettings.challengeActive} value={gameSettings.challengeCount} onChange={(e) => setGameSettings(prev => ({ ...prev, challengeCount: Math.max(0, parseInt(e.target.value) || 0) }))} className="w-full rounded-xl border border-[var(--border-color)] bg-white p-2.5 text-xs outline-none focus:border-[var(--color-primary)] disabled:opacity-40" />
                     </div>
                     <div className="space-y-1">
                       <label className="text-xs font-bold text-[var(--text-secondary)] block" htmlFor="challenge-reward">
                         Gelar Hadiah Challenge
                       </label>
-                      <input
-                        type="text"
-                        id="challenge-reward"
-                        disabled={!gameSettings.challengeActive}
-                        value={gameSettings.challengeReward}
-                        onChange={(e) => setGameSettings(prev => ({ ...prev, challengeReward: e.target.value }))}
-                        className="w-full rounded-xl border border-[var(--border-color)] bg-white p-2.5 text-xs outline-none focus:border-[var(--color-primary)] disabled:opacity-40"
-                      />
+                      <input autoComplete="off" /* autocomplete="off" */ name="challengeReward" type="text" id="challenge-reward" disabled={!gameSettings.challengeActive} value={gameSettings.challengeReward} onChange={(e) => setGameSettings(prev => ({ ...prev, challengeReward: e.target.value }))} className="w-full rounded-xl border border-[var(--border-color)] bg-white p-2.5 text-xs outline-none focus:border-[var(--color-primary)] disabled:opacity-40" />
                     </div>
                   </div>
                 </Card>
@@ -725,37 +696,19 @@ export default function AdminGames() {
                     <label className="text-xs font-bold text-[var(--text-secondary)] block" htmlFor="stat-players">
                       Total Pemain
                     </label>
-                    <input
-                      type="number"
-                      id="stat-players"
-                      value={gameSettings.stats.totalPlayers}
-                      onChange={(e) => updateStatsField('totalPlayers', e.target.value)}
-                      className="w-full rounded-xl border border-[var(--border-color)] bg-white p-2.5 text-xs outline-none focus:border-[var(--color-primary)]"
-                    />
+                    <input autoComplete="off" /* autocomplete="off" */ name="totalPlayers" type="number" id="stat-players" value={gameSettings.stats.totalPlayers} onChange={(e) => updateStatsField('totalPlayers', e.target.value)} className="w-full rounded-xl border border-[var(--border-color)] bg-white p-2.5 text-xs outline-none focus:border-[var(--color-primary)]" />
                   </div>
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-[var(--text-secondary)] block" htmlFor="stat-played">
                       Total Game Dimainkan
                     </label>
-                    <input
-                      type="number"
-                      id="stat-played"
-                      value={gameSettings.stats.totalGamesPlayed}
-                      onChange={(e) => updateStatsField('totalGamesPlayed', e.target.value)}
-                      className="w-full rounded-xl border border-[var(--border-color)] bg-white p-2.5 text-xs outline-none focus:border-[var(--color-primary)]"
-                    />
+                    <input autoComplete="off" /* autocomplete="off" */ name="totalGamesPlayed" type="number" id="stat-played" value={gameSettings.stats.totalGamesPlayed} onChange={(e) => updateStatsField('totalGamesPlayed', e.target.value)} className="w-full rounded-xl border border-[var(--border-color)] bg-white p-2.5 text-xs outline-none focus:border-[var(--color-primary)]" />
                   </div>
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-[var(--text-secondary)] block" htmlFor="stat-avg">
                       Rata-rata Skor
                     </label>
-                    <input
-                      type="number"
-                      id="stat-avg"
-                      value={gameSettings.stats.avgScore}
-                      onChange={(e) => updateStatsField('avgScore', e.target.value)}
-                      className="w-full rounded-xl border border-[var(--border-color)] bg-white p-2.5 text-xs outline-none focus:border-[var(--color-primary)]"
-                    />
+                    <input autoComplete="off" /* autocomplete="off" */ name="avgScore" type="number" id="stat-avg" value={gameSettings.stats.avgScore} onChange={(e) => updateStatsField('avgScore', e.target.value)} className="w-full rounded-xl border border-[var(--border-color)] bg-white p-2.5 text-xs outline-none focus:border-[var(--color-primary)]" />
                   </div>
                 </div>
               </Card>
@@ -798,7 +751,7 @@ export default function AdminGames() {
                     return (
                       <div
                         key={gameId}
-                        className={`border rounded-2xl overflow-hidden transition-all duration-300 ease-in-out ${
+                        className={`border rounded-2xl overflow-hidden transition-colors duration-300 ease-in-out ${
                           isExpanded
                             ? 'border-[var(--color-primary)]/40 shadow-lg shadow-[var(--color-primary)]/8 bg-white'
                             : 'border-[var(--border-color)] shadow-sm bg-slate-50/40 hover:shadow-md hover:border-slate-300 hover:bg-white'
@@ -806,7 +759,7 @@ export default function AdminGames() {
                       >
                         {/* Accordion Header */}
                         <div 
-                          className={`flex justify-between items-center p-4 cursor-pointer select-none transition-all duration-200 ${
+                          className={`flex justify-between items-center p-4 cursor-pointer select-none transition-colors duration-200 ${
                             isExpanded
                               ? 'bg-gradient-to-r from-[var(--color-primary)]/5 to-transparent'
                               : 'bg-transparent hover:bg-slate-50/60'
@@ -830,11 +783,11 @@ export default function AdminGames() {
 
                           <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                             {game.active ? (
-                              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-full px-2.5 py-0.5 transition-all duration-200">
+                              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-full px-2.5 py-0.5 transition-colors duration-200">
                                 <Eye className="h-3 w-3" /> Aktif
                               </span>
                             ) : (
-                              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-400 bg-slate-100 border border-slate-200 rounded-full px-2.5 py-0.5 transition-all duration-200">
+                              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-400 bg-slate-100 border border-slate-200 rounded-full px-2.5 py-0.5 transition-colors duration-200">
                                 <Lock className="h-3 w-3" /> Terkunci
                               </span>
                             )}
@@ -843,7 +796,7 @@ export default function AdminGames() {
                               <button
                                 type="button"
                                 onClick={() => handleDeleteGame(gameId)}
-                                className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-all duration-200 cursor-pointer"
+                                className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors duration-200 cursor-pointer"
                                 title="Hapus Game"
                               >
                                 <Trash2 className="h-3.5 w-3.5" />
@@ -853,7 +806,7 @@ export default function AdminGames() {
                             <button 
                               type="button" 
                               onClick={() => setExpandedGameId(isExpanded ? null : gameId)}
-                              className="p-1.5 rounded-lg text-slate-400 hover:text-[var(--color-primary)] hover:bg-[var(--color-primary)]/8 border border-transparent hover:border-[var(--color-primary)]/20 transition-all duration-200 cursor-pointer"
+                              className="p-1.5 rounded-lg text-slate-400 hover:text-[var(--color-primary)] hover:bg-[var(--color-primary)]/8 border border-transparent hover:border-[var(--color-primary)]/20 transition-colors duration-200 cursor-pointer"
                             >
                               <ChevronDown className={`h-4 w-4 transition-transform duration-300 ease-in-out ${isExpanded ? 'rotate-180' : 'rotate-0'}`} />
                             </button>
@@ -862,7 +815,7 @@ export default function AdminGames() {
 
                         {/* Accordion Content */}
                         <div
-                          className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                          className={`transition-colors duration-300 ease-in-out overflow-hidden ${
                             isExpanded ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'
                           }`}
                         >
@@ -870,82 +823,39 @@ export default function AdminGames() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div className="space-y-1">
                                 <label className="text-xs font-bold text-slate-500" htmlFor={`edit-title-${gameId}`}>Nama / Judul Game</label>
-                                <input
-                                  type="text"
-                                  id={`edit-title-${gameId}`}
-                                  value={title}
-                                  onChange={(e) => updateGameField(gameId, 'title', e.target.value)}
-                                  className="w-full rounded-xl border border-[var(--border-color)] bg-white p-2.5 text-xs outline-none focus:border-[var(--color-primary)] font-semibold"
-                                  placeholder="Contoh: Menangkap Kecoa"
-                                />
+                                <input autoComplete="off" /* autocomplete="off" */ name="title" type="text" id={`edit-title-${gameId}`} value={title} onChange={(e) => updateGameField(gameId, 'title', e.target.value)} className="w-full rounded-xl border border-[var(--border-color)] bg-white p-2.5 text-xs outline-none focus:border-[var(--color-primary)] font-semibold" placeholder="Contoh: Menangkap Kecoa" />
                               </div>
 
                               <div className="space-y-1">
                                 <label className="text-xs font-bold text-slate-500" htmlFor={`edit-link-${gameId}`}>Tautan Play / Rute (atau `modal:tebak-kata` / `#`)</label>
-                                <input
-                                  type="text"
-                                  id={`edit-link-${gameId}`}
-                                  value={link}
-                                  onChange={(e) => updateGameField(gameId, 'link', e.target.value)}
-                                  className="w-full rounded-xl border border-[var(--border-color)] bg-white p-2.5 text-xs outline-none focus:border-[var(--color-primary)] font-semibold"
-                                  placeholder="Contoh: /games/menangkap-kecoa"
-                                />
+                                <input autoComplete="off" /* autocomplete="off" */ name="link" type="text" id={`edit-link-${gameId}`} value={link} onChange={(e) => updateGameField(gameId, 'link', e.target.value)} className="w-full rounded-xl border border-[var(--border-color)] bg-white p-2.5 text-xs outline-none focus:border-[var(--color-primary)] font-semibold" placeholder="Contoh: /games/menangkap-kecoa" />
                               </div>
                             </div>
 
                             <div className="space-y-1">
                               <label className="text-xs font-bold text-slate-500" htmlFor={`edit-desc-${gameId}`}>Deskripsi Game</label>
-                              <textarea
-                                id={`edit-desc-${gameId}`}
-                                value={description}
-                                onChange={(e) => updateGameField(gameId, 'description', e.target.value)}
-                                rows={2}
-                                className="w-full rounded-xl border border-[var(--border-color)] bg-white p-2.5 text-xs outline-none focus:border-[var(--color-primary)] font-medium"
-                                placeholder="Tulis deskripsi singkat yang menarik mengenai game ini..."
-                              />
+                              <textarea name="textarea_field" id={`edit-desc-${gameId}`} value={description} onChange={(e) => updateGameField(gameId, 'description', e.target.value)} rows={2} className="w-full rounded-xl border border-[var(--border-color)] bg-white p-2.5 text-xs outline-none focus:border-[var(--color-primary)] font-medium" placeholder="Tulis deskripsi singkat yang menarik mengenai game ini…" />
                             </div>
 
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                               <div className="space-y-1">
                                 <label className="text-xs font-bold text-slate-500" htmlFor={`edit-badge-${gameId}`}>Lencana (Badge)</label>
-                                <input
-                                  type="text"
-                                  id={`edit-badge-${gameId}`}
-                                  value={badge}
-                                  onChange={(e) => updateGameField(gameId, 'badge', e.target.value)}
-                                  className="w-full rounded-xl border border-[var(--border-color)] bg-white p-2.5 text-xs outline-none focus:border-[var(--color-primary)] font-semibold"
-                                  placeholder="Contoh: Populer"
-                                />
+                                <input autoComplete="off" /* autocomplete="off" */ name="badge" type="text" id={`edit-badge-${gameId}`} value={badge} onChange={(e) => updateGameField(gameId, 'badge', e.target.value)} className="w-full rounded-xl border border-[var(--border-color)] bg-white p-2.5 text-xs outline-none focus:border-[var(--color-primary)] font-semibold" placeholder="Contoh: Populer" />
                               </div>
 
                               <div className="space-y-1">
                                 <label className="text-xs font-bold text-slate-500" htmlFor={`edit-diff-${gameId}`}>Tingkat Kesulitan</label>
-                                <input
-                                  type="text"
-                                  id={`edit-diff-${gameId}`}
-                                  value={difficulty}
-                                  onChange={(e) => updateGameField(gameId, 'difficulty', e.target.value)}
-                                  className="w-full rounded-xl border border-[var(--border-color)] bg-white p-2.5 text-xs outline-none focus:border-[var(--color-primary)] font-semibold"
-                                  placeholder="Contoh: Mudah"
-                                />
+                                <input autoComplete="off" /* autocomplete="off" */ name="difficulty" type="text" id={`edit-diff-${gameId}`} value={difficulty} onChange={(e) => updateGameField(gameId, 'difficulty', e.target.value)} className="w-full rounded-xl border border-[var(--border-color)] bg-white p-2.5 text-xs outline-none focus:border-[var(--color-primary)] font-semibold" placeholder="Contoh: Mudah" />
                               </div>
 
                               <div className="space-y-1">
                                 <label className="text-xs font-bold text-slate-500" htmlFor={`edit-playTime-${gameId}`}>Durasi Bermain</label>
-                                <input
-                                  type="text"
-                                  id={`edit-playTime-${gameId}`}
-                                  value={playTime}
-                                  onChange={(e) => updateGameField(gameId, 'playTime', e.target.value)}
-                                  className="w-full rounded-xl border border-[var(--border-color)] bg-white p-2.5 text-xs outline-none focus:border-[var(--color-primary)] font-semibold"
-                                  placeholder="Contoh: 60 Detik"
-                                />
+                                <input autoComplete="off" /* autocomplete="off" */ name="playTime" type="text" id={`edit-playTime-${gameId}`} value={playTime} onChange={(e) => updateGameField(gameId, 'playTime', e.target.value)} className="w-full rounded-xl border border-[var(--border-color)] bg-white p-2.5 text-xs outline-none focus:border-[var(--color-primary)] font-semibold" placeholder="Contoh: 60 Detik" />
                               </div>
 
                               <div className="space-y-1">
                                 <label className="text-xs font-bold text-slate-500" htmlFor={`edit-span-${gameId}`}>Ukuran Lebar Layout</label>
-                                <select
-                                  id={`edit-span-${gameId}`}
+                                <select id={`edit-span-${gameId}`}
                                   value={layoutSpan}
                                   onChange={(e) => updateGameField(gameId, 'layoutSpan', parseInt(e.target.value) || 1)}
                                   className="w-full rounded-xl border border-[var(--border-color)] bg-white p-2.5 text-xs outline-none focus:border-[var(--color-primary)] font-semibold"
@@ -959,8 +869,7 @@ export default function AdminGames() {
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                               <div className="space-y-1">
                                 <label className="text-xs font-bold text-slate-500" htmlFor={`edit-theme-${gameId}`}>Tema Warna Visual</label>
-                                <select
-                                  id={`edit-theme-${gameId}`}
+                                <select id={`edit-theme-${gameId}`}
                                   value={theme}
                                   onChange={(e) => updateGameField(gameId, 'theme', e.target.value)}
                                   className="w-full rounded-xl border border-[var(--border-color)] bg-white p-2.5 text-xs outline-none focus:border-[var(--color-primary)] font-semibold"
@@ -975,8 +884,7 @@ export default function AdminGames() {
 
                               <div className="space-y-1">
                                 <label className="text-xs font-bold text-slate-500" htmlFor={`edit-icon-${gameId}`}>Ikon Lucide</label>
-                                <select
-                                  id={`edit-icon-${gameId}`}
+                                <select id={`edit-icon-${gameId}`}
                                   value={icon}
                                   onChange={(e) => updateGameField(gameId, 'icon', e.target.value)}
                                   className="w-full rounded-xl border border-[var(--border-color)] bg-white p-2.5 text-xs outline-none focus:border-[var(--color-primary)] font-semibold"
@@ -994,20 +902,12 @@ export default function AdminGames() {
 
                               <div className="space-y-1">
                                 <label className="text-xs font-bold text-slate-500" htmlFor={`edit-emoji-${gameId}`}>Emoji Ikon</label>
-                                <input
-                                  type="text"
-                                  id={`edit-emoji-${gameId}`}
-                                  value={emoji}
-                                  onChange={(e) => updateGameField(gameId, 'emoji', e.target.value)}
-                                  className="w-full rounded-xl border border-[var(--border-color)] bg-white p-2.5 text-xs outline-none focus:border-[var(--color-primary)] font-semibold text-center"
-                                  placeholder="Contoh: 🐜"
-                                />
+                                <input autoComplete="off" /* autocomplete="off" */ name="emoji" type="text" id={`edit-emoji-${gameId}`} value={emoji} onChange={(e) => updateGameField(gameId, 'emoji', e.target.value)} className="w-full rounded-xl border border-[var(--border-color)] bg-white p-2.5 text-xs outline-none focus:border-[var(--color-primary)] font-semibold text-center" placeholder="Contoh: 🐜" />
                               </div>
 
                               <div className="space-y-1">
                                 <label className="text-xs font-bold text-slate-500" htmlFor={`edit-bgPreset-${gameId}`}>Background Preset / URL</label>
-                                <select
-                                  id={`edit-bgPreset-${gameId}`}
+                                <select id={`edit-bgPreset-${gameId}`}
                                   value={['cockroachBg', 'tebakKataBg', 'intanRunBg'].includes(bgImage) ? bgImage : 'custom'}
                                   onChange={(e) => {
                                     const val = e.target.value;
@@ -1026,25 +926,12 @@ export default function AdminGames() {
                             {!['cockroachBg', 'tebakKataBg', 'intanRunBg'].includes(bgImage) && (
                               <div className="space-y-1">
                                 <label className="text-xs font-bold text-slate-500" htmlFor={`edit-bgUrl-${gameId}`}>URL Gambar Latar Belakang Kustom</label>
-                                <input
-                                  type="text"
-                                  id={`edit-bgUrl-${gameId}`}
-                                  value={bgImage}
-                                  onChange={(e) => updateGameField(gameId, 'bgImage', e.target.value)}
-                                  className="w-full rounded-xl border border-[var(--border-color)] bg-white p-2.5 text-xs outline-none focus:border-[var(--color-primary)] font-semibold"
-                                  placeholder="https://example.com/gambar-game.jpg"
-                                />
+                                <input autoComplete="off" /* autocomplete="off" */ name="bgImage" type="text" id={`edit-bgUrl-${gameId}`} value={bgImage} onChange={(e) => updateGameField(gameId, 'bgImage', e.target.value)} className="w-full rounded-xl border border-[var(--border-color)] bg-white p-2.5 text-xs outline-none focus:border-[var(--color-primary)] font-semibold" placeholder="https://example.com/gambar-game.jpg" />
                               </div>
                             )}
 
                             <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
-                              <input
-                                type="checkbox"
-                                id={`edit-active-${gameId}`}
-                                checked={game.active}
-                                onChange={(e) => updateGameField(gameId, 'active', e.target.checked)}
-                                className="h-4.5 w-4.5 rounded border-gray-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)] cursor-pointer"
-                              />
+                              <input name="file_input" type="checkbox" id={`edit-active-${gameId}`} checked={game.active} onChange={(e) => updateGameField(gameId, 'active', e.target.checked)} className="h-4.5 w-4.5 rounded border-gray-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)] cursor-pointer" />
                               <label htmlFor={`edit-active-${gameId}`} className="text-xs font-extrabold text-slate-700 cursor-pointer flex items-center gap-1.5">
                                 Aktifkan Game (Bisa diakses & dimainkan oleh user)
                               </label>
@@ -1065,7 +952,7 @@ export default function AdminGames() {
                   className="flex items-center gap-2 px-6 py-3 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-extrabold cursor-pointer"
                 >
                   <Save className="h-4 w-4" />
-                  <span>{actionLoading ? 'Menyimpan...' : 'Simpan Pengaturan'}</span>
+                  <span>{actionLoading ? 'Menyimpan…' : 'Simpan Pengaturan'}</span>
                 </Button>
               </div>
             </>

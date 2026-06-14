@@ -17,7 +17,7 @@ import intanOne from '../../assets/images/intan-01.jpg';
 import intanTwo from '../../assets/images/intan-02.jpg';
 import intanThree from '../../assets/images/intan-03.jpg';
 import intanFour from '../../assets/images/intan-04.jpg';
-import logoNobg from '../../assets/logos/logo-nobg.png';
+import logoNobg from '../../assets/logos/logo-nobg.webp';
 
 const CATEGORIES = ['Semua', 'Pengumuman', 'Schedule', 'Event', 'Merch', 'Project', 'Media', 'Important'];
 

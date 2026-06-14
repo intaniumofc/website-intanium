@@ -260,7 +260,7 @@ export default function AdminCategories() {
       </div>
 
       {loading ? (
-        <div className="p-12"><Loading message="Memuat statistik kategori..." /></div>
+        <div className="p-12"><Loading message="Memuat statistik kategori…" /></div>
       ) : error ? (
         <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-800 flex items-center gap-2">
           <AlertCircle className="h-5 w-5 text-amber-600 shrink-0" />
@@ -284,7 +284,7 @@ export default function AdminCategories() {
                 <div 
                   key={stat.name}
                   onClick={() => setSelectedCategory(stat.name)}
-                  className={`cursor-pointer rounded-3xl border p-5 transition-all duration-300 relative overflow-hidden group bg-white shadow-xs hover:shadow-md ${
+                  className={`cursor-pointer rounded-3xl border p-5 transition-colors duration-300 relative overflow-hidden group bg-white shadow-xs hover:shadow-md ${
                     selectedCategory === stat.name 
                       ? 'border-[var(--color-primary)] ring-2 ring-[var(--color-primary)]/10 scale-[1.02]' 
                       : 'border-[var(--border-color)]/70 hover:border-slate-300'
@@ -342,7 +342,7 @@ export default function AdminCategories() {
                     <div 
                       key={stat.name}
                       style={{ width: `${pct}%` }}
-                      className={`h-full bg-gradient-to-r ${meta.gradient} transition-all duration-500 first:rounded-l-full last:rounded-r-full`}
+                      className={`h-full bg-gradient-to-r ${meta.gradient} transition-colors duration-500 first:rounded-l-full last:rounded-r-full`}
                       title={`${stat.name}: ${stat.totalProducts} produk (${Math.round(pct)}%)`}
                     />
                   );
@@ -451,11 +451,7 @@ export default function AdminCategories() {
                           <tr key={prod.id} className="hover:bg-slate-50/30 transition-colors">
                             <td className="px-5 py-3.5 whitespace-nowrap">
                               <div className="flex items-center gap-3">
-                                <img 
-                                  src={prod.image_url || 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=100'} 
-                                  alt={prod.name} 
-                                  className="w-10 h-10 object-cover rounded-xl border border-slate-200" 
-                                />
+                                <img width={40} height={40} alt="Product Category Preview" src={prod.image_url || 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=100'} className="w-10 h-10 object-cover rounded-xl border border-slate-200" />
                                 <div className="min-w-0">
                                   <div className="font-extrabold text-slate-800 truncate max-w-[200px]">{prod.name}</div>
                                   <div className="font-mono text-[9px] text-slate-400 mt-0.5">{prod.id}</div>

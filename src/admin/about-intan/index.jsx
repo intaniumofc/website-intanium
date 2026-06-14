@@ -51,10 +51,10 @@ function AdminTable({ columns, data, onEdit, onDelete, emptyMessage }) {
                 ))}
                 <td className="px-6 py-4 whitespace-nowrap text-right">
                   <div className="flex items-center justify-end gap-2">
-                    <button onClick={() => onEdit(item)} className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-all cursor-pointer" title="Edit">
+                    <button onClick={() => onEdit(item)} className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-colors cursor-pointer" title="Edit">
                       <Edit className="h-4 w-4" />
                     </button>
-                    <button onClick={() => onDelete(item.id)} className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-all cursor-pointer" title="Hapus">
+                    <button onClick={() => onDelete(item.id)} className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors cursor-pointer" title="Hapus">
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
@@ -136,7 +136,7 @@ function StatsTab() {
     } else notify.error('Gagal menyimpan statistik', result.error);
   };
 
-  if (isLoading) return <div className="p-12"><Loading message="Memuat statistik..." /></div>;
+  if (isLoading) return <div className="p-12"><Loading message="Memuat statistik…" /></div>;
 
   return (
     <>
@@ -164,25 +164,25 @@ function StatsTab() {
         <form onSubmit={handleSubmit} className="space-y-4 text-sm">
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-(--text-secondary)">Label</label>
-            <input type="text" value={formData.label} onChange={e => setFormData(p => ({ ...p, label: e.target.value }))} placeholder="Contoh: Total Show Teater" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" required />
+            <input autoComplete="off" /* autocomplete="off" */ name="label" type="text" value={formData.label} onChange={e => setFormData(p => ({ ...p, label: e.target.value }))} placeholder="Contoh: Total Show Teater" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" required />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-(--text-secondary)">Nilai</label>
-              <input type="text" value={formData.value} onChange={e => setFormData(p => ({ ...p, value: e.target.value }))} placeholder="Contoh: 128+ Show" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" required />
+              <input autoComplete="off" /* autocomplete="off" */ name="value" type="text" value={formData.value} onChange={e => setFormData(p => ({ ...p, value: e.target.value }))} placeholder="Contoh: 128+ Show" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" required />
             </div>
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-(--text-secondary)">Ikon</label>
-              <input type="text" value={formData.icon} onChange={e => setFormData(p => ({ ...p, icon: e.target.value }))} placeholder="Theater, Radio, ListMusic, Mic2" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" />
+              <input autoComplete="off" /* autocomplete="off" */ name="icon" type="text" value={formData.icon} onChange={e => setFormData(p => ({ ...p, icon: e.target.value }))} placeholder="Theater, Radio, ListMusic, Mic2" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" />
             </div>
           </div>
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-(--text-secondary)">Deskripsi</label>
-            <input type="text" value={formData.description} onChange={e => setFormData(p => ({ ...p, description: e.target.value }))} placeholder="Penjelasan singkat..." className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" />
+            <input autoComplete="off" /* autocomplete="off" */ name="description" type="text" value={formData.description} onChange={e => setFormData(p => ({ ...p, description: e.target.value }))} placeholder="Penjelasan singkat…" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" />
           </div>
           <div className="flex justify-end gap-2 pt-4 border-t border-(--border-color)">
             <Button type="button" variant="outline" size="sm" onClick={() => setIsModalOpen(false)} disabled={isSubmitting}>Batal</Button>
-            <Button type="submit" variant="primary" size="sm" disabled={isSubmitting} className="cursor-pointer">{isSubmitting ? 'Menyimpan...' : 'Simpan'}</Button>
+            <Button type="submit" variant="primary" size="sm" disabled={isSubmitting} className="cursor-pointer">{isSubmitting ? 'Menyimpan…' : 'Simpan'}</Button>
           </div>
         </form>
       </Modal>
@@ -271,7 +271,7 @@ function SetlistsTab() {
     } else notify.error('Gagal menyimpan setlist', result.error);
   };
 
-  if (isLoading) return <div className="p-12"><Loading message="Memuat setlist..." /></div>;
+  if (isLoading) return <div className="p-12"><Loading message="Memuat setlist…" /></div>;
 
   return (
     <>
@@ -301,21 +301,21 @@ function SetlistsTab() {
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-(--text-secondary)">Nama Setlist</label>
-              <input type="text" value={formData.name} onChange={e => setFormData(p => ({ ...p, name: e.target.value }))} placeholder="Contoh: Aitakatta" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" required />
+              <input autoComplete="off" /* autocomplete="off" */ name="name" type="text" value={formData.name} onChange={e => setFormData(p => ({ ...p, name: e.target.value }))} placeholder="Contoh: Aitakatta" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" required />
             </div>
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-(--text-secondary)">Periode</label>
-              <input type="text" value={formData.period} onChange={e => setFormData(p => ({ ...p, period: e.target.value }))} placeholder="Contoh: Desember 2024 - Sekarang" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" required />
+              <input autoComplete="off" /* autocomplete="off" */ name="period" type="text" value={formData.period} onChange={e => setFormData(p => ({ ...p, period: e.target.value }))} placeholder="Contoh: Desember 2024 - Sekarang" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" required />
             </div>
           </div>
           <div className="grid grid-cols-3 gap-4">
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-(--text-secondary)">Total Show</label>
-              <input type="text" value={formData.shows} onChange={e => setFormData(p => ({ ...p, shows: e.target.value }))} placeholder="45+ Shows" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" />
+              <input autoComplete="off" /* autocomplete="off" */ name="shows" type="text" value={formData.shows} onChange={e => setFormData(p => ({ ...p, shows: e.target.value }))} placeholder="45+ Shows" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" />
             </div>
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-(--text-secondary)">Tema CSS</label>
-              <input type="text" value={formData.theme} onChange={e => setFormData(p => ({ ...p, theme: e.target.value }))} placeholder="aitakatta, pajama, kirakira" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" />
+              <input autoComplete="off" /* autocomplete="off" */ name="theme" type="text" value={formData.theme} onChange={e => setFormData(p => ({ ...p, theme: e.target.value }))} placeholder="aitakatta, pajama, kirakira" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" />
             </div>
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-(--text-secondary)">Status</label>
@@ -327,7 +327,7 @@ function SetlistsTab() {
           </div>
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-(--text-secondary)">URL Gambar Poster</label>
-            <input type="text" value={formData.image_url} onChange={e => setFormData(p => ({ ...p, image_url: e.target.value }))} placeholder="/setlistaitakatta.webp" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" />
+            <input autoComplete="off" /* autocomplete="off" */ name="image_url" type="text" value={formData.image_url} onChange={e => setFormData(p => ({ ...p, image_url: e.target.value }))} placeholder="/setlistaitakatta.webp" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" />
           </div>
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-(--text-secondary)">Unit Songs (satu lagu per baris)</label>
@@ -336,7 +336,7 @@ function SetlistsTab() {
           </div>
           <div className="flex justify-end gap-2 pt-4 border-t border-(--border-color)">
             <Button type="button" variant="outline" size="sm" onClick={() => setIsModalOpen(false)} disabled={isSubmitting}>Batal</Button>
-            <Button type="submit" variant="primary" size="sm" disabled={isSubmitting} className="cursor-pointer">{isSubmitting ? 'Menyimpan...' : 'Simpan'}</Button>
+            <Button type="submit" variant="primary" size="sm" disabled={isSubmitting} className="cursor-pointer">{isSubmitting ? 'Menyimpan…' : 'Simpan'}</Button>
           </div>
         </form>
       </Modal>
@@ -450,7 +450,7 @@ function VideosTab() {
     } else notify.error('Gagal menyimpan video', result.error);
   };
 
-  if (isLoading) return <div className="p-12"><Loading message="Memuat video..." /></div>;
+  if (isLoading) return <div className="p-12"><Loading message="Memuat video…" /></div>;
 
   return (
     <>
@@ -464,7 +464,7 @@ function VideosTab() {
       <AdminTable
         columns={[
           { key: 'thumbnail', header: 'Preview', render: (item) => (
-            <img src={getYouTubeThumbnailUrl(item.youtube_id)} alt={item.title} className="w-24 h-14 object-cover rounded-lg border border-(--border-color)" />
+            <img width={96} height={56} src={getYouTubeThumbnailUrl(item.youtube_id)} alt={item.title || 'YouTube Thumbnail'} className="w-24 h-14 object-cover rounded-lg border border-(--border-color)" />
           )},
           { key: 'title', header: 'Judul Video', render: (item) => <span className="font-bold text-(--text-primary) line-clamp-1">{item.title}</span> },
           { key: 'category', header: 'Kategori', render: (item) => <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-(--color-primary-light) text-(--color-primary)">{item.category}</span> },
@@ -481,9 +481,9 @@ function VideosTab() {
         <form onSubmit={handleSubmit} className="space-y-4 text-sm">
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-(--text-secondary)">Link YouTube</label>
-            <input type="url" value={formData.youtube_url} onChange={handleYouTubeUrlChange} placeholder="https://www.youtube.com/watch?v=SojGpGHMYEA" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" required />
+            <input autoComplete="off" /* autocomplete="off" */ name="youtube_url" type="url" value={formData.youtube_url} onChange={handleYouTubeUrlChange} placeholder="https://www.youtube.com/watch?v=SojGpGHMYEA" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl focus:focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:ring-2 focus:ring-[#170C79]/15 focus:border-(--color-primary)" required />
             <p className={`text-[10px] ${formData.youtube_url && !parsedYouTubeId ? 'text-red-500' : 'text-(--text-muted)'}`}>
-              {isReadingMetadata ? 'Membaca judul dan durasi dari YouTube...' : parsedYouTubeId ? `Video ID terdeteksi: ${parsedYouTubeId}` : 'Mendukung link video, Shorts, live, embed, dan youtu.be.'}
+              {isReadingMetadata ? 'Membaca judul dan durasi dari YouTube…' : parsedYouTubeId ? `Video ID terdeteksi: ${parsedYouTubeId}` : 'Mendukung link video, Shorts, live, embed, dan youtu.be.'}
             </p>
           </div>
           <div className="flex flex-col gap-1.5">
@@ -497,16 +497,16 @@ function VideosTab() {
           {metadataError && <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-medium text-red-600">{metadataError}</p>}
           {parsedYouTubeId && (
             <div className="rounded-xl overflow-hidden border border-(--border-color) bg-white">
-              <img src={getYouTubeThumbnailUrl(parsedYouTubeId)} alt="Preview" className="w-full h-40 object-cover" />
+              <img width={320} height={160} src={getYouTubeThumbnailUrl(parsedYouTubeId)} alt="Preview" className="w-full h-40 object-cover" />
               <div className="p-3">
-                <p className="font-bold text-(--text-primary)">{formData.title || 'Menunggu judul video...'}</p>
-                <p className="mt-1 text-xs text-(--text-muted)">Durasi: {formData.duration || 'Membaca...'}</p>
+                <p className="font-bold text-(--text-primary)">{formData.title || 'Menunggu judul video…'}</p>
+                <p className="mt-1 text-xs text-(--text-muted)">Durasi: {formData.duration || 'Membaca…'}</p>
               </div>
             </div>
           )}
           <div className="flex justify-end gap-2 pt-4 border-t border-(--border-color)">
             <Button type="button" variant="outline" size="sm" onClick={() => setIsModalOpen(false)} disabled={isSubmitting}>Batal</Button>
-            <Button type="submit" variant="primary" size="sm" disabled={isSubmitting || isReadingMetadata || !formData.title || !formData.duration} className="cursor-pointer">{isSubmitting ? 'Menyimpan...' : 'Simpan'}</Button>
+            <Button type="submit" variant="primary" size="sm" disabled={isSubmitting || isReadingMetadata || !formData.title || !formData.duration} className="cursor-pointer">{isSubmitting ? 'Menyimpan…' : 'Simpan'}</Button>
           </div>
         </form>
       </Modal>
@@ -583,7 +583,7 @@ function TriviaTab() {
     } else notify.error('Gagal menyimpan trivia', result.error);
   };
 
-  if (isLoading) return <div className="p-12"><Loading message="Memuat trivia..." /></div>;
+  if (isLoading) return <div className="p-12"><Loading message="Memuat trivia…" /></div>;
 
   return (
     <>
@@ -610,7 +610,7 @@ function TriviaTab() {
         <form onSubmit={handleSubmit} className="space-y-4 text-sm">
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-(--text-secondary)">Pertanyaan</label>
-            <input type="text" value={formData.question} onChange={e => setFormData(p => ({ ...p, question: e.target.value }))} placeholder="Siapa member tertua di JKT48 Gen 13?" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" required />
+            <input autoComplete="off" /* autocomplete="off" */ name="question" type="text" value={formData.question} onChange={e => setFormData(p => ({ ...p, question: e.target.value }))} placeholder="Siapa member tertua di JKT48 Gen 13?" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" required />
           </div>
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-(--text-secondary)">Jawaban</label>
@@ -618,7 +618,7 @@ function TriviaTab() {
           </div>
           <div className="flex justify-end gap-2 pt-4 border-t border-(--border-color)">
             <Button type="button" variant="outline" size="sm" onClick={() => setIsModalOpen(false)} disabled={isSubmitting}>Batal</Button>
-            <Button type="submit" variant="primary" size="sm" disabled={isSubmitting} className="cursor-pointer">{isSubmitting ? 'Menyimpan...' : 'Simpan'}</Button>
+            <Button type="submit" variant="primary" size="sm" disabled={isSubmitting} className="cursor-pointer">{isSubmitting ? 'Menyimpan…' : 'Simpan'}</Button>
           </div>
         </form>
       </Modal>
@@ -666,7 +666,7 @@ export default function AdminAboutIntan() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-colors border cursor-pointer ${
                 isActive
                   ? 'bg-(--color-primary) border-(--color-primary) text-white shadow-sm'
                   : 'bg-white border-(--border-color) text-(--text-secondary) hover:bg-gray-50'

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { generateId } from '../lib/helpers';
 
@@ -250,5 +250,81 @@ export function useSupabaseUpload() {
     isUploading,
     error,
     progress,
+  };
+}
+
+/**
+ * Custom hook for managing local image file selection and preview before uploading.
+ * @param {string|null} initialUrl - The existing URL or emoji from the database.
+ */
+export function useImageUpload(initialUrl = null) {
+  const [file, setFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(initialUrl);
+  const [fileName, setFileName] = useState(null);
+  const fileInputRef = useRef(null);
+  const previewRef = useRef(null);
+
+  // Synchronize initial value when parent form updates
+  const setInitialValue = useCallback((val) => {
+    setPreviewUrl(val);
+    setFile(null);
+    setFileName(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  }, []);
+
+  const handleThumbnailClick = useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
+
+  const handleFileChange = useCallback((event) => {
+    const selectedFile = event.target.files?.[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      setFileName(selectedFile.name);
+
+      // Clean up previous temporary object URL to prevent memory leaks
+      if (previewRef.current && previewRef.current.startsWith('blob:')) {
+        URL.revokeObjectURL(previewRef.current);
+      }
+
+      const url = URL.createObjectURL(selectedFile);
+      setPreviewUrl(url);
+      previewRef.current = url;
+    }
+  }, []);
+
+  const handleRemove = useCallback(() => {
+    if (previewUrl && previewUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    setFile(null);
+    setPreviewUrl(initialUrl);
+    setFileName(null);
+    previewRef.current = null;
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  }, [previewUrl, initialUrl]);
+
+  // Clean up object URLs on unmount
+  useEffect(() => {
+    return () => {
+      if (previewRef.current && previewRef.current.startsWith('blob:')) {
+        URL.revokeObjectURL(previewRef.current);
+      }
+    };
+  }, []);
+
+  return {
+    file,
+    previewUrl,
+    fileName,
+    fileInputRef,
+    handleThumbnailClick,
+    handleFileChange,
+    handleRemove,
+    setInitialValue,
   };
 }

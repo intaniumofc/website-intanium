@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import logoNobg from '../../assets/logos/logo-nobg.png';
+import logoNobg from '../../assets/logos/logo-nobg.webp';
 import IntaniumStructureSection from './IntaniumStructureSection';
 import AboutSection3 from './AboutSection';
 import { PhotoGallery } from './PhotoGallery';

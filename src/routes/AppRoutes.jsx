@@ -24,6 +24,7 @@ import GalleryPage from '../features/gallery/GalleryPage';
 import GamesPage from '../features/games/GamesPage';
 import MenangkapKecoaPage from '../features/games/menangkap-kecoa/MenangkapKecoaPage';
 import ScoreResultPage from '../features/games/menangkap-kecoa/ScoreResultPage';
+import EsportPage from '../features/esport/EsportPage';
 
 // Admin Layout & View Pages
 import AdminLayout from '../admin/AdminLayout';
@@ -42,6 +43,7 @@ import AdminAboutIntan from '../admin/about-intan';
 import AdminIntanShiningStar from '../admin/intan-shining-star';
 import AdminHashtags from '../admin/hashtags';
 import AdminGames from '../admin/games';
+import AdminEsport from '../admin/esport/AdminEsportPage';
 
 // Reusable Admin Guard Route
 const AdminGuard = ({ children }) => {
@@ -206,6 +208,14 @@ export default function AppRoutes() {
           </MainLayout>
         }
       />
+      <Route
+        path={ROUTES.ESPORT}
+        element={
+          <MainLayout>
+            <EsportPage />
+          </MainLayout>
+        }
+      />
 
       {/* ================= ADMIN MANAGEMENT PORTAL ROUTES ================= */}
       <Route path={ROUTES.ADMIN_LOGIN} element={<LoginPage />} />
@@ -319,6 +329,14 @@ export default function AppRoutes() {
         element={
           <AdminGuard>
             <AdminGames />
+          </AdminGuard>
+        }
+      />
+      <Route
+        path={ROUTES.ADMIN_ESPORT}
+        element={
+          <AdminGuard>
+            <AdminEsport />
           </AdminGuard>
         }
       />

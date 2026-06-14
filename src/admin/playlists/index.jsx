@@ -402,7 +402,7 @@ export default function AdminPlaylists() {
       <div className="flex border-b border-[var(--border-color)]">
         <button
           onClick={() => setActiveTab('playlists')}
-          className={`px-6 py-3 font-bold text-sm tracking-wide transition-all border-b-2 cursor-pointer ${
+          className={`px-6 py-3 font-bold text-sm tracking-wide transition-colors border-b-2 cursor-pointer ${
             activeTab === 'playlists'
               ? 'border-[var(--color-primary)] text-[var(--color-primary)] bg-[var(--color-primary)]/5'
               : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
@@ -412,7 +412,7 @@ export default function AdminPlaylists() {
         </button>
         <button
           onClick={() => setActiveTab('songs')}
-          className={`px-6 py-3 font-bold text-sm tracking-wide transition-all border-b-2 cursor-pointer ${
+          className={`px-6 py-3 font-bold text-sm tracking-wide transition-colors border-b-2 cursor-pointer ${
             activeTab === 'songs'
               ? 'border-[var(--color-primary)] text-[var(--color-primary)] bg-[var(--color-primary)]/5'
               : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
@@ -428,13 +428,7 @@ export default function AdminPlaylists() {
           <div className="flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center">
             <div className="flex items-center gap-2 px-3 py-2 bg-white border border-[var(--border-color)] rounded-xl text-sm w-full md:w-80 shadow-sm">
               <Search className="h-4 w-4 text-[var(--text-muted)]" />
-              <input
-                type="text"
-                placeholder="Cari playlist..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-transparent border-none outline-none flex-1 text-[var(--text-primary)] placeholder-[var(--text-muted)]"
-              />
+              <input autoComplete="off" /* autocomplete="off" */ name="searchQuery" type="text" placeholder="Cari playlist…" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-transparent border-none focus:outline-none focus:ring-0 flex-1 text-[var(--text-primary)] placeholder-[var(--text-muted)]" />
             </div>
 
             {/* Badge Filter */}
@@ -443,7 +437,7 @@ export default function AdminPlaylists() {
                 <button
                   key={badge}
                   onClick={() => setSelectedBadge(badge)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${selectedBadge === badge
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors border ${selectedBadge === badge
                       ? 'bg-[var(--color-primary)] border-[var(--color-primary)] text-white'
                       : 'bg-white border-[var(--border-color)] text-[var(--text-secondary)] hover:bg-gray-50'
                     }`}
@@ -457,7 +451,7 @@ export default function AdminPlaylists() {
           {/* Main Table Card */}
           <Card hoverEffect={false} className="border border-[var(--border-color)] bg-white overflow-hidden rounded-2xl shadow-sm" padding="none">
             {isLoading ? (
-              <div className="p-12"><Loading message="Memuat playlist..." /></div>
+              <div className="p-12"><Loading message="Memuat playlist…" /></div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm text-[var(--text-secondary)]">
@@ -476,11 +470,7 @@ export default function AdminPlaylists() {
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
                             {item.imageUrl ? (
-                              <img
-                                src={item.imageUrl}
-                                alt={item.title}
-                                className="w-10 h-10 object-cover rounded-lg shadow-sm border border-slate-100 flex-shrink-0"
-                              />
+                              <img width={40} height={40} alt="Playlist Cover" src={item.imageUrl} className="w-10 h-10 object-cover rounded-lg shadow-sm border border-slate-100 flex-shrink-0" />
                             ) : (
                               <span className="w-10 h-10 rounded-lg bg-[var(--color-primary-light)] text-[var(--color-primary)] flex items-center justify-center flex-shrink-0 shadow-inner">
                                 <Music className="h-5 w-5" />
@@ -517,21 +507,21 @@ export default function AdminPlaylists() {
                               href={item.spotifyUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="p-1.5 text-green-600 hover:bg-green-50 border border-transparent hover:border-green-200 rounded-lg transition-all"
+                              className="p-1.5 text-green-600 hover:bg-green-50 border border-transparent hover:border-green-200 rounded-lg transition-colors"
                               title="Buka di Spotify"
                             >
                               <ExternalLink className="h-4 w-4" />
                             </a>
                             <button
                               onClick={() => handleOpenEditModal(item)}
-                              className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-all"
+                              className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-colors"
                               title="Ubah Playlist"
                             >
                               <Edit className="h-4 w-4" />
                             </button>
                             <button
                               onClick={() => handleDelete(item.id)}
-                              className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-all"
+                              className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors"
                               title="Hapus Playlist"
                             >
                               <Trash2 className="h-4 w-4" />
@@ -559,20 +549,14 @@ export default function AdminPlaylists() {
           <div className="flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center">
             <div className="flex items-center gap-2 px-3 py-2 bg-white border border-[var(--border-color)] rounded-xl text-sm w-full md:w-80 shadow-sm">
               <Search className="h-4 w-4 text-[var(--text-muted)]" />
-              <input
-                type="text"
-                placeholder="Cari lagu..."
-                value={songsSearchQuery}
-                onChange={(e) => setSongsSearchQuery(e.target.value)}
-                className="bg-transparent border-none outline-none flex-1 text-[var(--text-primary)] placeholder-[var(--text-muted)]"
-              />
+              <input autoComplete="off" /* autocomplete="off" */ name="songsSearchQuery" type="text" placeholder="Cari lagu…" value={songsSearchQuery} onChange={(e) => setSongsSearchQuery(e.target.value)} className="bg-transparent border-none focus:outline-none focus:ring-0 flex-1 text-[var(--text-primary)] placeholder-[var(--text-muted)]" />
             </div>
           </div>
 
           {/* Songs Table Card */}
           <Card hoverEffect={false} className="border border-[var(--border-color)] bg-white overflow-hidden rounded-2xl shadow-sm" padding="none">
             {isSongsLoading ? (
-              <div className="p-12"><Loading message="Memuat daftar lagu..." /></div>
+              <div className="p-12"><Loading message="Memuat daftar lagu…" /></div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm text-[var(--text-secondary)]">
@@ -608,14 +592,14 @@ export default function AdminPlaylists() {
                           <div className="flex items-center justify-end gap-2">
                             <button
                               onClick={() => handleOpenEditSongModal(song)}
-                              className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-all"
+                              className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-colors"
                               title="Ubah Lagu"
                             >
                               <Edit className="h-4 w-4" />
                             </button>
                             <button
                               onClick={() => handleSongDelete(song.id)}
-                              className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-all"
+                              className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors"
                               title="Hapus Lagu"
                             >
                               <Trash2 className="h-4 w-4" />
@@ -653,29 +637,13 @@ export default function AdminPlaylists() {
             {/* Title */}
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Judul Playlist</label>
-              <input
-                type="text"
-                name="title"
-                placeholder="Masukkan judul playlist bulanan..."
-                value={formData.title}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
-                required
-              />
+              <input autoComplete="off" /* autocomplete="off" */ type="text" name="title" placeholder="Masukkan judul playlist bulanan…" value={formData.title} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" required />
             </div>
 
             {/* Category / Month */}
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Kategori (Bulan & Tahun)</label>
-              <input
-                type="text"
-                name="category"
-                placeholder="Contoh: Juni 2026"
-                value={formData.category}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
-                required
-              />
+              <input autoComplete="off" /* autocomplete="off" */ type="text" name="category" placeholder="Contoh: Juni 2026" value={formData.category} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" required />
             </div>
           </div>
 
@@ -687,7 +655,7 @@ export default function AdminPlaylists() {
                 name="badgeText"
                 value={formData.badgeText}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
+                className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-colors"
               >
                 <option value="Ongoing Playlist">Ongoing Playlist</option>
                 <option value="Archive Playlist">Archive Playlist</option>
@@ -697,42 +665,20 @@ export default function AdminPlaylists() {
             {/* Tracks Count */}
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Jumlah Track Lagu</label>
-              <input
-                type="text"
-                name="tracksCount"
-                placeholder="Contoh: 30 Tracks"
-                value={formData.tracksCount}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
-              />
+              <input autoComplete="off" /* autocomplete="off" */ type="text" name="tracksCount" placeholder="Contoh: 30 Tracks" value={formData.tracksCount} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" />
             </div>
 
             {/* Duration */}
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Durasi Total</label>
-              <input
-                type="text"
-                name="duration"
-                placeholder="Contoh: 2h 15m"
-                value={formData.duration}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
-              />
+              <input autoComplete="off" /* autocomplete="off" */ type="text" name="duration" placeholder="Contoh: 2h 15m" value={formData.duration} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" />
             </div>
           </div>
 
           {/* Spotify URL */}
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Tautan Spotify (Spotify URL)</label>
-            <input
-              type="text"
-              name="spotifyUrl"
-              placeholder="Masukkan link share playlist Spotify..."
-              value={formData.spotifyUrl}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
-              required
-            />
+            <input autoComplete="off" /* autocomplete="off" */ type="text" name="spotifyUrl" placeholder="Masukkan link share playlist Spotify…" value={formData.spotifyUrl} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" required />
             <p className="text-[10px] text-[var(--text-muted)]">
               Paste link Spotify. Contoh: <code>https://open.spotify.com/playlist/2aMGqrDZrqERqgMPIQe0ui</code>
             </p>
@@ -741,55 +687,26 @@ export default function AdminPlaylists() {
           {/* Spotify Embed URL */}
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Spotify Embed URL</label>
-            <input
-              type="text"
-              name="spotifyEmbedUrl"
-              placeholder="URL embed Spotify (terisi otomatis dari link Spotify)..."
-              value={formData.spotifyEmbedUrl}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all text-xs text-[var(--text-muted)] bg-slate-50"
-              readOnly
-            />
+            <input autoComplete="off" /* autocomplete="off" */ type="text" name="spotifyEmbedUrl" placeholder="URL embed Spotify (terisi otomatis dari link Spotify)…" value={formData.spotifyEmbedUrl} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors text-xs text-[var(--text-muted)] bg-slate-50" readOnly />
           </div>
 
           {/* Cover Image URL */}
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">URL Gambar Sampul (Cover Image)</label>
-            <input
-              type="text"
-              name="imageUrl"
-              placeholder="Masukkan link gambar sampul..."
-              value={formData.imageUrl}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
-            />
+            <input autoComplete="off" /* autocomplete="off" */ type="text" name="imageUrl" placeholder="Masukkan link gambar sampul…" value={formData.imageUrl} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" />
             <p className="text-[10px] text-[var(--text-muted)]">Kosongkan untuk menggunakan gambar default.</p>
           </div>
 
           {/* Curator Note */}
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Pesan Kurator (Curator Note)</label>
-            <textarea
-              name="curatorNote"
-              rows="2"
-              placeholder="Tulis pesan sapaan dari Intan untuk pendengar playlist ini..."
-              value={formData.curatorNote}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all resize-none"
-            />
+            <textarea name="curatorNote" rows="2" placeholder="Tulis pesan sapaan dari Intan untuk pendengar playlist ini…" value={formData.curatorNote} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors resize-none" />
           </div>
 
           {/* Description */}
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Deskripsi Playlist</label>
-            <textarea
-              name="description"
-              rows="2"
-              placeholder="Deskripsi singkat playlist..."
-              value={formData.description}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all resize-none"
-            />
+            <textarea name="description" rows="2" placeholder="Deskripsi singkat playlist…" value={formData.description} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors resize-none" />
           </div>
 
           {/* Submit Action */}
@@ -810,7 +727,7 @@ export default function AdminPlaylists() {
               disabled={isSubmitting}
               className="cursor-pointer"
             >
-              {isSubmitting ? 'Menyimpan...' : 'Simpan Playlist'}
+              {isSubmitting ? 'Menyimpan…' : 'Simpan Playlist'}
             </Button>
           </div>
         </form>
@@ -829,57 +746,28 @@ export default function AdminPlaylists() {
             {/* Title */}
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Judul Lagu</label>
-              <input
-                type="text"
-                name="title"
-                placeholder="Masukkan judul lagu..."
-                value={songFormData.title}
-                onChange={handleSongInputChange}
-                className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
-                required
-              />
+              <input autoComplete="off" /* autocomplete="off" */ type="text" name="title" placeholder="Masukkan judul lagu…" value={songFormData.title} onChange={handleSongInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" required />
             </div>
 
             {/* Artist */}
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Nama Artis / Band</label>
-              <input
-                type="text"
-                name="artist"
-                placeholder="Masukkan nama penyanyi/band..."
-                value={songFormData.artist}
-                onChange={handleSongInputChange}
-                className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
-                required
-              />
+              <input autoComplete="off" /* autocomplete="off" */ type="text" name="artist" placeholder="Masukkan nama penyanyi/band…" value={songFormData.artist} onChange={handleSongInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" required />
             </div>
           </div>
 
           <div className="flex flex-col gap-1.5">
             {/* Mood */}
             <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Mood / Genre Vibes</label>
-            <input
-              type="text"
-              name="mood"
-              placeholder="Contoh: Chill / Calm, Nostalgic, Hype / Energetic"
-              value={songFormData.mood}
-              onChange={handleSongInputChange}
-              className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
-            />
+            <input autoComplete="off" /* autocomplete="off" */ type="text" name="mood" placeholder="Contoh: Chill / Calm, Nostalgic, Hype / Energetic" value={songFormData.mood} onChange={handleSongInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Audio File Upload */}
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Unggah Berkas Audio (MP3)</label>
-              <div className="relative border-2 border-dashed border-[var(--border-color)] rounded-2xl p-4 bg-[var(--bg-primary)] hover:border-[var(--color-primary)] transition-all flex flex-col items-center justify-center text-center group cursor-pointer">
-                <input
-                  type="file"
-                  accept="audio/mp3,audio/*"
-                  onChange={handleAudioFileChange}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                  disabled={isSongSubmitting || isFileUploading || isAudioConverting || isImageConverting}
-                />
+              <div className="relative border-2 border-dashed border-[var(--border-color)] rounded-2xl p-4 bg-[var(--bg-primary)] hover:border-[var(--color-primary)] transition-colors flex flex-col items-center justify-center text-center group cursor-pointer">
+                <input name="file_input" type="file" accept="audio/mp3,audio/*" onChange={handleAudioFileChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" disabled={isSongSubmitting || isFileUploading || isAudioConverting || isImageConverting} />
                 <Upload className="h-6 w-6 text-[var(--text-muted)] group-hover:text-[var(--color-primary)] transition-colors mb-1" />
                 <span className="font-extrabold text-xs text-[var(--text-secondary)]">
                   {selectedAudioFile ? selectedAudioFile.name : 'Pilih Berkas MP3'}
@@ -893,14 +781,8 @@ export default function AdminPlaylists() {
             {/* Cover Image Upload */}
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Unggah Gambar Sampul</label>
-              <div className="relative border-2 border-dashed border-[var(--border-color)] rounded-2xl p-4 bg-[var(--bg-primary)] hover:border-[var(--color-primary)] transition-all flex flex-col items-center justify-center text-center group cursor-pointer">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleCoverFileChange}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                  disabled={isSongSubmitting || isFileUploading || isAudioConverting || isImageConverting}
-                />
+              <div className="relative border-2 border-dashed border-[var(--border-color)] rounded-2xl p-4 bg-[var(--bg-primary)] hover:border-[var(--color-primary)] transition-colors flex flex-col items-center justify-center text-center group cursor-pointer">
+                <input name="file_input" type="file" accept="image/*" onChange={handleCoverFileChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" disabled={isSongSubmitting || isFileUploading || isAudioConverting || isImageConverting} />
                 <Upload className="h-6 w-6 text-[var(--text-muted)] group-hover:text-[var(--color-primary)] transition-colors mb-1" />
                 <span className="font-extrabold text-xs text-[var(--text-secondary)]">
                   {selectedCoverFile ? selectedCoverFile.name : 'Pilih Berkas Gambar'}
@@ -919,15 +801,15 @@ export default function AdminPlaylists() {
                 <Loader className="h-4 w-4 animate-spin text-blue-600" />
                 <span>
                   {isAudioConverting
-                    ? 'Mengodekan & mengompres berkas audio (LameJS)...'
+                    ? 'Mengodekan & mengompres berkas audio (LameJS)…'
                     : isImageConverting
-                    ? 'Mengonversi gambar sampul ke WebP...'
+                    ? 'Mengonversi gambar sampul ke WebP…'
                     : `Mengunggah berkas ke Supabase Storage (${uploadProgress}%)...`}
                 </span>
               </div>
               {isFileUploading && (
                 <div className="w-full bg-blue-200/50 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-blue-600 h-full transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
+                  <div className="bg-blue-600 h-full transition-[width] duration-300" style={{ width: `${uploadProgress}%` }} />
                  </div>
               )}
             </div>
@@ -937,30 +819,14 @@ export default function AdminPlaylists() {
             {/* Audio URL (Fallback / Manual) */}
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">URL File Audio (Direct MP3 URL - Alternatif)</label>
-              <input
-                type="text"
-                name="audioUrl"
-                placeholder="Masukkan link direct file audio (.mp3)..."
-                value={songFormData.audioUrl}
-                onChange={handleSongInputChange}
-                className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all text-xs text-[var(--text-muted)] bg-slate-50"
-                disabled={isSongSubmitting || isFileUploading || isAudioConverting || isImageConverting}
-              />
+              <input autoComplete="off" /* autocomplete="off" */ type="text" name="audioUrl" placeholder="Masukkan link direct file audio (.mp3)…" value={songFormData.audioUrl} onChange={handleSongInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors text-xs text-[var(--text-muted)] bg-slate-50" disabled={isSongSubmitting || isFileUploading || isAudioConverting || isImageConverting} />
               <p className="text-[10px] text-[var(--text-muted)]">Kosongkan jika mengunggah file MP3 di atas.</p>
             </div>
 
             {/* Cover Image URL (Fallback / Manual) */}
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">URL Gambar Sampul (Cover Image URL - Alternatif)</label>
-              <input
-                type="text"
-                name="coverUrl"
-                placeholder="Masukkan link gambar cover..."
-                value={songFormData.coverUrl}
-                onChange={handleSongInputChange}
-                className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all text-xs text-[var(--text-muted)] bg-slate-50"
-                disabled={isSongSubmitting || isFileUploading || isAudioConverting || isImageConverting}
-              />
+              <input autoComplete="off" /* autocomplete="off" */ type="text" name="coverUrl" placeholder="Masukkan link gambar cover…" value={songFormData.coverUrl} onChange={handleSongInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors text-xs text-[var(--text-muted)] bg-slate-50" disabled={isSongSubmitting || isFileUploading || isAudioConverting || isImageConverting} />
               <p className="text-[10px] text-[var(--text-muted)]">Kosongkan jika mengunggah gambar sampul di atas.</p>
             </div>
           </div>
@@ -968,15 +834,7 @@ export default function AdminPlaylists() {
           {/* Curator Note / Catatan */}
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Catatan Kurator / Alasan Intan Menyukai Lagu Ini</label>
-            <textarea
-              name="note"
-              rows="3"
-              placeholder="Tulis alasan atau cerita mengapa lagu ini sering diputar..."
-              value={songFormData.note}
-              onChange={handleSongInputChange}
-              className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all resize-none"
-              required
-            />
+            <textarea name="note" rows="3" placeholder="Tulis alasan atau cerita mengapa lagu ini sering diputar…" value={songFormData.note} onChange={handleSongInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors resize-none" required />
           </div>
 
           {/* Submit Action */}
@@ -997,7 +855,7 @@ export default function AdminPlaylists() {
               disabled={isSongSubmitting || isFileUploading || isAudioConverting || isImageConverting}
               className="cursor-pointer"
             >
-              {isSongSubmitting || isFileUploading || isAudioConverting || isImageConverting ? 'Memproses...' : 'Simpan Lagu'}
+              {isSongSubmitting || isFileUploading || isAudioConverting || isImageConverting ? 'Memproses…' : 'Simpan Lagu'}
             </Button>
           </div>
         </form>

@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 import { cn } from "../lib/utils";
 import { supabase } from "../lib/supabaseClient";
 import { ROUTES } from "../lib/constants";
-import logoNobg from "../assets/logos/logo-nobg.png";
+import logoNobg from "../assets/logos/logo-nobg.webp";
 
 const Pupil = ({
   size = 12,
@@ -128,7 +128,7 @@ const EyeBall = ({
   return (
     <div
       ref={eyeRef}
-      className="rounded-full flex items-center justify-center transition-all duration-150"
+      className="rounded-full flex items-center justify-center transition-colors duration-150"
       style={{
         width: `${size}px`,
         height: isBlinking ? '2px' : `${size}px`,
@@ -302,11 +302,7 @@ export default function LoginPage() {
       <div className="relative hidden lg:flex flex-col justify-between bg-gradient-to-br from-[#170C79] via-[#2112a3] to-[#0e074e] p-12 text-white overflow-hidden">
         <div className="relative z-20">
           <Link to="/" className="flex items-center gap-2 text-lg font-semibold group w-fit">
-            <img
-              src={logoNobg}
-              alt="Intanium"
-              className="h-8 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
-            />
+            <img width={32} height={32} alt="Logo Intanium" src={logoNobg} className="h-8 w-8 object-contain transition-transform duration-300 group-hover:scale-105" />
             <motion.span
               className="text-xl font-extrabold tracking-tight bg-[linear-gradient(110deg,#ffffff,35%,#a5b4fc,50%,#ffffff,75%,#ffffff)] bg-[length:200%_100%] bg-clip-text text-transparent select-none"
               initial={{ backgroundPosition: "200% 0" }}
@@ -328,7 +324,7 @@ export default function LoginPage() {
             {/* Purple tall rectangle character - Back layer */}
             <div
               ref={purpleRef}
-              className="absolute bottom-0 transition-all duration-700 ease-in-out"
+              className="absolute bottom-0 transition-[bottom,transform] duration-700 ease-in-out"
               style={{
                 left: '70px',
                 width: '180px',
@@ -346,7 +342,7 @@ export default function LoginPage() {
             >
               {/* Eyes */}
               <div
-                className="absolute flex gap-8 transition-all duration-700 ease-in-out"
+                className="absolute flex gap-8 transition-[bottom,transform] duration-700 ease-in-out"
                 style={{
                   left: (password.length > 0 && showPassword) ? `${20}px` : isLookingAtEachOther ? `${55}px` : `${45 + purplePos.faceX}px`,
                   top: (password.length > 0 && showPassword) ? `${35}px` : isLookingAtEachOther ? `${65}px` : `${40 + purplePos.faceY}px`,
@@ -378,7 +374,7 @@ export default function LoginPage() {
             {/* Black tall rectangle character - Middle layer */}
             <div
               ref={blackRef}
-              className="absolute bottom-0 transition-all duration-700 ease-in-out"
+              className="absolute bottom-0 transition-[bottom,transform] duration-700 ease-in-out"
               style={{
                 left: '240px',
                 width: '120px',
@@ -398,7 +394,7 @@ export default function LoginPage() {
             >
               {/* Eyes */}
               <div
-                className="absolute flex gap-6 transition-all duration-700 ease-in-out"
+                className="absolute flex gap-6 transition-[bottom,transform] duration-700 ease-in-out"
                 style={{
                   left: (password.length > 0 && showPassword) ? `${10}px` : isLookingAtEachOther ? `${32}px` : `${26 + blackPos.faceX}px`,
                   top: (password.length > 0 && showPassword) ? `${28}px` : isLookingAtEachOther ? `${12}px` : `${32 + blackPos.faceY}px`,
@@ -430,7 +426,7 @@ export default function LoginPage() {
             {/* Orange semi-circle character - Front left */}
             <div
               ref={orangeRef}
-              className="absolute bottom-0 transition-all duration-700 ease-in-out"
+              className="absolute bottom-0 transition-[bottom,transform] duration-700 ease-in-out"
               style={{
                 left: '0px',
                 width: '240px',
@@ -444,7 +440,7 @@ export default function LoginPage() {
             >
               {/* Eyes - just pupils, no white */}
               <div
-                className="absolute flex gap-8 transition-all duration-200 ease-out"
+                className="absolute flex gap-8 transition-[bottom,transform] duration-200 ease-out"
                 style={{
                   left: (password.length > 0 && showPassword) ? `${50}px` : `${82 + (orangePos.faceX || 0)}px`,
                   top: (password.length > 0 && showPassword) ? `${85}px` : `${90 + (orangePos.faceY || 0)}px`,
@@ -458,7 +454,7 @@ export default function LoginPage() {
             {/* Yellow tall rectangle character - Front right */}
             <div
               ref={yellowRef}
-              className="absolute bottom-0 transition-all duration-700 ease-in-out"
+              className="absolute bottom-0 transition-[bottom,transform] duration-700 ease-in-out"
               style={{
                 left: '310px',
                 width: '140px',
@@ -472,7 +468,7 @@ export default function LoginPage() {
             >
               {/* Eyes - just pupils, no white */}
               <div
-                className="absolute flex gap-6 transition-all duration-200 ease-out"
+                className="absolute flex gap-6 transition-[bottom,transform] duration-200 ease-out"
                 style={{
                   left: (password.length > 0 && showPassword) ? `${20}px` : `${52 + (yellowPos.faceX || 0)}px`,
                   top: (password.length > 0 && showPassword) ? `${35}px` : `${40 + (yellowPos.faceY || 0)}px`,
@@ -483,7 +479,7 @@ export default function LoginPage() {
               </div>
               {/* Horizontal line for mouth */}
               <div
-                className="absolute w-20 h-[4px] bg-[#2D2D2D] rounded-full transition-all duration-200 ease-out"
+                className="absolute w-20 h-[4px] bg-[#2D2D2D] rounded-full transition-[bottom,transform] duration-200 ease-out"
                 style={{
                   left: (password.length > 0 && showPassword) ? `${10}px` : `${40 + (yellowPos.faceX || 0)}px`,
                   top: (password.length > 0 && showPassword) ? `${88}px` : `${88 + (yellowPos.faceY || 0)}px`,
@@ -508,11 +504,7 @@ export default function LoginPage() {
         <div className="w-full max-w-[420px] space-y-6">
           {/* Mobile Logo */}
           <div className="lg:hidden flex items-center justify-center gap-2 text-lg font-semibold mb-12">
-            <img
-              src={logoNobg}
-              alt="Intanium"
-              className="h-8 w-auto object-contain"
-            />
+            <img width={32} height={32} alt="Logo Intanium" src={logoNobg} className="h-8 w-8 object-contain" />
             <motion.span
               className="text-xl font-extrabold tracking-tight bg-[linear-gradient(110deg,#1e293b,35%,#6366f1,50%,#1e293b,75%,#1e293b)] bg-[length:200%_100%] bg-clip-text text-transparent select-none"
               initial={{ backgroundPosition: "200% 0" }}
@@ -539,15 +531,17 @@ export default function LoginPage() {
               <Label htmlFor="email" className="text-xs font-bold text-slate-700 uppercase tracking-wider">Email Address</Label>
               <Input
                 id="email"
+                name="email"
                 type="email"
                 placeholder="admin@intanium.com"
                 value={email}
-                autoComplete="off"
+                autoComplete="email"
+                spellCheck={false}
                 onChange={(e) => setEmail(e.target.value)}
                 onFocus={() => setIsTyping(true)}
                 onBlur={() => setIsTyping(false)}
                 required
-                className="h-12 bg-white border-slate-200 text-slate-800 focus:border-[var(--color-primary)] placeholder-slate-400"
+                className="h-12 bg-white border-slate-200 text-slate-800 focus-visible:border-[#170C79] focus-visible:ring-2 focus-visible:ring-[#170C79]/15 focus-visible:outline-none placeholder-slate-400"
               />
             </div>
 
@@ -556,12 +550,14 @@ export default function LoginPage() {
               <div className="relative">
                 <Input
                   id="password"
+                  name="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   value={password}
+                  autoComplete="current-password"
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="h-12 pr-10 bg-white border-slate-200 text-slate-800 focus:border-[var(--color-primary)] placeholder-slate-400"
+                  className="h-12 pr-10 bg-white border-slate-200 text-slate-800 focus-visible:border-[#170C79] focus-visible:ring-2 focus-visible:ring-[#170C79]/15 focus-visible:outline-none placeholder-slate-400"
                 />
                 <button
                   type="button"
@@ -597,16 +593,16 @@ export default function LoginPage() {
 
             <Button
               type="submit"
-              className="w-full h-12 text-sm font-extrabold uppercase tracking-wider bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white shadow-lg cursor-pointer rounded-lg transition-all"
+              className="w-full h-12 text-sm font-extrabold uppercase tracking-wider bg-[#170C79] hover:bg-[#1f129e] text-white shadow-md cursor-pointer rounded-lg transition-colors duration-200"
               disabled={isLoading}
             >
-              {isLoading ? "Signing in..." : "Login "}
+              {isLoading ? "Signing in…" : "Login"}
             </Button>
           </form>
 
           {/* Back Link */}
           <div className="text-center pt-2">
-            <Link to="/" className="text-xs text-slate-500 hover:text-[var(--color-primary)] transition-colors font-semibold">
+            <Link to="/" className="text-xs text-slate-500 hover:text-[#170C79] transition-colors font-semibold">
               ← Kembali ke Halaman Utama
             </Link>
           </div>

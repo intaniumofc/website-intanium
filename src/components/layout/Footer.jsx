@@ -1,7 +1,7 @@
 import { FaInstagram, FaTiktok, FaYoutube } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { motion } from 'framer-motion';
-import logoNobg from "../../assets/logos/logo-nobg.png";
+import logoNobg from "../../assets/logos/logo-nobg.webp";
 import { SOCIALS } from "../../lib/constants";
 
 const defaultSections = [

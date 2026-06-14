@@ -34,17 +34,12 @@ const EMPTY_FORM = {
 };
 
 const inputClass =
-  'w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all';
+  'w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-colors';
 
 function ToggleField({ checked, label, description, onChange }) {
   return (
     <label className="flex items-start gap-3 rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] p-3 cursor-pointer">
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={(event) => onChange(event.target.checked)}
-        className="mt-0.5 h-4 w-4 accent-[var(--color-primary)]"
-      />
+      <input name="featured_checkbox" type="checkbox" checked={checked} onChange={(event) => onChange(event.target.checked)} className="mt-0.5 h-4 w-4 accent-[var(--color-primary)]" />
       <span>
         <strong className="block text-xs text-[var(--text-primary)]">{label}</strong>
         <span className="mt-0.5 block text-[10px] leading-relaxed text-[var(--text-muted)]">{description}</span>
@@ -218,12 +213,7 @@ export default function AdminIntanShiningStar() {
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div className="flex w-full items-center gap-2 rounded-xl border border-[var(--border-color)] bg-white px-3 py-2 shadow-sm md:w-80">
           <Search className="h-4 w-4 text-[var(--text-muted)]" />
-          <input
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
-            placeholder="Cari achievement..."
-            className="min-w-0 flex-1 bg-transparent text-sm outline-none"
-          />
+          <input autoComplete="off" /* autocomplete="off" */ name="searchQuery" value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Cari achievement…" className="min-w-0 flex-1 bg-transparent text-sm focus:outline-none focus:ring-0 outline-none" />
         </div>
         <div className="flex flex-wrap gap-1.5">
           {[
@@ -249,7 +239,7 @@ export default function AdminIntanShiningStar() {
 
       <Card hoverEffect={false} padding="none" className="overflow-hidden rounded-2xl border border-[var(--border-color)] bg-white shadow-sm">
         {isLoading ? (
-          <div className="p-12"><Loading message="Memuat achievement..." /></div>
+          <div className="p-12"><Loading message="Memuat achievement…" /></div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
@@ -269,7 +259,7 @@ export default function AdminIntanShiningStar() {
                       <div className="flex min-w-72 items-center gap-3">
                         <div className="h-14 w-20 shrink-0 overflow-hidden rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)]">
                           {item.image ? (
-                            <img src={item.image} alt="" className="h-full w-full object-cover" />
+                            <img width={80} height={56} src={item.image} alt="Achievement Thumbnail" className="h-full w-full object-cover" />
                           ) : (
                             <ImageIcon className="m-auto h-full w-5 text-[var(--text-muted)]" />
                           )}
@@ -324,7 +314,7 @@ export default function AdminIntanShiningStar() {
             {modalMode === 'add' && (
               <label className="flex flex-col gap-1.5">
                 <span className="text-xs font-bold uppercase text-[var(--text-secondary)]">ID / Slug (Opsional)</span>
-                <input value={formData.id} onChange={(event) => updateField('id', event.target.value)} placeholder="first-theater-show" className={inputClass} />
+                <input autoComplete="off" /* autocomplete="off" */ name="id" value={formData.id} onChange={(event) => updateField('id', event.target.value)} placeholder="first-theater-show" className={inputClass} />
               </label>
             )}
             <label className="flex flex-col gap-1.5">
@@ -337,12 +327,12 @@ export default function AdminIntanShiningStar() {
 
           <label className="flex flex-col gap-1.5">
             <span className="text-xs font-bold uppercase text-[var(--text-secondary)]">Judul</span>
-            <input value={formData.title} onChange={(event) => updateField('title', event.target.value)} className={inputClass} required />
+            <input autoComplete="off" /* autocomplete="off" */ name="title" value={formData.title} onChange={(event) => updateField('title', event.target.value)} className={inputClass} required />
           </label>
 
           <label className="flex flex-col gap-1.5">
             <span className="text-xs font-bold uppercase text-[var(--text-secondary)]">Tanggal</span>
-            <input type="date" value={formData.sortDate} onChange={(event) => updateField('sortDate', event.target.value)} className={inputClass} required />
+            <input autoComplete="off" /* autocomplete="off" */ name="sortDate" type="date" value={formData.sortDate} onChange={(event) => updateField('sortDate', event.target.value)} className={inputClass} required />
           </label>
 
           <label className="flex flex-col gap-1.5">
@@ -354,23 +344,23 @@ export default function AdminIntanShiningStar() {
             <div className="space-y-3">
               <label className="flex flex-col gap-1.5">
                 <span className="text-xs font-bold uppercase text-[var(--text-secondary)]">URL Gambar (Opsional)</span>
-                <input value={formData.image || ''} onChange={(event) => updateField('image', event.target.value)} className={inputClass} />
+                <input autoComplete="off" /* autocomplete="off" */ name="image || ''" value={formData.image || ''} onChange={(event) => updateField('image', event.target.value)} className={inputClass} />
               </label>
               <div className="relative flex min-h-28 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[var(--border-color)] bg-[var(--bg-primary)] p-5 text-center hover:border-[var(--color-primary)]">
-                <input type="file" accept="image/*" onChange={handleFileChange} className="absolute inset-0 h-full w-full cursor-pointer opacity-0" disabled={isSubmitting || isUploading} />
+                <input name="image_file" type="file" accept="image/*" onChange={handleFileChange} className="absolute inset-0 h-full w-full cursor-pointer opacity-0" disabled={isSubmitting || isUploading} />
                 {isUploading ? <Loader2 className="h-7 w-7 animate-spin text-[var(--color-primary)]" /> : <Upload className="h-7 w-7 text-[var(--color-primary)]" />}
                 <strong className="mt-2 text-xs">{selectedFile?.name || 'Pilih gambar achievement'}</strong>
                 <span className="mt-1 text-[10px] text-[var(--text-muted)]">Otomatis resize dan dikonversi menjadi WebP.</span>
               </div>
               {isUploading && (
                 <div className="h-1.5 overflow-hidden rounded-full bg-indigo-100">
-                  <div className="h-full bg-[var(--color-primary)] transition-all" style={{ width: `${progress}%` }} />
+                  <div className="h-full bg-[var(--color-primary)] transition-colors" style={{ width: `${progress}%` }} />
                 </div>
               )}
             </div>
             <div className="overflow-hidden rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)]">
               {preview || formData.image ? (
-                <img src={preview || formData.image} alt="Preview achievement" className="h-full min-h-52 w-full object-cover" />
+                <img width={400} height={208} src={preview || formData.image} alt="Preview achievement" className="h-full min-h-52 w-full object-cover" />
               ) : (
                 <div className="flex min-h-52 flex-col items-center justify-center text-[var(--text-muted)]">
                   <ImageIcon className="h-7 w-7" /><span className="mt-2 text-xs">Preview gambar</span>
