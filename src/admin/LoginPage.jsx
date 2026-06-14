@@ -528,14 +528,14 @@ export default function LoginPage() {
           {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-xs font-bold text-slate-700 uppercase tracking-wider">Email Address</Label>
+              <Label htmlFor="email" className="text-xs font-bold text-slate-700 uppercase tracking-wider">Username</Label>
               <Input
                 id="email"
                 name="email"
-                type="email"
-                placeholder="admin@intanium.com"
+                type="text"
+                placeholder="nama_user@intanium.admin"
                 value={email}
-                autoComplete="email"
+                autoComplete="username"
                 spellCheck={false}
                 onChange={(e) => setEmail(e.target.value)}
                 onFocus={() => setIsTyping(true)}

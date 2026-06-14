@@ -43,6 +43,7 @@ export const ROUTES = {
   ADMIN_HASHTAGS: '/admin/hashtags',
   ADMIN_GAMES: '/admin/games',
   ADMIN_ESPORT: '/admin/esport',
+  ADMIN_MEMBERSHIP: '/admin/keanggotaan',
 };
 
 export const SOCIALS = {

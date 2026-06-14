@@ -4,8 +4,9 @@ import { Link } from 'react-router-dom';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
 import Loading from '../components/common/Loading';
+import ConfirmDialog from '../components/common/ConfirmDialog';
 import { ROUTES } from '../lib/constants';
-import { formatCurrency } from '../lib/helpers';
+import { formatCurrency, logAdminActivity } from '../lib/helpers';
 import { supabase } from '../lib/supabaseClient';
 import { madingService } from '../features/mading/madingService';
 import { useAdminToast } from '../components/common/useAdminToast';
@@ -44,6 +45,13 @@ export default function DashboardPage() {
 
   const [recentOrders, setRecentOrders] = useState([]);
   const [pendingMading, setPendingMading] = useState([]);
+
+  // Log & Session States
+  const [currentUserRole, setCurrentUserRole] = useState('staff');
+  const [currentUserEmail, setCurrentUserEmail] = useState('');
+  const [currentUserUsername, setCurrentUserUsername] = useState('');
+  const [activities, setActivities] = useState([]);
+  const [confirmDelete, setConfirmDelete] = useState({ isOpen: false, id: null, isAll: false });
 
   const loadDashboardData = async () => {
     try {
@@ -119,6 +127,30 @@ export default function DashboardPage() {
       // Take last 3 pending notes
       setPendingMading(pendingMadingNotes.slice(0, 3));
 
+      // 6. Fetch session & user profile
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const userEmail = session.user.email || '';
+        setCurrentUserEmail(userEmail);
+        const { data: profile } = await supabase
+          .from('admin_profiles')
+          .select('role, username')
+          .eq('id', session.user.id)
+          .single();
+        if (profile) {
+          setCurrentUserRole(profile.role);
+          setCurrentUserUsername(profile.username);
+        }
+      }
+
+      // 7. Fetch admin activity logs (limit 10)
+      const { data: logsData } = await supabase
+        .from('admin_activity_logs')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(10);
+      setActivities(logsData || []);
+
       setIsLoading(false);
     } catch (error) {
       console.error('Failed to load dashboard data:', error);
@@ -133,6 +165,9 @@ export default function DashboardPage() {
   const handleQuickApprove = async (id) => {
     setActionLoading(id);
     try {
+      const note = pendingMading.find(n => n.id === id);
+      const author = note ? note.name : 'Anonim';
+
       const res = await madingService.approveNote(id);
       if (res.success) {
         // Remove from local queue
@@ -143,6 +178,15 @@ export default function DashboardPage() {
           pendingMadingCount: Math.max(0, prev.pendingMadingCount - 1)
         }));
         notify.success('Pesan disetujui', 'Pesan mading disetujui dan kini tayang di halaman utama.');
+        await logAdminActivity(`Menyetujui komentar mading dari: ${author}`);
+        
+        // Fetch logs again to update UI
+        const { data: logsData } = await supabase
+          .from('admin_activity_logs')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(10);
+        setActivities(logsData || []);
       } else {
         notify.error('Gagal menyetujui pesan', res.error);
       }
@@ -157,6 +201,9 @@ export default function DashboardPage() {
   const handleQuickDelete = async (id) => {
     setActionLoading(id);
     try {
+      const note = pendingMading.find(n => n.id === id);
+      const author = note ? note.name : 'Anonim';
+
       const res = await madingService.deleteNote(id);
       if (res.success) {
         // Remove from local queue
@@ -168,6 +215,15 @@ export default function DashboardPage() {
           madingNotes: Math.max(0, prev.madingNotes - 1)
         }));
         notify.success('Pesan dihapus', 'Pesan mading berhasil dihapus.');
+        await logAdminActivity(`Menghapus komentar mading dari: ${author}`);
+
+        // Fetch logs again to update UI
+        const { data: logsData } = await supabase
+          .from('admin_activity_logs')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(10);
+        setActivities(logsData || []);
       } else {
         notify.error('Gagal menghapus pesan', res.error);
       }
@@ -176,6 +232,86 @@ export default function DashboardPage() {
       notify.error('Gagal menghapus pesan', err.message);
     } finally {
       setActionLoading(null);
+    }
+  };
+
+  const formatRelativeTime = (dateString) => {
+    if (!dateString) return '';
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffMs = now - date;
+    const diffSec = Math.floor(diffMs / 1000);
+    const diffMin = Math.floor(diffSec / 60);
+    const diffHour = Math.floor(diffMin / 60);
+    const diffDay = Math.floor(diffHour / 24);
+
+    if (diffSec < 60) {
+      return 'baru saja';
+    } else if (diffMin < 60) {
+      return `${diffMin} menit yang lalu`;
+    } else if (diffHour < 24) {
+      return `${diffHour} jam yang lalu`;
+    } else if (diffDay === 1) {
+      return 'kemarin';
+    } else if (diffDay < 7) {
+      return `${diffDay} hari yang lalu`;
+    } else {
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      return `${day}/${month}/${year} ${hours}:${minutes}`;
+    }
+  };
+
+  const handleDeleteActivity = (id) => {
+    setConfirmDelete({ isOpen: true, id, isAll: false });
+  };
+
+  const handleClearAllActivities = () => {
+    setConfirmDelete({ isOpen: true, id: null, isAll: true });
+  };
+
+  const handleConfirmDeleteActivity = async () => {
+    const { id, isAll } = confirmDelete;
+    setConfirmDelete({ isOpen: false, id: null, isAll: false });
+
+    if (currentUserEmail.toLowerCase() !== 'it_support@intanium.admin') {
+      notify.error('Akses Ditolak', 'Hanya IT Support yang dapat mengelola log aktivitas.');
+      return;
+    }
+
+    try {
+      if (isAll) {
+        const { error } = await supabase
+          .from('admin_activity_logs')
+          .delete()
+          .neq('id', 0);
+        if (error) throw error;
+
+        notify.success('Log Dibersihkan', 'Seluruh log aktivitas admin telah berhasil dihapus.');
+        await logAdminActivity('Membersihkan seluruh log aktivitas admin');
+      } else {
+        const { error } = await supabase
+          .from('admin_activity_logs')
+          .delete()
+          .eq('id', id);
+        if (error) throw error;
+
+        notify.success('Aktivitas Dihapus', 'Entri log aktivitas telah dihapus.');
+      }
+
+      // Reload activities
+      const { data: logsData } = await supabase
+        .from('admin_activity_logs')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(10);
+      setActivities(logsData || []);
+    } catch (err) {
+      console.error(err);
+      notify.error('Gagal menghapus log', err.message);
     }
   };
 
@@ -243,16 +379,25 @@ export default function DashboardPage() {
           <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(23,12,121,0.01)_1px,transparent_1px),linear-gradient(to_bottom,rgba(23,12,121,0.01)_1px,transparent_1px)] bg-[size:1.25rem_1.25rem] pointer-events-none" />
           <div className="absolute -right-12 -top-12 size-40 rounded-full bg-[#170C79]/5 blur-3xl pointer-events-none group-hover:scale-110 transition-transform duration-700" />
 
-          <div className="space-y-3 z-10">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#170C79]/5 border border-[#170C79]/10 rounded-lg text-[10px] font-black uppercase tracking-[0.12em] text-[#170C79]">
-              <span className="size-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
-              Sistem Aktif
-            </span>
+          <div className="space-y-3 z-10 text-left">
+            <div className="flex flex-wrap gap-2 items-center">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#170C79]/5 border border-[#170C79]/10 rounded-lg text-[10px] font-black uppercase tracking-[0.12em] text-[#170C79]">
+                <span className="size-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
+                Sistem Aktif
+              </span>
+              <span className={`inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-[0.12em] border ${
+                currentUserRole === 'super_admin' ? 'bg-indigo-50 text-indigo-700 border-indigo-100' :
+                currentUserRole === 'coordinator' ? 'bg-amber-50 text-amber-700 border-amber-100' :
+                'bg-slate-50 text-slate-700 border-slate-100'
+              }`}>
+                {currentUserRole === 'super_admin' ? 'IT Support' : currentUserRole === 'coordinator' ? 'Koordinator' : 'Staff Admin'}
+              </span>
+            </div>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight text-slate-800">
-              Selamat Datang, Super Admin!
+              Selamat Datang, {currentUserUsername || 'Admin'}!
             </h1>
             <p className="max-w-xl text-xs sm:text-sm text-slate-500 font-semibold leading-relaxed">
-              Kelola data penjualan, moderasi pesan mading penggemar, dan update jadwal kegiatan Intanium dari satu panel kendali terpadu.
+              Email: {currentUserEmail} • Kelola data penjualan, moderasi pesan mading penggemar, dan update jadwal kegiatan Intanium dari satu panel kendali terpadu.
             </p>
           </div>
         </motion.div>
@@ -499,6 +644,85 @@ export default function DashboardPage() {
 
       </div>
 
+      {/* ================= ADMIN ACTIVITY LOGS PANEL ================= */}
+      <motion.div
+        variants={itemVariants}
+        className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs flex flex-col gap-5 text-left"
+      >
+        <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+          <h4 className="text-sm font-black text-[#170C79] flex items-center gap-2">
+            <Clock className="h-4.5 w-4.5 text-[#170C79]" />
+            Aktivitas Log Admin Terbaru
+          </h4>
+          {currentUserEmail.toLowerCase() === 'it_support@intanium.admin' && activities.length > 0 && (
+            <button
+              type="button"
+              onClick={handleClearAllActivities}
+              className="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200/50 py-1.5 px-3 text-xs font-black rounded-xl transition-all duration-200 cursor-pointer active:scale-95 flex items-center gap-1"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+              Bersihkan Log
+            </button>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-1 max-h-[350px] overflow-y-auto pr-1">
+          {activities.length === 0 ? (
+            <div className="flex flex-col items-center justify-center text-center p-8 bg-slate-50/50 border border-dashed border-slate-200/60 rounded-2xl">
+              <span className="size-11 rounded-2xl bg-slate-100 text-slate-400 border border-slate-200/40 flex items-center justify-center mb-3">
+                <Clock className="w-5.5 h-5.5" />
+              </span>
+              <p className="text-xs font-bold text-slate-600">Tidak ada log aktivitas</p>
+              <p className="text-[10px] text-slate-400 mt-0.5">Semua tindakan admin tersimpan dengan bersih.</p>
+            </div>
+          ) : (
+            activities.map((log) => {
+              const isITSupport = log.admin_username.toLowerCase() === 'it_support@intanium.admin';
+              return (
+                <div
+                  key={log.id}
+                  className="flex justify-between items-center py-2.5 border-b border-slate-100/50 last:border-0 hover:bg-slate-50/30 px-2 rounded-lg transition-colors"
+                >
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
+                      isITSupport ? 'bg-indigo-50 text-indigo-600 border border-indigo-100' : 'bg-slate-100 text-slate-600'
+                    }`}>
+                      {log.admin_username.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="min-w-0 flex-1 text-left">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-xs font-black text-slate-800 truncate">{log.admin_username}</span>
+                        <span className={`inline-block text-[8px] font-black px-1.5 py-0.5 rounded ${
+                          isITSupport ? 'bg-indigo-50 text-indigo-600' : 'bg-slate-100 text-slate-500'
+                        }`}>
+                          {isITSupport ? 'IT Support' : 'Admin'}
+                        </span>
+                      </div>
+                      <p className="text-xs font-semibold text-slate-600 mt-1 break-words">{log.action}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 shrink-0 ml-4">
+                    <span className="text-[10px] text-slate-400 font-bold whitespace-nowrap">
+                      {formatRelativeTime(log.created_at)}
+                    </span>
+                    {currentUserEmail.toLowerCase() === 'it_support@intanium.admin' && (
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteActivity(log.id)}
+                        className="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 transition-colors cursor-pointer"
+                        title="Hapus log ini"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </motion.div>
+
       {/* ================= QUICK ACTION MENU SHORTS ================= */}
       <motion.div
         variants={itemVariants}
@@ -539,6 +763,20 @@ export default function DashboardPage() {
 
         </div>
       </motion.div>
+
+      {/* ================= CONFIRM DIALOG FOR LOG DELETION ================= */}
+      <ConfirmDialog
+        isOpen={confirmDelete.isOpen}
+        title={confirmDelete.isAll ? 'Bersihkan Semua Log' : 'Hapus Log Aktivitas'}
+        message={confirmDelete.isAll 
+          ? 'Apakah Anda yakin ingin menghapus seluruh log aktivitas admin? Tindakan ini tidak dapat dibatalkan.' 
+          : 'Apakah Anda yakin ingin menghapus entri log aktivitas ini?'
+        }
+        confirmText="Ya, Hapus"
+        cancelText="Batal"
+        onConfirm={handleConfirmDeleteActivity}
+        onCancel={() => setConfirmDelete({ isOpen: false, id: null, isAll: false })}
+      />
 
     </motion.div>
   );

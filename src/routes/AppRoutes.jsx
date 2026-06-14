@@ -44,11 +44,19 @@ import AdminIntanShiningStar from '../admin/intan-shining-star';
 import AdminHashtags from '../admin/hashtags';
 import AdminGames from '../admin/games';
 import AdminEsport from '../admin/esport/AdminEsportPage';
+import AdminMembershipPage from '../admin/membership/AdminMembershipPage';
+import { AdminToastProvider } from '../components/common/AdminToastProvider';
 
 // Reusable Admin Guard Route
 const AdminGuard = ({ children }) => {
   const isAuth = localStorage.getItem('isAdminAuthenticated') === 'true';
-  return isAuth ? <AdminLayout>{children}</AdminLayout> : <Navigate to={ROUTES.ADMIN_LOGIN} replace />;
+  return isAuth ? (
+    <AdminToastProvider>
+      <AdminLayout>{children}</AdminLayout>
+    </AdminToastProvider>
+  ) : (
+    <Navigate to={ROUTES.ADMIN_LOGIN} replace />
+  );
 };
 
 export default function AppRoutes() {
@@ -337,6 +345,14 @@ export default function AppRoutes() {
         element={
           <AdminGuard>
             <AdminEsport />
+          </AdminGuard>
+        }
+      />
+      <Route
+        path={ROUTES.ADMIN_MEMBERSHIP}
+        element={
+          <AdminGuard>
+            <AdminMembershipPage />
           </AdminGuard>
         }
       />
