@@ -185,13 +185,7 @@ export default function AdminSchedule() {
       <div className="flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center">
         <div className="flex items-center gap-2 px-3 py-2 bg-white border border-[var(--border-color)] rounded-xl text-sm w-full md:w-80 shadow-sm">
           <Search className="h-4 w-4 text-[var(--text-muted)]" />
-          <input 
-            type="text" 
-            placeholder="Cari jadwal..." 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="bg-transparent border-none outline-none flex-1 text-[var(--text-primary)] placeholder-[var(--text-muted)]"
-          />
+          <input autoComplete="off" /* autocomplete="off" */ name="searchQuery" type="text" placeholder="Cari jadwal…" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-transparent border-none focus:outline-none focus:ring-0 flex-1 text-[var(--text-primary)] placeholder-[var(--text-muted)]" />
         </div>
 
         {/* Platform selection filters */}
@@ -200,7 +194,7 @@ export default function AdminSchedule() {
             <button
               key={plat}
               onClick={() => setSelectedPlatform(plat)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors border ${
                 selectedPlatform === plat
                   ? 'bg-[var(--color-primary)] border-[var(--color-primary)] text-white'
                   : 'bg-white border-[var(--border-color)] text-[var(--text-secondary)] hover:bg-gray-50'
@@ -215,7 +209,7 @@ export default function AdminSchedule() {
       {/* Main Table Card */}
       <Card hoverEffect={false} className="border border-[var(--border-color)] bg-white overflow-hidden rounded-2xl shadow-sm" padding="none">
         {isLoading ? (
-          <div className="p-12"><Loading message="Memuat schedule..." /></div>
+          <div className="p-12"><Loading message="Memuat schedule…" /></div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm text-[var(--text-secondary)]">
@@ -232,11 +226,7 @@ export default function AdminSchedule() {
                 {filteredItems.map(item => (
                   <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <img 
-                        src={item.thumbnail || 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=100'} 
-                        alt={item.title} 
-                        className="w-16 h-10 object-cover rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)]" 
-                      />
+                      <img width={64} height={40} alt={item.title || 'Schedule Cover'} src={item.thumbnail || 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=100'} className="w-16 h-10 object-cover rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)]" />
                     </td>
                     <td className="px-6 py-4">
                       <div className="font-bold text-[var(--text-primary)] text-sm">{item.title}</div>
@@ -285,14 +275,14 @@ export default function AdminSchedule() {
                       <div className="flex items-center justify-end gap-2">
                         <button 
                           onClick={() => handleOpenEditModal(item)} 
-                          className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-all"
+                          className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-colors"
                           title="Ubah Jadwal"
                         >
                           <Edit className="h-4 w-4" />
                         </button>
                         <button 
                           onClick={() => handleDelete(item.id)} 
-                          className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-all"
+                          className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors"
                           title="Hapus Jadwal"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -325,40 +315,18 @@ export default function AdminSchedule() {
           {/* Title */}
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Judul Acara / Topik</label>
-            <input 
-              type="text" 
-              name="title"
-              placeholder="Misal: JKT48 13th Anniversary Theater Show"
-              value={formData.title}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
-              required
-            />
+            <input autoComplete="off" /* autocomplete="off" */ type="text" name="title" placeholder="Misal: JKT48 13th Anniversary Theater Show" value={formData.title} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" required />
           </div>
 
           {/* Time & Duration */}
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Waktu Acara</label>
-              <input 
-                type="datetime-local" 
-                name="time"
-                value={formData.time}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
-                required
-              />
+              <input autoComplete="off" /* autocomplete="off" */ type="datetime-local" name="time" value={formData.time} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" required />
             </div>
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Estimasi Durasi</label>
-              <input 
-                type="text" 
-                name="duration"
-                placeholder="Misal: 2 Jam, 1.5 Jam"
-                value={formData.duration}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
-              />
+              <input autoComplete="off" /* autocomplete="off" */ type="text" name="duration" placeholder="Misal: 2 Jam, 1.5 Jam" value={formData.duration} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" />
             </div>
           </div>
 
@@ -370,7 +338,7 @@ export default function AdminSchedule() {
                 name="platform"
                 value={formData.platform}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
+                className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-colors"
               >
                 {['Show Theater', 'Video Call', 'Birthday', 'YouTube', 'IDN Live', 'Twitch', 'TikTok', 'Instagram', 'Discord', 'Other Events'].map(plat => (
                   <option key={plat} value={plat}>{plat}</option>
@@ -379,14 +347,7 @@ export default function AdminSchedule() {
             </div>
             <div className="flex flex-col gap-1.5 sm:col-span-2">
               <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Link Acara / Website (URL)</label>
-              <input 
-                type="text" 
-                name="link"
-                placeholder="Misal: https://jkt48.com/... atau link lainnya"
-                value={formData.link}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
-              />
+              <input autoComplete="off" /* autocomplete="off" */ type="text" name="link" placeholder="Misal: https://jkt48.com/... atau link lainnya" value={formData.link} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" />
               <p className="text-[10px] text-[var(--text-muted)]">Bisa berupa link pembelian tiket, link web JKT48, detail show, dll.</p>
             </div>
           </div>
@@ -394,28 +355,14 @@ export default function AdminSchedule() {
           {/* Thumbnail URL */}
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">URL Gambar Mini (Thumbnail)</label>
-            <input 
-              type="text" 
-              name="thumbnail"
-              placeholder="Masukkan URL banner/thumbnail..."
-              value={formData.thumbnail}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
-            />
+            <input autoComplete="off" /* autocomplete="off" */ type="text" name="thumbnail" placeholder="Masukkan URL banner/thumbnail…" value={formData.thumbnail} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" />
             <p className="text-[10px] text-[var(--text-muted)]">Kosongkan jika ingin menggunakan gambar default.</p>
           </div>
 
           {/* Description / Location */}
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Lokasi / Detail Tambahan</label>
-            <textarea 
-              name="description"
-              rows="3"
-              placeholder="Contoh lokasi: JKT48 Theater, fX Sudirman. Atau detail tambahan acara."
-              value={formData.description}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all resize-none"
-            />
+            <textarea name="description" rows="3" placeholder="Contoh lokasi: JKT48 Theater, fX Sudirman. Atau detail tambahan acara." value={formData.description} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors resize-none" />
           </div>
 
           {/* Submit Action */}
@@ -436,7 +383,7 @@ export default function AdminSchedule() {
               disabled={isSubmitting}
               className="cursor-pointer"
             >
-              {isSubmitting ? 'Menyimpan...' : 'Simpan Schedule'}
+              {isSubmitting ? 'Menyimpan…' : 'Simpan Schedule'}
             </Button>
           </div>
         </form>

@@ -666,13 +666,7 @@ export default function AdminOrdersPage() {
         {/* Search */}
         <div className="relative min-w-[200px] flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
-          <input
-            type="text"
-            placeholder="Cari invoice# / nama / phone..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="w-full rounded-xl border border-slate-200 bg-white py-1.5 pl-9 pr-3 text-xs placeholder-slate-400 focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]/10 font-semibold"
-          />
+          <input autoComplete="off" /* autocomplete="off" */ name="query" type="text" placeholder="Cari invoice# / nama / phone…" value={query} onChange={(e) => setQuery(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white py-1.5 pl-9 pr-3 text-xs placeholder-slate-400 focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]/10 font-semibold" />
         </div>
 
         {/* Status Filter */}
@@ -690,33 +684,13 @@ export default function AdminOrdersPage() {
         </select>
 
         {/* Date From */}
-        <input
-          type="date"
-          value={dateFrom}
-          onChange={(e) => setDateFrom(e.target.value)}
-          max={dateTo || undefined}
-          className="rounded-xl border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-bold text-slate-700 focus:outline-none focus:border-[var(--color-primary)]"
-        />
+        <input autoComplete="off" /* autocomplete="off" */ name="dateFrom" type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} max={dateTo || undefined} className="rounded-xl border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-bold text-slate-700 focus:outline-none focus:border-[var(--color-primary)]" />
         <span className="text-xs text-slate-400 font-bold">–</span>
         {/* Date To */}
-        <input
-          type="date"
-          value={dateTo}
-          onChange={(e) => setDateTo(e.target.value)}
-          min={dateFrom || undefined}
-          max={toDateInput(new Date())}
-          className="rounded-xl border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-bold text-slate-700 focus:outline-none focus:border-[var(--color-primary)]"
-        />
+        <input autoComplete="off" /* autocomplete="off" */ name="dateTo" type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} min={dateFrom || undefined} max={toDateInput(new Date())} className="rounded-xl border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-bold text-slate-700 focus:outline-none focus:border-[var(--color-primary)]" />
 
         {/* Minimum Total */}
-        <input
-          type="number"
-          min="0"
-          placeholder="Min nominal..."
-          value={minimumTotal}
-          onChange={(e) => setMinimumTotal(e.target.value)}
-          className="w-32 rounded-xl border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 placeholder-slate-400 focus:outline-none focus:border-[var(--color-primary)]"
-        />
+        <input autoComplete="off" /* autocomplete="off" */ name="minimumTotal" type="number" min="0" placeholder="Min nominal…" value={minimumTotal} onChange={(e) => setMinimumTotal(e.target.value)} className="w-32 rounded-xl border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 placeholder-slate-400 focus:outline-none focus:border-[var(--color-primary)]" />
 
         {/* Reset Filter Button */}
         {(query || statusFilter !== 'all' || dateFrom || dateTo || minimumTotal) ? (
@@ -742,13 +716,7 @@ export default function AdminOrdersPage() {
             <span className="text-xs font-bold text-blue-700">
               <span className="font-black text-blue-800">{selectedOrderIds.length}</span> order dipilih
             </span>
-            <input
-              type="text"
-              value={statusAuditNote}
-              onChange={(e) => setStatusAuditNote(e.target.value)}
-              placeholder="Catatan perubahan status (opsional)..."
-              className="min-w-[200px] flex-1 max-w-md rounded-xl border border-blue-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 placeholder-slate-400 focus:outline-none"
-            />
+            <input autoComplete="off" /* autocomplete="off" */ name="statusAuditNote" type="text" value={statusAuditNote} onChange={(e) => setStatusAuditNote(e.target.value)} placeholder="Catatan perubahan status (opsional)…" className="min-w-[200px] flex-1 max-w-md rounded-xl border border-blue-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 placeholder-slate-400 focus:outline-none" />
             <select
               value={bulkStatus}
               onChange={(e) => setBulkStatus(e.target.value)}
@@ -766,7 +734,7 @@ export default function AdminOrdersPage() {
               disabled={bulkSaving}
               className="rounded-xl bg-[var(--color-primary)] px-4 py-1.5 text-xs font-bold text-white transition hover:bg-indigo-900 disabled:opacity-60 cursor-pointer shadow-xs"
             >
-              {bulkSaving ? 'Memproses...' : 'Terapkan'}
+              {bulkSaving ? 'Memproses…' : 'Terapkan'}
             </button>
             <button
               type="button"
@@ -821,12 +789,7 @@ export default function AdminOrdersPage() {
               <thead className="text-[10px] uppercase bg-[var(--bg-primary)]/60 text-slate-500 font-bold border-b border-[var(--border-color)]/60 select-none">
                 <tr>
                   <th className="w-[50px] px-6 py-4">
-                    <input
-                      type="checkbox"
-                      checked={allVisibleSelected}
-                      onChange={toggleSelectAllVisible}
-                      className="rounded border-slate-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)]/20 cursor-pointer"
-                    />
+                    <input name="file_input" type="checkbox" checked={allVisibleSelected} onChange={toggleSelectAllVisible} className="rounded border-slate-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)]/20 cursor-pointer" />
                   </th>
                   <th className="px-4 py-4">Invoice & Update</th>
                   <th className="px-4 py-4">Penerima</th>
@@ -856,12 +819,7 @@ export default function AdminOrdersPage() {
                       }`}
                     >
                       <td className="px-6 py-4">
-                        <input
-                          type="checkbox"
-                          checked={selectedOrderIds.includes(order.id)}
-                          onChange={() => toggleSelectOne(order.id)}
-                          className="rounded border-slate-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)]/20 cursor-pointer"
-                        />
+                        <input name="file_input" type="checkbox" checked={selectedOrderIds.includes(order.id)} onChange={() => toggleSelectOne(order.id)} className="rounded border-slate-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)]/20 cursor-pointer" />
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap">
                         <p className="font-mono text-xs font-bold text-slate-800">
@@ -969,7 +927,7 @@ export default function AdminOrdersPage() {
         <div className="fixed inset-0 z-[120] flex justify-end bg-black/40 backdrop-blur-xs select-text">
           <button
             type="button"
-            className="h-full flex-1 cursor-default bg-transparent border-none outline-none"
+            className="h-full flex-1 cursor-default bg-transparent border-none focus:outline-none focus:ring-0 outline-none"
             aria-label="Tutup Detail"
             onClick={() => setDetailOpen(false)}
           />
@@ -981,7 +939,7 @@ export default function AdminOrdersPage() {
                   Rincian Transaksi
                 </p>
                 <h3 className="mt-0.5 font-mono text-base font-black">
-                  {detailData?.order.order_number ?? 'Memuat...'}
+                  {detailData?.order.order_number ?? 'Memuat…'}
                 </h3>
               </div>
               <button
@@ -1072,13 +1030,7 @@ export default function AdminOrdersPage() {
                         <div className="flex gap-2">
                           <div className="relative flex-1">
                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">Rp</span>
-                            <input
-                              type="number"
-                              value={correctedShippingCost}
-                              onChange={(e) => setCorrectedShippingCost(e.target.value)}
-                              className="w-full rounded-xl border border-slate-200 bg-white pl-8 pr-3 py-2 text-xs font-semibold focus:border-[var(--color-primary)] focus:outline-none"
-                              placeholder="Contoh: 15000"
-                            />
+                            <input autoComplete="off" /* autocomplete="off" */ name="correctedShippingCost" type="number" value={correctedShippingCost} onChange={(e) => setCorrectedShippingCost(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white pl-8 pr-3 py-2 text-xs font-semibold focus:border-[var(--color-primary)] focus:outline-none" placeholder="Contoh: 15000" />
                           </div>
                           <button
                             type="button"
@@ -1086,7 +1038,7 @@ export default function AdminOrdersPage() {
                             disabled={shippingCostSaving}
                             className="rounded-xl bg-[var(--color-primary)] hover:bg-indigo-900 px-4 py-2 text-xs font-bold text-white transition disabled:opacity-50 cursor-pointer shadow-xs"
                           >
-                            {shippingCostSaving ? 'Memproses...' : 'Perbarui Ongkir'}
+                            {shippingCostSaving ? 'Memproses…' : 'Perbarui Ongkir'}
                           </button>
                         </div>
                       </div>
@@ -1101,34 +1053,19 @@ export default function AdminOrdersPage() {
                           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                             Nomor Resi Pengiriman
                           </span>
-                          <input
-                            value={trackingNumber}
-                            onChange={(event) => setTrackingNumber(event.target.value)}
-                            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold focus:border-[var(--color-primary)] focus:outline-none"
-                            placeholder="Contoh: JNT123456789"
-                          />
+                          <input autoComplete="off" /* autocomplete="off" */ name="trackingNumber" value={trackingNumber} onChange={(event) => setTrackingNumber(event.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold focus:border-[var(--color-primary)] focus:outline-none" placeholder="Contoh: JNT123456789" />
                         </label>
                         <label className="space-y-1 block">
                           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                             Tautan Lacak Paket
                           </span>
-                          <input
-                            value={trackingUrl}
-                            onChange={(event) => setTrackingUrl(event.target.value)}
-                            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold focus:border-[var(--color-primary)] focus:outline-none"
-                            placeholder="https://cekresi.com/..."
-                          />
+                          <input autoComplete="off" /* autocomplete="off" */ name="trackingUrl" value={trackingUrl} onChange={(event) => setTrackingUrl(event.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold focus:border-[var(--color-primary)] focus:outline-none" placeholder="https://cekresi.com/..." />
                         </label>
                       </div>
 
                       {detailData.order.status === 'paid' && (
                         <label className="flex items-center gap-2 text-xs font-bold text-slate-600 select-none cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={markShipped}
-                            onChange={(event) => setMarkShipped(event.target.checked)}
-                            className="rounded border-slate-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)]/10"
-                          />
+                          <input name="file_input" type="checkbox" checked={markShipped} onChange={(event) => setMarkShipped(event.target.checked)} className="rounded border-slate-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)]/10" />
                           Tandai sebagai dikirim (Shipped) otomatis setelah resi disimpan
                         </label>
                       )}
@@ -1146,7 +1083,7 @@ export default function AdminOrdersPage() {
                           disabled={fulfillmentSaving}
                           className="rounded-xl bg-slate-900 hover:bg-slate-800 px-4 py-2 text-xs font-bold text-white transition disabled:opacity-50 cursor-pointer shadow-xs"
                         >
-                          {fulfillmentSaving ? 'Menyimpan...' : 'Simpan Info Resi'}
+                          {fulfillmentSaving ? 'Menyimpan…' : 'Simpan Info Resi'}
                         </button>
                       </div>
                     </div>
@@ -1313,7 +1250,7 @@ function OrderRowMenu({ onDetail, onDelete, isSaving, isDeleting }) {
               className="flex w-full items-center gap-2 px-3.5 py-2.5 hover:bg-red-50 text-red-600 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer text-left border-t border-slate-100"
             >
               <Trash2 className="h-3.5 w-3.5 text-red-500" />
-              {isDeleting ? 'Hapus...' : 'Hapus Order'}
+              {isDeleting ? 'Hapus…' : 'Hapus Order'}
             </button>
           </div>
         </>

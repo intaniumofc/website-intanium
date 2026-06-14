@@ -16,9 +16,10 @@ import {
   ShoppingBag,
   CreditCard,
   Gamepad2,
+  Trophy,
   ChevronDown
 } from "lucide-react";
-import logoNobg from '../../assets/logos/logo-nobg.png';
+import logoNobg from '../../assets/logos/logo-nobg.webp';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -35,6 +36,7 @@ export default function Navbar() {
     { name: 'Galeri', path: ROUTES.GALLERY },
     { name: '#dengerINTAN', path: ROUTES.DENGER_INTAN },
     { name: 'Game', path: ROUTES.GAMES },
+    { name: 'Esport', path: ROUTES.ESPORT },
   ];
 
   // Nested navigation schemas for custom hover dropdowns on desktop viewports
@@ -68,6 +70,12 @@ export default function Navbar() {
               description: "Asal usul, filosofi, pedoman, dan cara gabung Discord server",
               icon: Globe,
               link: ROUTES.ABOUT_INTANIUM,
+            },
+            {
+              label: "Intanium Esport",
+              description: "Hub divisi olahraga elektronik resmi komunitas Intanium",
+              icon: Trophy,
+              link: ROUTES.ESPORT,
             },
           ],
         },

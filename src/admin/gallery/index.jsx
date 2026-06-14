@@ -250,20 +250,14 @@ export default function AdminGallery() {
       <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
         <div className="flex items-center gap-2 px-3 py-2 bg-white border border-[var(--border-color)] rounded-xl text-sm w-full sm:w-80 shadow-sm">
           <Search className="h-4 w-4 text-[var(--text-muted)]" />
-          <input
-            type="text"
-            placeholder="Cari foto galeri..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="bg-transparent border-none outline-none flex-1 text-[var(--text-primary)] placeholder-[var(--text-muted)]"
-          />
+          <input autoComplete="off" /* autocomplete="off" */ name="searchQuery" type="text" placeholder="Cari foto galeri…" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-transparent border-none focus:outline-none focus:ring-0 flex-1 text-[var(--text-primary)] placeholder-[var(--text-muted)]" />
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold text-[var(--text-secondary)]">Tipe Tampilan:</span>
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="px-3 py-2 bg-white border border-[var(--border-color)] rounded-xl text-xs font-semibold text-[var(--text-primary)] outline-none focus:border-[var(--color-primary)] transition-all shadow-sm"
+            className="px-3 py-2 bg-white border border-[var(--border-color)] rounded-xl text-xs font-semibold text-[var(--text-primary)] outline-none focus:border-[var(--color-primary)] transition-colors shadow-sm"
           >
             <option value="all">Semua Foto ({items.length})</option>
             <option value="gallery">Galeri Utama ({items.filter(i => (i.display_type || 'gallery') === 'gallery' || i.display_type === 'both').length})</option>
@@ -276,7 +270,7 @@ export default function AdminGallery() {
       {/* Main Table Card */}
       <Card hoverEffect={false} className="border border-[var(--border-color)] bg-white overflow-hidden rounded-2xl shadow-sm" padding="none">
         {isLoading ? (
-          <div className="p-12"><Loading message="Memuat album galeri..." /></div>
+          <div className="p-12"><Loading message="Memuat album galeri…" /></div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm text-[var(--text-secondary)]">
@@ -293,11 +287,7 @@ export default function AdminGallery() {
                 {filteredItems.map(item => (
                   <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <img
-                        src={item.url || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100'}
-                        alt={item.title}
-                        className="w-16 h-16 object-cover rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] shadow-sm"
-                      />
+                      <img width={64} height={64} alt={item.title || 'Gallery Cover'} src={item.url || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100'} className="w-16 h-16 object-cover rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] shadow-sm" />
                     </td>
                     <td className="px-6 py-4 font-bold text-[var(--text-primary)] text-sm">
                       {item.title}
@@ -324,14 +314,14 @@ export default function AdminGallery() {
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => handleOpenEditModal(item)}
-                          className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-all"
+                          className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-colors"
                           title="Ubah Foto"
                         >
                           <Edit className="h-4 w-4" />
                         </button>
                         <button
                           onClick={() => handleDelete(item.id)}
-                          className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-all"
+                          className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors"
                           title="Hapus Foto"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -364,15 +354,7 @@ export default function AdminGallery() {
           {/* Title */}
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Judul Foto</label>
-            <input
-              type="text"
-              name="title"
-              placeholder="Masukkan judul atau caption singkat foto..."
-              value={formData.title}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
-              required
-            />
+            <input autoComplete="off" /* autocomplete="off" */ type="text" name="title" placeholder="Masukkan judul atau caption singkat foto…" value={formData.title} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" required />
           </div>
 
           {/* Display Type */}
@@ -382,7 +364,7 @@ export default function AdminGallery() {
               name="display_type"
               value={formData.display_type}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all font-semibold text-xs text-[var(--text-primary)]"
+              className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-colors font-semibold text-xs text-[var(--text-primary)]"
             >
               <option value="gallery">Halaman Galeri Utama (Public Gallery Page)</option>
               <option value="showcase">Highlight Showcase (Homepage & Tentang Intanium)</option>
@@ -393,14 +375,8 @@ export default function AdminGallery() {
           {/* File Upload Zone */}
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Unggah Berkas Gambar</label>
-            <div className="relative border-2 border-dashed border-[var(--border-color)] rounded-2xl p-6 bg-[var(--bg-primary)] hover:border-[var(--color-primary)] transition-all flex flex-col items-center justify-center text-center group cursor-pointer">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                disabled={isSubmitting || isFileUploading || isConverting}
-              />
+            <div className="relative border-2 border-dashed border-[var(--border-color)] rounded-2xl p-6 bg-[var(--bg-primary)] hover:border-[var(--color-primary)] transition-colors flex flex-col items-center justify-center text-center group cursor-pointer">
+              <input name="file_input" type="file" accept="image/*" onChange={handleFileChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" disabled={isSubmitting || isFileUploading || isConverting} />
               <Upload className="h-8 w-8 text-[var(--text-muted)] group-hover:text-[var(--color-primary)] transition-colors mb-2" />
               <span className="font-extrabold text-xs text-[var(--text-secondary)]">
                 {selectedFile ? selectedFile.name : 'Pilih atau Seret Foto ke Sini'}
@@ -417,12 +393,12 @@ export default function AdminGallery() {
               <div className="flex items-center gap-2 text-xs font-bold text-blue-700">
                 <Loader className="h-4 w-4 animate-spin text-blue-600" />
                 <span>
-                  {isConverting ? 'Mengompres gambar ke format WebP (Canvas)...' : 'Mengunggah gambar ke Supabase Storage...'}
+                  {isConverting ? 'Mengompres gambar ke format WebP (Canvas)…' : 'Mengunggah gambar ke Supabase Storage…'}
                 </span>
               </div>
               {!isConverting && (
                 <div className="w-full bg-blue-200/50 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-blue-600 h-full transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
+                  <div className="bg-blue-600 h-full transition-[width] duration-300" style={{ width: `${uploadProgress}%` }} />
                 </div>
               )}
             </div>
@@ -431,36 +407,21 @@ export default function AdminGallery() {
           {/* Image Preview */}
           {filePreview && (
             <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-[var(--border-color)] bg-[var(--bg-primary)] mt-2">
-              <img src={filePreview} alt="Preview" className="w-full h-full object-contain" />
+              <img width={400} height={300} src={filePreview} alt="Preview" className="w-full h-full object-contain" />
             </div>
           )}
 
           {/* Fallback URL Input (Optional) */}
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Atau Gunakan Direct URL (Opsional)</label>
-            <input
-              type="text"
-              name="url"
-              placeholder="https://images.unsplash.com/photo-..."
-              value={formData.url}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
-              disabled={isSubmitting || isFileUploading || isConverting}
-            />
+            <input autoComplete="off" /* autocomplete="off" */ type="text" name="url" placeholder="https://images.unsplash.com/photo-..." value={formData.url} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" disabled={isSubmitting || isFileUploading || isConverting} />
             <p className="text-[10px] text-[var(--text-muted)]">Kosongkan jika Anda sudah memilih berkas foto di atas.</p>
           </div>
 
           {/* Description */}
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Deskripsi Tambahan</label>
-            <textarea
-              name="description"
-              rows="3"
-              placeholder="Keterangan pendukung untuk foto ini..."
-              value={formData.description}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all resize-none"
-            />
+            <textarea name="description" rows="3" placeholder="Keterangan pendukung untuk foto ini…" value={formData.description} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors resize-none" />
           </div>
 
           {/* Submit Action */}
@@ -481,7 +442,7 @@ export default function AdminGallery() {
               disabled={isSubmitting || isFileUploading || isConverting}
               className="cursor-pointer"
             >
-              {isSubmitting || isFileUploading || isConverting ? 'Memproses...' : 'Simpan Foto'}
+              {isSubmitting || isFileUploading || isConverting ? 'Memproses…' : 'Simpan Foto'}
             </Button>
           </div>
         </form>

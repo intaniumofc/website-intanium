@@ -19,13 +19,13 @@ import {
   Search,
   ExternalLink,
   Headphones,
-  ClipboardList,
   User,
   Hash,
-  Gamepad2
+  Gamepad2,
+  Trophy
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import logoNobg from '../assets/logos/logo-nobg.png';
+import logoNobg from '../assets/logos/logo-nobg.webp';
 import { AdminToastProvider } from '../components/common/AdminToastProvider';
 
 
@@ -88,7 +88,6 @@ export default function AdminLayout({ children }) {
     checkAuth();
   }, [navigate]);
 
-
   const handleLogout = async () => {
     await supabase.auth.signOut();
     localStorage.removeItem('isAdminAuthenticated');
@@ -127,8 +126,8 @@ export default function AdminLayout({ children }) {
     { id: 'mading', name: 'Moderasi Mading', href: ROUTES.ADMIN_MADING, icon: Pin },
     { id: 'hashtags', name: 'Kelola Tagar', href: ROUTES.ADMIN_HASHTAGS, icon: Hash },
     { id: 'games', name: 'Kelola Game', href: ROUTES.ADMIN_GAMES, icon: Gamepad2 },
+    { id: 'esport', name: 'Kelola Esport', href: ROUTES.ADMIN_ESPORT, icon: Trophy },
   ];
-
 
   // Filter links based on sidebar search input
   const filteredLinks = adminLinks.filter(link => {
@@ -142,12 +141,22 @@ export default function AdminLayout({ children }) {
 
   return (
     <AdminToastProvider>
-    <div className="min-h-screen text-[var(--text-primary)] flex overflow-x-hidden">
+    <div 
+      className="min-h-screen text-[var(--text-primary)] flex overflow-x-hidden"
+      style={{
+        backgroundColor: 'var(--bg-primary)',
+        backgroundImage: 'url("/bg-web.webp")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed'
+      }}
+    >
       
       {/* ================= MOBILE DRAWER OVERLAY ================= */}
       {isMobileOpen && (
         <div 
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 md:hidden transition-opacity duration-300" 
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 md:hidden transition-opacity duration-350" 
           onClick={() => setIsMobileOpen(false)} 
         />
       )}
@@ -156,81 +165,54 @@ export default function AdminLayout({ children }) {
       <aside
         data-lenis-prevent
         className={`
-          fixed top-0 left-0 h-full bg-[#170C79] border-r border-white/10 z-50 transition-all duration-300 ease-in-out flex flex-col
+          fixed top-0 left-0 h-full bg-white border-r border-slate-200/80 z-50 flex flex-col
+          transition-[width,transform] duration-300 ease-in-out
           ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}
-          ${isCollapsed ? "w-[112px]" : "w-[312px]"}
           md:translate-x-0
         `}
+        style={{
+          width: isCollapsed ? '100px' : '280px'
+        }}
       >
         {/* Header with logo and collapse button */}
-        <div className="flex items-center justify-between p-5 border-b border-white/10 bg-black/10 h-20 shrink-0">
-          {!isCollapsed && (
-            <div className="flex items-center space-x-2.5 overflow-hidden">
-              <img
-                src={logoNobg}
-                alt="Intanium Logo"
-                className="w-10 h-10 object-contain shrink-0"
-              />
-              <div className="flex flex-col text-left">
-                <motion.span
-                  className="font-extrabold text-sm tracking-tight whitespace-nowrap bg-[linear-gradient(110deg,#ffffff,35%,#a5b4fc,50%,#ffffff,75%,#ffffff)] bg-[length:200%_100%] bg-clip-text text-transparent select-none"
-                  initial={{ backgroundPosition: "200% 0" }}
-                  animate={{ backgroundPosition: "-200% 0" }}
-                  transition={{
-                    repeat: Infinity,
-                    duration: 2.5,
-                    ease: "linear",
-                  }}
-                >
-                  Intanium Portal
-                </motion.span>
-                <span className="text-[10px] text-white/50 font-bold tracking-wider uppercase">Super Admin</span>
-              </div>
+        <div className="flex items-center justify-between p-5 border-b border-slate-100 bg-slate-50/50 h-20 shrink-0">
+          <div className="flex items-center space-x-2.5 overflow-hidden w-full">
+            <img width={40} height={40} alt="Logo Intanium" src={logoNobg} className={`w-10 h-10 object-contain shrink-0 transition-all duration-300 ${isCollapsed ? "mx-auto" : ""}`} />
+            <div className={`flex flex-col text-left transition-all duration-300 ${isCollapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"}`}>
+              <span className="font-extrabold text-sm tracking-tight text-slate-800 select-none whitespace-nowrap">
+                Intanium Admin
+              </span>
+              <span className="text-[10px] text-slate-400 font-bold tracking-wider uppercase whitespace-nowrap">Super Admin</span>
             </div>
-          )}
-
-          {isCollapsed && (
-            <img
-              src={logoNobg}
-              alt="Intanium Logo"
-              className="w-10 h-10 object-contain mx-auto shrink-0"
-            />
-          )}
+          </div>
 
           {/* Desktop collapse button */}
           <button
+            type="button"
             onClick={toggleCollapse}
-            className="hidden md:flex p-1.5 rounded-lg hover:bg-white/10 transition-all duration-200 border border-white/10 cursor-pointer text-white/70 hover:text-white"
+            className="hidden md:flex p-1.5 rounded-lg hover:bg-slate-100 transition-colors duration-200 border border-slate-200 cursor-pointer text-slate-500 hover:text-slate-800 shrink-0"
             aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             {isCollapsed ? (
-              <ChevronRight className="h-4 w-4 text-white/70" />
+              <ChevronRight className="h-4 w-4" />
             ) : (
-              <ChevronLeft className="h-4 w-4 text-white/70" />
+              <ChevronLeft className="h-4 w-4" />
             )}
           </button>
         </div>
 
         {/* Search Bar */}
-        {!isCollapsed && (
-          <div className="px-4 py-3 shrink-0">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-white/50" />
-              <input
-                type="text"
-                placeholder="Search menu..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 bg-white/10 border border-white/10 rounded-lg text-xs text-white placeholder-white/40 focus:outline-none focus:ring-1 focus:ring-white/25 focus:border-transparent transition-all duration-200"
-              />
-            </div>
+        <div className={`px-4 py-3 shrink-0 border-b border-slate-50 transition-all duration-300 overflow-hidden ${isCollapsed ? "opacity-0 h-0 py-0 border-b-0" : "opacity-100"}`}>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+            <input type="text" name="search-menu" autoComplete="off" placeholder="Search menu…" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus-visible:outline-none focus-visible:border-[#170C79] focus-visible:ring-2 focus-visible:ring-[#170C79]/15 transition-colors duration-200" />
           </div>
-        )}
+        </div>
 
         {/* Navigation List */}
         <nav
           data-lenis-prevent
-          className={`flex-1 px-3 py-3 admin-scrollbar ${isCollapsed ? "overflow-visible" : "overflow-y-auto overflow-x-hidden"}`}
+          className={`flex-1 px-3 py-4 admin-scrollbar ${isCollapsed ? "overflow-visible" : "overflow-y-auto overflow-x-hidden"}`}
         >
           <ul className="space-y-1">
             {filteredLinks.map((item) => {
@@ -248,18 +230,18 @@ export default function AdminLayout({ children }) {
                           type="button"
                           onClick={() => toggleDropdown(item.id)}
                           className={`
-                            w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-left transition-all duration-200 group cursor-pointer
+                            w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-left transition-colors duration-200 group cursor-pointer
                             ${isSubActive
-                              ? "bg-white/10 text-white font-bold"
-                              : "text-white/70 hover:bg-white/5 hover:text-white font-medium"
+                              ? "bg-[#170C79]/8 text-[#170C79] font-bold border-l-4 border-[#170C79]"
+                              : "text-slate-500 hover:bg-slate-50 hover:text-slate-800 font-medium"
                             }
                           `}
                         >
                           <div className="flex items-center justify-center min-w-[24px]">
                             <Icon
                               className={`
-                                h-5 w-5 flex-shrink-0 transition-transform group-hover:scale-105
-                                ${isSubActive ? "text-white" : "text-white/50 group-hover:text-white/80"}
+                                h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-105
+                                ${isSubActive ? "text-[#170C79]" : "text-slate-400 group-hover:text-slate-600"}
                               `}
                             />
                           </div>
@@ -267,15 +249,15 @@ export default function AdminLayout({ children }) {
                           <div className="flex items-center justify-between w-full min-w-0">
                             <span className="text-xs truncate">{item.name}</span>
                             <ChevronDown
-                              className={`h-3.5 w-3.5 transition-transform text-white/40 group-hover:text-white/70 ${
-                                isOpen ? "rotate-180 text-white" : ""
+                              className={`h-3.5 w-3.5 transition-transform duration-200 text-slate-400 group-hover:text-slate-600 ${
+                                isOpen ? "rotate-180 text-[#170C79]" : ""
                               }`}
                             />
                           </div>
                         </button>
 
                         {isOpen && (
-                          <ul className="mt-1 ml-6 pl-2.5 border-l border-white/10 space-y-1 animate-fade-in select-none">
+                          <ul className="mt-1 ml-6 pl-2.5 border-l border-slate-200 space-y-1 select-none">
                             {item.subLinks.map((sub) => {
                               const isSubItemActive = isSubLinkActive(sub.href);
                               return (
@@ -284,10 +266,10 @@ export default function AdminLayout({ children }) {
                                     to={sub.href}
                                     onClick={() => setIsMobileOpen(false)}
                                     className={`
-                                      block px-3.5 py-2 text-[11px] rounded-lg transition-all duration-150
+                                      block px-3.5 py-2 text-[11px] rounded-lg transition-colors duration-150
                                       ${isSubItemActive
-                                        ? "bg-white/15 text-white font-extrabold shadow-xs"
-                                        : "text-white/60 hover:text-white hover:bg-white/5 font-bold"
+                                        ? "bg-[#170C79]/8 text-[#170C79] font-extrabold border-l-2 border-[#170C79]"
+                                        : "text-slate-500 hover:text-slate-800 hover:bg-slate-50 font-bold"
                                       }
                                     `}
                                   >
@@ -305,17 +287,17 @@ export default function AdminLayout({ children }) {
                         <button
                           type="button"
                           className={`
-                            w-full flex items-center justify-center px-3.5 py-3 rounded-xl transition-all duration-200
-                            ${isSubActive ? "bg-white/15 text-white shadow-sm" : "text-white/70 hover:bg-white/5 hover:text-white"}
+                            w-full flex items-center justify-center px-3.5 py-3 rounded-xl transition-colors duration-200
+                            ${isSubActive ? "bg-[#170C79]/8 text-[#170C79]" : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"}
                           `}
                         >
                           <div className="flex items-center justify-center min-w-[24px]">
-                            <Icon className={`h-5 w-5 flex-shrink-0 transition-transform group-hover:scale-105 ${isSubActive ? "text-white" : "text-white/50"}`} />
+                            <Icon className={`h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-105 ${isSubActive ? "text-[#170C79]" : "text-slate-400"}`} />
                           </div>
                         </button>
 
-                        <div className="absolute left-full ml-3 bg-slate-800 text-white text-[10px] rounded-xl opacity-0 invisible group-hover/popover:opacity-100 group-hover/popover:visible transition-all duration-200 z-50 shadow-lg border border-white/5 py-1.5 min-w-[140px] text-left">
-                          <p className="px-3.5 py-1.5 text-[9px] font-black uppercase text-white/50 tracking-wider border-b border-white/5 mb-1">{item.name}</p>
+                        <div className="absolute left-full ml-3 bg-white text-slate-800 text-[10px] rounded-xl opacity-0 invisible group-hover/popover:opacity-100 group-hover/popover:visible transition-colors duration-200 z-50 shadow-md border border-slate-200 py-1.5 min-w-[140px] text-left">
+                          <p className="px-3.5 py-1.5 text-[9px] font-black uppercase text-slate-400 tracking-wider border-b border-slate-100 mb-1">{item.name}</p>
                           {item.subLinks.map((sub) => {
                             const isSubItemActive = isSubLinkActive(sub.href);
                             return (
@@ -323,15 +305,15 @@ export default function AdminLayout({ children }) {
                                 key={sub.name}
                                 to={sub.href}
                                 onClick={() => setIsMobileOpen(false)}
-                                className={`block px-3.5 py-2 hover:bg-white/10 transition-colors font-bold ${
-                                  isSubItemActive ? "text-white bg-white/5" : "text-white/70"
+                                className={`block px-3.5 py-2 hover:bg-slate-50 transition-colors font-bold ${
+                                  isSubItemActive ? "text-[#170C79] bg-[#170C79]/5" : "text-slate-600"
                                 }`}
                               >
                                 {sub.name}
                               </Link>
                             );
                           })}
-                          <div className="absolute left-0 top-6 transform -translate-y-1/2 -translate-x-1 w-1.5 h-1.5 bg-slate-800 rotate-45" />
+                          <div className="absolute left-0 top-6 transform -translate-y-1/2 -translate-x-1 w-1.5 h-1.5 bg-white border-l border-b border-slate-200 rotate-45" />
                         </div>
                       </div>
                     )}
@@ -347,10 +329,10 @@ export default function AdminLayout({ children }) {
                     to={item.href}
                     onClick={() => setIsMobileOpen(false)}
                     className={`
-                      w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-left transition-all duration-200 group
+                      w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-left transition-colors duration-200 group
                       ${isActive
-                        ? "bg-white/15 text-white font-bold shadow-sm"
-                        : "text-white/70 hover:bg-white/5 hover:text-white font-medium"
+                        ? "bg-[#170C79]/8 text-[#170C79] font-bold border-l-4 border-[#170C79]"
+                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-800 font-medium"
                       }
                       ${isCollapsed ? "justify-center px-2" : ""}
                     `}
@@ -358,24 +340,22 @@ export default function AdminLayout({ children }) {
                     <div className="flex items-center justify-center min-w-[24px]">
                       <Icon
                         className={`
-                          h-5 w-5 flex-shrink-0 transition-transform group-hover:scale-105
+                          h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-105
                           ${isActive 
-                            ? "text-white" 
-                            : "text-white/50 group-hover:text-white/80"
+                            ? "text-[#170C79]" 
+                            : "text-slate-400 group-hover:text-slate-600"
                           }
                         `}
                       />
                     </div>
                     
-                    {!isCollapsed && (
-                      <div className="flex items-center justify-between w-full min-w-0">
-                        <span className="text-xs truncate">{item.name}</span>
-                      </div>
-                    )}
+                    <div className={`flex items-center justify-between w-full min-w-0 transition-all duration-300 ${isCollapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"}`}>
+                      <span className="text-xs truncate">{item.name}</span>
+                    </div>
 
                     {/* Tooltip for collapsed state */}
                     {isCollapsed && (
-                      <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-slate-800 text-white text-[10px] font-bold rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 shadow-lg">
+                      <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-slate-800 text-white text-[10px] font-bold rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-colors duration-200 whitespace-nowrap z-50 shadow-lg">
                         {item.name}
                         <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-1.5 h-1.5 bg-slate-800 rotate-45" />
                       </div>
@@ -386,85 +366,24 @@ export default function AdminLayout({ children }) {
             })}
           </ul>
         </nav>
-
-        {/* Bottom section with profile and logout */}
-        <div className="mt-auto border-t border-white/10 shrink-0 bg-black/10">
-          {/* Profile Panel */}
-          <div className={`border-b border-white/10 ${isCollapsed ? 'py-4 px-2' : 'p-4'}`}>
-            {!isCollapsed ? (
-              <div className="flex items-center px-2.5 py-2 rounded-xl bg-white/5 border border-white/5 shadow-sm">
-                <div className="w-9 h-9 bg-white text-[#170C79] rounded-full flex items-center justify-center font-extrabold text-sm shadow-sm shrink-0">
-                  SA
-                </div>
-                <div className="flex-1 min-w-0 ml-3 text-left">
-                  <p className="text-xs font-bold text-white truncate leading-tight">Super Admin</p>
-                  <p className="text-[9px] text-white/50 truncate mt-0.5">admin@intanium.com</p>
-                </div>
-                <div className="w-2.5 h-2.5 bg-green-500 rounded-full ml-2 shrink-0 border-2 border-[#170C79] shadow-sm" title="Online" />
-              </div>
-            ) : (
-              <div className="flex justify-center">
-                <div className="relative cursor-default group">
-                  <div className="w-10 h-10 bg-white text-[#170C79] rounded-full flex items-center justify-center font-extrabold text-sm shadow-sm">
-                    SA
-                  </div>
-                  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-[#170C79] shadow-sm" />
-                  
-                  {/* Tooltip for collapsed avatar */}
-                  <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-slate-800 text-white text-[10px] rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 shadow-lg text-left">
-                    <span className="block font-bold">Super Admin</span>
-                    <span className="block text-[8px] text-slate-400">admin@intanium.com</span>
-                    <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-1.5 h-1.5 bg-slate-800 rotate-45" />
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Logout Button */}
-          <div className="p-3">
-            <button
-              onClick={handleLogout}
-              className={`
-                w-full flex items-center rounded-xl text-left transition-all duration-200 group cursor-pointer
-                text-red-400 hover:bg-red-500/10 hover:text-red-300
-                ${isCollapsed ? "justify-center p-3" : "space-x-3 px-4 py-3"}
-              `}
-            >
-              <div className="flex items-center justify-center min-w-[24px]">
-                <LogOut className="h-5 w-5 flex-shrink-0 text-red-400 group-hover:text-red-300 transition-transform group-hover:scale-105" />
-              </div>
-              
-              {!isCollapsed && (
-                <span className="text-xs font-bold">Sign out</span>
-              )}
-              
-              {/* Tooltip for collapsed state */}
-              {isCollapsed && (
-                <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-slate-800 text-white text-[10px] font-bold rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 shadow-lg">
-                  Sign out
-                  <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-1.5 h-1.5 bg-slate-800 rotate-45" />
-                </div>
-              )}
-            </button>
-          </div>
-        </div>
       </aside>
 
       {/* ================= MAIN CONTENT VIEWPORT ================= */}
       <div 
-        className={`
-          flex-1 flex flex-col min-h-screen transition-all duration-300 ease-in-out
-          ${isCollapsed ? "md:pl-[112px]" : "md:pl-[312px]"}
-        `}
+        className="flex-1 flex flex-col min-h-screen transition-[padding] duration-300 ease-in-out"
+        style={{
+          paddingLeft: isCollapsed ? '100px' : '280px'
+        }}
       >
         {/* Sticky App Header */}
-        <header className="sticky top-0 z-40 h-20 bg-white/80 backdrop-blur-md border-b border-slate-200 px-6 flex items-center justify-between shrink-0">
+        <header className="sticky top-0 z-40 h-20 bg-white/85 backdrop-blur-md border-b border-slate-200/80 px-6 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-4">
             {/* Hamburger Button (Mobile) */}
             <button 
+              type="button"
               onClick={toggleSidebar} 
-              className="md:hidden flex items-center justify-center w-10 h-10 border border-slate-200 rounded-xl text-[var(--color-primary)] hover:bg-slate-50 transition-colors"
+              className="md:hidden flex items-center justify-center w-10 h-10 border border-slate-200 rounded-xl text-[#170C79] hover:bg-slate-50 transition-colors"
+              aria-label="Open sidebar menu"
             >
               <Menu className="h-5 w-5" />
             </button>
@@ -479,16 +398,44 @@ export default function AdminLayout({ children }) {
             {/* View Site Quick Access */}
             <Link 
               to="/" 
-              className="flex items-center gap-1.5 text-xs font-extrabold text-[var(--color-primary)] hover:bg-[var(--color-primary-light)] border border-[var(--border-color)] px-4 py-2.5 rounded-xl bg-[var(--bg-primary)] transition-all shadow-sm"
+              className="flex items-center gap-1.5 text-xs font-extrabold text-[#170C79] hover:bg-[#170C79]/8 border border-slate-200 px-4 py-2.5 rounded-xl bg-white transition-colors shadow-xs"
             >
               Web Publik <ExternalLink className="h-3.5 w-3.5" />
             </Link>
+
+            {/* Profile Section */}
+            <div className="flex items-center gap-3 border-l border-slate-200 pl-4 h-8">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-[#170C79] text-white rounded-full flex items-center justify-center font-extrabold text-xs shadow-xs shrink-0 select-none">
+                  SA
+                </div>
+                <div className="hidden sm:block text-left">
+                  <p className="text-xs font-bold text-slate-800 leading-tight">Super Admin</p>
+                  <p className="text-[9px] text-slate-400">admin@intanium.com</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                title="Sign out"
+              >
+                <LogOut className="h-4 w-4" />
+              </button>
+            </div>
           </div>
         </header>
 
         {/* Content Viewport */}
-        <main data-lenis-prevent className="flex-1 p-6 sm:p-8 max-w-7xl w-full mx-auto animate-fade-in overflow-y-auto">
-          {children}
+        <main data-lenis-prevent className="flex-1 p-6 sm:p-8 max-w-7xl w-full mx-auto overflow-y-auto">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, ease: 'easeOut' }}
+          >
+            {children}
+          </motion.div>
         </main>
       </div>
     </div>

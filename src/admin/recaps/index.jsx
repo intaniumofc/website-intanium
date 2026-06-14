@@ -18,7 +18,7 @@ export default function AdminRecaps() {
     const file = e.target.files[0];
     if (!file) return;
     try {
-      notify.info('Mengunggah...', 'Sedang mengunggah gambar sampul...');
+      notify.info('Mengunggah…', 'Sedang mengunggah gambar sampul…');
       const publicUrl = await uploadFile(file, 'assets', 'recaps');
       setFormData(prev => ({ ...prev, thumbnail_url: publicUrl }));
       notify.success('Berhasil', 'Gambar sampul telah diunggah.');
@@ -31,7 +31,7 @@ export default function AdminRecaps() {
     const file = e.target.files[0];
     if (!file) return;
     try {
-      notify.info('Mengunggah...', `Sedang mengunggah halaman ${index + 1}...`);
+      notify.info('Mengunggah…', `Sedang mengunggah halaman ${index + 1}…`);
       const publicUrl = await uploadFile(file, 'assets', 'recaps');
       handlePageRowChange(index, 'image_url', publicUrl);
       notify.success('Berhasil', `Gambar halaman ${index + 1} telah diunggah.`);
@@ -425,13 +425,13 @@ export default function AdminRecaps() {
       {/* Sub-tab Switcher */}
       <div className="flex gap-4 border-b border-[var(--border-color)] pb-1">
         <button 
-          className={`pb-3 text-xs font-bold border-b-2 transition-all cursor-pointer ${activeTab === 'zine' ? 'border-[var(--color-primary)] text-[var(--color-primary)]' : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
+          className={`pb-3 text-xs font-bold border-b-2 transition-colors cursor-pointer ${activeTab === 'zine' ? 'border-[var(--color-primary)] text-[var(--color-primary)]' : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
           onClick={() => { setActiveTab('zine'); setSearchQuery(''); }}
         >
           Zine Digital
         </button>
         <button 
-          className={`pb-3 text-xs font-bold border-b-2 transition-all cursor-pointer ${activeTab === 'monthly' ? 'border-[var(--color-primary)] text-[var(--color-primary)]' : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
+          className={`pb-3 text-xs font-bold border-b-2 transition-colors cursor-pointer ${activeTab === 'monthly' ? 'border-[var(--color-primary)] text-[var(--color-primary)]' : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
           onClick={() => { setActiveTab('monthly'); setSearchQuery(''); }}
         >
           Buku Recap Bulanan
@@ -445,20 +445,14 @@ export default function AdminRecaps() {
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2 px-3 py-2 bg-white border border-[var(--border-color)] rounded-xl text-sm w-full sm:w-80 shadow-sm">
               <Search className="h-4 w-4 text-[var(--text-muted)]" />
-              <input 
-                type="text" 
-                placeholder="Cari edisi Zine..." 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-transparent border-none outline-none flex-1 text-[var(--text-primary)] placeholder-[var(--text-muted)] text-xs"
-              />
+              <input type="text" name="zineSearch" autoComplete="off" /* autocomplete="off" */ placeholder="Cari edisi Zine…" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-transparent border-none focus:outline-none focus:ring-0 flex-1 text-[var(--text-primary)] placeholder-[var(--text-muted)] text-xs" />
             </div>
           </div>
 
           {/* Main Table Card */}
           <Card hoverEffect={false} className="border border-[var(--border-color)] bg-white overflow-hidden rounded-2xl shadow-sm" padding="none">
             {isLoading ? (
-              <div className="p-12"><Loading message="Memuat arsip zine..." /></div>
+              <div className="p-12"><Loading message="Memuat arsip zine…" /></div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm text-[var(--text-secondary)]">
@@ -475,11 +469,7 @@ export default function AdminRecaps() {
                     {filteredItems.map(item => (
                       <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <img 
-                            src={item.thumbnailUrl || 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=100'} 
-                            alt={item.title} 
-                            className="w-12 h-16 object-cover rounded-lg border border-[var(--border-color)] shadow-sm bg-[var(--bg-primary)]" 
-                          />
+                          <img width={48} height={64} alt={item.title || 'Zine Cover'} src={item.thumbnailUrl || 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=100'} className="w-12 h-16 object-cover rounded-lg border border-[var(--border-color)] shadow-sm bg-[var(--bg-primary)]" />
                         </td>
                         <td className="px-6 py-4">
                           <div className="font-bold text-[var(--text-primary)] text-sm">{item.title}</div>
@@ -501,14 +491,14 @@ export default function AdminRecaps() {
                           <div className="flex items-center justify-end gap-2">
                             <button 
                               onClick={() => handleOpenEditModal(item)} 
-                              className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-all"
+                              className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-colors"
                               title="Ubah Zine"
                             >
                               <Edit className="h-4 w-4" />
                             </button>
                             <button 
                               onClick={() => handleDelete(item.id)} 
-                              className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-all"
+                              className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors"
                               title="Hapus Zine"
                             >
                               <Trash2 className="h-4 w-4" />
@@ -539,20 +529,14 @@ export default function AdminRecaps() {
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2 px-3 py-2 bg-white border border-[var(--border-color)] rounded-xl text-sm w-full sm:w-80 shadow-sm">
               <Search className="h-4 w-4 text-[var(--text-muted)]" />
-              <input 
-                type="text" 
-                placeholder="Cari tema atau bulan..." 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-transparent border-none outline-none flex-1 text-[var(--text-primary)] placeholder-[var(--text-muted)] text-xs"
-              />
+              <input type="text" name="monthlySearch" autoComplete="off" /* autocomplete="off" */ placeholder="Cari tema atau bulan…" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-transparent border-none focus:outline-none focus:ring-0 flex-1 text-[var(--text-primary)] placeholder-[var(--text-muted)] text-xs" />
             </div>
           </div>
 
           {/* Monthly Table Card */}
           <Card hoverEffect={false} className="border border-[var(--border-color)] bg-white overflow-hidden rounded-2xl shadow-sm" padding="none">
             {isMonthlyLoading ? (
-              <div className="p-12"><Loading message="Memuat buku rekap..." /></div>
+              <div className="p-12"><Loading message="Memuat buku rekap…" /></div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm text-[var(--text-secondary)]">
@@ -593,14 +577,14 @@ export default function AdminRecaps() {
                             <div className="flex items-center justify-end gap-2">
                               <button 
                                 onClick={() => handleOpenEditMonthlyModal(item)} 
-                                className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-all"
+                                className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-colors"
                                 title="Ubah Buku Recap"
                               >
                                 <Edit className="h-4 w-4" />
                               </button>
                               <button 
                                 onClick={() => handleDeleteMonthly(item.id)} 
-                                className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-all"
+                                className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors"
                                 title="Hapus Buku Recap"
                               >
                                 <Trash2 className="h-4 w-4" />
@@ -636,28 +620,13 @@ export default function AdminRecaps() {
             {/* Title */}
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Judul Edisi</label>
-              <input 
-                type="text" 
-                name="title"
-                placeholder="Misal: Recap Commish Volume 5"
-                value={formData.title}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
-                required
-              />
+              <input type="text" name="title" autoComplete="off" /* autocomplete="off" */ placeholder="Misal: Recap Commish Volume 5" value={formData.title} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors" required />
             </div>
 
             {/* Publish Date */}
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Tanggal Terbit</label>
-              <input 
-                type="date" 
-                name="publish_date"
-                value={formData.publish_date}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all"
-                required
-              />
+              <input type="date" name="publish_date" autoComplete="off" /* autocomplete="off" */ value={formData.publish_date} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors" required />
             </div>
           </div>
 
@@ -666,24 +635,11 @@ export default function AdminRecaps() {
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">URL Gambar Sampul (Thumbnail)</label>
               <div className="flex gap-2">
-                <input 
-                  type="text" 
-                  name="thumbnail_url"
-                  placeholder="URL foto sampul zine..."
-                  value={formData.thumbnail_url}
-                  onChange={handleInputChange}
-                  className="flex-1 px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all text-xs"
-                />
+                <input type="text" name="thumbnail_url" autoComplete="off" /* autocomplete="off" */ placeholder="URL foto sampul zine…" value={formData.thumbnail_url} onChange={handleInputChange} className="flex-1 px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors text-xs" />
                 <label className="px-3 py-2 bg-[var(--color-primary-light)] text-[var(--color-primary)] border border-[var(--color-primary)]/10 hover:bg-[var(--color-primary)]/10 rounded-xl cursor-pointer text-xs font-semibold flex items-center gap-1.5 transition-colors">
                   <Upload className="h-3.5 w-3.5" />
                   <span>Unggah</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleUploadThumbnail}
-                    className="hidden"
-                    disabled={isUploading}
-                  />
+                  <input name="file_input" type="file" accept="image/*" onChange={handleUploadThumbnail} className="hidden" disabled={isUploading} />
                 </label>
               </div>
               <p className="text-[10px] text-[var(--text-muted)]">Kosongkan jika ingin otomatis menggunakan gambar Halaman 1.</p>
@@ -692,14 +648,7 @@ export default function AdminRecaps() {
             {/* Summary */}
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Deskripsi / Ringkasan</label>
-              <textarea 
-                name="summary"
-                rows="2"
-                placeholder="Tulis ringkasan konten Zine edisi ini..."
-                value={formData.summary}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all resize-none text-xs"
-              />
+              <textarea name="summary" placeholder="Tulis ringkasan konten Zine edisi ini…" value={formData.summary} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors resize-none text-xs" />
             </div>
           </div>
 
@@ -708,10 +657,10 @@ export default function AdminRecaps() {
             <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl flex flex-col gap-2 animate-fade-in">
               <div className="flex items-center gap-2 text-xs font-bold text-blue-700">
                 <Loader className="h-4 w-4 animate-spin text-blue-600" />
-                <span>Sedang mengunggah gambar ke Supabase Storage ({uploadProgress}%)...</span>
+                <span>Sedang mengunggah gambar ke Supabase Storage ({uploadProgress}%)…</span>
               </div>
               <div className="w-full bg-blue-200/50 h-1.5 rounded-full overflow-hidden">
-                <div className="bg-blue-600 h-full transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
+                <div className="bg-blue-600 h-full transition-[width] duration-300" style={{ width: `${uploadProgress}%` }} />
               </div>
             </div>
           )}
@@ -740,33 +689,14 @@ export default function AdminRecaps() {
 
                   <div className="flex-1 flex flex-col gap-2">
                     <div className="flex gap-2">
-                      <input 
-                        type="text" 
-                        placeholder="URL Gambar Halaman..." 
-                        value={page.image_url}
-                        onChange={(e) => handlePageRowChange(index, 'image_url', e.target.value)}
-                        className="flex-1 px-3 py-1.5 bg-white border border-[var(--border-color)] rounded-lg outline-none text-xs focus:border-[var(--color-primary)] transition-all"
-                        required={index === 0} // Page 1 is mandatory
-                      />
+                      <input type="text" name={`pageUrl_${index}`} autoComplete="off" /* autocomplete="off" */ placeholder="URL Gambar Halaman…" value={page.image_url} onChange={(e) => handlePageRowChange(index, "image_url", e.target.value)} className="flex-1 px-3 py-1.5 bg-white border border-[var(--border-color)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs transition-colors" required={index === 0} /* Page 1 is mandatory */ />
                       <label className="px-2.5 py-1.5 bg-[var(--color-primary-light)] text-[var(--color-primary)] border border-[var(--color-primary)]/10 hover:bg-[var(--color-primary)]/10 rounded-lg cursor-pointer text-xs font-semibold flex items-center gap-1 transition-colors">
                         <Upload className="h-3.5 w-3.5" />
                         <span>Unggah</span>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => handleUploadPageImage(index, e)}
-                          className="hidden"
-                          disabled={isUploading}
-                        />
+                        <input name="file_input" type="file" accept="image/*" onChange={(e) => handleUploadPageImage(index, e)} className="hidden" disabled={isUploading} />
                       </label>
                     </div>
-                    <input 
-                      type="text" 
-                      placeholder="Keterangan Halaman (opsional)..." 
-                      value={page.caption}
-                      onChange={(e) => handlePageRowChange(index, 'caption', e.target.value)}
-                      className="w-full px-3 py-1.5 bg-white border border-[var(--border-color)] rounded-lg outline-none text-xs focus:border-[var(--color-primary)] transition-all"
-                    />
+                    <input type="text" name={`pageCaption_${index}`} autoComplete="off" /* autocomplete="off" */ placeholder="Keterangan Halaman (opsional)…" value={page.caption} onChange={(e) => handlePageRowChange(index, "caption", e.target.value)} className="w-full px-3 py-1.5 bg-white border border-[var(--border-color)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs transition-colors" />
                   </div>
 
                   {/* Remove row */}
@@ -806,7 +736,7 @@ export default function AdminRecaps() {
               disabled={isSubmitting || isUploading}
               className="cursor-pointer"
             >
-              {isSubmitting ? 'Menyimpan...' : 'Simpan Zine'}
+              {isSubmitting ? 'Menyimpan…' : 'Simpan Zine'}
             </Button>
           </div>
         </form>
@@ -824,21 +754,21 @@ export default function AdminRecaps() {
           <div className="flex border-b border-[var(--border-color)] mb-2">
             <button
               type="button"
-              className={`pb-2 pr-4 text-xs font-bold border-b-2 transition-all cursor-pointer ${monthlyFormTab === 'info' ? 'border-[var(--color-primary)] text-[var(--color-primary)]' : 'border-transparent text-[var(--text-muted)]'}`}
+              className={`pb-2 pr-4 text-xs font-bold border-b-2 transition-colors cursor-pointer ${monthlyFormTab === 'info' ? 'border-[var(--color-primary)] text-[var(--color-primary)]' : 'border-transparent text-[var(--text-muted)]'}`}
               onClick={() => setMonthlyFormTab('info')}
             >
               Info Umum & Catatan
             </button>
             <button
               type="button"
-              className={`pb-2 px-4 text-xs font-bold border-b-2 transition-all cursor-pointer ${monthlyFormTab === 'activity' ? 'border-[var(--color-primary)] text-[var(--color-primary)]' : 'border-transparent text-[var(--text-muted)]'}`}
+              className={`pb-2 px-4 text-xs font-bold border-b-2 transition-colors cursor-pointer ${monthlyFormTab === 'activity' ? 'border-[var(--color-primary)] text-[var(--color-primary)]' : 'border-transparent text-[var(--text-muted)]'}`}
               onClick={() => setMonthlyFormTab('activity')}
             >
               Aktivitas (Theater, Live, YT)
             </button>
             <button
               type="button"
-              className={`pb-2 pl-4 text-xs font-bold border-b-2 transition-all cursor-pointer ${monthlyFormTab === 'moments' ? 'border-[var(--color-primary)] text-[var(--color-primary)]' : 'border-transparent text-[var(--text-muted)]'}`}
+              className={`pb-2 pl-4 text-xs font-bold border-b-2 transition-colors cursor-pointer ${monthlyFormTab === 'moments' ? 'border-[var(--color-primary)] text-[var(--color-primary)]' : 'border-transparent text-[var(--text-muted)]'}`}
               onClick={() => setMonthlyFormTab('moments')}
             >
               Interaksi & Momen
@@ -855,7 +785,7 @@ export default function AdminRecaps() {
                     name="month"
                     value={monthlyFormData.month}
                     onChange={handleMonthlyInputChange}
-                    className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all font-semibold text-xs text-[var(--text-primary)]"
+                    className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] font-semibold text-xs text-[var(--text-primary)] transition-colors"
                     disabled={modalMode === 'edit'}
                   >
                     {['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'].map(m => (
@@ -865,39 +795,16 @@ export default function AdminRecaps() {
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label className="font-bold text-xs uppercase text-[var(--text-secondary)]">Tahun</label>
-                  <input
-                    type="number"
-                    name="year"
-                    value={monthlyFormData.year}
-                    onChange={handleMonthlyInputChange}
-                    className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all text-xs"
-                    required
-                    disabled={modalMode === 'edit'}
-                  />
+                  <input type="number" name="year" autoComplete="off" /* autocomplete="off" */ value={monthlyFormData.year} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors text-xs" required disabled={modalMode === 'edit'} />
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label className="font-bold text-xs uppercase text-[var(--text-secondary)]">Tema / Slogan</label>
-                  <input
-                    type="text"
-                    name="theme"
-                    placeholder="Misal: A Bright New Chapter"
-                    value={monthlyFormData.theme}
-                    onChange={handleMonthlyInputChange}
-                    className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all text-xs"
-                    required
-                  />
+                  <input type="text" name="theme" autoComplete="off" /* autocomplete="off" */ placeholder="Misal: A Bright New Chapter" value={monthlyFormData.theme} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors text-xs" required />
                 </div>
               </div>
               <div className="flex flex-col gap-1.5">
                 <label className="font-bold text-xs uppercase text-[var(--text-secondary)]">Catatan Bulanan (Journal/Note)</label>
-                <textarea
-                  name="monthlyNote"
-                  rows="4"
-                  placeholder="Tulis jurnal ringkasan catatan bulanan untuk Intan..."
-                  value={monthlyFormData.monthlyNote}
-                  onChange={handleMonthlyInputChange}
-                  className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-all resize-none text-xs"
-                />
+                <textarea name="monthlyNote" placeholder="Tulis jurnal ringkasan catatan bulanan untuk Intan…" value={monthlyFormData.monthlyNote} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors resize-none text-xs" />
               </div>
             </div>
           )}
@@ -911,25 +818,11 @@ export default function AdminRecaps() {
                   <h4 className="font-bold text-xs uppercase text-[var(--color-primary)]">YouTube Highlight</h4>
                   <div className="flex flex-col gap-1.5">
                     <label className="text-xs text-[var(--text-secondary)]">Judul Video</label>
-                    <input
-                      type="text"
-                      name="youtubeTitle"
-                      placeholder="Judul video YouTube..."
-                      value={monthlyFormData.youtubeTitle}
-                      onChange={handleMonthlyInputChange}
-                      className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none text-xs"
-                    />
+                    <input type="text" name="youtubeTitle" autoComplete="off" /* autocomplete="off" */ placeholder="Judul video YouTube…" value={monthlyFormData.youtubeTitle} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
                   </div>
                   <div className="flex flex-col gap-1.5">
                     <label className="text-xs text-[var(--text-secondary)]">Tanggal Upload Video</label>
-                    <input
-                      type="text"
-                      name="youtubeDate"
-                      placeholder="Misal: 17 Jan 2026"
-                      value={monthlyFormData.youtubeDate}
-                      onChange={handleMonthlyInputChange}
-                      className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none text-xs"
-                    />
+                    <input type="text" name="youtubeDate" autoComplete="off" /* autocomplete="off" */ placeholder="Misal: 17 Jan 2026" value={monthlyFormData.youtubeDate} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
                   </div>
                 </div>
 
@@ -938,36 +831,16 @@ export default function AdminRecaps() {
                   <h4 className="font-bold text-xs uppercase text-[var(--color-primary)]">Live Activity</h4>
                   <div className="flex flex-col gap-1.5">
                     <label className="text-xs text-[var(--text-secondary)]">Platform</label>
-                    <input
-                      type="text"
-                      name="livePlatform"
-                      placeholder="Misal: IDN Live"
-                      value={monthlyFormData.livePlatform}
-                      onChange={handleMonthlyInputChange}
-                      className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none text-xs"
-                    />
+                    <input type="text" name="livePlatform" autoComplete="off" /* autocomplete="off" */ placeholder="Misal: IDN Live" value={monthlyFormData.livePlatform} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <div className="flex flex-col gap-1.5">
                       <label className="text-xs text-[var(--text-secondary)]">Total Live (x)</label>
-                      <input
-                        type="number"
-                        name="liveTotal"
-                        value={monthlyFormData.liveTotal}
-                        onChange={handleMonthlyInputChange}
-                        className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none text-xs"
-                      />
+                      <input type="number" name="liveTotal" autoComplete="off" /* autocomplete="off" */ value={monthlyFormData.liveTotal} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
                     </div>
                     <div className="flex flex-col gap-1.5">
                       <label className="text-xs text-[var(--text-secondary)]">Tanggal (Koma)</label>
-                      <input
-                        type="text"
-                        name="liveDates"
-                        placeholder="Misal: 2, 4, 7, 9"
-                        value={monthlyFormData.liveDates}
-                        onChange={handleMonthlyInputChange}
-                        className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none text-xs"
-                      />
+                      <input type="text" name="liveDates" autoComplete="off" /* autocomplete="off" */ placeholder="Misal: 2, 4, 7, 9" value={monthlyFormData.liveDates} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
                     </div>
                   </div>
                 </div>
@@ -979,13 +852,7 @@ export default function AdminRecaps() {
                   <h4 className="font-bold text-xs uppercase text-[var(--color-primary)]">Theater Activity</h4>
                   <div className="flex items-center gap-2">
                     <label className="text-xs text-[var(--text-secondary)]">Total Shows:</label>
-                    <input
-                      type="number"
-                      name="theaterTotal"
-                      value={monthlyFormData.theaterTotal}
-                      onChange={handleMonthlyInputChange}
-                      className="w-16 px-2 py-1 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg text-xs"
-                    />
+                    <input type="number" name="theaterTotal" autoComplete="off" /* autocomplete="off" */ value={monthlyFormData.theaterTotal} onChange={handleMonthlyInputChange} className="w-16 px-2 py-1 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
                     <button
                       type="button"
                       onClick={handleAddTheaterItem}
@@ -999,20 +866,8 @@ export default function AdminRecaps() {
                 <div className="space-y-2 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
                   {monthlyFormData.theaterItems.map((show, index) => (
                     <div key={index} className="flex gap-2 items-center bg-gray-50/50 p-2 border border-[var(--border-color)] rounded-lg">
-                      <input
-                        type="text"
-                        placeholder="Tanggal (misal: 4 Jan)..."
-                        value={show.date}
-                        onChange={(e) => handleTheaterItemChange(index, 'date', e.target.value)}
-                        className="w-1/3 px-2 py-1 bg-white border border-[var(--border-color)] rounded text-xs outline-none"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Setlist (misal: Aturan Anti Cinta)..."
-                        value={show.title}
-                        onChange={(e) => handleTheaterItemChange(index, 'title', e.target.value)}
-                        className="flex-1 px-2 py-1 bg-white border border-[var(--border-color)] rounded text-xs outline-none"
-                      />
+                      <input type="text" placeholder="Tanggal (misal: 4 Jan)…" name={`theaterShowDate_${index}`} autoComplete="off" /* autocomplete="off" */ value={show.date} onChange={(e) => handleTheaterItemChange(index, "date", e.target.value)} className="w-1/3 px-2 py-1 bg-white border border-[var(--border-color)] rounded focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
+                      <input type="text" placeholder="Setlist (misal: Aturan Anti Cinta)…" name={`theaterShowTitle_${index}`} autoComplete="off" /* autocomplete="off" */ value={show.title} onChange={(e) => handleTheaterItemChange(index, "title", e.target.value)} className="flex-1 px-2 py-1 bg-white border border-[var(--border-color)] rounded focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
                       <button
                         type="button"
                         onClick={() => handleRemoveTheaterItem(index)}
@@ -1039,33 +894,15 @@ export default function AdminRecaps() {
                 <div className="grid grid-cols-3 gap-3">
                   <div className="flex flex-col gap-1.5">
                     <label className="text-xs text-[var(--text-secondary)]">Bubble Chats</label>
-                    <input
-                      type="number"
-                      name="bubbleChat"
-                      value={monthlyFormData.bubbleChat}
-                      onChange={handleMonthlyInputChange}
-                      className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none text-xs"
-                    />
+                    <input type="number" name="bubbleChat" autoComplete="off" /* autocomplete="off" */ value={monthlyFormData.bubbleChat} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
                   </div>
                   <div className="flex flex-col gap-1.5">
                     <label className="text-xs text-[var(--text-secondary)]">Voice Notes</label>
-                    <input
-                      type="number"
-                      name="voiceNote"
-                      value={monthlyFormData.voiceNote}
-                      onChange={handleMonthlyInputChange}
-                      className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none text-xs"
-                    />
+                    <input type="number" name="voiceNote" autoComplete="off" /* autocomplete="off" */ value={monthlyFormData.voiceNote} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
                   </div>
                   <div className="flex flex-col gap-1.5">
                     <label className="text-xs text-[var(--text-secondary)]">Foto Dibagikan</label>
-                    <input
-                      type="number"
-                      name="photo"
-                      value={monthlyFormData.photo}
-                      onChange={handleMonthlyInputChange}
-                      className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none text-xs"
-                    />
+                    <input type="number" name="photo" autoComplete="off" /* autocomplete="off" */ value={monthlyFormData.photo} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
                   </div>
                 </div>
               </div>
@@ -1076,25 +913,11 @@ export default function AdminRecaps() {
                   <h4 className="font-bold text-xs uppercase text-[var(--color-primary)]">Video Call</h4>
                   <div className="flex flex-col gap-1.5">
                     <label className="text-xs text-[var(--text-secondary)]">Nama Event Video Call</label>
-                    <input
-                      type="text"
-                      name="videoCallTitle"
-                      placeholder="Misal: Valentine Special Video Call"
-                      value={monthlyFormData.videoCallTitle}
-                      onChange={handleMonthlyInputChange}
-                      className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none text-xs"
-                    />
+                    <input type="text" name="videoCallTitle" autoComplete="off" /* autocomplete="off" */ placeholder="Misal: Valentine Special Video Call" value={monthlyFormData.videoCallTitle} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
                   </div>
                   <div className="flex flex-col gap-1.5">
                     <label className="text-xs text-[var(--text-secondary)]">Tanggal (Pemisah Koma)</label>
-                    <input
-                      type="text"
-                      name="videoCallDates"
-                      placeholder="Misal: 14 Februari, 21 Februari"
-                      value={monthlyFormData.videoCallDates}
-                      onChange={handleMonthlyInputChange}
-                      className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none text-xs"
-                    />
+                    <input type="text" name="videoCallDates" autoComplete="off" /* autocomplete="off" */ placeholder="Misal: 14 Februari, 21 Februari" value={monthlyFormData.videoCallDates} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
                   </div>
                 </div>
 
@@ -1102,25 +925,11 @@ export default function AdminRecaps() {
                   <h4 className="font-bold text-xs uppercase text-[var(--color-primary)]">Special Event</h4>
                   <div className="flex flex-col gap-1.5">
                     <label className="text-xs text-[var(--text-secondary)]">Nama Special Event</label>
-                    <input
-                      type="text"
-                      name="eventTitle"
-                      placeholder="Misal: JKT48 Spring Festival"
-                      value={monthlyFormData.eventTitle}
-                      onChange={handleMonthlyInputChange}
-                      className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none text-xs"
-                    />
+                    <input type="text" name="eventTitle" autoComplete="off" /* autocomplete="off" */ placeholder="Misal: JKT48 Spring Festival" value={monthlyFormData.eventTitle} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
                   </div>
                   <div className="flex flex-col gap-1.5">
                     <label className="text-xs text-[var(--text-secondary)]">Tanggal Event</label>
-                    <input
-                      type="text"
-                      name="eventDate"
-                      placeholder="Misal: 25 April 2026"
-                      value={monthlyFormData.eventDate}
-                      onChange={handleMonthlyInputChange}
-                      className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none text-xs"
-                    />
+                    <input type="text" name="eventDate" autoComplete="off" /* autocomplete="off" */ placeholder="Misal: 25 April 2026" value={monthlyFormData.eventDate} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
                   </div>
                 </div>
               </div>
@@ -1145,7 +954,7 @@ export default function AdminRecaps() {
               disabled={isSubmitting}
               className="cursor-pointer"
             >
-              {isSubmitting ? 'Menyimpan...' : 'Simpan Recap'}
+              {isSubmitting ? 'Menyimpan…' : 'Simpan Recap'}
             </Button>
           </div>
         </form>

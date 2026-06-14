@@ -456,13 +456,7 @@ export default function AdminMerchandise() {
             {/* Search Input */}
             <div className="flex items-center gap-2 px-3.5 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl text-xs w-full sm:w-64">
               <Search className="h-4 w-4 text-slate-400 shrink-0" />
-              <input 
-                type="text" 
-                placeholder="Cari nama atau deskripsi..." 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-transparent border-none outline-none flex-1 text-[var(--text-primary)] font-semibold placeholder-slate-400"
-              />
+              <input autoComplete="off" /* autocomplete="off" */  name="searchQuery" type="text" placeholder="Cari nama atau deskripsi…" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-transparent border-none focus:outline-none focus:ring-0 flex-1 text-[var(--text-primary)] font-semibold placeholder-slate-400" />
             </div>
 
             {/* Category Select Filters */}
@@ -508,7 +502,7 @@ export default function AdminMerchandise() {
           {/* DataTable Card */}
           <Card hoverEffect={false} className="border border-[var(--border-color)] bg-white overflow-hidden rounded-3xl shadow-sm" padding="none">
             {isLoading ? (
-              <div className="p-12"><Loading message="Memuat database katalog..." /></div>
+              <div className="p-12"><Loading message="Memuat database katalog…" /></div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs text-[var(--text-secondary)]">
@@ -527,11 +521,7 @@ export default function AdminMerchandise() {
                       <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center gap-3">
-                            <img 
-                              src={item.image_url || 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=100'} 
-                              alt={item.name} 
-                              className="w-11 h-11 object-cover rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)]" 
-                            />
+                            <img width={44} height={44} alt={item.name || 'Merchandise'} src={item.image_url || 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=100'} className="w-11 h-11 object-cover rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)]" />
                             <div className="min-w-0">
                               <div className="font-extrabold text-slate-800 text-xs truncate max-w-[200px]">{item.name}</div>
                               <div className="font-mono text-[9px] text-slate-400 mt-0.5">{item.id}</div>
@@ -573,14 +563,14 @@ export default function AdminMerchandise() {
                           <div className="flex items-center justify-end gap-1.5">
                             <button 
                               onClick={() => handleOpenEditWorkspace(item)} 
-                              className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-all cursor-pointer"
+                              className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-colors cursor-pointer"
                               title="Ubah Produk"
                             >
                               <Edit className="h-4 w-4" />
                             </button>
                             <button 
                               onClick={() => requestDelete(item)} 
-                              className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-all cursor-pointer"
+                              className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors cursor-pointer"
                               title="Hapus Produk"
                             >
                               <Trash2 className="h-4 w-4" />
@@ -652,29 +642,13 @@ export default function AdminMerchandise() {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Nama Produk</label>
-                    <input 
-                      type="text" 
-                      name="name"
-                      placeholder="Masukkan nama produk..."
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] font-semibold text-xs transition-all"
-                      required
-                    />
+                    <input autoComplete="off" /* autocomplete="off" */  type="text" name="name" placeholder="Masukkan nama produk…" value={formData.name} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] font-semibold text-xs transition-colors" required />
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Harga (Rupiah)</label>
-                      <input 
-                        type="number" 
-                        name="price"
-                        placeholder="Misal: 150000"
-                        value={formData.price}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] font-semibold text-xs transition-all"
-                        required
-                      />
+                      <input autoComplete="off" /* autocomplete="off" */  type="number" name="price" placeholder="Misal: 150000" value={formData.price} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] font-semibold text-xs transition-colors" required />
                     </div>
                     <div>
                       <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Kategori</label>
@@ -682,7 +656,7 @@ export default function AdminMerchandise() {
                         name="category"
                         value={formData.category}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] font-bold text-xs cursor-pointer transition-all"
+                        className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] font-bold text-xs cursor-pointer transition-colors"
                       >
                         {Object.values(MERCH_CATEGORIES).filter(c => c !== 'All').map(cat => (
                           <option key={cat} value={cat}>{cat}</option>
@@ -703,14 +677,7 @@ export default function AdminMerchandise() {
                 </p>
 
                 <div className="space-y-4">
-                  <input
-                    type="text"
-                    name="sizesInput"
-                    value={formData.sizesInput}
-                    onChange={handleInputChange}
-                    placeholder="S, M, L, XL"
-                    className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] font-semibold text-xs transition-all"
-                  />
+                  <input autoComplete="off" /* autocomplete="off" */  type="text" name="sizesInput" value={formData.sizesInput} onChange={handleInputChange} placeholder="S, M, L, XL" className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] font-semibold text-xs transition-colors" />
 
                   {/* Size Quick Add chips */}
                   <div className="flex flex-wrap gap-1.5 pt-1">
@@ -733,14 +700,7 @@ export default function AdminMerchandise() {
                 <h3 className="text-xs font-bold text-[var(--color-primary)] uppercase tracking-wider border-b border-slate-100 pb-2">
                   Deskripsi & Spesifikasi Produk
                 </h3>
-                <textarea 
-                  name="description"
-                  rows="5"
-                  placeholder="Detail deskripsi bahan, spesifikasi ukuran..."
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] font-semibold text-xs transition-all resize-none"
-                />
+                <textarea name="description" rows="5" placeholder="Detail deskripsi bahan, spesifikasi ukuran…" value={formData.description} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] font-semibold text-xs transition-colors resize-none" />
               </Card>
             </div>
 
@@ -752,14 +712,7 @@ export default function AdminMerchandise() {
                   Status Ketersediaan
                 </h3>
                 <div className="flex items-center gap-3">
-                  <input 
-                    type="checkbox" 
-                    name="is_available"
-                    id="is_available"
-                    checked={formData.is_available}
-                    onChange={handleInputChange}
-                    className="w-4.5 h-4.5 rounded border-[var(--border-color)] text-[var(--color-primary)] focus:ring-[var(--color-primary)] cursor-pointer"
-                  />
+                  <input type="checkbox" name="is_available" id="is_available" checked={formData.is_available} onChange={handleInputChange} className="w-4.5 h-4.5 rounded border-[var(--border-color)] text-[var(--color-primary)] focus:ring-[var(--color-primary)] cursor-pointer" />
                   <label htmlFor="is_available" className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)] cursor-pointer select-none">
                     Produk Aktif / Tersedia
                   </label>
@@ -786,11 +739,7 @@ export default function AdminMerchandise() {
                         {/* Image preview box */}
                         <div className="aspect-[4/3] w-full rounded-2xl overflow-hidden bg-slate-50 border border-dashed border-slate-300 flex items-center justify-center relative shadow-inner">
                           {hasVal ? (
-                            <img 
-                              src={formData[imgSlot.key]} 
-                              alt="" 
-                              className="w-full h-full object-cover" 
-                            />
+                            <img width={400} height={300} alt="Product Gallery Slot" src={formData[imgSlot.key]} className="w-full h-full object-cover" />
                           ) : (
                             <div className="text-center text-slate-300 flex flex-col items-center">
                               <ImageIcon className="h-6 w-6 stroke-1 mb-1" />
@@ -806,25 +755,13 @@ export default function AdminMerchandise() {
                         </div>
 
                         {/* Image URL text input */}
-                        <input
-                          type="text"
-                          name={imgSlot.key}
-                          value={formData[imgSlot.key]}
-                          onChange={handleInputChange}
-                          placeholder="Paste URL foto dari internet..."
-                          className="w-full px-3.5 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] font-semibold text-[10px] transition-all"
-                        />
+                        <input autoComplete="off" /* autocomplete="off" */  type="text" name={imgSlot.key} value={formData[imgSlot.key]} onChange={handleInputChange} placeholder="Paste URL foto dari internet…" className="w-full px-3.5 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] font-semibold text-[10px] transition-colors" />
 
                         {/* File Upload Selector Button */}
                         <label className="flex cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white py-2 text-[10px] font-bold text-slate-700 hover:border-slate-400 transition select-none">
                           <ImageIcon className="w-3.5 h-3.5 text-purple-400" />
                           <span>Unggah File Foto</span>
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => void handleImageUpload(imgSlot.key, e.target.files?.[0] || null)}
-                            className="hidden"
-                          />
+                          <input name="file_input" type="file" accept="image/*" onChange={(e) => void handleImageUpload(imgSlot.key, e.target.files?.[0] || null)} className="hidden" />
                         </label>
                       </div>
                     );
@@ -867,7 +804,7 @@ export default function AdminMerchandise() {
       {activeWorkspace === 'payment' && (
         <form onSubmit={handlePaymentSettingsSubmit} className="space-y-6 max-w-3xl mx-auto animate-fade-in">
           {isSettingsLoading ? (
-            <div className="p-12"><Loading message="Memuat info pembayaran..." /></div>
+            <div className="p-12"><Loading message="Memuat info pembayaran…" /></div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
               {/* Form Details */}
@@ -880,38 +817,17 @@ export default function AdminMerchandise() {
                   <div className="space-y-4">
                     <div>
                       <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Nama Bank / Wallet</label>
-                      <input 
-                        type="text" 
-                        placeholder="Misal: BANK JAGO, OVO, DANA, BCA"
-                        value={paymentSettings.bank_name}
-                        onChange={(e) => setPaymentSettings(prev => ({ ...prev, bank_name: e.target.value }))}
-                        className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] font-semibold text-xs transition-all"
-                        required
-                      />
+                      <input autoComplete="off" /* autocomplete="off" */  name="bank_name" type="text" placeholder="Misal: BANK JAGO, OVO, DANA, BCA" value={paymentSettings.bank_name} onChange={(e) => setPaymentSettings(prev => ({ ...prev, bank_name: e.target.value }))} className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] font-semibold text-xs transition-colors" required />
                     </div>
 
                     <div>
                       <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Nomor Rekening / HP</label>
-                      <input 
-                        type="text" 
-                        placeholder="Masukkan nomor rekening atau nomor HP e-wallet..."
-                        value={paymentSettings.account_number}
-                        onChange={(e) => setPaymentSettings(prev => ({ ...prev, account_number: e.target.value }))}
-                        className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] font-semibold text-xs transition-all"
-                        required
-                      />
+                      <input autoComplete="off" /* autocomplete="off" */  name="account_number" type="text" placeholder="Masukkan nomor rekening atau nomor HP e-wallet…" value={paymentSettings.account_number} onChange={(e) => setPaymentSettings(prev => ({ ...prev, account_number: e.target.value }))} className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] font-semibold text-xs transition-colors" required />
                     </div>
 
                     <div>
                       <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Nama Penerima (Atas Nama)</label>
-                      <input 
-                        type="text" 
-                        placeholder="Masukkan nama lengkap pemilik rekening..."
-                        value={paymentSettings.account_holder}
-                        onChange={(e) => setPaymentSettings(prev => ({ ...prev, account_holder: e.target.value }))}
-                        className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] font-semibold text-xs transition-all"
-                        required
-                      />
+                      <input autoComplete="off" /* autocomplete="off" */  name="account_holder" type="text" placeholder="Masukkan nama lengkap pemilik rekening…" value={paymentSettings.account_holder} onChange={(e) => setPaymentSettings(prev => ({ ...prev, account_holder: e.target.value }))} className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] font-semibold text-xs transition-colors" required />
                     </div>
                   </div>
                 </Card>
@@ -928,11 +844,7 @@ export default function AdminMerchandise() {
                     {/* QRIS image preview */}
                     <div className="aspect-[4/3] w-full rounded-2xl overflow-hidden bg-slate-50 border border-dashed border-slate-300 flex items-center justify-center relative shadow-inner">
                       {paymentSettings.qris_url ? (
-                        <img 
-                          src={paymentSettings.qris_url} 
-                          alt="Preview QRIS" 
-                          className="w-full h-full object-contain" 
-                        />
+                        <img width={400} height={300} alt="Preview QRIS" src={paymentSettings.qris_url} className="w-full h-full object-contain" />
                       ) : (
                         <div className="text-center text-slate-300 flex flex-col items-center">
                           <ImageIcon className="h-6 w-6 stroke-1 mb-1" />
@@ -948,24 +860,13 @@ export default function AdminMerchandise() {
                     </div>
 
                     {/* QRIS URL input */}
-                    <input
-                      type="text"
-                      placeholder="Paste URL foto QRIS dari internet..."
-                      value={paymentSettings.qris_url}
-                      onChange={(e) => setPaymentSettings(prev => ({ ...prev, qris_url: e.target.value }))}
-                      className="w-full px-3.5 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] font-semibold text-[10px] transition-all"
-                    />
+                    <input autoComplete="off" /* autocomplete="off" */  name="qris_url" type="text" placeholder="Paste URL foto QRIS dari internet…" value={paymentSettings.qris_url} onChange={(e) => setPaymentSettings(prev => ({ ...prev, qris_url: e.target.value }))} className="w-full px-3.5 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] font-semibold text-[10px] transition-colors" />
 
                     {/* QRIS Upload Button */}
                     <label className="flex cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white py-2 text-[10px] font-bold text-slate-700 hover:border-slate-400 transition select-none">
                       <ImageIcon className="w-3.5 h-3.5 text-purple-400" />
                       <span>Unggah Foto QRIS</span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => void handleQrisUpload(e.target.files?.[0] || null)}
-                        className="hidden"
-                      />
+                      <input name="file_input" type="file" accept="image/*" onChange={(e) => void handleQrisUpload(e.target.files?.[0] || null)} className="hidden" />
                     </label>
                   </div>
                 </Card>

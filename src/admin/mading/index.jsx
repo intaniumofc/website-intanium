@@ -225,7 +225,7 @@ export default function AdminMading() {
         <div className="md:col-span-3 flex flex-wrap gap-3">
           <button
             onClick={() => setStatusFilter('all')}
-            className={`flex-1 min-w-[120px] p-4 rounded-xl border transition-all text-left relative overflow-hidden bg-white border-[var(--border-color)] shadow-sm cursor-pointer ${statusFilter === 'all'
+            className={`flex-1 min-w-[120px] p-4 rounded-xl border transition-colors text-left relative overflow-hidden bg-white border-[var(--border-color)] shadow-sm cursor-pointer ${statusFilter === 'all'
               ? 'border-[var(--color-primary)] ring-2 ring-[var(--color-primary-light)]'
               : 'hover:border-slate-300'
               }`}
@@ -236,7 +236,7 @@ export default function AdminMading() {
 
           <button
             onClick={() => setStatusFilter('pending')}
-            className={`flex-1 min-w-[120px] p-4 rounded-xl border transition-all text-left relative overflow-hidden bg-white border-[var(--border-color)] cursor-pointer ${statusFilter === 'pending'
+            className={`flex-1 min-w-[120px] p-4 rounded-xl border transition-colors text-left relative overflow-hidden bg-white border-[var(--border-color)] cursor-pointer ${statusFilter === 'pending'
               ? 'border-amber-500 ring-2 ring-amber-500/10'
               : 'hover:border-slate-300'
               }`}
@@ -247,7 +247,7 @@ export default function AdminMading() {
 
           <button
             onClick={() => setStatusFilter('approved')}
-            className={`flex-1 min-w-[120px] p-4 rounded-xl border transition-all text-left relative overflow-hidden bg-white border-[var(--border-color)] cursor-pointer ${statusFilter === 'approved'
+            className={`flex-1 min-w-[120px] p-4 rounded-xl border transition-colors text-left relative overflow-hidden bg-white border-[var(--border-color)] cursor-pointer ${statusFilter === 'approved'
               ? 'border-emerald-500 ring-2 ring-emerald-500/10'
               : 'hover:border-slate-300'
               }`}
@@ -262,13 +262,7 @@ export default function AdminMading() {
           {/* Search bar */}
           <div className="relative flex items-center w-full">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
-            <input
-              type="text"
-              placeholder="Cari pesan..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 rounded-xl bg-white border border-[var(--border-color)] text-[var(--text-primary)] text-xs placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]"
-            />
+            <input autoComplete="off" /* autocomplete="off" */ name="searchQuery" type="text" placeholder="Cari pesan…" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-9 pr-3 py-2 rounded-xl bg-white border border-[var(--border-color)] text-[var(--text-primary)] text-xs placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]" />
           </div>
 
           {/* Styled Select Dropdown for Sorting */}
@@ -297,7 +291,7 @@ export default function AdminMading() {
 
       {/* Main Sortable Table */}
       {isLoading ? (
-        <Loading message="Mengunduh data mading..." />
+        <Loading message="Mengunduh data mading…" />
       ) : filteredNotes.length === 0 ? (
         <Card hoverEffect={false} className="border border-[var(--border-color)] bg-white p-8 text-center rounded-2xl">
           <p className="text-sm font-semibold text-[var(--text-secondary)]">Tidak ada pesan ditemukan.</p>
@@ -404,7 +398,7 @@ export default function AdminMading() {
                         {isNoteApproved ? (
                           <button
                             onClick={() => handleUnapprove(note.id)}
-                            className="p-2 text-amber-600 hover:text-amber-700 hover:bg-amber-50 rounded-lg transition-all cursor-pointer"
+                            className="p-2 text-amber-600 hover:text-amber-700 hover:bg-amber-50 rounded-lg transition-colors cursor-pointer"
                             title="Batalkan Persetujuan"
                           >
                             <X className="h-4.5 w-4.5" />
@@ -412,7 +406,7 @@ export default function AdminMading() {
                         ) : (
                           <button
                             onClick={() => handleApprove(note.id)}
-                            className="p-2 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-all cursor-pointer"
+                            className="p-2 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors cursor-pointer"
                             title="Setujui Pesan"
                           >
                             <Check className="h-4.5 w-4.5" />
@@ -420,7 +414,7 @@ export default function AdminMading() {
                         )}
                         <button
                           onClick={() => handleDelete(note.id)}
-                          className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all cursor-pointer"
+                          className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
                           title="Hapus Pesan"
                         >
                           <Trash2 className="h-4.5 w-4.5" />

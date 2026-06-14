@@ -218,7 +218,7 @@ export default function DashboardPage() {
   if (isLoading) {
     return (
       <div className="min-h-[50vh] flex items-center justify-center">
-        <Loading message="Memuat informasi dashboard..." />
+        <Loading message="Memuat informasi dashboard…" />
       </div>
     );
   }
@@ -237,21 +237,21 @@ export default function DashboardPage() {
         {/* Welcome Card (colspan-2) */}
         <motion.div
           variants={itemVariants}
-          className="lg:col-span-2 relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#170C79] via-[#1f129e] to-[#2d1ebd] p-8 text-white shadow-lg flex flex-col justify-between min-h-[160px] text-left group"
+          className="lg:col-span-2 relative overflow-hidden rounded-2xl bg-white border border-slate-200/80 p-8 text-slate-800 shadow-xs flex flex-col justify-between min-h-[160px] text-left border-l-4 border-l-[#170C79] group"
         >
           {/* Subtle grid pattern overlay */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:1.25rem_1.25rem] pointer-events-none" />
-          <div className="absolute -right-12 -top-12 size-40 rounded-full bg-cyan-400/10 blur-3xl pointer-events-none group-hover:scale-110 transition-transform duration-700" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(23,12,121,0.01)_1px,transparent_1px),linear-gradient(to_bottom,rgba(23,12,121,0.01)_1px,transparent_1px)] bg-[size:1.25rem_1.25rem] pointer-events-none" />
+          <div className="absolute -right-12 -top-12 size-40 rounded-full bg-[#170C79]/5 blur-3xl pointer-events-none group-hover:scale-110 transition-transform duration-700" />
 
           <div className="space-y-3 z-10">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/12 border border-white/10 rounded-lg text-[10px] font-black uppercase tracking-[0.12em]">
-              <span className="size-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#170C79]/5 border border-[#170C79]/10 rounded-lg text-[10px] font-black uppercase tracking-[0.12em] text-[#170C79]">
+              <span className="size-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
               Sistem Aktif
             </span>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight">
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight text-slate-800">
               Selamat Datang, Super Admin!
             </h1>
-            <p className="max-w-xl text-xs sm:text-sm text-indigo-100 font-semibold leading-relaxed">
+            <p className="max-w-xl text-xs sm:text-sm text-slate-500 font-semibold leading-relaxed">
               Kelola data penjualan, moderasi pesan mading penggemar, dan update jadwal kegiatan Intanium dari satu panel kendali terpadu.
             </p>
           </div>
@@ -260,14 +260,14 @@ export default function DashboardPage() {
         {/* Warning & Alerts Card (colspan-1) */}
         <motion.div
           variants={itemVariants}
-          className={`rounded-[2rem] border p-6 flex items-center gap-5 text-left relative overflow-hidden transition-all duration-300 ${statsData.pendingMadingCount > 0
-            ? 'bg-amber-50/75 border-amber-200/60 text-amber-900 shadow-[0_4px_20px_rgba(245,158,11,0.04)]'
-            : 'bg-emerald-50/60 border-emerald-200/50 text-emerald-900'
+          className={`rounded-2xl border p-6 flex items-center gap-5 text-left relative overflow-hidden transition-colors duration-200 ${statsData.pendingMadingCount > 0
+            ? 'bg-amber-50/50 border-amber-200 text-amber-900 shadow-xs'
+            : 'bg-emerald-50/30 border-emerald-200 text-emerald-900 shadow-xs'
             }`}
         >
           {statsData.pendingMadingCount > 0 ? (
             <>
-              <div className="size-13 rounded-2xl bg-amber-100 border border-amber-200/50 flex items-center justify-center text-amber-600 shrink-0 shadow-sm">
+              <div className="size-13 rounded-2xl bg-amber-100/80 border border-amber-200/50 flex items-center justify-center text-amber-600 shrink-0 shadow-xs">
                 <AlertTriangle className="h-6 w-6 animate-pulse" />
               </div>
               <div className="space-y-1">
@@ -278,7 +278,7 @@ export default function DashboardPage() {
             </>
           ) : (
             <>
-              <div className="size-13 rounded-2xl bg-emerald-100 border border-emerald-200/40 flex items-center justify-center text-emerald-600 shrink-0 shadow-sm">
+              <div className="size-13 rounded-2xl bg-emerald-100 border border-emerald-200/40 flex items-center justify-center text-emerald-600 shrink-0 shadow-xs">
                 <CheckCircle2 className="h-6 w-6" />
               </div>
               <div className="space-y-1">
@@ -297,10 +297,10 @@ export default function DashboardPage() {
 
         {/* Metric 1: Revenue */}
         <motion.div variants={itemVariants} className="group">
-          <Card hoverEffect={false} className="border border-slate-200/80 bg-white rounded-2xl p-5 text-left transition-all duration-300 hover:scale-[1.015] hover:border-[var(--color-primary)]/30 hover:shadow-md relative overflow-hidden">
+          <Card hoverEffect={false} className="border border-slate-200/80 bg-white rounded-2xl p-5 text-left transition-colors duration-200 hover:scale-[1.01] hover:border-[#170C79]/30 hover:shadow-xs relative overflow-hidden">
             <div className="flex justify-between items-center w-full">
               <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.08em]">Pendapatan Toko</span>
-              <div className="p-2 rounded-xl bg-indigo-50 border border-indigo-100/40 text-[var(--color-primary)] group-hover:scale-105 transition-transform">
+              <div className="p-2 rounded-xl bg-indigo-50 border border-indigo-100/40 text-[#170C79] transition-transform group-hover:scale-105">
                 <DollarSign className="h-4.5 w-4.5" />
               </div>
             </div>
@@ -315,10 +315,10 @@ export default function DashboardPage() {
 
         {/* Metric 2: Merchandise */}
         <motion.div variants={itemVariants} className="group">
-          <Card hoverEffect={false} className="border border-slate-200/80 bg-white rounded-2xl p-5 text-left transition-all duration-300 hover:scale-[1.015] hover:border-[var(--color-primary)]/30 hover:shadow-md relative overflow-hidden">
+          <Card hoverEffect={false} className="border border-slate-200/80 bg-white rounded-2xl p-5 text-left transition-colors duration-200 hover:scale-[1.01] hover:border-[#170C79]/30 hover:shadow-xs relative overflow-hidden">
             <div className="flex justify-between items-center w-full">
               <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.08em]">Katalog Merch</span>
-              <div className="p-2 rounded-xl bg-blue-50 border border-blue-100/40 text-blue-600 group-hover:scale-105 transition-transform">
+              <div className="p-2 rounded-xl bg-blue-50 border border-blue-100/40 text-blue-600 transition-transform group-hover:scale-105">
                 <ShoppingBag className="h-4.5 w-4.5" />
               </div>
             </div>
@@ -333,10 +333,10 @@ export default function DashboardPage() {
 
         {/* Metric 3: Schedules */}
         <motion.div variants={itemVariants} className="group">
-          <Card hoverEffect={false} className="border border-slate-200/80 bg-white rounded-2xl p-5 text-left transition-all duration-300 hover:scale-[1.015] hover:border-[var(--color-primary)]/30 hover:shadow-md relative overflow-hidden">
+          <Card hoverEffect={false} className="border border-slate-200/80 bg-white rounded-2xl p-5 text-left transition-colors duration-200 hover:scale-[1.01] hover:border-[#170C79]/30 hover:shadow-xs relative overflow-hidden">
             <div className="flex justify-between items-center w-full">
               <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.08em]">Jadwal Kegiatan</span>
-              <div className="p-2 rounded-xl bg-emerald-50 border border-emerald-100/40 text-emerald-600 group-hover:scale-105 transition-transform">
+              <div className="p-2 rounded-xl bg-emerald-50 border border-emerald-100/40 text-emerald-600 transition-transform group-hover:scale-105">
                 <Calendar className="h-4.5 w-4.5" />
               </div>
             </div>
@@ -351,10 +351,10 @@ export default function DashboardPage() {
 
         {/* Metric 4: Pending Orders */}
         <motion.div variants={itemVariants} className="group">
-          <Card hoverEffect={false} className="border border-slate-200/80 bg-white rounded-2xl p-5 text-left transition-all duration-300 hover:scale-[1.015] hover:border-[var(--color-primary)]/30 hover:shadow-md relative overflow-hidden">
+          <Card hoverEffect={false} className="border border-slate-200/80 bg-white rounded-2xl p-5 text-left transition-colors duration-200 hover:scale-[1.01] hover:border-[#170C79]/30 hover:shadow-xs relative overflow-hidden">
             <div className="flex justify-between items-center w-full">
               <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.08em]">Order Pending</span>
-              <div className="p-2 rounded-xl bg-amber-50 border border-amber-100/40 text-amber-500 group-hover:scale-105 transition-transform">
+              <div className="p-2 rounded-xl bg-amber-50 border border-amber-100/40 text-amber-500 transition-transform group-hover:scale-105">
                 <TrendingUp className="h-4.5 w-4.5" />
               </div>
             </div>
@@ -375,12 +375,12 @@ export default function DashboardPage() {
         {/* Real-time Mading Moderation Queue (colspan-2) */}
         <motion.div
           variants={itemVariants}
-          className="lg:col-span-2 bg-white border border-slate-200/80 rounded-[2rem] p-6 shadow-sm flex flex-col justify-between gap-5 text-left"
+          className="lg:col-span-2 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs flex flex-col justify-between gap-5 text-left"
         >
           <div className="space-y-4">
             <div className="flex justify-between items-center border-b border-slate-100 pb-3">
-              <h4 className="text-sm font-black text-[var(--color-primary)] flex items-center gap-2">
-                <MessageSquare className="h-4.5 w-4.5 text-cyan-600" />
+              <h4 className="text-sm font-black text-[#170C79] flex items-center gap-2">
+                <MessageSquare className="h-4.5 w-4.5 text-[#170C79]" />
                 Antrean Moderasi Mading Cepat
               </h4>
               <span className="text-[9px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100/30">
@@ -405,7 +405,7 @@ export default function DashboardPage() {
                   return (
                     <div
                       key={note.id}
-                      className={`border border-l-[5px] rounded-2xl p-4 flex items-center justify-between gap-4 transition-all duration-300 ${noteStyle} ${isBusy ? 'opacity-50 pointer-events-none' : ''
+                      className={`border border-l-[5px] rounded-xl p-4 flex items-center justify-between gap-4 transition-colors duration-200 ${noteStyle} ${isBusy ? 'opacity-50 pointer-events-none' : ''
                         }`}
                     >
                       <div className="space-y-1 min-w-0 flex-1">
@@ -416,16 +416,18 @@ export default function DashboardPage() {
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         <button
+                          type="button"
                           onClick={() => handleQuickApprove(note.id)}
-                          className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl py-2 px-3 text-xs font-black flex items-center gap-1 shadow-sm transition-all duration-200 cursor-pointer active:scale-95"
+                          className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl py-2 px-3 text-xs font-black flex items-center gap-1 shadow-xs transition-colors duration-200 cursor-pointer active:scale-95"
                           title="Setujui komentar mading"
                         >
                           <Check className="h-3.5 w-3.5" />
                           Setujui
                         </button>
                         <button
+                          type="button"
                           onClick={() => handleQuickDelete(note.id)}
-                          className="bg-white hover:bg-rose-50 text-rose-600 border border-rose-200/30 hover:border-rose-200 rounded-xl p-2 transition-all duration-200 cursor-pointer"
+                          className="bg-white hover:bg-rose-50 text-rose-600 border border-rose-200/30 hover:border-rose-200 rounded-xl p-2 transition-colors duration-200 cursor-pointer"
                           title="Hapus komentar mading"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -439,7 +441,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="border-t border-slate-100 pt-3 text-right">
-            <Link to={ROUTES.ADMIN_MADING} className="inline-flex items-center gap-1 text-xs font-black text-[var(--color-primary)] hover:underline">
+            <Link to={ROUTES.ADMIN_MADING} className="inline-flex items-center gap-1 text-xs font-black text-[#170C79] hover:underline">
               Kelola Mading Lengkap <ArrowUpRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -448,11 +450,11 @@ export default function DashboardPage() {
         {/* Recent Orders List (colspan-1) */}
         <motion.div
           variants={itemVariants}
-          className="bg-white border border-slate-200/80 rounded-[2rem] p-6 shadow-sm flex flex-col justify-between gap-5 text-left"
+          className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs flex flex-col justify-between gap-5 text-left"
         >
           <div className="space-y-4">
             <div className="border-b border-slate-100 pb-3">
-              <h4 className="text-sm font-black text-[var(--color-primary)] flex items-center gap-2">
+              <h4 className="text-sm font-black text-[#170C79] flex items-center gap-2">
                 <ShoppingBag className="h-4.5 w-4.5 text-blue-600" />
                 Order Baru Terbaru
               </h4>
@@ -475,7 +477,7 @@ export default function DashboardPage() {
                       <span className="text-[10px] text-slate-400 font-semibold block truncate mt-0.5">{order.shipping_name}</span>
                     </div>
                     <div className="text-right shrink-0">
-                      <span className="text-xs font-black text-[var(--color-primary)] block tabular-nums">
+                      <span className="text-xs font-black text-[#170C79] block tabular-nums">
                         {formatCurrency(order.total_amount)}
                       </span>
                       <span className={`inline-block text-[8px] font-black border uppercase px-1.5 py-0.5 rounded mt-1 ${getStatusBadge(order.status)}`}>
@@ -489,7 +491,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="border-t border-slate-100 pt-3 text-right">
-            <Link to={ROUTES.ADMIN_ORDERS} className="inline-flex items-center gap-1 text-xs font-black text-[var(--color-primary)] hover:underline">
+            <Link to={ROUTES.ADMIN_ORDERS} className="inline-flex items-center gap-1 text-xs font-black text-[#170C79] hover:underline">
               Semua Pesanan <ArrowUpRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -508,28 +510,28 @@ export default function DashboardPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 
           <Link to={ROUTES.ADMIN_MERCHANDISE} className="group">
-            <Card hoverEffect={false} className="p-4 bg-white border border-slate-200/80 rounded-2xl text-center font-bold text-slate-700 hover:text-[var(--color-primary)] hover:border-[var(--color-primary)]/40 hover:shadow-sm transition-all duration-300 flex items-center justify-center gap-2 text-xs">
+            <Card hoverEffect={false} className="p-4 bg-white border border-slate-200/80 rounded-2xl text-center font-bold text-slate-700 hover:text-[#170C79] hover:border-[#170C79]/40 hover:shadow-xs transition-colors duration-200 flex items-center justify-center gap-2 text-xs cursor-pointer">
               <ShoppingBag className="w-4 h-4 text-blue-600" />
               <span>Tambah Produk</span>
             </Card>
           </Link>
 
           <Link to={ROUTES.ADMIN_RECAPS} className="group">
-            <Card hoverEffect={false} className="p-4 bg-white border border-slate-200/80 rounded-2xl text-center font-bold text-slate-700 hover:text-[var(--color-primary)] hover:border-[var(--color-primary)]/40 hover:shadow-sm transition-all duration-300 flex items-center justify-center gap-2 text-xs">
+            <Card hoverEffect={false} className="p-4 bg-white border border-slate-200/80 rounded-2xl text-center font-bold text-slate-700 hover:text-[#170C79] hover:border-[#170C79]/40 hover:shadow-xs transition-colors duration-200 flex items-center justify-center gap-2 text-xs cursor-pointer">
               <BookOpen className="w-4 h-4 text-purple-600" />
               <span>Unggah Zine</span>
             </Card>
           </Link>
 
           <Link to={ROUTES.ADMIN_SCHEDULE} className="group">
-            <Card hoverEffect={false} className="p-4 bg-white border border-slate-200/80 rounded-2xl text-center font-bold text-slate-700 hover:text-[var(--color-primary)] hover:border-[var(--color-primary)]/40 hover:shadow-sm transition-all duration-300 flex items-center justify-center gap-2 text-xs">
+            <Card hoverEffect={false} className="p-4 bg-white border border-slate-200/80 rounded-2xl text-center font-bold text-slate-700 hover:text-[#170C79] hover:border-[#170C79]/40 hover:shadow-xs transition-colors duration-200 flex items-center justify-center gap-2 text-xs cursor-pointer">
               <Calendar className="w-4 h-4 text-emerald-600" />
               <span>Buat Jadwal</span>
             </Card>
           </Link>
 
           <Link to={ROUTES.ADMIN_NEWS} className="group">
-            <Card hoverEffect={false} className="p-4 bg-white border border-slate-200/80 rounded-2xl text-center font-bold text-slate-700 hover:text-[var(--color-primary)] hover:border-[var(--color-primary)]/40 hover:shadow-sm transition-all duration-300 flex items-center justify-center gap-2 text-xs">
+            <Card hoverEffect={false} className="p-4 bg-white border border-slate-200/80 rounded-2xl text-center font-bold text-slate-700 hover:text-[#170C79] hover:border-[#170C79]/40 hover:shadow-xs transition-colors duration-200 flex items-center justify-center gap-2 text-xs cursor-pointer">
               <Newspaper className="w-4 h-4 text-rose-500" />
               <span>Tulis Berita</span>
             </Card>
