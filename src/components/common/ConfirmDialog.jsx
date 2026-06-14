@@ -8,10 +8,12 @@ export default function ConfirmDialog({
   message,
   onConfirm,
   onCancel,
+  onClose,
   confirmText = 'Ya, Hapus',
   cancelText = 'Batal',
   type = 'danger', // 'danger' | 'warning' | 'info'
 }) {
+  const handleCancel = onCancel || onClose;
   // Prevent scrolling behind the active modal
   useEffect(() => {
     if (isOpen) {
@@ -60,7 +62,7 @@ export default function ConfirmDialog({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={onCancel}
+            onClick={handleCancel}
             className="absolute inset-0 bg-slate-900/40 backdrop-blur-xs"
           />
 
@@ -93,7 +95,7 @@ export default function ConfirmDialog({
             <div className="flex items-center justify-center gap-2 mt-6 pt-4 border-t border-slate-50 w-full">
               <button
                 type="button"
-                onClick={onCancel}
+                onClick={handleCancel}
                 className="flex-1 px-4 py-2.5 text-xs font-bold text-slate-500 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl transition-all outline-none cursor-pointer"
               >
                 {cancelText}

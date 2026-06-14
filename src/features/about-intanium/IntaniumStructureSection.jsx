@@ -1,48 +1,21 @@
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useInView } from 'framer-motion';
-import { ChevronDown, Crown, LayoutGrid, Palette, Shield, Sparkles, Users } from 'lucide-react';
+import {
+  ChevronDown,
+  Crown,
+  LayoutGrid,
+  Palette,
+  Shield,
+  Sparkles,
+  Users
+} from 'lucide-react';
+import { supabase } from '../../lib/supabaseClient';
 
-const STRUCTURE = {
-  leader: {
-    name: 'Nur Intan',
-    role: 'Pusat Arahan',
-    badge: 'Ketua Umum',
-    description: 'Menjadi pusat representasi, arahan, dan semangat utama bagi perjalanan Intanium.'
-  },
-  branches: [
-    {
-      id: 'external',
-      coordinator: 'Casimira',
-      role: 'Koor. Eksternal',
-      description: 'Menjembatani komunikasi, relasi luar, humas, dan aktivitas publik komunitas.',
-      divisions: [
-        { name: 'Humas', members: ['Ivan', 'Riul'] },
-        { name: 'Esport', members: ['Afif', 'Wilfan'] }
-      ]
-    },
-    {
-      id: 'creative',
-      coordinator: 'Cipani',
-      role: 'Koor. Media Kreatif',
-      description: 'Mengelola visual, konten, sosial media, editor, dan kebutuhan desain Intanium.',
-      divisions: [
-        { name: 'Sosial Media', members: ['Adel', 'Kiky', 'Rafli', 'Tassya'] },
-        { name: 'Editor', members: ['Deven', 'Kay', 'Miksi'] },
-        { name: 'Design', members: ['Aqza', 'Jiw', 'Risas', 'Robby', 'Steven'] }
-      ]
-    },
-    {
-      id: 'internal',
-      coordinator: 'Bogel',
-      role: 'Koor. Internal',
-      description: 'Menjaga kebutuhan internal, arsip data, keuangan, dan keanggotaan komunitas.',
-      divisions: [
-        { name: 'Data Archive', members: ['Arika', 'Azmi', 'Febs', 'Iqbal', 'Zill'] },
-        { name: 'Keuangan', members: ['Alifian', 'Diaz'] },
-        { name: 'Keanggotaan', members: ['Arsya', 'Azri', 'Manisha', 'Michelle', 'Ripli', 'Tirto'] }
-      ]
-    }
-  ]
+const LEADER_INFO = {
+  name: 'Nur Intan',
+  role: 'Pusat Arahan',
+  badge: 'Ketua Umum',
+  description: 'Menjadi pusat representasi, arahan, dan semangat utama bagi perjalanan Intanium.'
 };
 
 const BRANCH_VISUALS = {
@@ -70,25 +43,20 @@ const PREMIUM_EASE = [0.22, 1, 0.36, 1];
 
 // === Helpers ===
 const getTotalMembers = (branch) =>
-  branch.divisions.reduce((sum, division) => sum + division.members.length, 0);
+  branch.divisions ? branch.divisions.reduce((sum, division) => sum + (division.members?.length || 0), 0) : 0;
 
 const getDivisionPreview = (branch, max = 3) => {
+  if (!branch.divisions) return { preview: [], extra: 0 };
   const names = branch.divisions.map((division) => division.name);
   return { preview: names.slice(0, max), extra: Math.max(0, names.length - max) };
 };
 
-// === Aggregate stats (untuk StatBar) ===
-const TOTAL_DIVISIONS = STRUCTURE.branches.reduce((sum, b) => sum + b.divisions.length, 0);
-const TOTAL_MEMBERS = STRUCTURE.branches.reduce((sum, b) => sum + getTotalMembers(b), 0);
-
 // === Filter tabs ===
 const FILTER_TABS = [
   { id: 'all', label: 'Semua', icon: LayoutGrid },
-  ...STRUCTURE.branches.map((b) => ({
-    id: b.id,
-    label: BRANCH_VISUALS[b.id].eyebrow,
-    icon: BRANCH_VISUALS[b.id].icon
-  }))
+  { id: 'external', label: 'Hubungan Eksternal', icon: Users },
+  { id: 'creative', label: 'Media Kreatif', icon: Palette },
+  { id: 'internal', label: 'Operasional Internal', icon: Shield }
 ];
 
 // === Variants ===
@@ -155,7 +123,7 @@ const branchCardVariants = {
   exit: { opacity: 0, y: 14, scale: 0.97, transition: { duration: 0.25, ease: 'easeInOut' } }
 };
 
-// === Konstanta objek inline (dipisah agar JSX tidak memakai kurawal ganda) ===
+// === Konstanta objek inline ===
 const LEADER_HOVER = { y: -4, scale: 1.01 };
 const LEADER_SPRING = { type: 'spring', stiffness: 320, damping: 24 };
 const CARD_HOVER = { y: -6, scale: 1.01 };
@@ -211,14 +179,10 @@ function DecorativeStructureBackground() {
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Faint constellation dots */}
       <div style={DOTS_STYLE} className="absolute inset-0 opacity-30" />
-      {/* Soft radial glows */}
       <div className="absolute -top-24 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-(--color-primary)/10 blur-[5rem]" />
-      <div className="absolute -bottom-24 right-0 h-72 w-72 rounded-full bg-(--color-secondary)/10 blur-[5rem]" />
-      {/* Decorative thin line */}
+      <div className="absolute -bottom-24 right-0 h-72 w-72 rounded-full bg-(--color-secondary)/15 blur-[5rem]" />
       <div className="absolute left-1/2 top-10 h-px w-1/2 -translate-x-1/2 bg-[linear-gradient(to_right,transparent,rgba(167,139,250,0.25),transparent)]" />
-      {/* Tiny sparkles */}
       {sparkles.map((s, i) => {
         const spanStyle = { top: s.top, left: s.left };
         const spanAnimate = { opacity: [0.15, 0.6, 0.15], scale: [0.8, 1.1, 0.8] };
@@ -240,12 +204,12 @@ function DecorativeStructureBackground() {
   );
 }
 
-// === Aggregate stat bar dengan angka beranimasi ===
-function StatBar() {
+// === Aggregate stat bar ===
+function StatBar({ coordinatorCount, divisionCount, memberCount }) {
   const stats = [
-    { label: 'Koordinator', value: STRUCTURE.branches.length },
-    { label: 'Divisi', value: TOTAL_DIVISIONS },
-    { label: 'Anggota Aktif', value: TOTAL_MEMBERS }
+    { label: 'Koordinator', value: coordinatorCount },
+    { label: 'Divisi', value: divisionCount },
+    { label: 'Anggota Aktif', value: memberCount }
   ];
   return (
     <motion.div variants={fadeUp} className="mx-auto grid max-w-2xl grid-cols-3 gap-3 sm:gap-4">
@@ -296,7 +260,7 @@ function BranchStats({ branch }) {
   return (
     <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-(--text-secondary)">
       <span className="inline-flex items-center gap-1.5 rounded-full bg-(--color-primary-light)/60 px-2.5 py-1 text-(--color-primary)">
-        {branch.divisions.length} Divisi
+        {branch.divisions?.length || 0} Divisi
       </span>
       <span className="inline-flex items-center gap-1.5 rounded-full bg-white/70 px-2.5 py-1">
         <CountUp end={total} duration={1} className="font-bold" /> Anggota
@@ -305,7 +269,7 @@ function BranchStats({ branch }) {
   );
 }
 
-// === Division preview chips (max 3 + N) ===
+// === Division preview chips ===
 function DivisionPreviewChips({ branch }) {
   const { preview, extra } = getDivisionPreview(branch);
   return (
@@ -335,9 +299,7 @@ function LeaderCard() {
       transition={LEADER_SPRING}
       className="relative mx-auto max-w-2xl overflow-hidden rounded-4xl border border-white/70 bg-white/80 p-5 shadow-[0_30px_80px_-40px_rgba(28,15,132,0.45)] backdrop-blur-xl sm:p-6"
     >
-      {/* Premium top accent line */}
       <div className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(to_right,transparent,var(--color-secondary),transparent)]" />
-      {/* Subtle crown glow */}
       <div className="absolute -top-10 left-1/2 h-28 w-28 -translate-x-1/2 rounded-full bg-(--color-secondary)/15 blur-2xl pointer-events-none" />
 
       <div className="relative flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left">
@@ -347,12 +309,12 @@ function LeaderCard() {
         </div>
         <div className="min-w-0 flex-1 space-y-2">
           <span className="inline-flex rounded-full border border-(--color-primary)/15 bg-white/80 px-3 py-1 text-xs font-black uppercase tracking-widest text-(--color-primary) shadow-sm">
-            {STRUCTURE.leader.badge}
+            {LEADER_INFO.badge}
           </span>
           <div>
-            <h3 className="text-2xl font-black leading-tight text-(--color-primary)">{STRUCTURE.leader.name}</h3>
+            <h3 className="text-2xl font-black leading-tight text-(--color-primary)">{LEADER_INFO.name}</h3>
           </div>
-          <p className="text-sm leading-relaxed text-(--text-secondary)">{STRUCTURE.leader.description}</p>
+          <p className="text-sm leading-relaxed text-(--text-secondary)">{LEADER_INFO.description}</p>
         </div>
       </div>
     </motion.div>
@@ -370,25 +332,28 @@ function BranchDetails({ branch }) {
       className="overflow-hidden"
     >
       <motion.div variants={detailContainerVariants} className="mt-4 space-y-3 border-t border-white/60 pt-4">
-        {branch.divisions.map((division) => (
+        {branch.divisions?.map((division) => (
           <motion.div
             key={division.name}
             variants={divisionItemVariants}
-            className="rounded-2xl border border-white/70 bg-white/70 p-3.5"
+            className="rounded-2xl border border-white/70 bg-white/70 p-3.5 text-left"
           >
             <div className="mb-2 flex items-center justify-between gap-3">
               <span className="text-xs font-black text-(--color-primary)">{division.name}</span>
-              <span className="shrink-0 text-[11px] font-semibold text-(--text-secondary)">{division.members.length} anggota</span>
+              <span className="shrink-0 text-[11px] font-semibold text-(--text-secondary)">{division.members?.length || 0} anggota</span>
             </div>
             <div className="flex flex-wrap gap-1.5">
-              {division.members.map((member) => (
-                <span
-                  key={member}
-                  className="rounded-full border border-white/70 bg-white px-2.5 py-1 text-xs font-semibold text-(--text-secondary)"
+              {division.members?.map((member) => (
+                <div
+                  key={member.id}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-white/70 bg-white px-2.5 py-1 text-xs font-semibold text-(--text-secondary) shadow-xs hover:border-(--color-primary)/20 transition-all"
                 >
-                  {member}
-                </span>
+                  <span>{member.name}</span>
+                </div>
               ))}
+              {(!division.members || division.members.length === 0) && (
+                <span className="text-xs text-(--text-secondary) italic">Belum ada anggota</span>
+              )}
             </div>
           </motion.div>
         ))}
@@ -423,7 +388,7 @@ function BranchCard({ branch, isActive, onToggle }) {
       >
         <motion.div layout="position" whileTap={CARD_TAP} className="space-y-4">
           <div className="flex items-start justify-between gap-4">
-            <div className="flex min-w-0 items-center gap-3">
+            <div className="flex min-w-0 items-center gap-3 text-left">
               <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border transition-transform duration-300 ${visual.iconBox} ${isActive ? 'scale-105' : ''}`}>
                 <BranchIcon className="h-5 w-5" />
               </div>
@@ -441,7 +406,7 @@ function BranchCard({ branch, isActive, onToggle }) {
             </motion.span>
           </div>
 
-          <p className="text-sm leading-relaxed text-(--text-secondary)">{branch.description}</p>
+          <p className="text-sm leading-relaxed text-(--text-secondary) text-left">{branch.description}</p>
 
           <BranchStats branch={branch} />
           <DivisionPreviewChips branch={branch} />
@@ -462,13 +427,9 @@ function BranchCard({ branch, isActive, onToggle }) {
 function Connector() {
   return (
     <motion.div variants={connectorReveal} className="relative mx-auto hidden h-16 max-w-4xl origin-top lg:block">
-      {/* Vertical line from leader */}
       <div className="absolute left-1/2 top-0 h-9 w-px -translate-x-1/2 bg-[linear-gradient(to_bottom,rgba(167,139,250,0.55),rgba(124,58,237,0.12))]" />
-      {/* Node dot at the branch point */}
       <div className="absolute left-1/2 top-9 h-2 w-2 -translate-x-1/2 rounded-full bg-(--color-secondary)/60 shadow-[0_0_10px_rgba(167,139,250,0.6)]" />
-      {/* Horizontal constellation line */}
       <div className="absolute bottom-0 left-[16.6%] right-[16.6%] h-px bg-[linear-gradient(to_right,transparent,rgba(124,58,237,0.4),transparent)]" />
-      {/* Drop lines + node dots */}
       <div className="absolute bottom-0 left-[16.6%] h-5 w-px bg-(--color-primary)/20" />
       <div className="absolute bottom-0 left-1/2 h-5 w-px -translate-x-1/2 bg-(--color-primary)/20" />
       <div className="absolute bottom-0 right-[16.6%] h-5 w-px bg-(--color-primary)/20" />
@@ -480,8 +441,45 @@ function Connector() {
 }
 
 export default function IntaniumStructureSection() {
+  const [branchesData, setBranchesData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [activeBranch, setActiveBranch] = useState(null);
   const [filter, setFilter] = useState('all');
+
+  useEffect(() => {
+    const loadStructure = async () => {
+      try {
+        const { data: branches } = await supabase.from('org_branches').select('*').order('id');
+        const { data: divisions } = await supabase.from('org_divisions').select('*').order('id');
+        const { data: members } = await supabase.from('org_members').select('*');
+
+        if (branches && divisions && members) {
+          const formatted = branches.map(b => {
+            const bDivs = divisions
+              .filter(d => d.branch_id === b.id)
+              .map(d => {
+                const dMems = members.filter(m => m.division_id === d.id);
+                return {
+                  ...d,
+                  members: dMems
+                };
+              });
+            return {
+              ...b,
+              divisions: bDivs
+            };
+          });
+          setBranchesData(formatted);
+        }
+      } catch (err) {
+        console.error('Failed to load structure:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadStructure();
+  }, []);
 
   const handleToggle = (branchId) => {
     setActiveBranch((current) => (current === branchId ? null : branchId));
@@ -494,10 +492,13 @@ export default function IntaniumStructureSection() {
 
   const visibleBranches =
     filter === 'all'
-      ? STRUCTURE.branches
-      : STRUCTURE.branches.filter((branch) => branch.id === filter);
+      ? branchesData
+      : branchesData.filter((branch) => branch.id === filter);
 
   const isFiltered = filter !== 'all';
+
+  const totalDivisions = branchesData.reduce((sum, b) => sum + b.divisions.length, 0);
+  const totalMembers = branchesData.reduce((sum, b) => sum + getTotalMembers(b), 0);
 
   return (
     <motion.section
@@ -520,31 +521,43 @@ export default function IntaniumStructureSection() {
           </p>
         </motion.div>
 
-        <StatBar />
+        {isLoading ? (
+          <div className="py-12 text-center text-sm font-bold text-slate-500">
+            Memuat struktur kepengurusan…
+          </div>
+        ) : (
+          <>
+            <StatBar
+              coordinatorCount={branchesData.length}
+              divisionCount={totalDivisions}
+              memberCount={totalMembers}
+            />
 
-        <LeaderCard />
-        {!isFiltered && <Connector />}
+            <LeaderCard />
+            {!isFiltered && <Connector />}
 
-        <FilterTabs active={filter} onChange={handleFilter} />
+            <FilterTabs active={filter} onChange={handleFilter} />
 
-        <motion.div
-          layout
-          variants={staggerContainer}
-          className={`grid items-start gap-5 ${isFiltered
-            ? 'mx-auto max-w-2xl grid-cols-1'
-            : 'sm:grid-cols-2 lg:grid-cols-3'}`}
-        >
-          <AnimatePresence mode="popLayout">
-            {visibleBranches.map((branch) => (
-              <BranchCard
-                key={branch.id}
-                branch={branch}
-                isActive={activeBranch === branch.id}
-                onToggle={() => handleToggle(branch.id)}
-              />
-            ))}
-          </AnimatePresence>
-        </motion.div>
+            <motion.div
+              layout
+              variants={staggerContainer}
+              className={`grid items-start gap-5 ${isFiltered
+                ? 'mx-auto max-w-2xl grid-cols-1'
+                : 'sm:grid-cols-2 lg:grid-cols-3'}`}
+            >
+              <AnimatePresence mode="popLayout">
+                {visibleBranches.map((branch) => (
+                  <BranchCard
+                    key={branch.id}
+                    branch={branch}
+                    isActive={activeBranch === branch.id}
+                    onToggle={() => handleToggle(branch.id)}
+                  />
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          </>
+        )}
       </motion.div>
     </motion.section>
   );

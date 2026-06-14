@@ -1,4 +1,5 @@
 // Common utility helper functions
+import { supabase } from './supabaseClient';
 
 /**
  * Format number into Indonesian Rupiah (IDR) currency format.
@@ -57,4 +58,24 @@ export const getBase64 = (file) => {
     reader.onload = () => resolve(reader.result);
     reader.onerror = error => reject(error);
   });
+};
+
+/**
+ * Log admin activity to supabase
+ * @param {string} actionText 
+ */
+export const logAdminActivity = async (actionText) => {
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session && session.user) {
+      await supabase.from('admin_activity_logs').insert([
+        {
+          admin_username: session.user.email,
+          action: actionText
+        }
+      ]);
+    }
+  } catch (err) {
+    console.error('Gagal mencatat log aktivitas:', err);
+  }
 };
