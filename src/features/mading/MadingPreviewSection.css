@@ -264,44 +264,139 @@
 }
 
 /* Mobile responsive horizontal scrolling */
+/* Mobile responsive horizontal scrolling and scaling adjustments */
 @media (max-width: 640px) {
+  .corkboard-outer {
+    padding: 8px;
+    border-radius: 12px;
+  }
+  
+  .corkboard-bevel-frame {
+    border-width: 3px;
+    border-radius: 6px;
+  }
+
   .corkboard-surface {
     display: flex;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    gap: 12px;
-    padding: 24px 16px;
-    padding-top: 48px; /* space for title banner overlay */
-    min-height: auto;
+    gap: 10px;
+    padding: 16px 12px;
+    padding-top: 44px; /* Space for the scaled-down title banner overlay */
+    min-height: 170px; /* Gives the board a natural aspect ratio even with few notes */
+    box-shadow: inset 0 4px 12px rgba(0,0,0,0.3);
   }
+
+  /* Compact sticky notes on mobile */
   .sticky-note-item {
-    min-width: 120px;
-    max-width: 130px;
-    width: 120px;
-    min-height: 120px;
+    min-width: 95px;
+    max-width: 100px;
+    width: 95px;
+    min-height: 95px;
+    padding: 8px;
     scroll-snap-align: center;
     flex-shrink: 0;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
   }
+
+  .sticky-note-item .note-content {
+    padding-top: 8px;
+    padding-bottom: 0px;
+  }
+
+  /* Smaller pins and washi tape on mobile */
+  .note-push-pin {
+    width: 10px;
+    height: 10px;
+    top: -5px;
+  }
+  .note-push-pin::after {
+    top: 2.5px;
+    left: 2.5px;
+    width: 2px;
+    height: 2px;
+  }
+
+  .note-washi-tape {
+    width: 35px;
+    height: 10px;
+  }
+  .note-washi-tape.washi {
+    top: -6px;
+  }
+
+  /* Micro text formatting for compact note layout */
   .note-text {
-    font-size: 11.5px;
+    font-size: 9.5px;
+    line-height: 1.3;
     display: -webkit-box;
     -webkit-line-clamp: 4;
     line-clamp: 4;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-  .note-author {
-    font-size: 10px;
+
+  .note-footer {
+    margin-top: 2px !important;
+    padding-top: 1px !important;
+    font-size: 7.5px !important;
   }
+
+  .note-footer .note-author {
+    font-size: 8px;
+  }
+
+  .note-footer .text-slate-500 {
+    font-size: 6.5px !important;
+  }
+
+  .note-footer .h-3 {
+    width: 10px;
+    height: 10px;
+  }
+
   .note-doodle {
-    font-size: 12px;
+    font-size: 9px;
   }
+
+  /* Scaled-down paper banner */
   .corkboard-banner {
-    left: 20px;
+    left: 12px;
+    top: 10px;
     transform: none;
   }
+
+  .banner-paper {
+    font-size: 13px;
+    padding: 2.5px 12px;
+    border-radius: 1px;
+    box-shadow: 0 1.5px 3px rgba(0,0,0,0.1);
+  }
+
+  .banner-washi {
+    width: 22px;
+    height: 9px;
+  }
+  .banner-washi.left {
+    left: -12px;
+    top: -2px;
+  }
+  .banner-washi.right {
+    right: -12px;
+    top: -2px;
+  }
+
+  /* Scaled-down butterfly badge */
   .butterfly-pin-badge {
     right: 10px;
     top: 10px;
+  }
+
+  .butterfly-pin-circle {
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+    border-width: 1px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.25);
   }
 }

@@ -272,11 +272,90 @@
 }
 
 /* Responsive grid overrides for corkboard */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+  .corkboard-outer {
+    padding: 8px;
+    border-radius: 12px;
+  }
+  
+  .corkboard-bevel-frame {
+    border-width: 3px;
+    border-radius: 6px;
+  }
+
   .corkboard-surface {
-    grid-template-columns: 1fr;
-    padding: 1.5rem 1rem;
-    min-height: auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px;
+    padding: 16px 10px;
+    min-height: 250px;
+    box-shadow: inset 0 4px 12px rgba(0,0,0,0.3);
+  }
+
+  /* Compact sticky notes on mobile corkboard */
+  .corkboard-surface .sticky-note-item {
+    aspect-ratio: 1 / 1 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    align-self: start;
+    padding: 8px !important;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
+  }
+
+  .corkboard-surface .sticky-note-item .note-push-pin {
+    width: 10px !important;
+    height: 10px !important;
+    top: -5px !important;
+  }
+  .corkboard-surface .sticky-note-item .note-push-pin::after {
+    top: 2.5px !important;
+    left: 2.5px !important;
+    width: 2px !important;
+    height: 2px !important;
+  }
+
+  .corkboard-surface .sticky-note-item .note-washi-tape {
+    width: 35px !important;
+    height: 10px !important;
+  }
+  .corkboard-surface .sticky-note-item .note-washi-tape.washi {
+    top: -6px !important;
+  }
+
+  .corkboard-surface .sticky-note-item .note-text {
+    font-size: 9.5px !important;
+    line-height: 1.3 !important;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .corkboard-surface .sticky-note-item .note-footer {
+    margin-top: 2px !important;
+    padding-top: 1px !important;
+    font-size: 7.5px !important;
+  }
+
+  .corkboard-surface .sticky-note-item .note-footer .note-author {
+    font-size: 8px !important;
+  }
+
+  .corkboard-surface .sticky-note-item .note-footer .text-slate-500 {
+    font-size: 6.5px !important;
+  }
+
+  .corkboard-surface .sticky-note-item .note-footer div {
+    font-size: 7.5px !important;
+  }
+
+  .corkboard-surface .sticky-note-item .note-footer svg {
+    width: 10px !important;
+    height: 10px !important;
+  }
+
+  .corkboard-surface .sticky-note-item .note-doodle {
+    font-size: 9px !important;
   }
   
   .search-input-wrapper {

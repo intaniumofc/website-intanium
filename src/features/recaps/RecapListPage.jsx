@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import HTMLFlipBook from 'react-pageflip';
 import { Link } from 'react-router-dom';
 import {
@@ -11,6 +11,7 @@ import {
   List,
   FileText,
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Book from './Book';
 import { monthlyRecaps } from './monthlyRecaps';
 import { recapService } from './recapService';
@@ -24,7 +25,6 @@ const ActivityPage = forwardRef(function ActivityPage({ recap, pageNumber }, ref
         <span className="recap-page__chapter">Chapter {String(pageNumber).padStart(2, '0')}</span>
         <h2 className="recap-page__title">{recap.month} {recap.year}</h2>
         <p className="recap-page__subtitle">{recap.theme} · Activity Recap</p>
-
         <RecapSection title="01 / Theater Activity" badge={`${recap.left.theater.total} Shows`}>
           <ul className="recap-list">
             {recap.left.theater.items.map((item) => (
@@ -35,17 +35,14 @@ const ActivityPage = forwardRef(function ActivityPage({ recap, pageNumber }, ref
             ))}
           </ul>
         </RecapSection>
-
         <RecapSection title="02 / YouTube Highlight" badge="YouTube">
           <p className="recap-meta">{recap.left.youtube.date}</p>
           <p className="recap-content-title">{recap.left.youtube.title}</p>
         </RecapSection>
-
         <RecapSection title="03 / Live Activity" badge={`${recap.left.live.total}x Live`}>
           <p className="recap-meta">{recap.left.live.platform}</p>
           <p className="recap-content-title">{recap.left.live.dates.join(', ')}</p>
         </RecapSection>
-
         <p className="recap-page__number">INTANIUM · Page {String(pageNumber * 2 - 1).padStart(2, '0')}</p>
       </div>
     </article>
@@ -59,7 +56,6 @@ const MomentsPage = forwardRef(function MomentsPage({ recap, pageNumber }, ref) 
         <span className="recap-page__chapter">Monthly Journal</span>
         <h2 className="recap-page__title">Moments &<br />Interaction</h2>
         <p className="recap-page__subtitle">{recap.month} {recap.year}</p>
-
         <RecapSection title="Private Message">
           <div className="recap-pm-grid">
             <Stat label="Bubble Chat" value={recap.right.privateMessage.bubbleChat} />
@@ -67,17 +63,14 @@ const MomentsPage = forwardRef(function MomentsPage({ recap, pageNumber }, ref) 
             <Stat label="Foto" value={recap.right.privateMessage.photo} />
           </div>
         </RecapSection>
-
         <RecapSection title="Video Call" badge="Violet">
           <p className="recap-content-title">{recap.right.videoCall.title}</p>
           <p className="recap-meta">{recap.right.videoCall.dates.join(' · ')}</p>
         </RecapSection>
-
         <RecapSection title="Special Event" badge="Event">
           <p className="recap-content-title">{recap.right.event.title}</p>
           <p className="recap-meta">{recap.right.event.date}</p>
         </RecapSection>
-
         <p className="recap-page__number">INTANIUM · Page {String(pageNumber * 2).padStart(2, '0')}</p>
       </div>
     </article>
@@ -100,11 +93,12 @@ function Stat({ label, value }) {
   return <div><strong>{value}</strong><span>{label}</span></div>;
 }
 
-function ClosedBookIntro({ state, onOpen }) {
+// 🔹 Sekarang menerima prop `onOpenEnd` dan meneruskannya ke <Book>
+function ClosedBookIntro({ state, onOpen, onOpenEnd }) {
   const isOpening = state === 'opening';
-
+  const isExiting = state === 'transitioning';
   return (
-    <div className={`recap-closed-state ${isOpening ? 'is-opening' : ''}`}>
+    <div className={`recap-closed-state ${isOpening ? 'is-opening' : ''} ${isExiting ? 'is-exiting' : ''}`}>
       <button
         type="button"
         className="recap-book-trigger"
@@ -112,7 +106,7 @@ function ClosedBookIntro({ state, onOpen }) {
         disabled={isOpening}
         aria-label="Buka recap book"
       >
-        <Book isOpening={isOpening}>
+        <Book isOpening={isOpening} onOpenEnd={onOpenEnd}>
           <div className="recap-cover-art">
             <span className="recap-cover-art__brand">INTANIUM</span>
             <span className="recap-cover-art__tag">#Berkilau</span>
@@ -122,14 +116,12 @@ function ClosedBookIntro({ state, onOpen }) {
             </p>
           </div>
         </Book>
-
         {!isOpening && (
           <span className="recap-book-hint">
             Klik buku untuk membuka
           </span>
         )}
       </button>
-
       <div className="recap-closed-copy">
         <span className="recap-kicker">Collectible Digital Edition · 2026</span>
         <h2>Satu tahun, dirangkai menjadi cerita.</h2>
@@ -148,12 +140,10 @@ function ClosedBookIntro({ state, onOpen }) {
 
 function DesktopReader({ currentMonth, onMonthChange, monthlyRecaps }) {
   const flipBook = useRef(null);
-
   const flipToMonth = (index) => {
     flipBook.current?.pageFlip()?.flip(index * 2);
     onMonthChange(index);
   };
-
   return (
     <>
       <div className="recap-toolbar">
@@ -173,7 +163,6 @@ function DesktopReader({ currentMonth, onMonthChange, monthlyRecaps }) {
           </button>
         </div>
       </div>
-
       <div className="recap-flip-stage">
         <HTMLFlipBook
           ref={flipBook}
@@ -199,7 +188,6 @@ function DesktopReader({ currentMonth, onMonthChange, monthlyRecaps }) {
           ])}
         </HTMLFlipBook>
       </div>
-
       <nav className="recap-toc" aria-label="Daftar isi recap bulanan">
         {monthlyRecaps.map((recap, index) => (
           <button key={recap.id} className={currentMonth === index ? 'active' : ''} onClick={() => flipToMonth(index)}>
@@ -213,6 +201,7 @@ function DesktopReader({ currentMonth, onMonthChange, monthlyRecaps }) {
 
 function MobileReader({ currentMonth, onMonthChange, monthlyRecaps }) {
   const [subPage, setSubPage] = useState(0); // 0: Activity (left), 1: Moments (right)
+  const [direction, setDirection] = useState(0); // -1: left, 1: right
   const recap = monthlyRecaps[currentMonth];
 
   // Reset subPage to 0 when month is changed
@@ -221,6 +210,7 @@ function MobileReader({ currentMonth, onMonthChange, monthlyRecaps }) {
   }, [currentMonth]);
 
   const handlePrev = () => {
+    setDirection(-1);
     if (subPage === 1) {
       setSubPage(0);
     } else if (currentMonth > 0) {
@@ -230,6 +220,7 @@ function MobileReader({ currentMonth, onMonthChange, monthlyRecaps }) {
   };
 
   const handleNext = () => {
+    setDirection(1);
     if (subPage === 0) {
       setSubPage(1);
     } else if (currentMonth < monthlyRecaps.length - 1) {
@@ -238,15 +229,58 @@ function MobileReader({ currentMonth, onMonthChange, monthlyRecaps }) {
     }
   };
 
+  const handleSelectMonth = (event) => {
+    const nextMonth = Number(event.target.value);
+    setDirection(nextMonth > currentMonth ? 1 : -1);
+    onMonthChange(nextMonth);
+  };
+
+  const handleTabClick = (pageIdx) => {
+    setDirection(pageIdx > subPage ? 1 : -1);
+    setSubPage(pageIdx);
+  };
+
   const hasPrev = currentMonth > 0 || subPage === 1;
   const hasNext = currentMonth < monthlyRecaps.length - 1 || subPage === 0;
 
+  const onDragEnd = (event, info) => {
+    const swipeThreshold = 50;
+    if (info.offset.x < -swipeThreshold && hasNext) {
+      handleNext();
+    } else if (info.offset.x > swipeThreshold && hasPrev) {
+      handlePrev();
+    }
+  };
+
+  const slideVariants = {
+    enter: (dir) => ({
+      x: dir > 0 ? '100%' : '-100%',
+      opacity: 0,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+      transition: {
+        x: { type: 'spring', stiffness: 300, damping: 30 },
+        opacity: { duration: 0.2 },
+      },
+    },
+    exit: (dir) => ({
+      x: dir > 0 ? '-100%' : '100%',
+      opacity: 0,
+      transition: {
+        x: { type: 'spring', stiffness: 300, damping: 30 },
+        opacity: { duration: 0.2 },
+      },
+    }),
+  };
+
   return (
     <div className="recap-mobile-reader">
-      <select 
-        className="recap-mobile-select" 
-        value={currentMonth} 
-        onChange={(event) => onMonthChange(Number(event.target.value))} 
+      <select
+        className="recap-mobile-select"
+        value={currentMonth}
+        onChange={handleSelectMonth}
         aria-label="Pilih bulan recap"
       >
         {monthlyRecaps.map((item, index) => (
@@ -255,46 +289,58 @@ function MobileReader({ currentMonth, onMonthChange, monthlyRecaps }) {
           </option>
         ))}
       </select>
-
       <div className="recap-mobile-tabs">
         <button
           type="button"
           className={`recap-mobile-tab-btn ${subPage === 0 ? 'active' : ''}`}
-          onClick={() => setSubPage(0)}
+          onClick={() => handleTabClick(0)}
         >
           Aktivitas (Page 1)
         </button>
         <button
           type="button"
           className={`recap-mobile-tab-btn ${subPage === 1 ? 'active' : ''}`}
-          onClick={() => setSubPage(1)}
+          onClick={() => handleTabClick(1)}
         >
           Momen (Page 2)
         </button>
       </div>
-
-      <div className="recap-mobile-pages">
-        <div key={`${currentMonth}-${subPage}`} className="recap-mobile-page-transition">
-          {subPage === 0 ? (
-            <ActivityPage recap={recap} pageNumber={currentMonth + 1} />
-          ) : (
-            <MomentsPage recap={recap} pageNumber={currentMonth + 1} />
-          )}
-        </div>
+      <div className="recap-mobile-pages-wrapper" style={{ position: 'relative', overflow: 'hidden' }}>
+        <AnimatePresence initial={false} custom={direction} mode="popLayout">
+          <motion.div
+            key={`${currentMonth}-${subPage}`}
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.5}
+            onDragEnd={onDragEnd}
+            className="recap-mobile-page-transition"
+            style={{ width: '100%', touchAction: 'pan-y' }}
+          >
+            {subPage === 0 ? (
+              <ActivityPage recap={recap} pageNumber={currentMonth + 1} />
+            ) : (
+              <MomentsPage recap={recap} pageNumber={currentMonth + 1} />
+            )}
+          </motion.div>
+        </AnimatePresence>
       </div>
-
       <div className="recap-mobile-controls">
-        <button 
-          className="recap-control" 
-          disabled={!hasPrev} 
+        <button
+          className="recap-control"
+          disabled={!hasPrev}
           onClick={handlePrev}
           aria-label="Halaman sebelumnya"
         >
           <ArrowLeft size={15} /> Sebelumnya
         </button>
-        <button 
-          className="recap-control" 
-          disabled={!hasNext} 
+        <button
+          className="recap-control"
+          disabled={!hasNext}
           onClick={handleNext}
           aria-label="Halaman berikutnya"
         >
@@ -305,7 +351,6 @@ function MobileReader({ currentMonth, onMonthChange, monthlyRecaps }) {
   );
 }
 
-
 function AnnualRecap({ monthlyRecaps }) {
   const stats = useMemo(() => monthlyRecaps.reduce((total, recap) => ({
     theater: total.theater + (recap.left?.theater?.total || 0),
@@ -313,7 +358,6 @@ function AnnualRecap({ monthlyRecaps }) {
     messages: total.messages + (recap.right?.privateMessage?.bubbleChat || 0),
     moments: total.moments + (recap.right?.privateMessage?.photo || 0),
   }), { theater: 0, live: 0, messages: 0, moments: 0 }), [monthlyRecaps]);
-
   return (
     <section className="recap-annual animate-fade-in">
       <div className="recap-annual__header">
@@ -337,14 +381,13 @@ function AnnualRecap({ monthlyRecaps }) {
           </article>
         ))}
       </div>
-    </section>
+    </section >
   );
 }
 
 function DigitalZineList() {
   const [zines, setZines] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
   useEffect(() => {
     recapService.getRecaps()
       .then(data => {
@@ -356,7 +399,6 @@ function DigitalZineList() {
         setIsLoading(false);
       });
   }, []);
-
   if (isLoading) {
     return (
       <div className="py-12 flex justify-center">
@@ -364,7 +406,6 @@ function DigitalZineList() {
       </div>
     );
   }
-
   if (zines.length === 0) {
     return (
       <div className="text-center py-12 max-w-md mx-auto animate-fade-in">
@@ -376,18 +417,17 @@ function DigitalZineList() {
       </div>
     );
   }
-
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-5xl mx-auto animate-fade-in p-4">
       {zines.map((zine) => (
-        <Link 
-          to={`/recaps/${zine.id}`} 
+        <Link
+          to={`/recaps/${zine.id}`}
           key={zine.id}
           className="group flex flex-col bg-white border border-[var(--border-color)] rounded-2xl overflow-hidden hover:border-[var(--color-primary)]/40 hover:shadow-xl transition-all duration-300"
         >
           <div className="aspect-[3/4] w-full overflow-hidden bg-gray-100 relative">
-            <img 
-              src={zine.thumbnailUrl || 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400'} 
+            <img
+              src={zine.thumbnailUrl || 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400'}
               alt={zine.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               loading="lazy"
@@ -428,15 +468,24 @@ export default function RecapListPage() {
   const [currentMonth, setCurrentMonth] = useState(0);
   const [bookRecaps, setBookRecaps] = useState(monthlyRecaps);
   const openTimerRef = useRef(null);
+  const transitionTimerRef = useRef(null);
 
-  const clearOpenTimer = () => {
+  const clearOpenTimer = useCallback(() => {
     if (openTimerRef.current) {
       window.clearTimeout(openTimerRef.current);
       openTimerRef.current = null;
     }
-  };
+  }, []);
 
-  const handleOpenBook = () => {
+  const clearTransitionTimer = useCallback(() => {
+    if (transitionTimerRef.current) {
+      window.clearTimeout(transitionTimerRef.current);
+      transitionTimerRef.current = null;
+    }
+  }, []);
+
+  // 🔹 Event-driven: pakai animationend dari <Book>, timer hanya jadi safety net
+  const handleOpenBook = useCallback(() => {
     if (readerState !== 'closed') return;
 
     const shouldRespectReducedMotion = import.meta.env.PROD;
@@ -450,15 +499,38 @@ export default function RecapListPage() {
     }
 
     setReaderState('opening');
+
+    // Safety net: kalau tab di-background, animationend bisa tidak terpanggil.
+    // Sedikit lebih lama dari durasi animasi (1450ms) sebagai cadangan.
     clearOpenTimer();
     openTimerRef.current = window.setTimeout(() => {
-      setReaderState('open');
+      clearTransitionTimer();
+      setReaderState('transitioning');
+      transitionTimerRef.current = window.setTimeout(() => {
+        setReaderState('open');
+      }, 600);
       openTimerRef.current = null;
-    }, 1450);
-  };
+    }, 1700);
+  }, [readerState, clearOpenTimer, clearTransitionTimer]);
+
+  // 🔹 Dipanggil tepat saat animasi buku benar-benar selesai → handoff frame-perfect
+  const handleOpenEnd = useCallback(() => {
+    clearOpenTimer();
+    setReaderState((prev) => {
+      if (prev === 'opening') {
+        clearTransitionTimer();
+        transitionTimerRef.current = window.setTimeout(() => {
+          setReaderState('open');
+        }, 600);
+        return 'transitioning';
+      }
+      return prev;
+    });
+  }, [clearOpenTimer, clearTransitionTimer]);
 
   const handleModeChange = (nextMode) => {
     clearOpenTimer();
+    clearTransitionTimer();
     setMode(nextMode);
     if (nextMode === 'monthly') {
       setReaderState('closed');
@@ -485,7 +557,12 @@ export default function RecapListPage() {
       });
   }, []);
 
-  useEffect(() => clearOpenTimer, []);
+  useEffect(() => {
+    return () => {
+      clearOpenTimer();
+      clearTransitionTimer();
+    };
+  }, [clearOpenTimer, clearTransitionTimer]);
 
   return (
     <div
@@ -508,13 +585,18 @@ export default function RecapListPage() {
         <AnnualRecap monthlyRecaps={bookRecaps} />
       ) : mode === 'zine' ? (
         <DigitalZineList />
-      ) : readerState === 'open' ? (
-        <section className="recap-reader recap-reader--after-open">
-          <DesktopReader currentMonth={currentMonth} onMonthChange={setCurrentMonth} monthlyRecaps={bookRecaps} />
-          <MobileReader currentMonth={currentMonth} onMonthChange={setCurrentMonth} monthlyRecaps={bookRecaps} />
-        </section>
       ) : (
-        <ClosedBookIntro state={readerState} onOpen={handleOpenBook} />
+        <>
+          {(readerState === 'closed' || readerState === 'opening' || readerState === 'transitioning') && (
+            <ClosedBookIntro state={readerState} onOpen={handleOpenBook} onOpenEnd={handleOpenEnd} />
+          )}
+          {(readerState === 'transitioning' || readerState === 'open') && (
+            <section className={`recap-reader ${readerState === 'transitioning' ? 'is-entering' : 'recap-reader--after-open'}`}>
+              <DesktopReader currentMonth={currentMonth} onMonthChange={setCurrentMonth} monthlyRecaps={bookRecaps} />
+              <MobileReader currentMonth={currentMonth} onMonthChange={setCurrentMonth} monthlyRecaps={bookRecaps} />
+            </section>
+          )}
+        </>
       )}
     </div>
   );

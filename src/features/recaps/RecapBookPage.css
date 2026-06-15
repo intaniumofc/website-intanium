@@ -180,8 +180,11 @@
   width: 100%;
   aspect-ratio: 49 / 60;
   border-radius: 5px 17px 17px 5px;
-  transform: rotateY(-16deg) rotateX(3deg);
+  transform: rotateY(-16deg) rotateX(3deg) translateZ(0);
+  /* 🔹 translateZ(0): promosi ke GPU compositor */
   transform-style: preserve-3d;
+  backface-visibility: hidden;
+  /* 🔹 cegah flicker saat transform 3D */
   box-shadow: 0 30px 70px rgba(23, 16, 95, 0.22);
   transition:
     transform 760ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -197,6 +200,14 @@
 
 .recap-closed-book.is-opening .recap-closed-book__body {
   animation: recap-book-body-power-open 1450ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* 🔹 Optimasi: will-change HANYA aktif saat membuka, otomatis dilepas setelahnya */
+.recap-closed-book.is-opening .recap-closed-book__body,
+.recap-closed-book.is-opening .recap-closed-book__cover,
+.recap-closed-book.is-opening .recap-closed-book__inner-spread,
+.recap-closed-book.is-opening .recap-closed-book__pages {
+  will-change: transform, opacity;
 }
 
 .recap-closed-book__cover,
@@ -1137,6 +1148,40 @@
   }
 }
 
+.recap-closed-state.is-exiting .recap-closed-book__glow {
+  animation: recap-book-glow-exit 600ms cubic-bezier(0.25, 1, 0.5, 1) both;
+}
+
+@keyframes recap-book-glow-exit {
+  0% {
+    opacity: 0.2;
+    transform: translateZ(-42px) scale(1.05);
+    filter: blur(18px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateZ(-42px) scale(1.6);
+    filter: blur(35px);
+    background: radial-gradient(circle, rgba(167, 139, 250, 0.35) 0%, rgba(37, 21, 143, 0.1) 50%, transparent 80%);
+  }
+}
+
+.recap-closed-state.is-exiting .recap-closed-book__burst {
+  animation: recap-book-burst-exit 600ms cubic-bezier(0.25, 1, 0.5, 1) both;
+}
+
+@keyframes recap-book-burst-exit {
+  0% {
+    opacity: 0;
+    transform: translateZ(-50px) scale(1.45) rotate(22deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateZ(-50px) scale(2.1) rotate(45deg);
+    filter: blur(15px);
+  }
+}
+
 @keyframes recap-copy-cinematic-out {
   0% {
     opacity: 1;
@@ -1169,6 +1214,67 @@
     transform: translateY(0) scale(1);
     filter: blur(0px);
   }
+}
+
+/* 🔹 Smooth Dissolve & Morph Transitions */
+.recap-closed-state.is-exiting {
+  animation: recap-cover-cinematic-exit 600ms cubic-bezier(0.25, 1, 0.5, 1) both;
+  pointer-events: none;
+}
+
+@keyframes recap-cover-cinematic-exit {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.06);
+    filter: blur(8px);
+  }
+}
+
+.recap-reader.is-entering {
+  animation: recap-reader-cinematic-entry 600ms cubic-bezier(0.25, 1, 0.5, 1) both;
+  position: absolute;
+  top: auto;
+  left: 0;
+  right: 0;
+  z-index: 10;
+}
+
+@keyframes recap-reader-cinematic-entry {
+  0% {
+    opacity: 0;
+    transform: scale(0.96) translateY(12px);
+    filter: blur(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0px);
+  }
+}
+
+/* 🔹 Mobile Swipe Gesture Overrides */
+.recap-mobile-pages-wrapper {
+  position: relative;
+  overflow: hidden;
+  min-height: 550px;
+  width: 100%;
+}
+
+.recap-mobile-pages-wrapper .recap-page {
+  min-height: 530px;
+  border: 1px solid rgba(37, 21, 143, 0.1);
+  border-radius: 0.9rem;
+  box-shadow: 0 15px 35px rgba(23, 16, 95, 0.1);
+}
+
+.recap-mobile-page-transition {
+  animation: none !important;
+  width: 100%;
 }
 
 @media (prefers-reduced-motion: reduce) {
