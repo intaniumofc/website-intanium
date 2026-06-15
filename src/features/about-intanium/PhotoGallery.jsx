@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, useMotionValue } from "framer-motion";
 
 import { Link } from "react-router-dom";
@@ -61,44 +61,68 @@ const defaultStaticPhotos = [
 ];
 
 export const PhotoGallery = () => {
-  const [photos, setPhotos] = useState(defaultStaticPhotos);
+  const [rawPhotos, setRawPhotos] = useState([]);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 640);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     galleryService.getGalleryPhotos()
       .then((data) => {
         const showcasePhotos = data.filter(p => p.display_type === 'showcase' || p.display_type === 'both').slice(0, 6);
         if (showcasePhotos.length > 0) {
-          const spreadDistance = 160;
-          const mappedPhotos = showcasePhotos.map((photo, index) => {
-            const order = index;
-            const total = showcasePhotos.length;
-            const centerOffset = (total - 1) / 2;
-            const xVal = (index - centerOffset) * spreadDistance;
-            const x = `${xVal}px`;
-
-            const yVal = index % 2 === 0 ? 15 + (index * 5) % 30 : 8 + (index * 7) % 25;
-            const y = `${yVal}px`;
-
-            const zIndex = (total - index) * 10;
-            const direction = index % 2 === 0 ? "left" : "right";
-
-            return {
-              id: photo.id,
-              order,
-              x,
-              y,
-              zIndex,
-              direction,
-              src: photo.url,
-            };
-          });
-          setPhotos(mappedPhotos);
+          setRawPhotos(showcasePhotos);
         }
       })
       .catch((err) => {
         console.error('Gagal mengambil showcase photos:', err);
       });
   }, []);
+
+  const photos = useMemo(() => {
+    const spreadDistance = isMobile ? 35 : 160;
+
+    if (rawPhotos.length === 0) {
+      return defaultStaticPhotos.map((photo, index) => {
+        const total = defaultStaticPhotos.length;
+        const centerOffset = (total - 1) / 2;
+        const xVal = (index - centerOffset) * spreadDistance;
+        return {
+          ...photo,
+          x: `${xVal}px`,
+        };
+      });
+    }
+
+    return rawPhotos.map((photo, index) => {
+      const order = index;
+      const total = rawPhotos.length;
+      const centerOffset = (total - 1) / 2;
+      const xVal = (index - centerOffset) * spreadDistance;
+      const x = `${xVal}px`;
+
+      const yVal = index % 2 === 0 ? 15 + (index * 5) % 30 : 8 + (index * 7) % 25;
+      const y = `${yVal}px`;
+
+      const zIndex = (total - index) * 10;
+      const direction = index % 2 === 0 ? "left" : "right";
+
+      return {
+        id: photo.id,
+        order,
+        x,
+        y,
+        zIndex,
+        direction,
+        src: photo.url,
+      };
+    });
+  }, [rawPhotos, isMobile]);
 
   const containerVariants = {
     hidden: { opacity: 1 },
@@ -157,7 +181,7 @@ export const PhotoGallery = () => {
             whileInView="visible"
             viewport={{ once: true, amount: 0.3 }}
           >
-            <div className="relative h-[220px] w-[220px]">
+            <div className="relative h-[160px] w-[160px] sm:h-[220px] sm:w-[220px]">
               {[...photos].reverse().map((photo) => (
                 <motion.div
                   key={photo.id}
@@ -171,8 +195,8 @@ export const PhotoGallery = () => {
                   }}
                 >
                   <Photo
-                    width={220}
-                    height={220}
+                    width={isMobile ? 160 : 220}
+                    height={isMobile ? 160 : 220}
                     src={photo.src}
                     alt="Intan photo"
                     direction={photo.direction}

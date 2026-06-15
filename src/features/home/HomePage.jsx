@@ -42,6 +42,14 @@ export default function HomePage() {
   const [featuredNews, setFeaturedNews] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [bio, setBio] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 640);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const socialLinks = React.useMemo(() => [
     {
@@ -228,10 +236,10 @@ export default function HomePage() {
           </ContainerStagger>
 
           <ContainerInset
-            insetXRange={[20, 0]}
-            insetTopRange={[0, 0]}
-            insetBottomRange={[45, 0]}
-            roundednessRange={[1000, 16]}
+            insetXRange={isMobile ? [0, 0] : [20, 0]}
+            insetTopRange={isMobile ? [0, 0] : [0, 0]}
+            insetBottomRange={isMobile ? [0, 0] : [45, 0]}
+            roundednessRange={isMobile ? [16, 16] : [1000, 16]}
             className="mx-2 sm:mx-8 mt-12 border-2 border-[var(--color-primary)]/30 rounded-2xl overflow-hidden shadow-2xl bg-black/40"
           >
             <video
@@ -265,7 +273,7 @@ export default function HomePage() {
               <User className="h-5 w-5 text-[var(--color-primary)]" /> Kenalan dengan Nur Intan
             </h2>
 
-            <div className="relative overflow-hidden rounded-3xl bg-[#345B8B] border border-white/10 shadow-2xl p-8 md:p-12">
+            <div className="relative overflow-hidden rounded-3xl bg-[#345B8B] border border-white/10 shadow-2xl p-5 sm:p-8 md:p-12">
               {/* Decorative background glow elements inside card */}
               <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
               <div className="absolute bottom-0 left-0 w-96 h-96 bg-black/10 rounded-full blur-3xl -ml-20 -mb-20 pointer-events-none" />
@@ -324,8 +332,8 @@ export default function HomePage() {
                     <div className="absolute inset-0 bg-white/10 opacity-20 blur-2xl rounded-2xl -m-4 pointer-events-none" />
                     <ImageSwiper
                       images={`${intan1},${intan2},${intan3},${intan4}`}
-                      cardWidth={280}
-                      cardHeight={390}
+                      cardWidth={isMobile ? 220 : 280}
+                      cardHeight={isMobile ? 310 : 390}
                       className="z-10"
                     />
                   </div>

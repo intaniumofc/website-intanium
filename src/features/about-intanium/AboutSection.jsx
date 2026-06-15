@@ -48,8 +48,8 @@ export default function AboutSection3() {
       <div className="max-w-6xl mx-auto">
         <div className="relative">
           {/* Header with social icons */}
-          <div className="flex justify-between items-center mb-8 w-[85%] absolute lg:top-2 md:-top-2 sm:-top-3 -top-5 z-10">
-            <div className="flex items-center gap-2 text-xl">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 w-full sm:w-[85%] sm:absolute lg:top-2 md:-top-2 sm:-top-3 sm:-top-5 z-10 relative">
+            <div className="flex items-center gap-2 text-xl sm:text-left text-center">
               <TimelineContent
                 as="span"
                 animationNum={0}

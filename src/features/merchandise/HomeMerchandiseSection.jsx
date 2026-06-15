@@ -119,7 +119,7 @@ const ProductCard = ({ product }) => {
             </div>
 
             {/* Row at the bottom: Price on the left, circles on the right */}
-            <div className="flex items-center justify-between gap-2 mt-auto pt-1">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mt-auto pt-1">
               <span className="text-sm sm:text-base font-black text-slate-900 block">
                 {formatCurrency(product.price)}
               </span>

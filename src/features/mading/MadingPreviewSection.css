@@ -284,6 +284,11 @@
   }
   .note-text {
     font-size: 11.5px;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
   .note-author {
     font-size: 10px;

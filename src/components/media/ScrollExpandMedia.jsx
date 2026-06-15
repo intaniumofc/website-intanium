@@ -14,6 +14,7 @@ const ScrollExpandMedia = ({
   date,
   scrollToExpand,
   textBlend,
+  soundOnFirstPlayOnly = false,
   children,
 }) => {
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -22,14 +23,46 @@ const ScrollExpandMedia = ({
   const [touchStartY, setTouchStartY] = useState(0);
   const [isMobileState, setIsMobileState] = useState(false);
 
+  const [isMuted, setIsMuted] = useState(soundOnFirstPlayOnly ? false : true);
+  const [isLooping, setIsLooping] = useState(soundOnFirstPlayOnly ? false : true);
+
   const sectionRef = useRef(null);
+  const videoRef = useRef(null);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setScrollProgress(0);
     setShowContent(false);
     setMediaFullyExpanded(false);
-  }, [mediaType]);
+    setIsMuted(soundOnFirstPlayOnly ? false : true);
+    setIsLooping(soundOnFirstPlayOnly ? false : true);
+  }, [mediaType, mediaSrc, soundOnFirstPlayOnly]);
+
+  useEffect(() => {
+    if (mediaType === 'video' && soundOnFirstPlayOnly && videoRef.current) {
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.log("Autoplay unmuted was prevented, muting video to play:", error);
+          setIsMuted(true);
+          if (videoRef.current) {
+            videoRef.current.muted = true;
+            videoRef.current.play().catch(e => console.log("Muted autoplay also failed:", e));
+          }
+        });
+      }
+    }
+  }, [mediaType, mediaSrc, soundOnFirstPlayOnly]);
+
+  const handleVideoEnded = () => {
+    if (soundOnFirstPlayOnly) {
+      setIsMuted(true);
+      setIsLooping(true);
+      if (videoRef.current) {
+        videoRef.current.play().catch((err) => console.log("Video replay failed:", err));
+      }
+    }
+  };
 
   // Handle body scroll locking to prevent standard page scroll while zooming
   useEffect(() => {
@@ -286,17 +319,19 @@ const ScrollExpandMedia = ({
                   ) : (
                     <div className='relative w-full h-full pointer-events-none'>
                       <video
+                        ref={videoRef}
                         src={mediaSrc}
                         poster={posterSrc}
                         autoPlay
-                        muted
-                        loop
+                        muted={isMuted}
+                        loop={isLooping}
                         playsInline
                         preload='auto'
                         className='w-full h-full object-cover rounded-xl'
                         controls={false}
                         disablePictureInPicture
                         disableRemotePlayback
+                        onEnded={handleVideoEnded}
                       />
                       <div
                         className='absolute inset-0 z-10'
