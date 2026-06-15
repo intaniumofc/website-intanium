@@ -7,10 +7,10 @@ import Loading from '../../components/common/Loading';
 import { formatDate } from '../../lib/formatDate';
 import { ROUTES } from '../../lib/constants';
 import bannerIntanium from '../../assets/logos/banner-nium.webp';
-import intanOne from '../../assets/images/intan-01.jpg';
-import intanTwo from '../../assets/images/intan-02.jpg';
-import intanThree from '../../assets/images/intan-03.jpg';
-import intanFour from '../../assets/images/intan-04.jpg';
+import intanOne from '../../assets/images/intan-01.webp';
+import intanTwo from '../../assets/images/intan-02.webp';
+import intanThree from '../../assets/images/intan-03.webp';
+import intanFour from '../../assets/images/intan-04.webp';
 
 const CATEGORY_IMAGES = {
   Announcement: bannerIntanium,

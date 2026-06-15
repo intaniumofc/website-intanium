@@ -24,10 +24,10 @@ import HomeMerchandiseSection from '../merchandise/HomeMerchandiseSection';
 import HomeGallerySection from '../gallery/HomeGallerySection';
 import HomeHashtagsSection from '../hashtags/HomeHashtagsSection';
 import MadingPreviewSection from '../mading/MadingPreviewSection';
-import intan1 from '../../assets/images/intan-01.jpg';
-import intan2 from '../../assets/images/intan-02.jpg';
-import intan3 from '../../assets/images/intan-03.jpg';
-import intan4 from '../../assets/images/intan-04.jpg';
+import intan1 from '../../assets/images/intan-01.webp';
+import intan2 from '../../assets/images/intan-02.webp';
+import intan3 from '../../assets/images/intan-03.webp';
+import intan4 from '../../assets/images/intan-04.webp';
 
 const scrollRevealVariants = {
   hidden: { opacity: 0, y: 35 },
@@ -235,15 +235,13 @@ export default function HomePage() {
             className="mx-2 sm:mx-8 mt-12 border-2 border-[var(--color-primary)]/30 rounded-2xl overflow-hidden shadow-2xl bg-black/40"
           >
             <video
-              width="100%"
-              height="100%"
               loop
               playsInline
               autoPlay
               muted
               aria-label="Video profil Nur Intan JKT48"
               title="Video profil Nur Intan"
-              className="relative z-10 block h-auto max-h-full max-w-full object-contain align-middle"
+              className="relative z-10 block w-full h-auto aspect-video object-cover align-middle"
             >
               <source
                 src={intanVideo}

@@ -5,10 +5,10 @@ import { BookmarkIcon, X, ArrowRight, Newspaper } from 'lucide-react';
 import { ROUTES } from '../../lib/constants';
 import Card from '../../components/common/Card';
 import bannerIntanium from '../../assets/logos/banner-nium.webp';
-import intanOne from '../../assets/images/intan-01.jpg';
-import intanTwo from '../../assets/images/intan-02.jpg';
-import intanThree from '../../assets/images/intan-03.jpg';
-import intanFour from '../../assets/images/intan-04.jpg';
+import intanOne from '../../assets/images/intan-01.webp';
+import intanTwo from '../../assets/images/intan-02.webp';
+import intanThree from '../../assets/images/intan-03.webp';
+import intanFour from '../../assets/images/intan-04.webp';
 
 // Mapping categories to premium gradient glow color schemes
 const CATEGORY_THEMES = {
