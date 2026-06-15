@@ -12,7 +12,7 @@ import { FaInstagram, FaXTwitter } from 'react-icons/fa6';
 import Card from '../../components/common/Card';
 import { esportService } from './esportService';
 
-import achievementPlaceholder from '../../assets/images/esport/achievement_placeholder.png';
+import achievementPlaceholder from '../../assets/images/esport/achievement_placeholder.webp';
 import logoNobg from '../../assets/logos/logo-nobg.webp';
 
 export default function EsportPage() {

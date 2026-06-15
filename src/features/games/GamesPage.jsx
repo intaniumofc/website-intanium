@@ -29,9 +29,9 @@ import {
 } from 'lucide-react';
 
 import cockroachBg from './menangkap-kecoa/background-gamearena.webp';
-import cockroachImage from './menangkap-kecoa/kecoa.png';
-import tebakKataBg from '../../assets/images/intan-01.jpg';
-import intanRunBg from '../../assets/images/intan-03.jpg';
+import cockroachImage from './menangkap-kecoa/kecoa.webp';
+import tebakKataBg from '../../assets/images/intan-01.webp';
+import intanRunBg from '../../assets/images/intan-03.webp';
 
 const ICON_MAP = {
   Bug,

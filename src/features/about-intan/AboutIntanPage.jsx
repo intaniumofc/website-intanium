@@ -25,10 +25,10 @@ import { FaThreads } from 'react-icons/fa6';
 import Loading from '../../components/common/Loading';
 import ScrollExpandMedia from '../../components/media/ScrollExpandMedia';
 import intanVideo from '../../assets/images/intan-02.mp4';
-import intanPoster from '../../assets/images/intan-02.jpg';
-import intanBg from '../../assets/images/intan-04.jpg';
-import intanProfile from '../../assets/images/Nur_Intan.jpg';
-import intan1 from '../../assets/images/intan-01.jpg';
+import intanPoster from '../../assets/images/intan-02.webp';
+import intanBg from '../../assets/images/intan-04.webp';
+import intanProfile from '../../assets/images/Nur_Intan.webp';
+import intan1 from '../../assets/images/intan-01.webp';
 import { ImageSwiper } from '../../components/ui/ImageSwiper';
 import {
   CalendarBlank as PhCalendarBlank,

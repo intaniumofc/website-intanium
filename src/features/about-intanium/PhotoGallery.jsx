@@ -7,10 +7,10 @@ import { cn } from "@/lib/utils";
 import { ROUTES } from "@/lib/constants";
 import { galleryService } from "@/features/gallery/galleryService";
 
-import intan01 from "@/assets/images/intan-01.jpg";
-import intan02 from "@/assets/images/intan-02.jpg";
-import intan03 from "@/assets/images/intan-03.jpg";
-import intan04 from "@/assets/images/intan-04.jpg";
+import intan01 from "@/assets/images/intan-01.webp";
+import intan02 from "@/assets/images/intan-02.webp";
+import intan03 from "@/assets/images/intan-03.webp";
+import intan04 from "@/assets/images/intan-04.webp";
 
 const defaultStaticPhotos = [
   {

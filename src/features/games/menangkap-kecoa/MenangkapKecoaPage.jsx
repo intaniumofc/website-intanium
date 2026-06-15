@@ -17,9 +17,9 @@ import { getBadges, getComboText, getPerformanceTitle } from './gameData';
 import { calculatePoint, shareScore } from './gameUtils';
 import { useGameLoop } from './useGameLoop';
 import LeaderboardCard from './LeaderboardCard';
-import cockroachImage from './kecoa.png';
-import flyingCockroachImage from './kecoa-biasa-terbang.png';
-import goldenFlyingCockroachImage from './kecoa-emas-terbang.png';
+import cockroachImage from './kecoa.webp';
+import flyingCockroachImage from './kecoa-biasa-terbang.webp';
+import goldenFlyingCockroachImage from './kecoa-emas-terbang.webp';
 import './MenangkapKecoaPage.css';
 
 const PLAYER_KEY = 'menangkap-kecoa-username';

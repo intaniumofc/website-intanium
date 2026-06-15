@@ -10,7 +10,7 @@ import {
   Check, ShieldAlert, Truck, Copy, 
   ExternalLink
 } from 'lucide-react';
-import qrisImage from '../../assets/images/qris-intanium.png';
+import qrisImage from '../../assets/images/qris-intanium.webp';
 import { StatusBadge } from '../../components/ui/status-badge';
 import { OrderStatus } from '../../components/ui/order-status-tracker';
 

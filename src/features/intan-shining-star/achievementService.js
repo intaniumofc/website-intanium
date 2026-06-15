@@ -1,7 +1,7 @@
 import { supabase } from '../../lib/supabaseClient';
-import intanProfile from '../../assets/images/Nur_Intan.jpg';
-import intanPoster from '../../assets/images/intan-02.jpg';
-import intanFour from '../../assets/images/intan-04.jpg';
+import intanProfile from '../../assets/images/Nur_Intan.webp';
+import intanPoster from '../../assets/images/intan-02.webp';
+import intanFour from '../../assets/images/intan-04.webp';
 
 export const ACHIEVEMENT_CATEGORIES = [
   'Milestone',
