@@ -5,51 +5,41 @@ import Button from '../common/Button';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   User,
+  Sparkle,
   Globe,
-  Sparkles,
   Calendar,
   BookOpen,
   Newspaper,
-  MessageSquare,
+  ChatCenteredText,
   Image,
   Palette,
   ShoppingBag,
   CreditCard,
-  Gamepad2,
+  GameController,
   Trophy,
-  ChevronDown
-} from "lucide-react";
+  CaretDown
+} from "@phosphor-icons/react";
 import logoNobg from '../../assets/logos/logo-nobg.webp';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const [activeAccordion, setActiveAccordion] = useState(null);
 
-  const navLinks = [
-    { name: 'Tentang Intan', path: ROUTES.ABOUT_INTAN },
-    { name: '#IntanShiningStar', path: ROUTES.SHINING_STAR },
-    { name: 'Intanium', path: ROUTES.ABOUT_INTANIUM },
-    { name: 'Merchandise', path: ROUTES.MERCHANDISE },
-    { name: 'News', path: ROUTES.NEWS },
-    { name: 'Schedule', path: ROUTES.SCHEDULE },
-    { name: 'Mading', path: ROUTES.MADING },
-    { name: 'Galeri', path: ROUTES.GALLERY },
-    { name: '#dengerINTAN', path: ROUTES.DENGER_INTAN },
-    { name: 'Game', path: ROUTES.GAMES },
-    { name: 'Esport', path: ROUTES.ESPORT },
-  ];
+  const toggleAccordion = (index) => {
+    setActiveAccordion(activeAccordion === index ? null : index);
+  };
 
-  // Nested navigation schemas for custom hover dropdowns on desktop viewports
   const NAV_ITEMS = [
     {
       id: 1,
-      label: "About",
+      label: "Tentang",
       subMenus: [
         {
-          title: "Profile & Character",
+          title: "Profil & Karakter",
           items: [
             {
-              label: "About Nur Intan",
+              label: "Tentang Nur Intan",
               description: "Profil lengkap, biodata, dan fakta menarik seputar Intan",
               icon: User,
               link: ROUTES.ABOUT_INTAN,
@@ -57,25 +47,19 @@ export default function Navbar() {
             {
               label: "#IntanShiningStar",
               description: "Arsip perjalanan dan milestone bersejarah Intan",
-              icon: Sparkles,
+              icon: Sparkle,
               link: ROUTES.SHINING_STAR,
             },
           ],
         },
         {
-          title: "Lore Komunitas",
+          title: "Komunitas",
           items: [
             {
-              label: "About Intanium",
-              description: "Asal usul, filosofi, pedoman, dan cara gabung Discord server",
+              label: "Tentang Intanium",
+              description: "Asal usul, filosofi, pedoman, dan cara gabung Discord",
               icon: Globe,
               link: ROUTES.ABOUT_INTANIUM,
-            },
-            {
-              label: "Intanium Esport",
-              description: "Hub divisi olahraga elektronik resmi komunitas Intanium",
-              icon: Trophy,
-              link: ROUTES.ESPORT,
             },
           ],
         },
@@ -83,33 +67,28 @@ export default function Navbar() {
     },
     {
       id: 2,
-      label: "Aktivitas",
+      label: "Jadwal & Berita",
       subMenus: [
         {
-          title: "Kalender & Logs",
+          title: "Update & Kegiatan",
           items: [
             {
-              label: "Schedule",
-              description: "Jadwal theater, video call, birthday, dan event Nur Intan",
+              label: "Jadwal Acara",
+              description: "Kalender theater, video call, birthday, dan event Nur Intan",
               icon: Calendar,
               link: ROUTES.SCHEDULE,
             },
             {
-              label: "Zine & Recap",
-              description: "Arsip e-magazine digital recap aktivitas bulanan komunitas",
-              icon: BookOpen,
-              link: ROUTES.RECAPS,
-            },
-          ],
-        },
-        {
-          title: "Informasi",
-          items: [
-            {
-              label: "Berita & News",
+              label: "Berita & Pengumuman",
               description: "Rilis pengumuman, agenda event resmi terkini",
               icon: Newspaper,
               link: ROUTES.NEWS,
+            },
+            {
+              label: "Zine & Recap",
+              description: "Arsip e-magazine digital recap aktivitas bulanan",
+              icon: BookOpen,
+              link: ROUTES.RECAPS,
             },
           ],
         },
@@ -120,12 +99,12 @@ export default function Navbar() {
       label: "Komunitas",
       subMenus: [
         {
-          title: "Interaksi Kreatif",
+          title: "Aktivitas & Kreativitas",
           items: [
             {
               label: "Papan Mading",
               description: "Tempelkan pesan dukungan hangat Anda di mading digital",
-              icon: MessageSquare,
+              icon: ChatCenteredText,
               link: ROUTES.MADING,
             },
             {
@@ -134,10 +113,16 @@ export default function Navbar() {
               icon: Palette,
               link: ROUTES.FANART,
             },
+            {
+              label: "Intanium Esport",
+              description: "Hub divisi olahraga elektronik resmi komunitas Intanium",
+              icon: Trophy,
+              link: ROUTES.ESPORT,
+            },
           ],
         },
         {
-          title: "Dokumentasi",
+          title: "Arsip Dokumentasi",
           items: [
             {
               label: "Galeri Foto",
@@ -151,7 +136,7 @@ export default function Navbar() {
     },
     {
       id: 4,
-      label: "Official Shop",
+      label: "Toko Resmi",
       subMenus: [
         {
           title: "Merchandise Shop",
@@ -163,7 +148,7 @@ export default function Navbar() {
               link: ROUTES.MERCHANDISE,
             },
             {
-              label: "Cek Pesanan",
+              label: "Cek Status Pesanan",
               description: "Pantau status pesanan merchandise",
               icon: CreditCard,
               link: ROUTES.PAYMENT_CONFIRM,
@@ -181,7 +166,7 @@ export default function Navbar() {
       id: 6,
       label: "Game Corner",
       link: ROUTES.GAMES,
-      icon: Gamepad2,
+      icon: GameController,
     },
   ];
 
@@ -249,35 +234,120 @@ export default function Navbar() {
       </div>
 
       {/* Mobile Drawer menu */}
-      {isOpen && (
-        <div className="lg:hidden border-t border-white/15 bg-[#170C79] py-2 px-4 space-y-1 shadow-2xl animate-slide-down">
-          {navLinks.map((link) => {
-            const isActive = location.pathname === link.path;
-            return (
-              <Link
-                key={link.name}
-                to={link.path}
-                onClick={() => setIsOpen(false)}
-                className={`block px-3 py-2 rounded-lg text-base font-semibold transition-all ${isActive
-                  ? 'text-white bg-white/20 shadow-md'
-                  : 'text-white/80 hover:text-white hover:bg-white/10'
-                  }`}
-              >
-                {link.name}
-              </Link>
-            );
-          })}
-          <div className="pt-4 pb-2 border-t border-white/15">
-            <Link
-              to={ROUTES.ADMIN_LOGIN}
-              onClick={() => setIsOpen(false)}
-              className="block w-full text-center px-4 py-2 border border-white/20 rounded-lg text-base font-semibold text-white hover:bg-white/10 transition-all"
-            >
-              Admin Panel
-            </Link>
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="lg:hidden border-t border-white/15 bg-[#170C79] overflow-hidden shadow-2xl"
+          >
+            <div className="py-3 px-4 space-y-1 max-h-[calc(100vh-4rem)] overflow-y-auto">
+              {NAV_ITEMS.map((item, index) => {
+                const hasSub = !!item.subMenus;
+                const isExpanded = activeAccordion === index;
+
+                if (hasSub) {
+                  return (
+                    <div key={item.label} className="border-b border-white/5 py-1">
+                      <button
+                        onClick={() => toggleAccordion(index)}
+                        className="w-full flex items-center justify-between py-2 px-3 rounded-lg text-white/80 hover:text-white hover:bg-white/10 text-base font-semibold transition-all focus:outline-none cursor-pointer"
+                        aria-expanded={isExpanded}
+                      >
+                        <span>{item.label}</span>
+                        <CaretDown
+                          className={`h-4 w-4 transition-transform duration-300 ${
+                            isExpanded ? "rotate-180 text-white" : "text-white/60"
+                          }`}
+                        />
+                      </button>
+                      <AnimatePresence initial={false}>
+                        {isExpanded && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.25, ease: "easeInOut" }}
+                            className="overflow-hidden pl-4 pr-2 py-1 space-y-3"
+                          >
+                            {item.subMenus.map((sub) => (
+                              <div key={sub.title} className="space-y-1.5 pt-1">
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 block px-2">
+                                  {sub.title}
+                                </span>
+                                <div className="space-y-1">
+                                  {sub.items.map((subItem) => {
+                                    const Icon = subItem.icon;
+                                    const isSubActive = location.pathname === subItem.link;
+                                    return (
+                                      <Link
+                                        key={subItem.label}
+                                        to={subItem.link || "#"}
+                                        onClick={() => setIsOpen(false)}
+                                        className={`flex items-center gap-3 p-2 rounded-lg transition-all ${
+                                          isSubActive
+                                            ? "text-white bg-white/20 font-semibold"
+                                            : "text-white/70 hover:text-white hover:bg-white/5"
+                                        }`}
+                                      >
+                                        <div className="rounded-md flex items-center justify-center p-1.5 bg-white/10 text-white/80 shrink-0">
+                                          <Icon className="h-4 w-4" />
+                                        </div>
+                                        <div className="leading-tight">
+                                          <p className="text-sm font-medium">{subItem.label}</p>
+                                          {subItem.description && (
+                                            <p className="text-[10px] text-white/50 font-normal line-clamp-1">
+                                              {subItem.description}
+                                            </p>
+                                          )}
+                                        </div>
+                                      </Link>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  );
+                } else {
+                  const isActive = location.pathname === item.link;
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.label}
+                      to={item.link || "#"}
+                      onClick={() => setIsOpen(false)}
+                      className={`flex items-center gap-3 py-2 px-3 rounded-lg text-base font-semibold transition-all ${
+                        isActive
+                          ? "text-white bg-white/20 shadow-md"
+                          : "text-white/80 hover:text-white hover:bg-white/10"
+                      }`}
+                    >
+                      {Icon && <Icon className="h-5 w-5 text-white/80" />}
+                      <span>{item.label}</span>
+                    </Link>
+                  );
+                }
+              })}
+
+              <div className="pt-4 pb-2 border-t border-white/15">
+                <Link
+                  to={ROUTES.ADMIN_LOGIN}
+                  onClick={() => setIsOpen(false)}
+                  className="block w-full text-center px-4 py-2 border border-white/20 rounded-lg text-base font-semibold text-white hover:bg-white/10 transition-all"
+                >
+                  Admin Panel
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }
@@ -312,7 +382,7 @@ function DropdownNavigation({ navItems }) {
               onMouseLeave={() => setIsHover(null)}
             >
               <span className="relative z-10">{navItem.label}</span>
-              <ChevronDown
+              <CaretDown
                 className={`h-4 w-4 relative z-10 group-hover:rotate-180 duration-300 transition-transform text-white/60 group-hover:text-white
                   ${openMenu === navItem.label ? "rotate-180 text-white" : ""}`}
               />

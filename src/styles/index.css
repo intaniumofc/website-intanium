@@ -1,6 +1,12 @@
 @import "tailwindcss";
 @import "./theme.css";
 
+@theme {
+  --font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  --font-heading: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
 @layer base {
   html, body {
     overflow-x: hidden;

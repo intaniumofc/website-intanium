@@ -1000,6 +1000,7 @@ export default function AboutIntanPage() {
         title="Nur Intan"
         scrollToExpand="Scroll untuk melihat profil Intan"
         textBlend={false}
+        soundOnFirstPlayOnly={true}
       >
         <div className="mx-auto max-w-7xl space-y-20 px-4 pb-20 pt-10 text-(--text-primary) relative">
 
