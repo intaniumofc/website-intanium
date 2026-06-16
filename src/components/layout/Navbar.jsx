@@ -215,7 +215,7 @@ export default function Navbar() {
           <div className="flex lg:hidden items-center gap-3">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2 rounded-lg hover:bg-white/10 text-white/80 hover:text-white focus:outline-none cursor-pointer transition-colors"
+              className="p-2 w-11 h-11 flex items-center justify-center rounded-lg hover:bg-white/10 text-white/80 hover:text-white focus:outline-none cursor-pointer transition-colors"
               aria-expanded={isOpen}
             >
               <span className="sr-only">Open main menu</span>
@@ -253,7 +253,7 @@ export default function Navbar() {
                     <div key={item.label} className="border-b border-white/5 py-1">
                       <button
                         onClick={() => toggleAccordion(index)}
-                        className="w-full flex items-center justify-between py-2 px-3 rounded-lg text-white/80 hover:text-white hover:bg-white/10 text-base font-semibold transition-all focus:outline-none cursor-pointer"
+                        className="w-full flex items-center justify-between py-2 px-3 min-h-[44px] rounded-lg text-white/80 hover:text-white hover:bg-white/10 text-base font-semibold transition-all focus:outline-none cursor-pointer"
                         aria-expanded={isExpanded}
                       >
                         <span>{item.label}</span>
@@ -286,7 +286,7 @@ export default function Navbar() {
                                         key={subItem.label}
                                         to={subItem.link || "#"}
                                         onClick={() => setIsOpen(false)}
-                                        className={`flex items-center gap-3 p-2 rounded-lg transition-all ${
+                                        className={`flex items-center gap-3 p-2 min-h-[44px] rounded-lg transition-all ${
                                           isSubActive
                                             ? "text-white bg-white/20 font-semibold"
                                             : "text-white/70 hover:text-white hover:bg-white/5"
@@ -322,7 +322,7 @@ export default function Navbar() {
                       key={item.label}
                       to={item.link || "#"}
                       onClick={() => setIsOpen(false)}
-                      className={`flex items-center gap-3 py-2 px-3 rounded-lg text-base font-semibold transition-all ${
+                      className={`flex items-center gap-3 py-2 px-3 min-h-[44px] rounded-lg text-base font-semibold transition-all ${
                         isActive
                           ? "text-white bg-white/20 shadow-md"
                           : "text-white/80 hover:text-white hover:bg-white/10"
@@ -339,7 +339,7 @@ export default function Navbar() {
                 <Link
                   to={ROUTES.ADMIN_LOGIN}
                   onClick={() => setIsOpen(false)}
-                  className="block w-full text-center px-4 py-2 border border-white/20 rounded-lg text-base font-semibold text-white hover:bg-white/10 transition-all"
+                  className="flex items-center justify-center w-full px-4 min-h-[44px] border border-white/20 rounded-lg text-base font-semibold text-white hover:bg-white/10 transition-all"
                 >
                   Admin Panel
                 </Link>

@@ -10,33 +10,33 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function App() {
   useEffect(() => {
-    // Initialize butter-smooth Lenis scrolling globally
+    // Only initialize Lenis smooth scrolling on desktop to save mobile CPU
+    if (window.innerWidth < 768) {
+      return;
+    }
+
     const lenis = new Lenis({
       duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Smooth cubic inertia easing
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       direction: 'vertical',
       gestureDirection: 'vertical',
       smooth: true,
       mouseMultiplier: 1,
-      smoothTouch: false, // Keep standard mobile responsive touch feel
+      smoothTouch: false,
       touchMultiplier: 2,
       infinite: false,
     });
 
     window.lenis = lenis;
 
-    // Synchronize Lenis scrolling updates with GSAP ScrollTrigger
     lenis.on('scroll', ScrollTrigger.update);
 
-    // Bind GSAP ticker rendering loops to Lenis frames
     const tickHandler = (time) => {
       lenis.raf(time * 1000);
     };
     gsap.ticker.add(tickHandler);
-
     gsap.ticker.lagSmoothing(0);
 
-    // Clean up connections on unmount
     return () => {
       lenis.destroy();
       window.lenis = null;

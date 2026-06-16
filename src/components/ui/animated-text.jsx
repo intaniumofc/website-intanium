@@ -55,12 +55,10 @@ const AnimatedText = React.forwardRef(
 
     const lineVariants = {
       hidden: {
-        width: "0%",
-        left: "50%"
+        scaleX: 0
       },
       visible: {
-        width: "100%",
-        left: "0%",
+        scaleX: 1,
         transition: {
           delay: (letters.length * duration) + delay + 0.1,
           duration: 0.8,
@@ -95,13 +93,14 @@ const AnimatedText = React.forwardRef(
             initial="hidden"
             animate="visible"
             className={cn(
-              "absolute",
+              "absolute w-full origin-center",
               underlineHeight,
               underlineOffset,
               "bg-gradient-to-r",
               underlineGradient,
               underlineClassName
             )}
+            style={{ transformOrigin: "center" }}
           />
         </div>
       </Component>

@@ -108,7 +108,7 @@ export default function Footer({
                     <li key={link.name}>
                       <a
                         href={link.href}
-                        className="transition-colors duration-200 hover:text-white"
+                        className="py-1.5 inline-block transition-colors duration-200 hover:text-white"
                       >
                         {link.name}
                       </a>
@@ -130,7 +130,7 @@ export default function Footer({
                 title={social.label}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex size-9 items-center justify-center rounded-xl border border-white/15 bg-white/5 text-white/70 transition-all duration-200 hover:-translate-y-1 hover:border-white/35 hover:bg-white/10 hover:text-white"
+                className="flex size-11 sm:size-9 items-center justify-center rounded-xl border border-white/15 bg-white/5 text-white/70 transition-all duration-200 hover:-translate-y-1 hover:border-white/35 hover:bg-white/10 hover:text-white"
               >
                 {typeof social.icon === "function" ? (
                   <social.icon className="size-4" />
@@ -145,7 +145,7 @@ export default function Footer({
             <ul className="flex items-center gap-4">
               {legalLinks.map((link) => (
                 <li key={link.name}>
-                  <a href={link.href} className="transition-colors duration-200 hover:text-white">
+                  <a href={link.href} className="py-1.5 inline-block transition-colors duration-200 hover:text-white">
                     {link.name}
                   </a>
                 </li>

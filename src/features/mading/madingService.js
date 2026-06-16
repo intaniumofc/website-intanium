@@ -2,7 +2,7 @@ import { supabase } from '../../lib/supabaseClient';
 import { generateId } from '../../lib/helpers';
 
 export const madingService = {
-  getNotes: async (onlyApproved = true) => {
+  getNotes: async (onlyApproved = true, limit = 50) => {
     let query = supabase
       .from('mading_notes')
       .select('*');
@@ -11,7 +11,7 @@ export const madingService = {
       query = query.eq('is_approved', true);
     }
       
-    const { data, error } = await query.order('created_at', { ascending: false });
+    const { data, error } = await query.order('created_at', { ascending: false }).limit(limit);
       
     if (error) {
       console.error('Error fetching mading notes:', error);

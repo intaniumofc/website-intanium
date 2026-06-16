@@ -1,10 +1,14 @@
 import { supabase } from '../../lib/supabaseClient';
 
 export const galleryService = {
-  getGalleryPhotos: async () => {
-    const { data, error } = await supabase
-      .from('gallery')
-      .select('*');
+  getGalleryPhotos: async (limit = null, offset = 0) => {
+    let query = supabase.from('gallery').select('*');
+    
+    if (limit) {
+      query = query.range(offset, offset + limit - 1);
+    }
+    
+    const { data, error } = await query;
       
     if (error) {
       console.error('Error fetching gallery:', error);

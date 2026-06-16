@@ -247,6 +247,7 @@ export const ImageSwiper = ({
               alt={`Photo ${originalIndex + 1}`}
               className="w-full h-full object-cover select-none pointer-events-none"
               draggable={false}
+              loading={isFront ? "eager" : "lazy"}
               style={{ borderRadius: '11px' }}
             />
           </article>

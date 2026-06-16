@@ -198,6 +198,10 @@ const ImageModal = ({ item, onClose }) => {
 export default function GalleryPage() {
   const [photos, setPhotos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [offset, setOffset] = useState(0);
+  const LIMIT = 15;
   const [selectedItem, setSelectedItem] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -210,17 +214,44 @@ export default function GalleryPage() {
 
   useEffect(() => {
     document.title = 'Galeri Foto Intanium | Album Memori Komunitas';
-    galleryService.getGalleryPhotos()
-      .then((data) => {
-        const filtered = data.filter(p => p.display_type === 'gallery' || p.display_type === 'both');
-        setPhotos(filtered);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setIsLoading(false);
-      });
+    fetchPhotos(0);
   }, []);
+
+  const fetchPhotos = async (currentOffset) => {
+    try {
+      if (currentOffset === 0) setIsLoading(true);
+      else setIsLoadingMore(true);
+
+      const data = await galleryService.getGalleryPhotos(LIMIT, currentOffset);
+      const filtered = data.filter(p => p.display_type === 'gallery' || p.display_type === 'both');
+      
+      if (data.length < LIMIT) {
+        setHasMore(false);
+      }
+
+      if (currentOffset === 0) {
+        setPhotos(filtered);
+      } else {
+        setPhotos(prev => {
+          // Prevent duplicates just in case
+          const existingIds = new Set(prev.map(p => p.id));
+          const newPhotos = filtered.filter(p => !existingIds.has(p.id));
+          return [...prev, ...newPhotos];
+        });
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+      setIsLoadingMore(false);
+    }
+  };
+
+  const handleLoadMore = () => {
+    const newOffset = offset + LIMIT;
+    setOffset(newOffset);
+    fetchPhotos(newOffset);
+  };
 
   const columns = useMemo(() => {
     if (isMobile) {
@@ -308,7 +339,7 @@ export default function GalleryPage() {
         </div>
       ) : (
         <ContainerScroll className="w-full pb-16 pt-4">
-          <ContainerSticky className="mx-auto max-w-7xl px-4 md:px-8">
+          <ContainerSticky className="mx-auto max-w-7xl px-4 md:px-8 overflow-y-auto admin-scrollbar">
             <GalleryContainer
               className={isMobile ? "grid-cols-2" : "grid-cols-3"}
               isMobile={isMobile}
@@ -322,6 +353,18 @@ export default function GalleryPage() {
                 </GalleryCol>
               ))}
             </GalleryContainer>
+            
+            {hasMore && (
+              <div className="flex justify-center mt-12 mb-8">
+                <button
+                  onClick={handleLoadMore}
+                  disabled={isLoadingMore}
+                  className="px-6 py-3 bg-[var(--color-primary)] text-white rounded-xl font-bold transition-all hover:-translate-y-1 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none"
+                >
+                  {isLoadingMore ? 'Memuat...' : 'Muat Lebih Banyak'}
+                </button>
+              </div>
+            )}
           </ContainerSticky>
         </ContainerScroll>
       )}

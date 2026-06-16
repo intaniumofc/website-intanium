@@ -124,7 +124,7 @@ export default function HomeHashtagsSection() {
                 <div className="flex gap-1 shrink-0">
                   <button
                     onClick={(e) => handleCopyHashtag(e, hash.text)}
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center"
                     title="Salin Tagar"
                   >
                     {copiedText === hash.text ? (
@@ -135,7 +135,7 @@ export default function HomeHashtagsSection() {
                   </button>
                   <button
                     onClick={(e) => handleShareOnX(e, hash.text)}
-                    className="p-1.5 rounded-lg text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer"
+                    className="p-1.5 rounded-lg text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center"
                     title="Posting di X"
                   >
                     <TwitterIcon />
@@ -176,7 +176,7 @@ export default function HomeHashtagsSection() {
                 <div className="flex gap-1 shrink-0">
                   <button
                     onClick={(e) => handleCopyHashtag(e, hash.text)}
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center"
                     title="Salin Tagar"
                   >
                     {copiedText === hash.text ? (
@@ -187,7 +187,7 @@ export default function HomeHashtagsSection() {
                   </button>
                   <button
                     onClick={(e) => handleShareOnX(e, hash.text)}
-                    className="p-1.5 rounded-lg text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer"
+                    className="p-1.5 rounded-lg text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center"
                     title="Posting di X"
                   >
                     <TwitterIcon />
@@ -234,7 +234,7 @@ export default function HomeHashtagsSection() {
             >
               <button
                 onClick={() => setSelectedHashtag(null)}
-                className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
+                className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
               >
                 <X className="w-5 h-5" />
               </button>

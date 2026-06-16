@@ -289,7 +289,7 @@ export default function MerchandisePage() {
               type="button"
               onClick={() => setDrawerOpen(true)}
               whileTap={{ scale: 0.97 }}
-              className="flex items-center gap-2 rounded-xl border border-[var(--border-color)] bg-slate-50 px-3.5 py-2.5 text-xs font-bold text-slate-700 shadow-xs transition hover:bg-slate-100 cursor-pointer xl:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 shrink-0 h-10"
+              className="flex items-center gap-2 rounded-xl border border-[var(--border-color)] bg-slate-50 px-3.5 py-2.5 text-xs font-bold text-slate-700 shadow-xs transition hover:bg-slate-100 cursor-pointer xl:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 shrink-0 min-h-[44px]"
             >
               <IconFilter />
               Filter
@@ -304,7 +304,7 @@ export default function MerchandisePage() {
                 value={searchVal}
                 onChange={(e) => setSearchVal(e.target.value)}
                 aria-label="Cari produk"
-                className="w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl pl-9 pr-4 py-2.5 text-xs text-[var(--text-primary)] font-bold shadow-xs transition hover:border-slate-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50 h-10"
+                className="w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl pl-9 pr-4 py-2.5 text-xs text-[var(--text-primary)] font-bold shadow-xs transition hover:border-slate-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/50 min-h-[44px]"
               />
               <Search className="absolute left-3 w-4 h-4 text-slate-400 pointer-events-none" />
             </form>
@@ -343,7 +343,7 @@ export default function MerchandisePage() {
                   setCurrentPage(1);
                 }}
                 aria-label="Urutkan produk"
-                className="appearance-none cursor-pointer rounded-xl border border-[var(--border-color)] bg-slate-50 py-2.5 pl-4 pr-9 text-xs font-bold text-slate-700 shadow-xs transition hover:border-slate-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] h-10"
+                className="appearance-none cursor-pointer rounded-xl border border-[var(--border-color)] bg-slate-50 py-2.5 pl-4 pr-9 text-xs font-bold text-slate-700 shadow-xs transition hover:border-slate-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] min-h-[44px]"
               >
                 {SORT_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>

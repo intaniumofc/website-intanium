@@ -19,11 +19,11 @@ import intanVideo from '../../assets/images/intan-02.mp4';
 import { ImageSwiper } from '../../components/ui/ImageSwiper';
 import { aboutIntanService } from '../about-intan/aboutIntanService';
 import { SocialTooltip } from '../../components/ui/social-media';
-import HomeNewsSection from '../news/HomeNewsSection';
-import HomeMerchandiseSection from '../merchandise/HomeMerchandiseSection';
-import HomeGallerySection from '../gallery/HomeGallerySection';
-import HomeHashtagsSection from '../hashtags/HomeHashtagsSection';
-import MadingPreviewSection from '../mading/MadingPreviewSection';
+const HomeNewsSection = React.lazy(() => import('../news/HomeNewsSection'));
+const HomeMerchandiseSection = React.lazy(() => import('../merchandise/HomeMerchandiseSection'));
+const HomeGallerySection = React.lazy(() => import('../gallery/HomeGallerySection'));
+const HomeHashtagsSection = React.lazy(() => import('../hashtags/HomeHashtagsSection'));
+const MadingPreviewSection = React.lazy(() => import('../mading/MadingPreviewSection'));
 import intan1 from '../../assets/images/intan-01.webp';
 import intan2 from '../../assets/images/intan-02.webp';
 import intan3 from '../../assets/images/intan-03.webp';
@@ -175,10 +175,11 @@ export default function HomePage() {
                 />
                 {/* Unified, glowing premium bottom divider line */}
                 <motion.div
-                  initial={{ width: "0%", left: "50%" }}
-                  animate={{ width: "100%", left: "0%" }}
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
                   transition={{ delay: 0.8, duration: 0.8, ease: "easeOut" }}
-                  className="absolute bottom-0 h-1.5 sm:h-2 md:h-2.5 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-hover)] rounded-full shadow-[0_0_12px_rgba(74,122,191,0.4)]"
+                  style={{ transformOrigin: "center" }}
+                  className="absolute bottom-0 w-full h-1.5 sm:h-2 md:h-2.5 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-hover)] rounded-full shadow-[0_0_12px_rgba(74,122,191,0.4)]"
                 />
               </div>
             </ContainerAnimated>
@@ -351,7 +352,9 @@ export default function HomePage() {
           viewport={{ once: true, amount: 0.15 }}
           variants={scrollRevealVariants}
         >
-          <HomeNewsSection articles={featuredNews} />
+          <React.Suspense fallback={<div className="h-40 flex items-center justify-center text-slate-400">Memuat...</div>}>
+            <HomeNewsSection articles={featuredNews} />
+          </React.Suspense>
         </motion.div>
 
         {/* ================= MERCHANDISE PROMOTION ================= */}
@@ -361,7 +364,9 @@ export default function HomePage() {
           viewport={{ once: true, amount: 0.15 }}
           variants={scrollRevealVariants}
         >
-          <HomeMerchandiseSection products={featuredProducts} />
+          <React.Suspense fallback={<div className="h-40 flex items-center justify-center text-slate-400">Memuat...</div>}>
+            <HomeMerchandiseSection products={featuredProducts} />
+          </React.Suspense>
         </motion.div>
 
         {/* ================= SOCIAL TAGS LOOPING BOARD ================= */}
@@ -371,7 +376,9 @@ export default function HomePage() {
           viewport={{ once: true, amount: 0.15 }}
           variants={scrollRevealVariants}
         >
-          <HomeHashtagsSection />
+          <React.Suspense fallback={<div className="h-40 flex items-center justify-center text-slate-400">Memuat...</div>}>
+            <HomeHashtagsSection />
+          </React.Suspense>
         </motion.div>
 
         {/* ================= INTERACTIVE PHOTO GALLERY ================= */}
@@ -381,7 +388,9 @@ export default function HomePage() {
           viewport={{ once: true, amount: 0.15 }}
           variants={scrollRevealVariants}
         >
-          <HomeGallerySection />
+          <React.Suspense fallback={<div className="h-40 flex items-center justify-center text-slate-400">Memuat...</div>}>
+            <HomeGallerySection />
+          </React.Suspense>
         </motion.div>
 
         {/* ================= MADING PREVIEW SECTION ================= */}
@@ -391,7 +400,9 @@ export default function HomePage() {
           viewport={{ once: true, amount: 0.15 }}
           variants={scrollRevealVariants}
         >
-          <MadingPreviewSection />
+          <React.Suspense fallback={<div className="h-40 flex items-center justify-center text-slate-400">Memuat...</div>}>
+            <MadingPreviewSection />
+          </React.Suspense>
         </motion.div>
       </div>
     </div>
