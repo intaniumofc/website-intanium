@@ -368,18 +368,22 @@ export default function AdminMerchandise() {
     <div className="space-y-6 select-none">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-[var(--border-color)]/60">
-        <div>
+        <div className="min-w-0 w-full sm:w-auto">
           <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[var(--color-primary)]">
             Admin Dashboard
           </p>
           <h1 className="text-xl sm:text-2xl font-extrabold text-slate-800 mt-1 flex items-center gap-2">
-            <ShoppingBag className="h-5.5 w-5.5 text-[var(--color-primary)] shrink-0" /> Katalog Merchandise
+            <ShoppingBag className="h-5.5 w-5.5 text-[var(--color-primary)] shrink-0" /> 
+            <span className="truncate">Katalog Merchandise</span>
           </h1>
+          <p className="text-xs text-slate-500 font-medium mt-1 truncate sm:whitespace-normal">
+            Kelola katalog merchandise, ketersediaan, dan order penjualan
+          </p>
         </div>
         <Button 
           variant="primary" 
           size="sm" 
-          className="flex items-center gap-1.5 shadow-sm cursor-pointer" 
+          className="flex items-center justify-center gap-1.5 shadow-sm cursor-pointer w-full sm:w-auto shrink-0" 
           onClick={handleOpenAddWorkspace}
         >
           <Plus className="h-4 w-4" /> Tambah Produk Baru
@@ -388,13 +392,13 @@ export default function AdminMerchandise() {
 
       {/* Tabs Menu Navigation */}
       <div className="border-b border-slate-200">
-        <nav className="-mb-px flex gap-6 overflow-x-auto">
+        <nav className="-mb-px flex flex-wrap gap-x-6 gap-y-2">
           <button
             type="button"
             onClick={() => {
               setActiveWorkspace('inventory');
             }}
-            className={`whitespace-nowrap border-b-2 px-1 pb-3 text-xs font-bold uppercase tracking-wider transition cursor-pointer ${
+            className={`border-b-2 px-1 pb-3 text-xs font-bold uppercase tracking-wider transition cursor-pointer ${
               activeWorkspace === 'inventory'
                 ? 'border-[var(--color-primary)] text-[var(--color-primary)] font-extrabold'
                 : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'
@@ -408,7 +412,7 @@ export default function AdminMerchandise() {
               if (activeWorkspace !== 'editor') resetForm();
               setActiveWorkspace('editor');
             }}
-            className={`whitespace-nowrap border-b-2 px-1 pb-3 text-xs font-bold uppercase tracking-wider transition cursor-pointer ${
+            className={`border-b-2 px-1 pb-3 text-xs font-bold uppercase tracking-wider transition cursor-pointer ${
               activeWorkspace === 'editor'
                 ? 'border-[var(--color-primary)] text-[var(--color-primary)] font-extrabold'
                 : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'
@@ -421,13 +425,13 @@ export default function AdminMerchandise() {
             onClick={() => {
               setActiveWorkspace('payment');
             }}
-            className={`whitespace-nowrap border-b-2 px-1 pb-3 text-xs font-bold uppercase tracking-wider transition cursor-pointer flex items-center gap-1.5 ${
+            className={`border-b-2 px-1 pb-3 text-xs font-bold uppercase tracking-wider transition cursor-pointer flex items-center gap-1.5 ${
               activeWorkspace === 'payment'
                 ? 'border-[var(--color-primary)] text-[var(--color-primary)] font-extrabold'
                 : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'
             }`}
           >
-            <CreditCard className="h-3.5 w-3.5" /> Informasi Pembayaran
+            <CreditCard className="h-3.5 w-3.5 shrink-0" /> Informasi Pembayaran
           </button>
         </nav>
       </div>
@@ -504,50 +508,111 @@ export default function AdminMerchandise() {
             {isLoading ? (
               <div className="p-12"><Loading message="Memuat database katalog…" /></div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs text-[var(--text-secondary)]">
-                  <thead className="text-[10px] uppercase bg-[var(--bg-primary)]/60 text-slate-500 font-bold border-b border-[var(--border-color)]/60">
-                    <tr>
-                      <th className="px-6 py-4">Gambar & Nama</th>
-                      <th className="px-6 py-4">Kategori</th>
-                      <th className="px-6 py-4">Harga</th>
-                      <th className="px-6 py-4">Varian Size</th>
-                      <th className="px-6 py-4">Status</th>
-                      <th className="px-6 py-4 text-right">Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[var(--border-color)]/60 bg-white">
-                    {paginatedItems.map(item => (
-                      <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center gap-3">
-                            <img width={44} height={44} alt={item.name || 'Merchandise'} src={item.image_url || 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=100'} className="w-11 h-11 object-cover rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)]" />
-                            <div className="min-w-0">
-                              <div className="font-extrabold text-slate-800 text-xs truncate max-w-[200px]">{item.name}</div>
-                              <div className="font-mono text-[9px] text-slate-400 mt-0.5">{item.id}</div>
+              <>
+                {/* Desktop Table */}
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full text-left text-xs text-[var(--text-secondary)]">
+                    <thead className="text-[10px] uppercase bg-[var(--bg-primary)]/60 text-slate-500 font-bold border-b border-[var(--border-color)]/60">
+                      <tr>
+                        <th className="px-6 py-4">Gambar & Nama</th>
+                        <th className="px-6 py-4">Kategori</th>
+                        <th className="px-6 py-4">Harga</th>
+                        <th className="px-6 py-4">Varian Size</th>
+                        <th className="px-6 py-4">Status</th>
+                        <th className="px-6 py-4 text-right">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[var(--border-color)]/60 bg-white">
+                      {paginatedItems.map(item => (
+                        <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex items-center gap-3">
+                              <img width={44} height={44} alt={item.name || 'Merchandise'} src={item.image_url || 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=100'} className="w-11 h-11 object-cover rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)]" />
+                              <div className="min-w-0">
+                                <div className="font-extrabold text-slate-800 text-xs truncate max-w-[200px]">{item.name}</div>
+                                <div className="font-mono text-[9px] text-slate-400 mt-0.5">{item.id}</div>
+                              </div>
                             </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className="px-2 py-0.5 text-[10px] font-bold rounded-lg bg-[var(--color-primary-light)] text-[var(--color-primary)] border border-[var(--color-primary)]/10">
+                              {item.category || 'Clothing'}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap font-black text-slate-800">
+                            {formatCurrency(item.price)}
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="flex flex-wrap gap-1 max-w-[150px]">
+                              {item.sizes && item.sizes.length > 0 ? (
+                                item.sizes.map(sz => (
+                                  <span key={sz} className="px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded text-[9px] font-bold border border-slate-200">{sz}</span>
+                                ))
+                              ) : (
+                                <span className="text-[10px] text-slate-400 italic">No Size</span>
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <button
+                              onClick={() => handleQuickToggleActive(item)}
+                              className={`inline-flex items-center gap-1 text-[9px] font-extrabold px-2.5 py-0.5 rounded-full border transition cursor-pointer ${
+                                item.is_available 
+                                  ? 'text-emerald-700 bg-emerald-50 border-emerald-200' 
+                                  : 'text-red-700 bg-red-50 border-red-200'
+                              }`}
+                            >
+                              {item.is_available ? '✓ Tersedia' : '✕ Habis'}
+                            </button>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-semibold">
+                            <div className="flex items-center justify-end gap-1.5">
+                              <button 
+                                onClick={() => handleOpenEditWorkspace(item)} 
+                                className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-colors cursor-pointer"
+                                title="Ubah Produk"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </button>
+                              <button 
+                                onClick={() => requestDelete(item)} 
+                                className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors cursor-pointer"
+                                title="Hapus Produk"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                      {paginatedItems.length === 0 && (
+                        <tr>
+                          <td colSpan="6" className="px-6 py-12 text-center text-slate-400 text-xs font-bold italic">
+                            Belum ada merchandise yang sesuai dengan pencarian Anda.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Cards */}
+                <div className="md:hidden flex flex-col divide-y divide-[var(--border-color)]/60 bg-white">
+                  {paginatedItems.map(item => (
+                    <div key={item.id} className="p-4 hover:bg-slate-50/50 transition-colors flex flex-col gap-3">
+                      <div className="flex gap-3">
+                        <img width={64} height={64} alt={item.name || 'Merchandise'} src={item.image_url || 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=100'} className="w-16 h-16 object-cover rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] shrink-0" />
+                        <div className="flex-1 min-w-0 flex flex-col justify-center">
+                          <div className="font-extrabold text-slate-800 text-xs line-clamp-2">{item.name}</div>
+                          <div className="font-mono text-[9px] text-slate-400 mt-1">{item.id}</div>
+                          <div className="font-black text-slate-800 mt-1">{formatCurrency(item.price)}</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between gap-2 mt-1">
+                        <div className="flex items-center gap-2">
                           <span className="px-2 py-0.5 text-[10px] font-bold rounded-lg bg-[var(--color-primary-light)] text-[var(--color-primary)] border border-[var(--color-primary)]/10">
                             {item.category || 'Clothing'}
                           </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap font-black text-slate-800">
-                          {formatCurrency(item.price)}
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex flex-wrap gap-1 max-w-[150px]">
-                            {item.sizes && item.sizes.length > 0 ? (
-                              item.sizes.map(sz => (
-                                <span key={sz} className="px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded text-[9px] font-bold border border-slate-200">{sz}</span>
-                              ))
-                            ) : (
-                              <span className="text-[10px] text-slate-400 italic">No Size</span>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
                           <button
                             onClick={() => handleQuickToggleActive(item)}
                             className={`inline-flex items-center gap-1 text-[9px] font-extrabold px-2.5 py-0.5 rounded-full border transition cursor-pointer ${
@@ -558,37 +623,40 @@ export default function AdminMerchandise() {
                           >
                             {item.is_available ? '✓ Tersedia' : '✕ Habis'}
                           </button>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-semibold">
-                          <div className="flex items-center justify-end gap-1.5">
-                            <button 
-                              onClick={() => handleOpenEditWorkspace(item)} 
-                              className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-colors cursor-pointer"
-                              title="Ubah Produk"
-                            >
-                              <Edit className="h-4 w-4" />
-                            </button>
-                            <button 
-                              onClick={() => requestDelete(item)} 
-                              className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors cursor-pointer"
-                              title="Hapus Produk"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                    {paginatedItems.length === 0 && (
-                      <tr>
-                        <td colSpan="6" className="px-6 py-12 text-center text-slate-400 text-xs font-bold italic">
-                          Belum ada merchandise yang sesuai dengan pencarian Anda.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
+                        </div>
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <button 
+                            onClick={() => handleOpenEditWorkspace(item)} 
+                            className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 border border-transparent rounded-lg transition-colors cursor-pointer"
+                            title="Ubah Produk"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </button>
+                          <button 
+                            onClick={() => requestDelete(item)} 
+                            className="p-2 text-red-500 bg-red-50 hover:bg-red-100 border border-transparent rounded-lg transition-colors cursor-pointer"
+                            title="Hapus Produk"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
+                      {item.sizes && item.sizes.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 mt-1 border-t border-[var(--border-color)]/30 pt-3">
+                          {item.sizes.map(sz => (
+                            <span key={sz} className="px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] font-bold border border-slate-200">{sz}</span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                  {paginatedItems.length === 0 && (
+                    <div className="p-12 text-center text-slate-400 text-xs font-bold italic">
+                      Belum ada merchandise yang sesuai dengan pencarian Anda.
+                    </div>
+                  )}
+                </div>
+              </>
             )}
           </Card>
 

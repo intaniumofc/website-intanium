@@ -441,34 +441,37 @@ export default function AdminLayout({ children }) {
       >
         {/* Sticky App Header */}
         <header className="sticky top-0 z-40 h-20 bg-white/85 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-6 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
             {/* Hamburger Button (Mobile) */}
             <button 
               type="button"
               onClick={toggleSidebar} 
-              className="md:hidden flex items-center justify-center w-10 h-10 border border-slate-200 rounded-xl text-[#170C79] hover:bg-slate-50 transition-colors"
+              className="md:hidden flex shrink-0 items-center justify-center w-10 h-10 border border-slate-200 rounded-xl text-[#170C79] hover:bg-slate-50 transition-colors"
               aria-label="Open sidebar menu"
             >
               <Menu className="h-5 w-5" />
             </button>
 
             {/* Title / Brand */}
-            <span className="font-extrabold text-sm md:text-base text-slate-800 tracking-tight">
-              Dashboard Administrator
+            <span className="font-extrabold text-sm md:text-base text-slate-800 tracking-tight truncate">
+              <span className="hidden sm:inline">Dashboard Administrator</span>
+              <span className="sm:hidden">Dashboard</span>
             </span>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4 shrink-0">
             {/* View Site Quick Access */}
             <Link 
               to="/" 
-              className="flex items-center gap-1.5 text-xs font-extrabold text-[#170C79] hover:bg-[#170C79]/8 border border-slate-200 px-4 py-2.5 rounded-xl bg-white transition-colors shadow-xs"
+              className="flex items-center gap-1.5 text-xs font-extrabold text-[#170C79] hover:bg-[#170C79]/8 border border-slate-200 p-2.5 sm:px-4 sm:py-2.5 rounded-xl bg-white transition-colors shadow-xs"
+              title="Web Publik"
             >
-              Web Publik <ExternalLink className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Web Publik</span>
+              <ExternalLink className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
             </Link>
 
             {/* Profile Section */}
-            <div className="flex items-center gap-3 border-l border-slate-200 pl-4 h-8">
+            <div className="flex items-center gap-3 border-l border-slate-200 pl-2 sm:pl-4 h-8">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-[#170C79] text-white rounded-full flex items-center justify-center font-extrabold text-xs shadow-xs shrink-0 select-none">
                   {adminProfile?.username ? adminProfile.username.substring(0, 2).toUpperCase() : 'AD'}

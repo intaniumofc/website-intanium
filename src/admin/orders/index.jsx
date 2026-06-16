@@ -610,27 +610,28 @@ export default function AdminOrdersPage() {
     <div className="space-y-6 select-none">
       {/* ── Page header ── */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-[var(--border-color)]/60">
-        <div>
+        <div className="min-w-0 w-full sm:w-auto">
           <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[var(--color-primary)]">
             Admin Dashboard
           </p>
           <h1 className="mt-1 text-xl sm:text-2xl font-extrabold text-slate-800 flex items-center gap-2">
-            <Package className="h-5.5 w-5.5 text-[var(--color-primary)] shrink-0" /> Kelola Order Merchandise
+            <Package className="h-5.5 w-5.5 text-[var(--color-primary)] shrink-0" /> 
+            <span className="truncate">Kelola Order Merchandise</span>
           </h1>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 overflow-x-auto admin-scrollbar pb-1 sm:pb-0 w-full sm:w-auto shrink-0">
           <button
             type="button"
             onClick={exportFilteredOrdersToPdf}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:border-slate-400 transition cursor-pointer shadow-sm"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:border-slate-400 transition cursor-pointer shadow-sm whitespace-nowrap"
           >
-            <Download className="h-3.5 w-3.5 text-blue-500" />
+            <Download className="h-3.5 w-3.5 text-blue-500 shrink-0" />
             Cetak PDF
           </button>
           <button
             type="button"
             onClick={exportFilteredOrdersToCsv}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:border-slate-400 transition cursor-pointer shadow-sm"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:border-slate-400 transition cursor-pointer shadow-sm whitespace-nowrap"
           >
             Export CSV
           </button>
@@ -784,7 +785,8 @@ export default function AdminOrdersPage() {
         </div>
       ) : (
         <div className="bg-white border border-[var(--border-color)]/60 rounded-3xl overflow-hidden shadow-sm">
-          <div className="overflow-x-auto">
+          {/* Desktop Table */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="min-w-full text-xs text-left">
               <thead className="text-[10px] uppercase bg-[var(--bg-primary)]/60 text-slate-500 font-bold border-b border-[var(--border-color)]/60 select-none">
                 <tr>
@@ -882,6 +884,97 @@ export default function AdminOrdersPage() {
                 })}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile Cards */}
+          <div className="md:hidden flex flex-col divide-y divide-slate-100 bg-white">
+            {/* "Select All" bar for mobile */}
+            {paginatedOrders.length > 0 && (
+              <div className="px-4 py-3 bg-slate-50 flex items-center justify-between border-b border-slate-100">
+                <div className="flex items-center gap-2">
+                  <input name="file_input_all" type="checkbox" checked={allVisibleSelected} onChange={toggleSelectAllVisible} className="rounded border-slate-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)]/20 cursor-pointer" />
+                  <span className="text-[10px] font-bold text-slate-500 uppercase">Pilih Semua</span>
+                </div>
+              </div>
+            )}
+            
+            {paginatedOrders.map((order) => {
+              const isSaving = rowSavingIds.includes(order.id);
+              const isDeleting = deletingIds.includes(order.id);
+              const isLatePending = isPendingOver24Hours(order);
+              const isHighTotal = Number(order.total_amount) >= HIGH_TOTAL_THRESHOLD;
+              
+              return (
+                <div 
+                  key={order.id} 
+                  className={`p-4 flex flex-col gap-3 transition-colors hover:bg-slate-50/50 ${
+                    isLatePending ? 'bg-amber-50/20' : isHighTotal ? 'bg-blue-50/10' : ''
+                  }`}
+                >
+                  {/* Top Row: Checkbox, Invoice, Action Menu */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <input name="file_input" type="checkbox" checked={selectedOrderIds.includes(order.id)} onChange={() => toggleSelectOne(order.id)} className="rounded border-slate-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)]/20 cursor-pointer shrink-0" />
+                      <div className="font-mono text-xs font-bold text-slate-800 truncate">
+                        {order.order_number}
+                      </div>
+                    </div>
+                    <OrderRowMenu
+                      onDetail={() => void handleOpenDetail(order.id)}
+                      onDelete={() => void handleDeleteOrder(order)}
+                      isSaving={isSaving}
+                      isDeleting={isDeleting}
+                    />
+                  </div>
+
+                  {/* Customer Info & Date */}
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div>
+                      <p className="font-bold text-slate-800 line-clamp-1">{order.shipping_name}</p>
+                      <p className="text-[10px] font-semibold text-slate-400 mt-0.5">{order.shipping_phone}</p>
+                    </div>
+                    <div className="text-right font-semibold text-slate-600">
+                      <p>{formatDateTime(order.created_at)}</p>
+                      {isLatePending ? (
+                        <span className="inline-flex items-center gap-1 text-[9px] font-extrabold text-amber-600 mt-0.5">
+                          <Clock className="h-3.5 w-3.5 shrink-0" />
+                          {'>'} 24 jam pending
+                        </span>
+                      ) : null}
+                    </div>
+                  </div>
+
+                  {/* Bottom Row: Status & Total */}
+                  <div className="flex items-center justify-between mt-1 pt-2 border-t border-slate-100">
+                    <div className="flex flex-col gap-1.5 min-w-[130px]">
+                      <StatusBadge status={order.status} />
+                      <select
+                        value={order.status}
+                        onChange={(e) =>
+                          void handleSingleStatusUpdate(order, e.target.value)
+                        }
+                        disabled={isSaving}
+                        className="rounded-lg border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-bold text-slate-700 focus:border-[var(--color-primary)] focus:outline-none disabled:opacity-50 cursor-pointer w-fit"
+                      >
+                        {orderStatusOptions.map((s) => (
+                          <option key={s} value={s}>
+                            {s.toUpperCase()}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-black text-slate-800 tabular-nums text-sm">
+                        {formatCurrency(Number(order.total_amount))}
+                      </p>
+                      {isHighTotal ? (
+                        <p className="text-[9px] font-extrabold text-[var(--color-primary)] mt-0.5">High Value</p>
+                      ) : null}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
