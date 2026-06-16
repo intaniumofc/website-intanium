@@ -157,61 +157,111 @@ export default function AdminHashtags() {
             Belum ada tagar. Silakan tambah tagar baru.
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-slate-50/80 border-b border-slate-100 text-slate-500 text-xs uppercase tracking-wider font-semibold">
-                  <th className="p-4 pl-6">Tagar</th>
-                  <th className="p-4">Jumlah Tweet</th>
-                  <th className="p-4">Baris</th>
-                  <th className="p-4">Penjelasan</th>
-                  <th className="p-4 text-right pr-6">Aksi</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {hashtags.map((h) => (
-                  <tr key={h.id} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="p-4 pl-6">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-500">
-                          <Hash className="w-4 h-4" />
-                        </div>
-                        <span className="font-bold text-slate-800">{h.text}</span>
-                      </div>
-                    </td>
-                    <td className="p-4 text-sm text-slate-600">{h.count}</td>
-                    <td className="p-4">
-                      <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium ${
-                        h.row_number === 1 ? 'bg-indigo-50 text-indigo-700' : 'bg-emerald-50 text-emerald-700'
-                      }`}>
-                        Baris {h.row_number}
-                      </span>
-                    </td>
-                    <td className="p-4 text-sm text-slate-500 max-w-xs truncate" title={h.explanation}>
-                      {h.explanation || '-'}
-                    </td>
-                    <td className="p-4 text-right pr-6">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => handleOpenModal(h)}
-                          className="p-1.5 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
-                          title="Edit"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(h.id, h.text)}
-                          className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                          title="Hapus"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
+          <div>
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-slate-50/80 border-b border-slate-100 text-slate-500 text-xs uppercase tracking-wider font-semibold">
+                    <th className="p-4 pl-6">Tagar</th>
+                    <th className="p-4">Jumlah Tweet</th>
+                    <th className="p-4">Baris</th>
+                    <th className="p-4">Penjelasan</th>
+                    <th className="p-4 text-right pr-6">Aksi</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {hashtags.map((h) => (
+                    <tr key={h.id} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="p-4 pl-6">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 shrink-0">
+                            <Hash className="w-4 h-4" />
+                          </div>
+                          <span className="font-bold text-slate-800 truncate max-w-[150px] lg:max-w-[250px]">{h.text}</span>
+                        </div>
+                      </td>
+                      <td className="p-4 text-sm text-slate-600">{h.count}</td>
+                      <td className="p-4">
+                        <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium ${
+                          h.row_number === 1 ? 'bg-indigo-50 text-indigo-700' : 'bg-emerald-50 text-emerald-700'
+                        }`}>
+                          Baris {h.row_number}
+                        </span>
+                      </td>
+                      <td className="p-4 text-sm text-slate-500 max-w-[150px] lg:max-w-xs truncate" title={h.explanation}>
+                        {h.explanation || '-'}
+                      </td>
+                      <td className="p-4 text-right pr-6">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => handleOpenModal(h)}
+                            className="p-1.5 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
+                            title="Edit"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(h.id, h.text)}
+                            className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                            title="Hapus"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Cards */}
+            <div className="md:hidden flex flex-col divide-y divide-slate-100">
+              {hashtags.map((h) => (
+                <div key={h.id} className="p-4 flex flex-col gap-3 hover:bg-slate-50/50 transition-colors min-w-0">
+                  <div className="flex justify-between items-start gap-4">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 shrink-0">
+                        <Hash className="w-5 h-5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="font-bold text-slate-800 text-sm truncate">{h.text}</div>
+                        <div className="text-xs text-slate-500 mt-0.5">{h.count}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        onClick={() => handleOpenModal(h)}
+                        className="p-2 text-slate-500 bg-slate-50 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors cursor-pointer border border-slate-200"
+                        title="Edit"
+                      >
+                        <Edit className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(h.id, h.text)}
+                        className="p-2 text-slate-500 bg-slate-50 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors cursor-pointer border border-slate-200"
+                        title="Hapus"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="pl-[52px] min-w-0">
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                      h.row_number === 1 ? 'bg-indigo-50 text-indigo-700' : 'bg-emerald-50 text-emerald-700'
+                    }`}>
+                      Baris {h.row_number}
+                    </span>
+                    {h.explanation && (
+                      <div className="text-xs text-slate-600 mt-1.5 leading-relaxed bg-slate-50 p-2.5 rounded-xl border border-slate-100 line-clamp-3 break-words min-w-0">
+                        {h.explanation}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>

@@ -241,64 +241,108 @@ export default function AdminIntanShiningStar() {
         {isLoading ? (
           <div className="p-12"><Loading message="Memuat achievement…" /></div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="border-b border-[var(--border-color)] bg-[var(--bg-primary)]/80 text-xs uppercase text-[var(--text-secondary)]">
-                <tr>
-                  <th className="px-5 py-4">Achievement</th>
-                  <th className="px-5 py-4">Tanggal</th>
-                  <th className="px-5 py-4">Tampil</th>
-                  <th className="px-5 py-4">Status</th>
-                  <th className="px-5 py-4 text-right">Aksi</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--border-color)]">
-                {filteredItems.map((item) => (
-                  <tr key={item.id} className="hover:bg-slate-50/60">
-                    <td className="px-5 py-4">
-                      <div className="flex min-w-72 items-center gap-3">
-                        <div className="h-14 w-20 shrink-0 overflow-hidden rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)]">
-                          {item.image ? (
-                            <img width={80} height={56} src={item.image} alt="Achievement Thumbnail" className="h-full w-full object-cover" />
-                          ) : (
-                            <ImageIcon className="m-auto h-full w-5 text-[var(--text-muted)]" />
-                          )}
-                        </div>
-                        <div>
-                          <p className="font-extrabold text-[var(--text-primary)]">{item.title}</p>
-                          <p className="mt-1 text-[10px] font-bold text-[var(--color-primary)]">{item.date} - {item.category}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="whitespace-nowrap px-5 py-4 text-xs font-bold text-[var(--text-secondary)]">{item.sortDate}</td>
-                    <td className="px-5 py-4">
-                      <div className="flex flex-wrap gap-1">
-                        {item.showInAchievement && <span className="rounded-full bg-pink-50 px-2 py-1 text-[9px] font-black text-pink-700">Achievement</span>}
-                        {item.showInTimeline && <span className="rounded-full bg-indigo-50 px-2 py-1 text-[9px] font-black text-indigo-700">Timeline</span>}
-                      </div>
-                    </td>
-                    <td className="px-5 py-4">
-                      <div className="flex flex-wrap gap-1">
-                        {item.isMajor && <span className="rounded-full bg-amber-50 px-2 py-1 text-[9px] font-black text-amber-700">Major</span>}
-                      </div>
-                    </td>
-                    <td className="px-5 py-4 text-right">
-                      <div className="flex justify-end gap-2">
-                        <button type="button" onClick={() => openEditModal(item)} className="rounded-lg p-2 text-blue-600 hover:bg-blue-50" aria-label={`Edit ${item.title}`}>
-                          <Edit className="h-4 w-4" />
-                        </button>
-                        <button type="button" onClick={() => setConfirmDelete({ isOpen: true, id: item.id })} className="rounded-lg p-2 text-red-500 hover:bg-red-50" aria-label={`Hapus ${item.title}`}>
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
+          <div>
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead className="border-b border-[var(--border-color)] bg-[var(--bg-primary)]/80 text-xs uppercase text-[var(--text-secondary)]">
+                  <tr>
+                    <th className="px-5 py-4">Achievement</th>
+                    <th className="px-5 py-4">Tanggal</th>
+                    <th className="px-5 py-4">Tampil</th>
+                    <th className="px-5 py-4">Status</th>
+                    <th className="px-5 py-4 text-right">Aksi</th>
                   </tr>
-                ))}
-                {filteredItems.length === 0 && (
-                  <tr><td colSpan="5" className="px-5 py-12 text-center text-sm text-[var(--text-muted)]">Belum ada data yang sesuai.</td></tr>
-                )}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-[var(--border-color)]">
+                  {filteredItems.map((item) => (
+                    <tr key={item.id} className="hover:bg-slate-50/60">
+                      <td className="px-5 py-4">
+                        <div className="flex min-w-72 items-center gap-3">
+                          <div className="h-14 w-20 shrink-0 overflow-hidden rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)]">
+                            {item.image ? (
+                              <img width={80} height={56} src={item.image} alt="Achievement Thumbnail" className="h-full w-full object-cover" />
+                            ) : (
+                              <ImageIcon className="m-auto h-full w-5 text-[var(--text-muted)]" />
+                            )}
+                          </div>
+                          <div>
+                            <p className="font-extrabold text-[var(--text-primary)] max-w-[200px] lg:max-w-xs truncate">{item.title}</p>
+                            <p className="mt-1 text-[10px] font-bold text-[var(--color-primary)]">{item.date} - {item.category}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="whitespace-nowrap px-5 py-4 text-xs font-bold text-[var(--text-secondary)]">{item.sortDate}</td>
+                      <td className="px-5 py-4">
+                        <div className="flex flex-wrap gap-1">
+                          {item.showInAchievement && <span className="rounded-full bg-pink-50 px-2 py-1 text-[9px] font-black text-pink-700">Achievement</span>}
+                          {item.showInTimeline && <span className="rounded-full bg-indigo-50 px-2 py-1 text-[9px] font-black text-indigo-700">Timeline</span>}
+                        </div>
+                      </td>
+                      <td className="px-5 py-4">
+                        <div className="flex flex-wrap gap-1">
+                          {item.isMajor && <span className="rounded-full bg-amber-50 px-2 py-1 text-[9px] font-black text-amber-700">Major</span>}
+                        </div>
+                      </td>
+                      <td className="px-5 py-4 text-right">
+                        <div className="flex justify-end gap-2">
+                          <button type="button" onClick={() => openEditModal(item)} className="rounded-lg p-2 text-blue-600 hover:bg-blue-50" aria-label={`Edit ${item.title}`}>
+                            <Edit className="h-4 w-4" />
+                          </button>
+                          <button type="button" onClick={() => setConfirmDelete({ isOpen: true, id: item.id })} className="rounded-lg p-2 text-red-500 hover:bg-red-50" aria-label={`Hapus ${item.title}`}>
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {filteredItems.length === 0 && (
+                    <tr><td colSpan="5" className="px-5 py-12 text-center text-sm text-[var(--text-muted)]">Belum ada data yang sesuai.</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Cards */}
+            <div className="md:hidden flex flex-col divide-y divide-[var(--border-color)]">
+              {filteredItems.map((item) => (
+                <div key={item.id} className="p-4 flex flex-col gap-3 hover:bg-slate-50/60 transition-colors">
+                  <div className="flex gap-3 items-start min-w-0">
+                    <div className="h-14 w-20 shrink-0 overflow-hidden rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)]">
+                      {item.image ? (
+                        <img width={80} height={56} src={item.image} alt="Achievement Thumbnail" className="h-full w-full object-cover" />
+                      ) : (
+                        <ImageIcon className="m-auto h-full w-5 text-[var(--text-muted)]" />
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-extrabold text-[var(--text-primary)] text-sm line-clamp-2 break-words min-w-0">{item.title}</p>
+                      <p className="mt-1 text-[10px] font-bold text-[var(--color-primary)] truncate">{item.date} - {item.category}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-1.5 items-center">
+                    {item.showInAchievement && <span className="rounded-full bg-pink-50 px-2 py-0.5 text-[9px] font-black text-pink-700">Achievement</span>}
+                    {item.showInTimeline && <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[9px] font-black text-indigo-700">Timeline</span>}
+                    {item.isMajor && <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[9px] font-black text-amber-700">Major</span>}
+                  </div>
+                  
+                  <div className="flex justify-between items-center mt-1 border-t border-[var(--border-color)] pt-3">
+                    <span className="text-[10px] font-bold text-[var(--text-secondary)]">Urutan: {item.sortDate}</span>
+                    <div className="flex justify-end gap-2">
+                      <button type="button" onClick={() => openEditModal(item)} className="rounded-lg px-3 py-1.5 text-xs font-bold text-blue-600 bg-blue-50 border border-blue-100 flex items-center gap-1.5">
+                        <Edit className="h-3.5 w-3.5" /> Ubah
+                      </button>
+                      <button type="button" onClick={() => setConfirmDelete({ isOpen: true, id: item.id })} className="rounded-lg p-1.5 text-red-500 bg-red-50 border border-red-100">
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {filteredItems.length === 0 && (
+                <div className="px-5 py-12 text-center text-sm text-[var(--text-muted)]">Belum ada data yang sesuai.</div>
+              )}
+            </div>
           </div>
         )}
       </Card>

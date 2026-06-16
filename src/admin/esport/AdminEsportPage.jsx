@@ -296,7 +296,7 @@ export default function AdminEsportPage() {
       </div>
 
       {/* Tabs Layout */}
-      <div className="flex border-b border-slate-200">
+      <div className="flex flex-wrap border-b border-slate-200">
         <button
           onClick={() => setActiveTab('divisions')}
           className={`py-3 px-6 font-semibold text-sm border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
@@ -402,75 +402,132 @@ export default function AdminEsportPage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.25 }}
-                className="overflow-x-auto"
               >
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 text-xs uppercase tracking-wider font-semibold">
-                      <th className="p-4 pl-6">Foto & Nama</th>
-                      <th className="p-4">IGN</th>
-                      <th className="p-4">Divisi</th>
-                      <th className="p-4">Role</th>
-                      <th className="p-4">Sosial Media</th>
-                      <th className="p-4 text-right pr-6">Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {rosters.map((r) => {
-                      const div = divisions.find(d => d.id === r.division_id);
-                      return (
-                        <tr key={r.id} className="hover:bg-slate-50/50 transition-colors">
-                          <td className="p-4 pl-6">
-                            <div className="flex items-center gap-3">
-                              <img src={r.image_url || 'https://api.dicebear.com/7.x/adventurer/svg?seed=placeholder'} alt={r.name} className="w-8 h-8 rounded-full object-cover border border-slate-200" />
-                              <span className="font-bold text-slate-800 text-sm">{r.name}</span>
-                            </div>
-                          </td>
-                          <td className="p-4 text-sm font-semibold text-slate-700">{r.ign}</td>
-                          <td className="p-4">
-                            <span className="inline-block px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
-                              {div?.name || r.division_id}
-                            </span>
-                          </td>
-                          <td className="p-4 text-sm text-slate-600">{r.role}</td>
-                          <td className="p-4">
-                            <div className="flex gap-2 text-slate-400">
-                              {r.social_instagram && (
-                                <a href={r.social_instagram} target="_blank" rel="noopener noreferrer" className="hover:text-pink-500" title="Instagram">
-                                  <Link2 className="w-4 h-4" />
-                                </a>
-                              )}
-                              {r.social_twitter && (
-                                <a href={r.social_twitter} target="_blank" rel="noopener noreferrer" className="hover:text-blue-500" title="Twitter">
-                                  <Link2 className="w-4 h-4" />
-                                </a>
-                              )}
-                              {!r.social_instagram && !r.social_twitter && '-'}
-                            </div>
-                          </td>
-                          <td className="p-4 text-right pr-6">
-                            <div className="flex items-center justify-end gap-2">
-                              <button
-                                onClick={() => handleOpenModal('roster', 'edit', r)}
-                                className="p-1.5 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
-                                title="Edit"
-                              >
-                                <Edit className="w-4 h-4" />
-                              </button>
-                              <button
-                                onClick={() => handleDelete('roster', r.id, `${r.ign} (${r.name})`)}
-                                className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
-                                title="Hapus"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 text-xs uppercase tracking-wider font-semibold">
+                        <th className="p-4 pl-6">Foto & Nama</th>
+                        <th className="p-4">IGN</th>
+                        <th className="p-4">Divisi</th>
+                        <th className="p-4">Role</th>
+                        <th className="p-4">Sosial Media</th>
+                        <th className="p-4 text-right pr-6">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {rosters.map((r) => {
+                        const div = divisions.find(d => d.id === r.division_id);
+                        return (
+                          <tr key={r.id} className="hover:bg-slate-50/50 transition-colors">
+                            <td className="p-4 pl-6">
+                              <div className="flex items-center gap-3">
+                                <img src={r.image_url || 'https://api.dicebear.com/7.x/adventurer/svg?seed=placeholder'} alt={r.name} className="w-8 h-8 rounded-full object-cover border border-slate-200" />
+                                <span className="font-bold text-slate-800 text-sm max-w-[150px] lg:max-w-[200px] truncate">{r.name}</span>
+                              </div>
+                            </td>
+                            <td className="p-4 text-sm font-semibold text-slate-700 truncate max-w-[120px]">{r.ign}</td>
+                            <td className="p-4">
+                              <span className="inline-block px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+                                {div?.name || r.division_id}
+                              </span>
+                            </td>
+                            <td className="p-4 text-sm text-slate-600 truncate max-w-[100px]">{r.role}</td>
+                            <td className="p-4">
+                              <div className="flex gap-2 text-slate-400">
+                                {r.social_instagram && (
+                                  <a href={r.social_instagram} target="_blank" rel="noopener noreferrer" className="hover:text-pink-500" title="Instagram">
+                                    <Link2 className="w-4 h-4" />
+                                  </a>
+                                )}
+                                {r.social_twitter && (
+                                  <a href={r.social_twitter} target="_blank" rel="noopener noreferrer" className="hover:text-blue-500" title="Twitter">
+                                    <Link2 className="w-4 h-4" />
+                                  </a>
+                                )}
+                                {!r.social_instagram && !r.social_twitter && '-'}
+                              </div>
+                            </td>
+                            <td className="p-4 text-right pr-6">
+                              <div className="flex items-center justify-end gap-2">
+                                <button
+                                  onClick={() => handleOpenModal('roster', 'edit', r)}
+                                  className="p-1.5 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
+                                  title="Edit"
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => handleDelete('roster', r.id, `${r.ign} (${r.name})`)}
+                                  className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                                  title="Hapus"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Cards */}
+                <div className="md:hidden flex flex-col divide-y divide-slate-100">
+                  {rosters.map((r) => {
+                    const div = divisions.find(d => d.id === r.division_id);
+                    return (
+                      <div key={r.id} className="p-4 flex flex-col gap-3 hover:bg-slate-50/50 transition-colors">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <img src={r.image_url || 'https://api.dicebear.com/7.x/adventurer/svg?seed=placeholder'} alt={r.name} className="w-12 h-12 rounded-full object-cover border border-slate-200 shrink-0" />
+                          <div className="flex flex-col min-w-0 flex-1">
+                            <div className="font-bold text-slate-800 text-sm truncate">{r.name}</div>
+                            <div className="text-xs font-semibold text-slate-600 truncate mt-0.5">{r.ign}</div>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-2 mt-1">
+                          <span className="px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+                            {div?.name || r.division_id}
+                          </span>
+                          <span className="text-xs text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200">{r.role}</span>
+                        </div>
+
+                        <div className="flex justify-between items-center pt-2 border-t border-slate-100 mt-1">
+                          <div className="flex gap-2 text-slate-400">
+                            {r.social_instagram && (
+                              <a href={r.social_instagram} target="_blank" rel="noopener noreferrer" className="p-1 hover:text-pink-500 bg-slate-50 rounded" title="Instagram">
+                                <Link2 className="w-3.5 h-3.5" />
+                              </a>
+                            )}
+                            {r.social_twitter && (
+                              <a href={r.social_twitter} target="_blank" rel="noopener noreferrer" className="p-1 hover:text-blue-500 bg-slate-50 rounded" title="Twitter">
+                                <Link2 className="w-3.5 h-3.5" />
+                              </a>
+                            )}
+                            {!r.social_instagram && !r.social_twitter && <span className="text-xs italic">No social</span>}
+                          </div>
+                          
+                          <div className="flex justify-end gap-2">
+                            <button
+                              onClick={() => handleOpenModal('roster', 'edit', r)}
+                              className="px-3 py-1.5 text-xs font-bold text-blue-600 bg-blue-50 border border-blue-100 rounded-lg flex items-center gap-1.5 cursor-pointer"
+                            >
+                              <Edit className="w-3.5 h-3.5" /> Edit
+                            </button>
+                            <button
+                              onClick={() => handleDelete('roster', r.id, `${r.ign} (${r.name})`)}
+                              className="p-1.5 text-red-500 bg-red-50 border border-red-100 rounded-lg cursor-pointer"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </motion.div>
             )}
 
@@ -482,87 +539,158 @@ export default function AdminEsportPage() {
                 transition={{ duration: 0.25 }}
                 className="overflow-x-auto"
               >
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 text-xs uppercase tracking-wider font-semibold">
-                      <th className="p-4 pl-6">Tanggal & Waktu</th>
-                      <th className="p-4">Lawan</th>
-                      <th className="p-4">Divisi</th>
-                      <th className="p-4">Stage</th>
-                      <th className="p-4">Status</th>
-                      <th className="p-4">Skor & Hasil</th>
-                      <th className="p-4 text-right pr-6">Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {matches.map((m) => {
-                      const div = divisions.find(d => d.id === m.division_id);
-                      return (
-                        <tr key={m.id} className="hover:bg-slate-50/50 transition-colors">
-                          <td className="p-4 pl-6">
-                            <div className="text-sm font-semibold text-slate-800">{m.date}</div>
-                            <div className="text-[10px] text-slate-400 font-bold uppercase mt-0.5">{m.time}</div>
-                          </td>
-                          <td className="p-4">
-                            <div className="flex items-center gap-2">
-                              {m.opponent_logo && (m.opponent_logo.startsWith('http') || m.opponent_logo.startsWith('blob:')) ? (
-                                <img src={m.opponent_logo} alt={m.opponent} className="w-8 h-8 object-contain rounded-full border border-slate-200 bg-white" />
-                              ) : (
-                                <span className="text-lg">{m.opponent_logo}</span>
-                              )}
-                              <span className="font-bold text-slate-800 text-sm">{m.opponent}</span>
-                            </div>
-                          </td>
-                          <td className="p-4">
-                            <span className="inline-block px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
-                              {div?.name || m.division_id}
-                            </span>
-                          </td>
-                          <td className="p-4 text-sm text-slate-600 max-w-xs truncate" title={m.stage}>{m.stage}</td>
-                          <td className="p-4">
-                            <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                              m.status === 'Upcoming' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-slate-100 text-slate-700 border border-slate-200'
-                            }`}>
-                              {m.status}
-                            </span>
-                          </td>
-                          <td className="p-4 text-sm">
-                            {m.status === 'Past' ? (
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 text-xs uppercase tracking-wider font-semibold">
+                        <th className="p-4 pl-6">Tanggal & Waktu</th>
+                        <th className="p-4">Lawan</th>
+                        <th className="p-4">Divisi</th>
+                        <th className="p-4">Stage</th>
+                        <th className="p-4">Status</th>
+                        <th className="p-4">Skor & Hasil</th>
+                        <th className="p-4 text-right pr-6">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {matches.map((m) => {
+                        const div = divisions.find(d => d.id === m.division_id);
+                        return (
+                          <tr key={m.id} className="hover:bg-slate-50/50 transition-colors">
+                            <td className="p-4 pl-6">
+                              <div className="text-sm font-semibold text-slate-800">{m.date}</div>
+                              <div className="text-[10px] text-slate-400 font-bold uppercase mt-0.5">{m.time}</div>
+                            </td>
+                            <td className="p-4">
                               <div className="flex items-center gap-2">
-                                <span className="font-bold text-slate-800">{m.score || '-'}</span>
-                                {m.result && (
-                                  <span className={`inline-block px-1.5 py-0.2 text-[9px] font-black rounded uppercase ${
-                                    m.result === 'win' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-red-50 text-red-600 border border-red-200'
-                                  }`}>
-                                    {m.result}
-                                  </span>
+                                {m.opponent_logo && (m.opponent_logo.startsWith('http') || m.opponent_logo.startsWith('blob:')) ? (
+                                  <img src={m.opponent_logo} alt={m.opponent} className="w-8 h-8 object-contain rounded-full border border-slate-200 bg-white" />
+                                ) : (
+                                  <span className="text-lg">{m.opponent_logo}</span>
                                 )}
+                                <span className="font-bold text-slate-800 text-sm">{m.opponent}</span>
                               </div>
-                            ) : '-'}
-                          </td>
-                          <td className="p-4 text-right pr-6">
-                            <div className="flex items-center justify-end gap-2">
-                              <button
-                                onClick={() => handleOpenModal('match', 'edit', m)}
-                                className="p-1.5 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
-                                title="Edit"
-                              >
-                                <Edit className="w-4 h-4" />
-                              </button>
-                              <button
-                                onClick={() => handleDelete('match', m.id, `Lawan ${m.opponent}`)}
-                                className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
-                                title="Hapus"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
+                            </td>
+                            <td className="p-4">
+                              <span className="inline-block px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+                                {div?.name || m.division_id}
+                              </span>
+                            </td>
+                            <td className="p-4 text-sm text-slate-600 max-w-xs truncate" title={m.stage}>{m.stage}</td>
+                            <td className="p-4">
+                              <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                                m.status === 'Upcoming' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-slate-100 text-slate-700 border border-slate-200'
+                              }`}>
+                                {m.status}
+                              </span>
+                            </td>
+                            <td className="p-4 text-sm">
+                              {m.status === 'Past' ? (
+                                <div className="flex items-center gap-2">
+                                  <span className="font-bold text-slate-800">{m.score || '-'}</span>
+                                  {m.result && (
+                                    <span className={`inline-block px-1.5 py-0.2 text-[9px] font-black rounded uppercase ${
+                                      m.result === 'win' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-red-50 text-red-600 border border-red-200'
+                                    }`}>
+                                      {m.result}
+                                    </span>
+                                  )}
+                                </div>
+                              ) : '-'}
+                            </td>
+                            <td className="p-4 text-right pr-6">
+                              <div className="flex items-center justify-end gap-2">
+                                <button
+                                  onClick={() => handleOpenModal('match', 'edit', m)}
+                                  className="p-1.5 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
+                                  title="Edit"
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => handleDelete('match', m.id, `Lawan ${m.opponent}`)}
+                                  className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                                  title="Hapus"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Cards */}
+                <div className="md:hidden flex flex-col divide-y divide-slate-100">
+                  {matches.map((m) => {
+                    const div = divisions.find(d => d.id === m.division_id);
+                    return (
+                      <div key={m.id} className="p-4 flex flex-col gap-3 hover:bg-slate-50/50 transition-colors">
+                        <div className="flex justify-between items-start">
+                          <div className="flex items-center gap-3">
+                            {m.opponent_logo && (m.opponent_logo.startsWith('http') || m.opponent_logo.startsWith('blob:')) ? (
+                              <img src={m.opponent_logo} alt={m.opponent} className="w-10 h-10 object-contain rounded-full border border-slate-200 bg-white" />
+                            ) : (
+                              <span className="text-2xl">{m.opponent_logo}</span>
+                            )}
+                            <div className="flex flex-col">
+                              <span className="font-bold text-slate-800 text-sm truncate">{m.opponent}</span>
+                              <span className="text-xs text-slate-500 truncate">{m.stage}</span>
                             </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                          </div>
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-semibold border ${
+                            m.status === 'Upcoming' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-slate-100 text-slate-700 border-slate-200'
+                          }`}>
+                            {m.status}
+                          </span>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-2 mt-1">
+                          <span className="px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+                            {div?.name || m.division_id}
+                          </span>
+                          {m.status === 'Past' && (
+                            <div className="flex items-center gap-1.5">
+                              <span className="font-bold text-slate-800 text-sm">{m.score || '-'}</span>
+                              {m.result && (
+                                <span className={`px-1.5 py-0.5 text-[9px] font-black rounded uppercase ${
+                                  m.result === 'win' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'
+                                }`}>
+                                  {m.result}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="flex justify-between items-center pt-2 border-t border-slate-100 mt-1">
+                          <div className="flex flex-col">
+                            <span className="text-xs font-bold text-slate-700">{m.date}</span>
+                            <span className="text-[10px] text-slate-400 font-bold uppercase">{m.time}</span>
+                          </div>
+                          
+                          <div className="flex justify-end gap-2">
+                            <button
+                              onClick={() => handleOpenModal('match', 'edit', m)}
+                              className="px-3 py-1.5 text-xs font-bold text-blue-600 bg-blue-50 border border-blue-100 rounded-lg flex items-center gap-1.5 cursor-pointer"
+                            >
+                              <Edit className="w-3.5 h-3.5" /> Edit
+                            </button>
+                            <button
+                              onClick={() => handleDelete('match', m.id, `Lawan ${m.opponent}`)}
+                              className="p-1.5 text-red-500 bg-red-50 border border-red-100 rounded-lg cursor-pointer"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </motion.div>
             )}
 
@@ -572,69 +700,126 @@ export default function AdminEsportPage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.25 }}
-                className="overflow-x-auto"
               >
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 text-xs uppercase tracking-wider font-semibold">
-                      <th className="p-4 pl-6">Prestasi / Piala</th>
-                      <th className="p-4">Badge</th>
-                      <th className="p-4">Divisi</th>
-                      <th className="p-4">Peringkat</th>
-                      <th className="p-4">Tanggal Perolehan</th>
-                      <th className="p-4 text-right pr-6">Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {achievements.map((a) => {
-                      const div = divisions.find(d => d.id === a.division_id);
-                      return (
-                        <tr key={a.id} className="hover:bg-slate-50/50 transition-colors">
-                          <td className="p-4 pl-6">
-                            <div className="font-bold text-slate-800 text-sm">{a.title}</div>
-                            {a.image_url && (
-                              <div className="text-[10px] text-blue-500 font-semibold mt-0.5 flex items-center gap-1">
-                                <Eye className="w-3 h-3" /> Memiliki Foto
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 text-xs uppercase tracking-wider font-semibold">
+                        <th className="p-4 pl-6">Prestasi / Piala</th>
+                        <th className="p-4">Badge</th>
+                        <th className="p-4">Divisi</th>
+                        <th className="p-4">Peringkat</th>
+                        <th className="p-4">Tanggal Perolehan</th>
+                        <th className="p-4 text-right pr-6">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {achievements.map((a) => {
+                        const div = divisions.find(d => d.id === a.division_id);
+                        return (
+                          <tr key={a.id} className="hover:bg-slate-50/50 transition-colors">
+                            <td className="p-4 pl-6">
+                              <div className="font-bold text-slate-800 text-sm max-w-[200px] truncate">{a.title}</div>
+                              {a.image_url && (
+                                <div className="text-[10px] text-blue-500 font-semibold mt-0.5 flex items-center gap-1">
+                                  <Eye className="w-3 h-3" /> Memiliki Foto
+                                </div>
+                              )}
+                            </td>
+                            <td className="p-4">
+                              {a.badge && (a.badge.startsWith('http') || a.badge.startsWith('blob:')) ? (
+                                <img src={a.badge} alt={a.title} className="w-8 h-8 object-contain rounded-lg border border-slate-200 bg-white" />
+                              ) : (
+                                <span className="text-lg">{a.badge}</span>
+                              )}
+                            </td>
+                            <td className="p-4">
+                              <span className="inline-block px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+                                {div?.name || a.division_id}
+                              </span>
+                            </td>
+                            <td className="p-4 text-sm font-semibold text-slate-700">{a.rank}</td>
+                            <td className="p-4 text-sm text-slate-600">{a.date}</td>
+                            <td className="p-4 text-right pr-6">
+                              <div className="flex items-center justify-end gap-2">
+                                <button
+                                  onClick={() => handleOpenModal('achievement', 'edit', a)}
+                                  className="p-1.5 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
+                                  title="Edit"
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => handleDelete('achievement', a.id, a.title)}
+                                  className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                                  title="Hapus"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
                               </div>
-                            )}
-                          </td>
-                          <td className="p-4">
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Cards */}
+                <div className="md:hidden flex flex-col divide-y divide-slate-100">
+                  {achievements.map((a) => {
+                    const div = divisions.find(d => d.id === a.division_id);
+                    return (
+                      <div key={a.id} className="p-4 flex flex-col gap-3 hover:bg-slate-50/50 transition-colors">
+                        <div className="flex justify-between items-start">
+                          <div className="flex items-center gap-3 min-w-0">
                             {a.badge && (a.badge.startsWith('http') || a.badge.startsWith('blob:')) ? (
-                              <img src={a.badge} alt={a.title} className="w-8 h-8 object-contain rounded-lg border border-slate-200 bg-white" />
+                              <img src={a.badge} alt={a.title} className="w-10 h-10 object-contain rounded-lg border border-slate-200 bg-white shrink-0" />
                             ) : (
-                              <span className="text-lg">{a.badge}</span>
+                              <span className="text-2xl shrink-0">{a.badge}</span>
                             )}
-                          </td>
-                          <td className="p-4">
-                            <span className="inline-block px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
-                              {div?.name || a.division_id}
-                            </span>
-                          </td>
-                          <td className="p-4 text-sm font-semibold text-slate-700">{a.rank}</td>
-                          <td className="p-4 text-sm text-slate-600">{a.date}</td>
-                          <td className="p-4 text-right pr-6">
-                            <div className="flex items-center justify-end gap-2">
-                              <button
-                                onClick={() => handleOpenModal('achievement', 'edit', a)}
-                                className="p-1.5 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
-                                title="Edit"
-                              >
-                                <Edit className="w-4 h-4" />
-                              </button>
-                              <button
-                                onClick={() => handleDelete('achievement', a.id, a.title)}
-                                className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
-                                title="Hapus"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
+                            <div className="flex flex-col min-w-0">
+                              <span className="font-bold text-slate-800 text-sm truncate">{a.title}</span>
+                              {a.image_url && (
+                                <span className="text-[10px] text-blue-500 font-semibold mt-0.5 flex items-center gap-1">
+                                  <Eye className="w-3 h-3" /> Memiliki Foto
+                                </span>
+                              )}
                             </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                          </div>
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-600 border border-amber-200 shrink-0 ml-2">
+                            {a.rank}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+                            {div?.name || a.division_id}
+                          </span>
+                        </div>
+
+                        <div className="flex justify-between items-center pt-2 border-t border-slate-100 mt-1">
+                          <span className="text-xs font-semibold text-slate-500">{a.date}</span>
+                          
+                          <div className="flex justify-end gap-2">
+                            <button
+                              onClick={() => handleOpenModal('achievement', 'edit', a)}
+                              className="px-3 py-1.5 text-xs font-bold text-blue-600 bg-blue-50 border border-blue-100 rounded-lg flex items-center gap-1.5 cursor-pointer"
+                            >
+                              <Edit className="w-3.5 h-3.5" /> Edit
+                            </button>
+                            <button
+                              onClick={() => handleDelete('achievement', a.id, a.title)}
+                              className="p-1.5 text-red-500 bg-red-50 border border-red-100 rounded-lg cursor-pointer"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </motion.div>
             )}
           </div>

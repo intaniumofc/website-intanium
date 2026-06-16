@@ -399,7 +399,7 @@ export default function AdminPlaylists() {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-[var(--border-color)]">
+      <div className="flex flex-wrap border-b border-[var(--border-color)]">
         <button
           onClick={() => setActiveTab('playlists')}
           className={`px-6 py-3 font-bold text-sm tracking-wide transition-colors border-b-2 cursor-pointer ${
@@ -453,92 +453,162 @@ export default function AdminPlaylists() {
             {isLoading ? (
               <div className="p-12"><Loading message="Memuat playlist…" /></div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-[var(--text-secondary)]">
-                  <thead className="text-xs uppercase bg-[var(--bg-primary)]/80 text-[var(--text-secondary)] font-bold border-b border-[var(--border-color)]">
-                    <tr>
-                      <th className="px-6 py-4">Info Playlist</th>
-                      <th className="px-6 py-4">Bulan / Kategori</th>
-                      <th className="px-6 py-4">Status / Badge</th>
-                      <th className="px-6 py-4">Meta Data</th>
-                      <th className="px-6 py-4 text-right">Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[var(--border-color)]">
-                    {filteredItems.map(item => (
-                      <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-3">
-                            {item.imageUrl ? (
-                              <img width={40} height={40} alt="Playlist Cover" src={item.imageUrl} className="w-10 h-10 object-cover rounded-lg shadow-sm border border-slate-100 flex-shrink-0" />
-                            ) : (
-                              <span className="w-10 h-10 rounded-lg bg-[var(--color-primary-light)] text-[var(--color-primary)] flex items-center justify-center flex-shrink-0 shadow-inner">
-                                <Music className="h-5 w-5" />
-                              </span>
-                            )}
-                            <div className="flex flex-col min-w-0">
-                              <span className="font-bold text-[var(--text-primary)] text-sm truncate">{item.title}</span>
-                              {item.curatorNote && (
-                                <span className="text-xs text-[var(--text-muted)] mt-0.5 truncate max-w-xs">{item.curatorNote}</span>
-                              )}
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold text-[var(--text-primary)]">
-                          {item.category}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2.5 py-1 text-xs font-bold rounded-lg border ${item.badgeText === 'Ongoing Playlist'
-                              ? 'bg-green-50 text-green-700 border-green-200'
-                              : 'bg-slate-50 text-slate-600 border-slate-200'
-                            }`}>
-                            {item.badgeText || 'Archive'}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-xs">
-                          <div className="flex flex-col gap-1 text-[var(--text-muted)]">
-                            <span className="flex items-center gap-1"><Music className="h-3.5 w-3.5" /> {item.tracksCount || '0 Tracks'}</span>
-                            <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {item.duration || '0m'}</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-semibold">
-                          <div className="flex items-center justify-end gap-2">
-                            <a
-                              href={item.spotifyUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="p-1.5 text-green-600 hover:bg-green-50 border border-transparent hover:border-green-200 rounded-lg transition-colors"
-                              title="Buka di Spotify"
-                            >
-                              <ExternalLink className="h-4 w-4" />
-                            </a>
-                            <button
-                              onClick={() => handleOpenEditModal(item)}
-                              className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-colors"
-                              title="Ubah Playlist"
-                            >
-                              <Edit className="h-4 w-4" />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(item.id)}
-                              className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors"
-                              title="Hapus Playlist"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                    {filteredItems.length === 0 && (
+              <div>
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full text-left text-sm text-[var(--text-secondary)]">
+                    <thead className="text-xs uppercase bg-[var(--bg-primary)]/80 text-[var(--text-secondary)] font-bold border-b border-[var(--border-color)]">
                       <tr>
-                        <td colSpan="5" className="px-6 py-12 text-center text-[var(--text-muted)] text-sm">
-                          Belum ada playlist yang sesuai dengan pencarian Anda.
-                        </td>
+                        <th className="px-6 py-4">Info Playlist</th>
+                        <th className="px-6 py-4">Bulan / Kategori</th>
+                        <th className="px-6 py-4">Status / Badge</th>
+                        <th className="px-6 py-4">Meta Data</th>
+                        <th className="px-6 py-4 text-right">Aksi</th>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-[var(--border-color)]">
+                      {filteredItems.map(item => (
+                        <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-3">
+                              {item.imageUrl ? (
+                                <img width={40} height={40} alt="Playlist Cover" src={item.imageUrl} className="w-10 h-10 object-cover rounded-lg shadow-sm border border-slate-100 flex-shrink-0" />
+                              ) : (
+                                <span className="w-10 h-10 rounded-lg bg-[var(--color-primary-light)] text-[var(--color-primary)] flex items-center justify-center flex-shrink-0 shadow-inner">
+                                  <Music className="h-5 w-5" />
+                                </span>
+                              )}
+                              <div className="flex flex-col min-w-0">
+                                <span className="font-bold text-[var(--text-primary)] text-sm max-w-[200px] lg:max-w-xs truncate">{item.title}</span>
+                                {item.curatorNote && (
+                                  <span className="text-xs text-[var(--text-muted)] mt-0.5 truncate max-w-xs">{item.curatorNote}</span>
+                                )}
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold text-[var(--text-primary)]">
+                            {item.category}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-2.5 py-1 text-xs font-bold rounded-lg border ${item.badgeText === 'Ongoing Playlist'
+                                ? 'bg-green-50 text-green-700 border-green-200'
+                                : 'bg-slate-50 text-slate-600 border-slate-200'
+                              }`}>
+                              {item.badgeText || 'Archive'}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-xs">
+                            <div className="flex flex-col gap-1 text-[var(--text-muted)]">
+                              <span className="flex items-center gap-1"><Music className="h-3.5 w-3.5" /> {item.tracksCount || '0 Tracks'}</span>
+                              <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {item.duration || '0m'}</span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-semibold">
+                            <div className="flex items-center justify-end gap-2">
+                              <a
+                                href={item.spotifyUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-1.5 text-green-600 hover:bg-green-50 border border-transparent hover:border-green-200 rounded-lg transition-colors"
+                                title="Buka di Spotify"
+                              >
+                                <ExternalLink className="h-4 w-4" />
+                              </a>
+                              <button
+                                onClick={() => handleOpenEditModal(item)}
+                                className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-colors"
+                                title="Ubah Playlist"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDelete(item.id)}
+                                className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors"
+                                title="Hapus Playlist"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                      {filteredItems.length === 0 && (
+                        <tr>
+                          <td colSpan="5" className="px-6 py-12 text-center text-[var(--text-muted)] text-sm">
+                            Belum ada playlist yang sesuai dengan pencarian Anda.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Cards */}
+                <div className="md:hidden flex flex-col divide-y divide-[var(--border-color)]">
+                  {filteredItems.map(item => (
+                    <div key={item.id} className="p-4 flex flex-col gap-3 hover:bg-gray-50/50 transition-colors">
+                      <div className="flex gap-3 items-start min-w-0">
+                        {item.imageUrl ? (
+                          <img width={40} height={40} alt="Playlist Cover" src={item.imageUrl} className="w-10 h-10 object-cover rounded-lg shadow-sm border border-slate-100 shrink-0" />
+                        ) : (
+                          <span className="w-10 h-10 rounded-lg bg-[var(--color-primary-light)] text-[var(--color-primary)] flex items-center justify-center shrink-0 shadow-inner">
+                            <Music className="h-5 w-5" />
+                          </span>
+                        )}
+                        <div className="flex flex-col min-w-0 flex-1">
+                          <span className="font-bold text-[var(--text-primary)] text-sm line-clamp-2 break-words">{item.title}</span>
+                          <div className="flex items-center flex-wrap gap-1 mt-0.5">
+                            <span className="text-xs font-semibold text-[var(--color-primary)]">{item.category}</span>
+                            <span className="text-[10px] text-gray-400">•</span>
+                            <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded ${item.badgeText === 'Ongoing Playlist' ? 'bg-green-50 text-green-700' : 'bg-slate-50 text-slate-600'}`}>
+                              {item.badgeText || 'Archive'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {item.curatorNote && (
+                        <div className="text-xs text-[var(--text-muted)] italic line-clamp-2 break-words min-w-0 border-l-2 border-slate-200 pl-2">
+                          "{item.curatorNote}"
+                        </div>
+                      )}
+
+                      <div className="flex justify-between items-center bg-slate-50 p-2 rounded-lg border border-slate-100">
+                        <div className="flex gap-3 text-[10px] text-[var(--text-muted)] font-semibold">
+                          <span className="flex items-center gap-1"><Music className="h-3 w-3" /> {item.tracksCount || '0'} Tracks</span>
+                          <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {item.duration || '0m'}</span>
+                        </div>
+                        <a
+                          href={item.spotifyUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 text-[10px] font-bold text-green-600"
+                        >
+                          Spotify <ExternalLink className="h-3 w-3" />
+                        </a>
+                      </div>
+                      
+                      <div className="flex justify-end gap-2 pt-1">
+                        <button 
+                          onClick={() => handleOpenEditModal(item)} 
+                          className="px-3 py-1.5 text-xs font-bold text-blue-600 bg-blue-50 border border-blue-100 rounded-lg flex items-center gap-1.5"
+                        >
+                          <Edit className="h-3.5 w-3.5" /> Ubah
+                        </button>
+                        <button 
+                          onClick={() => handleDelete(item.id)} 
+                          className="p-1.5 text-red-500 bg-red-50 border border-red-100 rounded-lg"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  {filteredItems.length === 0 && (
+                    <div className="px-6 py-12 text-center text-[var(--text-muted)] text-sm">
+                      Belum ada playlist yang sesuai dengan pencarian Anda.
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </Card>
@@ -558,65 +628,118 @@ export default function AdminPlaylists() {
             {isSongsLoading ? (
               <div className="p-12"><Loading message="Memuat daftar lagu…" /></div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-[var(--text-secondary)]">
-                  <thead className="text-xs uppercase bg-[var(--bg-primary)]/80 text-[var(--text-secondary)] font-bold border-b border-[var(--border-color)]">
-                    <tr>
-                      <th className="px-6 py-4">Judul Lagu / Artis</th>
-                      <th className="px-6 py-4">Mood</th>
-                      <th className="px-6 py-4">Catatan Kurator</th>
-                      <th className="px-6 py-4 text-right">Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[var(--border-color)]">
-                    {filteredSongs.map(song => (
-                      <tr key={song.id} className="hover:bg-gray-50/50 transition-colors">
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-3">
-                            <span className="w-10 h-10 rounded-lg bg-[var(--color-primary-light)] text-[var(--color-primary)] flex items-center justify-center flex-shrink-0 shadow-inner">
-                              <Music className="h-5 w-5" />
-                            </span>
-                            <div className="flex flex-col min-w-0">
-                              <span className="font-bold text-[var(--text-primary)] text-sm truncate">{song.title}</span>
-                              <span className="text-xs text-[var(--text-muted)] mt-0.5 truncate">{song.artist}</span>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold text-[var(--text-primary)]">
-                          {song.mood || '-'}
-                        </td>
-                        <td className="px-6 py-4 text-xs max-w-xs truncate italic">
-                          "{song.note}"
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-semibold">
-                          <div className="flex items-center justify-end gap-2">
-                            <button
-                              onClick={() => handleOpenEditSongModal(song)}
-                              className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-colors"
-                              title="Ubah Lagu"
-                            >
-                              <Edit className="h-4 w-4" />
-                            </button>
-                            <button
-                              onClick={() => handleSongDelete(song.id)}
-                              className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors"
-                              title="Hapus Lagu"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                    {filteredSongs.length === 0 && (
+              <div>
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full text-left text-sm text-[var(--text-secondary)]">
+                    <thead className="text-xs uppercase bg-[var(--bg-primary)]/80 text-[var(--text-secondary)] font-bold border-b border-[var(--border-color)]">
                       <tr>
-                        <td colSpan="5" className="px-6 py-12 text-center text-[var(--text-muted)] text-sm">
-                          Belum ada lagu terpopuler yang sesuai dengan pencarian Anda.
-                        </td>
+                        <th className="px-6 py-4">Judul Lagu / Artis</th>
+                        <th className="px-6 py-4">Mood</th>
+                        <th className="px-6 py-4">Catatan Kurator</th>
+                        <th className="px-6 py-4 text-right">Aksi</th>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-[var(--border-color)]">
+                      {filteredSongs.map(song => (
+                        <tr key={song.id} className="hover:bg-gray-50/50 transition-colors">
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-3">
+                              <span className="w-10 h-10 rounded-lg bg-[var(--color-primary-light)] text-[var(--color-primary)] flex items-center justify-center flex-shrink-0 shadow-inner">
+                                <Music className="h-5 w-5" />
+                              </span>
+                              <div className="flex flex-col min-w-0">
+                                <span className="font-bold text-[var(--text-primary)] text-sm max-w-[200px] lg:max-w-xs truncate">{song.title}</span>
+                                <span className="text-xs text-[var(--text-muted)] mt-0.5 truncate">{song.artist}</span>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold text-[var(--text-primary)]">
+                            {song.mood || '-'}
+                          </td>
+                          <td className="px-6 py-4 text-xs max-w-xs line-clamp-2 break-words italic">
+                            "{song.note}"
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-semibold">
+                            <div className="flex items-center justify-end gap-2">
+                              <button
+                                onClick={() => handleOpenEditSongModal(song)}
+                                className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-colors"
+                                title="Ubah Lagu"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </button>
+                              <button
+                                onClick={() => handleSongDelete(song.id)}
+                                className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors"
+                                title="Hapus Lagu"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                      {filteredSongs.length === 0 && (
+                        <tr>
+                          <td colSpan="5" className="px-6 py-12 text-center text-[var(--text-muted)] text-sm">
+                            Belum ada lagu terpopuler yang sesuai dengan pencarian Anda.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Cards */}
+                <div className="md:hidden flex flex-col divide-y divide-[var(--border-color)]">
+                  {filteredSongs.map(song => (
+                    <div key={song.id} className="p-4 flex flex-col gap-3 hover:bg-gray-50/50 transition-colors">
+                      <div className="flex gap-3 items-start min-w-0">
+                        <span className="w-10 h-10 rounded-lg bg-[var(--color-primary-light)] text-[var(--color-primary)] flex items-center justify-center shrink-0 shadow-inner">
+                          <Music className="h-5 w-5" />
+                        </span>
+                        <div className="flex flex-col min-w-0 flex-1">
+                          <span className="font-bold text-[var(--text-primary)] text-sm line-clamp-2 break-words">{song.title}</span>
+                          <div className="flex items-center flex-wrap gap-1 mt-0.5">
+                            <span className="text-xs text-[var(--text-muted)]">{song.artist}</span>
+                            {song.mood && (
+                              <>
+                                <span className="text-[10px] text-gray-400">•</span>
+                                <span className="px-1.5 py-0.5 text-[9px] font-bold rounded bg-purple-50 text-purple-700">{song.mood}</span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {song.note && (
+                        <div className="text-xs text-[var(--text-muted)] italic line-clamp-3 break-words min-w-0 border-l-2 border-slate-200 pl-2">
+                          "{song.note}"
+                        </div>
+                      )}
+
+                      <div className="flex justify-end gap-2 pt-2 border-t border-[var(--border-color)] mt-1">
+                        <button 
+                          onClick={() => handleOpenEditSongModal(song)} 
+                          className="px-3 py-1.5 text-xs font-bold text-blue-600 bg-blue-50 border border-blue-100 rounded-lg flex items-center gap-1.5"
+                        >
+                          <Edit className="h-3.5 w-3.5" /> Ubah
+                        </button>
+                        <button 
+                          onClick={() => handleSongDelete(song.id)} 
+                          className="p-1.5 text-red-500 bg-red-50 border border-red-100 rounded-lg"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  {filteredSongs.length === 0 && (
+                    <div className="px-6 py-12 text-center text-[var(--text-muted)] text-sm">
+                      Belum ada lagu terpopuler yang sesuai dengan pencarian Anda.
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </Card>

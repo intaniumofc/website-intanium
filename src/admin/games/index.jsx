@@ -364,7 +364,7 @@ export default function AdminGames() {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-[var(--border-color)]">
+      <div className="flex flex-wrap border-b border-[var(--border-color)]">
         <button
           onClick={() => setActiveTab('scores')}
           className={`px-5 py-3 font-bold text-sm border-b-2 transition-colors flex items-center gap-2 cursor-pointer ${
@@ -509,79 +509,132 @@ export default function AdminGames() {
             {isLoadingScores ? (
               <div className="p-12"><Loading message="Memuat riwayat skor game…" /></div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-[var(--text-secondary)]">
-                  <thead className="text-xs uppercase bg-[var(--bg-primary)]/80 text-[var(--text-secondary)] font-bold border-b border-[var(--border-color)]">
-                    <tr>
-                      <th className="px-6 py-4">Rank</th>
-                      <th className="px-6 py-4">Pemain</th>
-                      <th className="px-6 py-4">Skor</th>
-                      <th className="px-6 py-4">Tangkap</th>
-                      <th className="px-6 py-4">Maks Combo</th>
-                      <th className="px-6 py-4">Gelar</th>
-                      <th className="px-6 py-4">Tanggal Rilis</th>
-                      <th className="px-6 py-4 text-right">Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[var(--border-color)]">
-                    {paginatedScores.map((item, index) => {
-                      const absoluteRank = currentPage * pageSize + index + 1;
-                      return (
-                        <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
-                          <td className="px-6 py-4 whitespace-nowrap text-xs font-black text-slate-400">
-                            #{absoluteRank}
-                          </td>
-                          <td className="px-6 py-4 font-bold text-[var(--text-primary)]">
-                            {item.username}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap font-black text-[var(--color-primary)] text-sm">
-                            {item.score.toLocaleString('id-ID')}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold">
-                            <span className="flex items-center gap-1">
-                              <Bug className="h-3.5 w-3.5 text-slate-400" /> {item.caught_count} kecoa
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold">
-                            <span className="flex items-center gap-1">
-                              <Sparkles className="h-3.5 w-3.5 text-slate-400" /> {item.max_combo}x
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 text-xs font-semibold text-amber-600">
-                            {item.title || '-'}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-xs text-slate-400">
-                            {new Date(item.created_at).toLocaleDateString('id-ID', {
-                              day: 'numeric',
-                              month: 'short',
-                              year: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-semibold">
-                            <div className="flex items-center justify-end gap-2">
-                              <button 
-                                onClick={() => handleOpenDelete(item)} 
-                                className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors cursor-pointer"
-                                title="Hapus Skor"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
-                            </div>
+              <div>
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full text-left text-sm text-[var(--text-secondary)]">
+                    <thead className="text-xs uppercase bg-[var(--bg-primary)]/80 text-[var(--text-secondary)] font-bold border-b border-[var(--border-color)]">
+                      <tr>
+                        <th className="px-6 py-4">Rank</th>
+                        <th className="px-6 py-4">Pemain</th>
+                        <th className="px-6 py-4">Skor</th>
+                        <th className="px-6 py-4">Tangkap</th>
+                        <th className="px-6 py-4">Maks Combo</th>
+                        <th className="px-6 py-4">Gelar</th>
+                        <th className="px-6 py-4">Tanggal Rilis</th>
+                        <th className="px-6 py-4 text-right">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[var(--border-color)]">
+                      {paginatedScores.map((item, index) => {
+                        const absoluteRank = currentPage * pageSize + index + 1;
+                        return (
+                          <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
+                            <td className="px-6 py-4 whitespace-nowrap text-xs font-black text-slate-400">
+                              #{absoluteRank}
+                            </td>
+                            <td className="px-6 py-4 font-bold text-[var(--text-primary)]">
+                              {item.username}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap font-black text-[var(--color-primary)] text-sm">
+                              {item.score.toLocaleString('id-ID')}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold">
+                              <span className="flex items-center gap-1">
+                                <Bug className="h-3.5 w-3.5 text-slate-400" /> {item.caught_count} kecoa
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold">
+                              <span className="flex items-center gap-1">
+                                <Sparkles className="h-3.5 w-3.5 text-slate-400" /> {item.max_combo}x
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 text-xs font-semibold text-amber-600">
+                              {item.title || '-'}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-xs text-slate-400">
+                              {new Date(item.created_at).toLocaleDateString('id-ID', {
+                                day: 'numeric',
+                                month: 'short',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-semibold">
+                              <div className="flex items-center justify-end gap-2">
+                                <button 
+                                  onClick={() => handleOpenDelete(item)} 
+                                  className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors cursor-pointer"
+                                  title="Hapus Skor"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                      {scores.length === 0 && (
+                        <tr>
+                          <td colSpan="8" className="px-6 py-12 text-center text-[var(--text-muted)] text-sm">
+                            Belum ada data skor yang terekam atau sesuai dengan pencarian Anda.
                           </td>
                         </tr>
-                      );
-                    })}
-                    {scores.length === 0 && (
-                      <tr>
-                        <td colSpan="8" className="px-6 py-12 text-center text-[var(--text-muted)] text-sm">
-                          Belum ada data skor yang terekam atau sesuai dengan pencarian Anda.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Cards */}
+                <div className="md:hidden flex flex-col divide-y divide-[var(--border-color)]">
+                  {paginatedScores.map((item, index) => {
+                    const absoluteRank = currentPage * pageSize + index + 1;
+                    return (
+                      <div key={item.id} className="p-4 flex flex-col gap-3 hover:bg-gray-50/50 transition-colors">
+                        <div className="flex justify-between items-start">
+                          <div className="flex gap-3 items-center min-w-0">
+                            <span className="text-sm font-black text-slate-400 flex-shrink-0">#{absoluteRank}</span>
+                            <div className="min-w-0 flex-1">
+                              <div className="font-bold text-[var(--text-primary)] text-sm truncate">{item.username}</div>
+                              {item.title && (
+                                <div className="text-xs font-semibold text-amber-600 truncate mt-0.5">{item.title}</div>
+                              )}
+                            </div>
+                          </div>
+                          <span className="font-black text-[var(--color-primary)] text-sm shrink-0 whitespace-nowrap ml-2">
+                            {item.score.toLocaleString('id-ID')}
+                          </span>
+                        </div>
+                        
+                        <div className="flex justify-between items-center bg-slate-50 p-2 rounded-lg border border-slate-100">
+                          <div className="flex gap-3 text-[10px] font-semibold text-[var(--text-secondary)]">
+                            <span className="flex items-center gap-1"><Bug className="h-3 w-3" /> {item.caught_count} kecoa</span>
+                            <span className="flex items-center gap-1"><Sparkles className="h-3 w-3" /> {item.max_combo}x combo</span>
+                          </div>
+                        </div>
+
+                        <div className="flex justify-between items-center mt-1">
+                          <span className="text-[10px] text-slate-400">
+                            {new Date(item.created_at).toLocaleDateString('id-ID', {
+                              day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                            })}
+                          </span>
+                          <button 
+                            onClick={() => handleOpenDelete(item)} 
+                            className="p-1.5 text-red-500 bg-red-50 border border-red-100 rounded-lg flex items-center gap-1"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" /> <span className="text-[10px] font-bold">Hapus</span>
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {scores.length === 0 && (
+                    <div className="px-6 py-12 text-center text-[var(--text-muted)] text-sm">
+                      Belum ada data skor yang terekam atau sesuai dengan pencarian Anda.
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </Card>

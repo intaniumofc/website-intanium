@@ -180,67 +180,119 @@ export default function AdminNews() {
         {isLoading ? (
           <div className="p-12"><Loading message="Memuat berita…" /></div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-[var(--text-secondary)]">
-              <thead className="text-xs uppercase bg-[var(--bg-primary)]/80 text-[var(--text-secondary)] font-bold border-b border-[var(--border-color)]">
-                <tr>
-                  <th className="px-6 py-4">Judul Artikel</th>
-                  <th className="px-6 py-4">Kategori</th>
-                  <th className="px-6 py-4">Tanggal Rilis</th>
-                  <th className="px-6 py-4 text-right">Aksi</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--border-color)]">
-                {filteredItems.map(item => (
-                  <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="font-bold text-[var(--text-primary)] text-sm flex items-center gap-2">
-                        <Newspaper className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
-                        <span>{item.title}</span>
-                      </div>
-                      {item.summary && (
-                        <div className="text-xs text-[var(--text-muted)] mt-1 max-w-lg truncate">{item.summary}</div>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="px-2.5 py-1 text-xs font-bold rounded-lg bg-[var(--color-primary-light)] text-[var(--color-primary)] border border-[var(--color-primary)]/10">
+          <div>
+            {/* Desktop Table */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-sm text-[var(--text-secondary)]">
+                <thead className="text-xs uppercase bg-[var(--bg-primary)]/80 text-[var(--text-secondary)] font-bold border-b border-[var(--border-color)]">
+                  <tr>
+                    <th className="px-6 py-4">Judul Artikel</th>
+                    <th className="px-6 py-4">Kategori</th>
+                    <th className="px-6 py-4">Tanggal Rilis</th>
+                    <th className="px-6 py-4 text-right">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[var(--border-color)]">
+                  {filteredItems.map(item => (
+                    <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="font-bold text-[var(--text-primary)] text-sm flex items-center gap-2">
+                          <Newspaper className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
+                          <span className="truncate max-w-[200px] lg:max-w-sm">{item.title}</span>
+                        </div>
+                        {item.summary && (
+                          <div className="text-xs text-[var(--text-muted)] mt-1 max-w-[200px] lg:max-w-sm truncate">{item.summary}</div>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="px-2.5 py-1 text-xs font-bold rounded-lg bg-[var(--color-primary-light)] text-[var(--color-primary)] border border-[var(--color-primary)]/10">
+                          {item.category || 'Announcement'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold text-[var(--text-primary)]">
+                        <span className="flex items-center gap-1.5">
+                          <Calendar className="h-3.5 w-3.5 text-[var(--text-muted)]" /> {item.date}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-semibold">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => handleOpenEditModal(item)}
+                            className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-colors cursor-pointer"
+                            title="Ubah Berita"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(item.id)}
+                            className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors cursor-pointer"
+                            title="Hapus Berita"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {filteredItems.length === 0 && (
+                    <tr>
+                      <td colSpan="4" className="px-6 py-12 text-center text-[var(--text-muted)] text-sm">
+                        Belum ada berita yang sesuai dengan pencarian Anda.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Cards */}
+            <div className="md:hidden flex flex-col divide-y divide-[var(--border-color)]">
+              {filteredItems.map(item => (
+                <div key={item.id} className="p-4 hover:bg-gray-50/50 transition-colors flex flex-col gap-3 min-w-0">
+                  <div className="min-w-0">
+                    <div className="font-bold text-[var(--text-primary)] text-sm flex items-start gap-2 min-w-0">
+                      <Newspaper className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0 mt-0.5" />
+                      <span className="leading-tight line-clamp-2 break-words min-w-0">{item.title}</span>
+                    </div>
+                    {item.summary && (
+                      <div className="text-xs text-[var(--text-muted)] mt-1.5 line-clamp-2 pl-6 break-words min-w-0">{item.summary}</div>
+                    )}
+                  </div>
+                  
+                  <div className="flex items-center justify-between pl-6">
+                    <div className="flex items-center gap-3">
+                      <span className="px-2 py-0.5 text-[10px] font-bold rounded-lg bg-[var(--color-primary-light)] text-[var(--color-primary)] border border-[var(--color-primary)]/10">
                         {item.category || 'Announcement'}
                       </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold text-[var(--text-primary)]">
-                      <span className="flex items-center gap-1.5">
-                        <Calendar className="h-3.5 w-3.5 text-[var(--text-muted)]" /> {item.date}
+                      <span className="flex items-center gap-1 text-xs font-semibold text-[var(--text-primary)]">
+                        <Calendar className="h-3 w-3 text-[var(--text-muted)]" /> {item.date}
                       </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-semibold">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => handleOpenEditModal(item)}
-                          className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-colors"
-                          title="Ubah Berita"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(item.id)}
-                          className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors"
-                          title="Hapus Berita"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-                {filteredItems.length === 0 && (
-                  <tr>
-                    <td colSpan="4" className="px-6 py-12 text-center text-[var(--text-muted)] text-sm">
-                      Belum ada berita yang sesuai dengan pencarian Anda.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => handleOpenEditModal(item)}
+                        className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer border border-blue-100"
+                        title="Ubah Berita"
+                      >
+                        <Edit className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(item.id)}
+                        className="p-2 text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-colors cursor-pointer border border-red-100"
+                        title="Hapus Berita"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {filteredItems.length === 0 && (
+                <div className="px-6 py-12 text-center text-[var(--text-muted)] text-sm">
+                  Belum ada berita yang sesuai dengan pencarian Anda.
+                </div>
+              )}
+            </div>
           </div>
         )}
       </Card>

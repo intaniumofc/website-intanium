@@ -590,7 +590,7 @@ export default function AdminMembershipPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-4 border-b border-slate-200 pb-1">
+      <div className="flex flex-wrap gap-4 border-b border-slate-200 pb-1">
         <button
           className={`pb-3 text-xs font-bold border-b-2 transition-colors cursor-pointer ${activeTab === 'members' ? 'border-[#170C79] text-[#170C79]' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
           onClick={() => { setActiveTab('members'); setSearchQuery(''); setMemberCurrentPage(0); }}
@@ -634,121 +634,196 @@ export default function AdminMembershipPage() {
             {isLoading ? (
               <div className="p-12"><Loading message="Memuat daftar anggota…" /></div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-slate-600">
-                  <thead className="text-xs uppercase bg-slate-50 text-slate-500 font-bold border-b border-slate-200 select-none">
-                    <tr>
-                      <th className="px-6 py-4 w-16">Foto</th>
-                      <th
-                        className="px-6 py-4 cursor-pointer hover:bg-slate-100 transition-colors"
-                        onClick={() => handleMemberSort('name')}
-                      >
-                        <div className="flex items-center gap-1">
-                          Nama
-                          {memberSortField === 'name' ? (
-                            memberSortOrder === 'asc' ? <ArrowUp className="h-3 w-3 text-[#170C79]" /> : <ArrowDown className="h-3 w-3 text-[#170C79]" />
-                          ) : (
-                            <ChevronsUpDown className="h-3 w-3 text-slate-300" />
-                          )}
-                        </div>
-                      </th>
-                      <th
-                        className="px-6 py-4 cursor-pointer hover:bg-slate-100 transition-colors"
-                        onClick={() => handleMemberSort('division')}
-                      >
-                        <div className="flex items-center gap-1">
-                          Divisi (Cabang)
-                          {memberSortField === 'division' ? (
-                            memberSortOrder === 'asc' ? <ArrowUp className="h-3 w-3 text-[#170C79]" /> : <ArrowDown className="h-3 w-3 text-[#170C79]" />
-                          ) : (
-                            <ChevronsUpDown className="h-3 w-3 text-slate-300" />
-                          )}
-                        </div>
-                      </th>
-                      <th className="px-6 py-4">Social Media</th>
-                      <th className="px-6 py-4 text-right">Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {paginatedMembers.map(member => (
-                      <tr key={member.id} className="hover:bg-slate-50/50 transition-colors">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {member.avatar_url ? (
-                            <img
-                              src={member.avatar_url}
-                              alt={member.name}
-                              className="h-10 w-10 rounded-full object-cover border border-slate-200 shadow-sm"
-                              onError={(e) => {
-                                e.target.onerror = null;
-                                e.target.src = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(member.name)}`;
-                              }}
-                            />
-                          ) : (
-                            <div className="h-10 w-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 shadow-sm">
-                              <User className="h-5 w-5" />
-                            </div>
-                          )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap font-bold text-slate-800">
-                          {member.name}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold text-slate-700">
-                          <div>{getDivisionName(member.division_id)}</div>
-                          <div className="text-[10px] text-slate-400 font-medium">
-                            ({getBranchName(divisions.find(d => d.id === member.division_id)?.branch_id)})
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex gap-2">
-                            {member.instagram_url ? (
-                              <a href={member.instagram_url} target="_blank" rel="noopener noreferrer" className="p-1 rounded-lg bg-pink-50 border border-pink-100 text-pink-600 hover:scale-105 transition-transform" title="Instagram">
-                                <FaInstagram className="h-4 w-4" />
-                              </a>
-                            ) : (
-                              <span className="p-1 text-slate-300" title="Tidak ada Instagram"><FaInstagram className="h-4 w-4" /></span>
-                            )}
-                            {member.twitter_url ? (
-                              <a href={member.twitter_url} target="_blank" rel="noopener noreferrer" className="p-1 rounded-lg bg-slate-50 border border-slate-100 text-slate-800 hover:scale-105 transition-transform" title="Twitter / X">
-                                <FaXTwitter className="h-4 w-4" />
-                              </a>
-                            ) : (
-                              <span className="p-1 text-slate-300" title="Tidak ada X/Twitter"><FaXTwitter className="h-4 w-4" /></span>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-xs">
-                          <div className="flex items-center justify-end gap-2">
-                            {canEditMember(member) && (
-                              <button
-                                onClick={() => handleOpenEditMember(member)}
-                                className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-colors cursor-pointer"
-                                title={canManage ? "Ubah Anggota" : "Ubah Profil Saya"}
-                              >
-                                <Edit className="h-4 w-4" />
-                              </button>
-                            )}
-                            {canManage && (
-                              <button
-                                onClick={() => handleDeleteMemberClick(member)}
-                                className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors cursor-pointer"
-                                title="Hapus Anggota"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                    {paginatedMembers.length === 0 && (
+              <div>
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full text-left text-sm text-slate-600">
+                    <thead className="text-xs uppercase bg-slate-50 text-slate-500 font-bold border-b border-slate-200 select-none">
                       <tr>
-                        <td colSpan="5" className="px-6 py-12 text-center text-slate-400 text-sm">
-                          Belum ada anggota pengurus terdaftar.
-                        </td>
+                        <th className="px-6 py-4 w-16">Foto</th>
+                        <th
+                          className="px-6 py-4 cursor-pointer hover:bg-slate-100 transition-colors"
+                          onClick={() => handleMemberSort('name')}
+                        >
+                          <div className="flex items-center gap-1">
+                            Nama
+                            {memberSortField === 'name' ? (
+                              memberSortOrder === 'asc' ? <ArrowUp className="h-3 w-3 text-[#170C79]" /> : <ArrowDown className="h-3 w-3 text-[#170C79]" />
+                            ) : (
+                              <ChevronsUpDown className="h-3 w-3 text-slate-300" />
+                            )}
+                          </div>
+                        </th>
+                        <th
+                          className="px-6 py-4 cursor-pointer hover:bg-slate-100 transition-colors"
+                          onClick={() => handleMemberSort('division')}
+                        >
+                          <div className="flex items-center gap-1">
+                            Divisi (Cabang)
+                            {memberSortField === 'division' ? (
+                              memberSortOrder === 'asc' ? <ArrowUp className="h-3 w-3 text-[#170C79]" /> : <ArrowDown className="h-3 w-3 text-[#170C79]" />
+                            ) : (
+                              <ChevronsUpDown className="h-3 w-3 text-slate-300" />
+                            )}
+                          </div>
+                        </th>
+                        <th className="px-6 py-4">Social Media</th>
+                        <th className="px-6 py-4 text-right">Aksi</th>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {paginatedMembers.map(member => (
+                        <tr key={member.id} className="hover:bg-slate-50/50 transition-colors">
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            {member.avatar_url ? (
+                              <img
+                                src={member.avatar_url}
+                                alt={member.name}
+                                className="h-10 w-10 rounded-full object-cover border border-slate-200 shadow-sm"
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(member.name)}`;
+                                }}
+                              />
+                            ) : (
+                              <div className="h-10 w-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 shadow-sm">
+                                <User className="h-5 w-5" />
+                              </div>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap font-bold text-slate-800">
+                            {member.name}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold text-slate-700">
+                            <div>{getDivisionName(member.division_id)}</div>
+                            <div className="text-[10px] text-slate-400 font-medium">
+                              ({getBranchName(divisions.find(d => d.id === member.division_id)?.branch_id)})
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex gap-2">
+                              {member.instagram_url ? (
+                                <a href={member.instagram_url} target="_blank" rel="noopener noreferrer" className="p-1 rounded-lg bg-pink-50 border border-pink-100 text-pink-600 hover:scale-105 transition-transform" title="Instagram">
+                                  <FaInstagram className="h-4 w-4" />
+                                </a>
+                              ) : (
+                                <span className="p-1 text-slate-300" title="Tidak ada Instagram"><FaInstagram className="h-4 w-4" /></span>
+                              )}
+                              {member.twitter_url ? (
+                                <a href={member.twitter_url} target="_blank" rel="noopener noreferrer" className="p-1 rounded-lg bg-slate-50 border border-slate-100 text-slate-800 hover:scale-105 transition-transform" title="Twitter / X">
+                                  <FaXTwitter className="h-4 w-4" />
+                                </a>
+                              ) : (
+                                <span className="p-1 text-slate-300" title="Tidak ada X/Twitter"><FaXTwitter className="h-4 w-4" /></span>
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-right text-xs">
+                            <div className="flex items-center justify-end gap-2">
+                              {canEditMember(member) && (
+                                <button
+                                  onClick={() => handleOpenEditMember(member)}
+                                  className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-colors cursor-pointer"
+                                  title={canManage ? "Ubah Anggota" : "Ubah Profil Saya"}
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </button>
+                              )}
+                              {canManage && (
+                                <button
+                                  onClick={() => handleDeleteMemberClick(member)}
+                                  className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors cursor-pointer"
+                                  title="Hapus Anggota"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                      {paginatedMembers.length === 0 && (
+                        <tr>
+                          <td colSpan="5" className="px-6 py-12 text-center text-slate-400 text-sm">
+                            Belum ada anggota pengurus terdaftar.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Cards */}
+                <div className="md:hidden flex flex-col divide-y divide-slate-100">
+                  {paginatedMembers.map(member => (
+                    <div key={member.id} className="p-4 flex flex-col gap-3 hover:bg-slate-50/50 transition-colors">
+                      <div className="flex items-center gap-3">
+                        {member.avatar_url ? (
+                          <img
+                            src={member.avatar_url}
+                            alt={member.name}
+                            className="h-12 w-12 rounded-full object-cover border border-slate-200 shadow-sm shrink-0"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(member.name)}`;
+                            }}
+                          />
+                        ) : (
+                          <div className="h-12 w-12 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 shadow-sm shrink-0">
+                            <User className="h-6 w-6" />
+                          </div>
+                        )}
+                        <div className="flex flex-col min-w-0">
+                          <span className="font-bold text-slate-800 text-sm truncate">{member.name}</span>
+                          <span className="text-xs font-semibold text-slate-600 truncate mt-0.5">{getDivisionName(member.division_id)}</span>
+                          <span className="text-[10px] text-slate-400 font-medium truncate">({getBranchName(divisions.find(d => d.id === member.division_id)?.branch_id)})</span>
+                        </div>
+                      </div>
+
+                      <div className="flex justify-between items-center pt-2 border-t border-slate-100 mt-1">
+                        <div className="flex gap-2">
+                          {member.instagram_url ? (
+                            <a href={member.instagram_url} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg bg-pink-50 border border-pink-100 text-pink-600 hover:bg-pink-100 transition-colors" title="Instagram">
+                              <FaInstagram className="h-4 w-4" />
+                            </a>
+                          ) : (
+                            <span className="p-1.5 text-slate-300" title="Tidak ada Instagram"><FaInstagram className="h-4 w-4" /></span>
+                          )}
+                          {member.twitter_url ? (
+                            <a href={member.twitter_url} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg bg-slate-50 border border-slate-200 text-slate-800 hover:bg-slate-100 transition-colors" title="Twitter / X">
+                              <FaXTwitter className="h-4 w-4" />
+                            </a>
+                          ) : (
+                            <span className="p-1.5 text-slate-300" title="Tidak ada X/Twitter"><FaXTwitter className="h-4 w-4" /></span>
+                          )}
+                        </div>
+                        
+                        <div className="flex justify-end gap-2">
+                          {canEditMember(member) && (
+                            <button
+                              onClick={() => handleOpenEditMember(member)}
+                              className="px-3 py-1.5 text-xs font-bold text-blue-600 bg-blue-50 border border-blue-100 rounded-lg flex items-center gap-1.5 cursor-pointer"
+                            >
+                              <Edit className="w-3.5 h-3.5" /> Edit
+                            </button>
+                          )}
+                          {canManage && (
+                            <button
+                              onClick={() => handleDeleteMemberClick(member)}
+                              className="p-1.5 text-red-500 bg-red-50 border border-red-100 rounded-lg cursor-pointer"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {paginatedMembers.length === 0 && (
+                    <div className="px-6 py-12 text-center text-slate-400 text-sm">
+                      Belum ada anggota pengurus terdaftar.
+                    </div>
+                  )}
+                </div>
               </div>
             )}
             {!isLoading && sortedAndFilteredMembers.length > 0 && (
@@ -905,82 +980,167 @@ export default function AdminMembershipPage() {
             {isLoading ? (
               <div className="p-12"><Loading message="Memuat staff admin…" /></div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-slate-600">
-                  <thead className="text-xs uppercase bg-slate-50 text-slate-500 font-bold border-b border-slate-200 select-none">
-                    <tr>
-                      <th
-                        className="px-6 py-4 cursor-pointer hover:bg-slate-100 transition-colors"
-                        onClick={() => handleAdminSort('username')}
-                      >
-                        <div className="flex items-center gap-1">
-                          Username (ID)
-                          {adminSortField === 'username' ? (
-                            adminSortOrder === 'asc' ? <ArrowUp className="h-3 w-3 text-[#170C79]" /> : <ArrowDown className="h-3 w-3 text-[#170C79]" />
-                          ) : (
-                            <ChevronsUpDown className="h-3 w-3 text-slate-300" />
+              <div>
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full text-left text-sm text-slate-600">
+                    <thead className="text-xs uppercase bg-slate-50 text-slate-500 font-bold border-b border-slate-200 select-none">
+                      <tr>
+                        <th
+                          className="px-6 py-4 cursor-pointer hover:bg-slate-100 transition-colors"
+                          onClick={() => handleAdminSort('username')}
+                        >
+                          <div className="flex items-center gap-1">
+                            Username (ID)
+                            {adminSortField === 'username' ? (
+                              adminSortOrder === 'asc' ? <ArrowUp className="h-3 w-3 text-[#170C79]" /> : <ArrowDown className="h-3 w-3 text-[#170C79]" />
+                            ) : (
+                              <ChevronsUpDown className="h-3 w-3 text-slate-300" />
+                            )}
+                          </div>
+                        </th>
+                        <th
+                          className="px-6 py-4 cursor-pointer hover:bg-slate-100 transition-colors"
+                          onClick={() => handleAdminSort('role')}
+                        >
+                          <div className="flex items-center gap-1">
+                            Role Sistem
+                            {adminSortField === 'role' ? (
+                              adminSortOrder === 'asc' ? <ArrowUp className="h-3 w-3 text-[#170C79]" /> : <ArrowDown className="h-3 w-3 text-[#170C79]" />
+                            ) : (
+                              <ChevronsUpDown className="h-3 w-3 text-slate-300" />
+                            )}
+                          </div>
+                        </th>
+                        <th
+                          className="px-6 py-4 cursor-pointer hover:bg-slate-100 transition-colors"
+                          onClick={() => handleAdminSort('division')}
+                        >
+                          <div className="flex items-center gap-1">
+                            Mengelola Divisi
+                            {adminSortField === 'division' ? (
+                              adminSortOrder === 'asc' ? <ArrowUp className="h-3 w-3 text-[#170C79]" /> : <ArrowDown className="h-3 w-3 text-[#170C79]" />
+                            ) : (
+                              <ChevronsUpDown className="h-3 w-3 text-slate-300" />
+                            )}
+                          </div>
+                        </th>
+                        <th className="px-6 py-4">Menu Hak Akses</th>
+                        {canManage && <th className="px-6 py-4 text-right">Aksi</th>}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {paginatedAdmins.map(profile => (
+                        <tr key={profile.id} className="hover:bg-slate-50/50 transition-colors">
+                          <td className="px-6 py-4 whitespace-nowrap font-bold text-slate-800 flex items-center gap-1.5">
+                            <UserCheck className="h-4.5 w-4.5 text-slate-400" /> {profile.username}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-xs font-bold">
+                            {profile.role === 'super_admin' ? (
+                              <span className="inline-flex items-center gap-1 text-red-600 bg-red-50 border border-red-100 px-2 py-0.5 rounded-md">
+                                <Shield className="h-3.5 w-3.5 fill-red-100" /> Super Admin
+                              </span>
+                            ) : profile.role === 'coordinator' ? (
+                              <span className="text-indigo-600 bg-indigo-50 border border-indigo-100 px-2 py-0.5 rounded-md">
+                                Koordinator
+                              </span>
+                            ) : (
+                              <span className="text-slate-600 bg-slate-50 border border-slate-100 px-2 py-0.5 rounded-md">
+                                Staff Admin
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold">
+                            {profile.division_id ? getDivisionName(profile.division_id) : <span className="text-slate-400 italic">Umum / Semua</span>}
+                          </td>
+                          <td className="px-6 py-4 text-xs font-medium max-w-xs">
+                            {profile.role === 'super_admin' ? (
+                              <span className="text-red-600 font-bold">Semua Akses (Super Admin)</span>
+                            ) : (
+                              <div className="flex flex-wrap gap-1">
+                                {profile.permissions?.map(p => (
+                                  <span key={p} className="px-1.5 py-0.5 bg-slate-100 rounded text-slate-500 font-bold border border-slate-200/40 text-[10px]">
+                                    {AVAILABLE_PERMISSIONS.find(item => item.id === p)?.label || p}
+                                  </span>
+                                ))}
+                                {(!profile.permissions || profile.permissions.length === 0) && (
+                                  <span className="text-slate-400 italic text-[11px]">Tidak ada akses</span>
+                                )}
+                              </div>
+                            )}
+                          </td>
+                          {canManage && (
+                            <td className="px-6 py-4 whitespace-nowrap text-right text-xs">
+                              <div className="flex items-center justify-end gap-2">
+                                <button
+                                  onClick={() => handleOpenEditAdmin(profile)}
+                                  className="p-1.5 text-indigo-600 hover:bg-indigo-50 border border-transparent hover:border-indigo-200 rounded-lg transition-colors cursor-pointer"
+                                  title="Ubah Hak Akses Admin"
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </button>
+                                <button
+                                  onClick={() => handleOpenResetPassword(profile)}
+                                  className="p-1.5 text-amber-600 hover:bg-amber-50 border border-transparent hover:border-amber-200 rounded-lg transition-colors cursor-pointer"
+                                  title="Ganti Password Staff"
+                                >
+                                  <Key className="h-4 w-4" />
+                                </button>
+                              </div>
+                            </td>
                           )}
+                        </tr>
+                      ))}
+                      {paginatedAdmins.length === 0 && (
+                        <tr>
+                          <td colSpan="5" className="px-6 py-12 text-center text-slate-400 text-sm">
+                            Tidak ada data staff admin ditemukan.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Cards */}
+                <div className="md:hidden flex flex-col divide-y divide-slate-100">
+                  {paginatedAdmins.map(profile => (
+                    <div key={profile.id} className="p-4 flex flex-col gap-3 hover:bg-slate-50/50 transition-colors">
+                      <div className="flex justify-between items-start">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <UserCheck className="h-5 w-5 text-slate-400 shrink-0" />
+                          <span className="font-bold text-slate-800 text-sm truncate">{profile.username}</span>
                         </div>
-                      </th>
-                      <th
-                        className="px-6 py-4 cursor-pointer hover:bg-slate-100 transition-colors"
-                        onClick={() => handleAdminSort('role')}
-                      >
-                        <div className="flex items-center gap-1">
-                          Role Sistem
-                          {adminSortField === 'role' ? (
-                            adminSortOrder === 'asc' ? <ArrowUp className="h-3 w-3 text-[#170C79]" /> : <ArrowDown className="h-3 w-3 text-[#170C79]" />
-                          ) : (
-                            <ChevronsUpDown className="h-3 w-3 text-slate-300" />
-                          )}
-                        </div>
-                      </th>
-                      <th
-                        className="px-6 py-4 cursor-pointer hover:bg-slate-100 transition-colors"
-                        onClick={() => handleAdminSort('division')}
-                      >
-                        <div className="flex items-center gap-1">
-                          Mengelola Divisi
-                          {adminSortField === 'division' ? (
-                            adminSortOrder === 'asc' ? <ArrowUp className="h-3 w-3 text-[#170C79]" /> : <ArrowDown className="h-3 w-3 text-[#170C79]" />
-                          ) : (
-                            <ChevronsUpDown className="h-3 w-3 text-slate-300" />
-                          )}
-                        </div>
-                      </th>
-                      <th className="px-6 py-4">Menu Hak Akses</th>
-                      {canManage && <th className="px-6 py-4 text-right">Aksi</th>}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {paginatedAdmins.map(profile => (
-                      <tr key={profile.id} className="hover:bg-slate-50/50 transition-colors">
-                        <td className="px-6 py-4 whitespace-nowrap font-bold text-slate-800 flex items-center gap-1.5">
-                          <UserCheck className="h-4.5 w-4.5 text-slate-400" /> {profile.username}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-xs font-bold">
+                        <div className="shrink-0 ml-2">
                           {profile.role === 'super_admin' ? (
-                            <span className="inline-flex items-center gap-1 text-red-600 bg-red-50 border border-red-100 px-2 py-0.5 rounded-md">
-                              <Shield className="h-3.5 w-3.5 fill-red-100" /> Super Admin
+                            <span className="inline-flex items-center gap-1 text-red-600 bg-red-50 border border-red-100 px-2 py-0.5 rounded-md text-[10px] font-bold">
+                              <Shield className="h-3 w-3 fill-red-100" /> Super Admin
                             </span>
                           ) : profile.role === 'coordinator' ? (
-                            <span className="text-indigo-600 bg-indigo-50 border border-indigo-100 px-2 py-0.5 rounded-md">
+                            <span className="text-indigo-600 bg-indigo-50 border border-indigo-100 px-2 py-0.5 rounded-md text-[10px] font-bold">
                               Koordinator
                             </span>
                           ) : (
-                            <span className="text-slate-600 bg-slate-50 border border-slate-100 px-2 py-0.5 rounded-md">
+                            <span className="text-slate-600 bg-slate-50 border border-slate-100 px-2 py-0.5 rounded-md text-[10px] font-bold">
                               Staff Admin
                             </span>
                           )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold">
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Mengelola Divisi</div>
+                        <div className="text-sm font-semibold text-slate-700">
                           {profile.division_id ? getDivisionName(profile.division_id) : <span className="text-slate-400 italic">Umum / Semua</span>}
-                        </td>
-                        <td className="px-6 py-4 text-xs font-medium max-w-xs">
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Menu Hak Akses</div>
+                        <div className="flex flex-wrap gap-1">
                           {profile.role === 'super_admin' ? (
-                            <span className="text-red-600 font-bold">Semua Akses (Super Admin)</span>
+                            <span className="text-red-600 font-bold text-xs">Semua Akses (Super Admin)</span>
                           ) : (
-                            <div className="flex flex-wrap gap-1">
+                            <>
                               {profile.permissions?.map(p => (
                                 <span key={p} className="px-1.5 py-0.5 bg-slate-100 rounded text-slate-500 font-bold border border-slate-200/40 text-[10px]">
                                   {AVAILABLE_PERMISSIONS.find(item => item.id === p)?.label || p}
@@ -989,40 +1149,35 @@ export default function AdminMembershipPage() {
                               {(!profile.permissions || profile.permissions.length === 0) && (
                                 <span className="text-slate-400 italic text-[11px]">Tidak ada akses</span>
                               )}
-                            </div>
+                            </>
                           )}
-                        </td>
-                        {canManage && (
-                          <td className="px-6 py-4 whitespace-nowrap text-right text-xs">
-                            <div className="flex items-center justify-end gap-2">
-                              <button
-                                onClick={() => handleOpenEditAdmin(profile)}
-                                className="p-1.5 text-indigo-600 hover:bg-indigo-50 border border-transparent hover:border-indigo-200 rounded-lg transition-colors cursor-pointer"
-                                title="Ubah Hak Akses Admin"
-                              >
-                                <Edit className="h-4 w-4" />
-                              </button>
-                              <button
-                                onClick={() => handleOpenResetPassword(profile)}
-                                className="p-1.5 text-amber-600 hover:bg-amber-50 border border-transparent hover:border-amber-200 rounded-lg transition-colors cursor-pointer"
-                                title="Ganti Password Staff"
-                              >
-                                <Key className="h-4 w-4" />
-                              </button>
-                            </div>
-                          </td>
-                        )}
-                      </tr>
-                    ))}
-                    {paginatedAdmins.length === 0 && (
-                      <tr>
-                        <td colSpan="5" className="px-6 py-12 text-center text-slate-400 text-sm">
-                          Tidak ada data staff admin ditemukan.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
+                        </div>
+                      </div>
+
+                      {canManage && (
+                        <div className="flex justify-end gap-2 pt-2 border-t border-slate-100 mt-1">
+                          <button
+                            onClick={() => handleOpenEditAdmin(profile)}
+                            className="px-3 py-1.5 text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 rounded-lg flex items-center gap-1.5 cursor-pointer"
+                          >
+                            <Edit className="h-3.5 w-3.5" /> Edit Akses
+                          </button>
+                          <button
+                            onClick={() => handleOpenResetPassword(profile)}
+                            className="px-3 py-1.5 text-xs font-bold text-amber-600 bg-amber-50 border border-amber-100 rounded-lg flex items-center gap-1.5 cursor-pointer"
+                          >
+                            <Key className="h-3.5 w-3.5" /> Reset Password
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                  {paginatedAdmins.length === 0 && (
+                    <div className="px-6 py-12 text-center text-slate-400 text-sm">
+                      Tidak ada data staff admin ditemukan.
+                    </div>
+                  )}
+                </div>
               </div>
             )}
             {!isLoading && sortedAndFilteredAdmins.length > 0 && (

@@ -423,7 +423,7 @@ export default function AdminRecaps() {
       </div>
 
       {/* Sub-tab Switcher */}
-      <div className="flex gap-4 border-b border-[var(--border-color)] pb-1">
+      <div className="flex flex-wrap gap-4 border-b border-[var(--border-color)] pb-1">
         <button 
           className={`pb-3 text-xs font-bold border-b-2 transition-colors cursor-pointer ${activeTab === 'zine' ? 'border-[var(--color-primary)] text-[var(--color-primary)]' : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
           onClick={() => { setActiveTab('zine'); setSearchQuery(''); }}
@@ -454,68 +454,114 @@ export default function AdminRecaps() {
             {isLoading ? (
               <div className="p-12"><Loading message="Memuat arsip zine…" /></div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-[var(--text-secondary)]">
-                  <thead className="text-xs uppercase bg-[var(--bg-primary)]/80 text-[var(--text-secondary)] font-bold border-b border-[var(--border-color)]">
-                    <tr>
-                      <th className="px-6 py-4">Sampul</th>
-                      <th className="px-6 py-4">Judul Edisi</th>
-                      <th className="px-6 py-4">Tanggal Rilis</th>
-                      <th className="px-6 py-4">Halaman</th>
-                      <th className="px-6 py-4 text-right">Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[var(--border-color)]">
-                    {filteredItems.map(item => (
-                      <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <img width={48} height={64} alt={item.title || 'Zine Cover'} src={item.thumbnailUrl || 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=100'} className="w-12 h-16 object-cover rounded-lg border border-[var(--border-color)] shadow-sm bg-[var(--bg-primary)]" />
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="font-bold text-[var(--text-primary)] text-sm">{item.title}</div>
-                          {item.summary && (
-                            <div className="text-xs text-[var(--text-muted)] mt-0.5 max-w-sm truncate">{item.summary}</div>
-                          )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold text-[var(--text-primary)]">
-                          <span className="flex items-center gap-1.5">
-                            <Calendar className="h-3.5 w-3.5 text-[var(--text-muted)]" /> {item.publishDate}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold">
-                          <span className="flex items-center gap-1.5 text-[var(--color-primary)] bg-[var(--color-primary-light)] px-2.5 py-1 rounded-full border border-[var(--color-primary)]/10">
-                            <FileText className="h-3.5 w-3.5" /> {item.pages?.length || 0} Halaman
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-semibold">
-                          <div className="flex items-center justify-end gap-2">
-                            <button 
-                              onClick={() => handleOpenEditModal(item)} 
-                              className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-colors"
-                              title="Ubah Zine"
-                            >
-                              <Edit className="h-4 w-4" />
-                            </button>
-                            <button 
-                              onClick={() => handleDelete(item.id)} 
-                              className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors"
-                              title="Hapus Zine"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                    {filteredItems.length === 0 && (
+              <div>
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full text-left text-sm text-[var(--text-secondary)]">
+                    <thead className="text-xs uppercase bg-[var(--bg-primary)]/80 text-[var(--text-secondary)] font-bold border-b border-[var(--border-color)]">
                       <tr>
-                        <td colSpan="5" className="px-6 py-12 text-center text-[var(--text-muted)] text-sm">
-                          Belum ada zine yang sesuai dengan pencarian Anda.
-                        </td>
+                        <th className="px-6 py-4">Sampul</th>
+                        <th className="px-6 py-4">Judul Edisi</th>
+                        <th className="px-6 py-4">Tanggal Rilis</th>
+                        <th className="px-6 py-4">Halaman</th>
+                        <th className="px-6 py-4 text-right">Aksi</th>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-[var(--border-color)]">
+                      {filteredItems.map(item => (
+                        <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <img width={48} height={64} alt={item.title || 'Zine Cover'} src={item.thumbnailUrl || 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=100'} className="w-12 h-16 object-cover rounded-lg border border-[var(--border-color)] shadow-sm bg-[var(--bg-primary)]" />
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="font-bold text-[var(--text-primary)] text-sm max-w-[200px] lg:max-w-sm truncate">{item.title}</div>
+                            {item.summary && (
+                              <div className="text-xs text-[var(--text-muted)] mt-0.5 max-w-[200px] lg:max-w-sm truncate">{item.summary}</div>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold text-[var(--text-primary)]">
+                            <span className="flex items-center gap-1.5">
+                              <Calendar className="h-3.5 w-3.5 text-[var(--text-muted)]" /> {item.publishDate}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold">
+                            <span className="flex items-center gap-1.5 text-[var(--color-primary)] bg-[var(--color-primary-light)] px-2.5 py-1 rounded-full border border-[var(--color-primary)]/10">
+                              <FileText className="h-3.5 w-3.5" /> {item.pages?.length || 0} Halaman
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-semibold">
+                            <div className="flex items-center justify-end gap-2">
+                              <button 
+                                onClick={() => handleOpenEditModal(item)} 
+                                className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-colors cursor-pointer"
+                                title="Ubah Zine"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </button>
+                              <button 
+                                onClick={() => handleDelete(item.id)} 
+                                className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors cursor-pointer"
+                                title="Hapus Zine"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                      {filteredItems.length === 0 && (
+                        <tr>
+                          <td colSpan="5" className="px-6 py-12 text-center text-[var(--text-muted)] text-sm">
+                            Belum ada zine yang sesuai dengan pencarian Anda.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+                
+                {/* Mobile Cards */}
+                <div className="md:hidden flex flex-col divide-y divide-[var(--border-color)]">
+                  {filteredItems.map(item => (
+                    <div key={item.id} className="p-4 flex gap-4 hover:bg-gray-50/50 transition-colors">
+                      <img width={60} height={80} alt={item.title || 'Zine Cover'} src={item.thumbnailUrl || 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=100'} className="w-[60px] h-[80px] shrink-0 object-cover rounded-lg border border-[var(--border-color)] shadow-sm bg-[var(--bg-primary)]" />
+                      <div className="flex-1 flex flex-col gap-2 min-w-0">
+                        <div className="min-w-0">
+                          <div className="font-bold text-[var(--text-primary)] text-sm line-clamp-2 break-words min-w-0">{item.title}</div>
+                          {item.summary && (
+                            <div className="text-xs text-[var(--text-muted)] mt-0.5 line-clamp-2 break-words min-w-0">{item.summary}</div>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-3 text-xs font-semibold text-[var(--text-primary)] shrink-0">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="h-3 w-3 text-[var(--text-muted)]" /> {item.publishDate}
+                          </span>
+                          <span className="flex items-center gap-1 text-[var(--color-primary)]">
+                            <FileText className="h-3 w-3" /> {item.pages?.length || 0} Hlm
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 mt-auto">
+                          <button 
+                            onClick={() => handleOpenEditModal(item)} 
+                            className="flex-1 py-1.5 flex justify-center items-center gap-1.5 text-xs text-blue-600 bg-blue-50 rounded-lg transition-colors border border-blue-100 font-bold cursor-pointer"
+                          >
+                            <Edit className="h-3 w-3" /> Ubah
+                          </button>
+                          <button 
+                            onClick={() => handleDelete(item.id)} 
+                            className="p-1.5 text-red-500 bg-red-50 rounded-lg transition-colors border border-red-100 cursor-pointer"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {filteredItems.length === 0 && (
+                    <div className="px-6 py-12 text-center text-[var(--text-muted)] text-sm">
+                      Belum ada zine yang sesuai dengan pencarian Anda.
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </Card>
@@ -538,70 +584,132 @@ export default function AdminRecaps() {
             {isMonthlyLoading ? (
               <div className="p-12"><Loading message="Memuat buku rekap…" /></div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-[var(--text-secondary)]">
-                  <thead className="text-xs uppercase bg-[var(--bg-primary)]/80 text-[var(--text-secondary)] font-bold border-b border-[var(--border-color)]">
-                    <tr>
-                      <th className="px-6 py-4">Bulan / Tahun</th>
-                      <th className="px-6 py-4">Tema</th>
-                      <th className="px-6 py-4">Theater</th>
-                      <th className="px-6 py-4">Live Stream</th>
-                      <th className="px-6 py-4">Bubble Chat</th>
-                      <th className="px-6 py-4 text-right">Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[var(--border-color)]">
-                    {monthlyItems
-                      .filter(item => 
-                        item.month.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        item.theme.toLowerCase().includes(searchQuery.toLowerCase())
-                      )
-                      .map(item => (
-                        <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
-                          <td className="px-6 py-4 whitespace-nowrap font-bold text-[var(--text-primary)]">
-                            {item.month} {item.year}
-                          </td>
-                          <td className="px-6 py-4 font-semibold text-xs text-[var(--text-primary)]">
-                            {item.theme}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-xs">
-                            {item.left_page?.theater?.total || 0} Shows ({item.left_page?.theater?.items?.length || 0} Detail)
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-xs">
-                            {item.left_page?.live?.total || 0}x Live
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold text-[var(--color-primary)]">
-                            {item.right_page?.privateMessage?.bubbleChat || 0} Chats
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-semibold">
-                            <div className="flex items-center justify-end gap-2">
-                              <button 
-                                onClick={() => handleOpenEditMonthlyModal(item)} 
-                                className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-colors"
-                                title="Ubah Buku Recap"
-                              >
-                                <Edit className="h-4 w-4" />
-                              </button>
-                              <button 
-                                onClick={() => handleDeleteMonthly(item.id)} 
-                                className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors"
-                                title="Hapus Buku Recap"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
-                            </div>
+              <div>
+                {/* Desktop Table */}
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full text-left text-sm text-[var(--text-secondary)]">
+                    <thead className="text-xs uppercase bg-[var(--bg-primary)]/80 text-[var(--text-secondary)] font-bold border-b border-[var(--border-color)]">
+                      <tr>
+                        <th className="px-6 py-4">Bulan / Tahun</th>
+                        <th className="px-6 py-4">Tema</th>
+                        <th className="px-6 py-4">Theater</th>
+                        <th className="px-6 py-4">Live Stream</th>
+                        <th className="px-6 py-4">Bubble Chat</th>
+                        <th className="px-6 py-4 text-right">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[var(--border-color)]">
+                      {monthlyItems
+                        .filter(item => 
+                          item.month.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          item.theme.toLowerCase().includes(searchQuery.toLowerCase())
+                        )
+                        .map(item => (
+                          <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
+                            <td className="px-6 py-4 whitespace-nowrap font-bold text-[var(--text-primary)]">
+                              {item.month} {item.year}
+                            </td>
+                            <td className="px-6 py-4 font-semibold text-xs text-[var(--text-primary)] max-w-[200px] lg:max-w-sm truncate">
+                              {item.theme}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-xs">
+                              {item.left_page?.theater?.total || 0} Shows ({item.left_page?.theater?.items?.length || 0} Detail)
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-xs">
+                              {item.left_page?.live?.total || 0}x Live
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold text-[var(--color-primary)]">
+                              {item.right_page?.privateMessage?.bubbleChat || 0} Chats
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-semibold">
+                              <div className="flex items-center justify-end gap-2">
+                                <button 
+                                  onClick={() => handleOpenEditMonthlyModal(item)} 
+                                  className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-colors cursor-pointer"
+                                  title="Ubah Buku Recap"
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </button>
+                                <button 
+                                  onClick={() => handleDeleteMonthly(item.id)} 
+                                  className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors cursor-pointer"
+                                  title="Hapus Buku Recap"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      {monthlyItems.length === 0 && (
+                        <tr>
+                          <td colSpan="6" className="px-6 py-12 text-center text-[var(--text-muted)] text-sm">
+                            Belum ada data rekap bulanan yang tersimpan.
                           </td>
                         </tr>
-                      ))}
-                    {monthlyItems.length === 0 && (
-                      <tr>
-                        <td colSpan="6" className="px-6 py-12 text-center text-[var(--text-muted)] text-sm">
-                          Belum ada data rekap bulanan yang tersimpan.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Cards */}
+                <div className="md:hidden flex flex-col divide-y divide-[var(--border-color)]">
+                  {monthlyItems
+                    .filter(item => 
+                      item.month.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                      item.theme.toLowerCase().includes(searchQuery.toLowerCase())
+                    )
+                    .map(item => (
+                      <div key={item.id} className="p-4 flex flex-col gap-3 hover:bg-gray-50/50 transition-colors">
+                        <div className="flex justify-between items-start gap-4">
+                          <div className="min-w-0">
+                            <div className="font-bold text-[var(--text-primary)] text-sm">
+                              {item.month} {item.year}
+                            </div>
+                            <div className="text-xs text-[var(--text-muted)] mt-0.5 line-clamp-2 break-words min-w-0">
+                              {item.theme}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1 shrink-0">
+                            <button 
+                              onClick={() => handleOpenEditMonthlyModal(item)} 
+                              className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer border border-blue-100"
+                              title="Ubah Buku Recap"
+                            >
+                              <Edit className="h-3.5 w-3.5" />
+                            </button>
+                            <button 
+                              onClick={() => handleDeleteMonthly(item.id)} 
+                              className="p-2 text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-colors cursor-pointer border border-red-100"
+                              title="Hapus Buku Recap"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-2 bg-gray-50 rounded-xl p-3 border border-gray-100">
+                          <div className="flex flex-col text-center">
+                            <span className="text-[10px] text-[var(--text-muted)] font-medium mb-1">Theater</span>
+                            <span className="text-xs font-bold text-[var(--text-primary)]">{item.left_page?.theater?.total || 0} <span className="text-[10px] font-normal text-gray-500">Show</span></span>
+                          </div>
+                          <div className="flex flex-col text-center border-x border-gray-200">
+                            <span className="text-[10px] text-[var(--text-muted)] font-medium mb-1">Live</span>
+                            <span className="text-xs font-bold text-[var(--text-primary)]">{item.left_page?.live?.total || 0}x</span>
+                          </div>
+                          <div className="flex flex-col text-center">
+                            <span className="text-[10px] text-[var(--text-muted)] font-medium mb-1">Chat</span>
+                            <span className="text-xs font-bold text-[var(--color-primary)]">{item.right_page?.privateMessage?.bubbleChat || 0}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  {monthlyItems.length === 0 && (
+                    <div className="px-6 py-12 text-center text-[var(--text-muted)] text-sm">
+                      Belum ada data rekap bulanan yang tersimpan.
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </Card>
@@ -751,7 +859,7 @@ export default function AdminRecaps() {
       >
         <form onSubmit={handleSubmitMonthly} className="space-y-4 text-sm text-[var(--text-primary)]">
           {/* Sub-tabs inside monthly modal form */}
-          <div className="flex border-b border-[var(--border-color)] mb-2">
+          <div className="flex flex-wrap border-b border-[var(--border-color)] mb-2">
             <button
               type="button"
               className={`pb-2 pr-4 text-xs font-bold border-b-2 transition-colors cursor-pointer ${monthlyFormTab === 'info' ? 'border-[var(--color-primary)] text-[var(--color-primary)]' : 'border-transparent text-[var(--text-muted)]'}`}

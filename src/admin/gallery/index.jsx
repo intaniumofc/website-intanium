@@ -272,73 +272,124 @@ export default function AdminGallery() {
         {isLoading ? (
           <div className="p-12"><Loading message="Memuat album galeri…" /></div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-[var(--text-secondary)]">
-              <thead className="text-xs uppercase bg-[var(--bg-primary)]/80 text-[var(--text-secondary)] font-bold border-b border-[var(--border-color)]">
-                <tr>
-                  <th className="px-6 py-4">Foto</th>
-                  <th className="px-6 py-4">Judul Foto</th>
-                  <th className="px-6 py-4">Tipe Tampilan</th>
-                  <th className="px-6 py-4">Deskripsi</th>
-                  <th className="px-6 py-4 text-right">Aksi</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--border-color)]">
-                {filteredItems.map(item => (
-                  <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <img width={64} height={64} alt={item.title || 'Gallery Cover'} src={item.url || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100'} className="w-16 h-16 object-cover rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] shadow-sm" />
-                    </td>
-                    <td className="px-6 py-4 font-bold text-[var(--text-primary)] text-sm">
-                      {item.title}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider border ${
-                        item.display_type === 'showcase'
-                          ? 'bg-purple-50 text-purple-700 border-purple-200'
-                          : item.display_type === 'both'
-                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                          : 'bg-blue-50 text-blue-700 border-blue-200'
-                      }`}>
-                        {item.display_type === 'showcase'
-                          ? 'Showcase'
-                          : item.display_type === 'both'
-                          ? 'Keduanya'
-                          : 'Gallery'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-xs text-[var(--text-secondary)] max-w-sm truncate">
-                      {item.description || <span className="text-[var(--text-muted)] italic">Tidak ada keterangan</span>}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-semibold">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => handleOpenEditModal(item)}
-                          className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-colors"
-                          title="Ubah Foto"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(item.id)}
-                          className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors"
-                          title="Hapus Foto"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-                {filteredItems.length === 0 && (
+          <div>
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-sm text-[var(--text-secondary)]">
+                <thead className="text-xs uppercase bg-[var(--bg-primary)]/80 text-[var(--text-secondary)] font-bold border-b border-[var(--border-color)]">
                   <tr>
-                    <td colSpan="5" className="px-6 py-12 text-center text-[var(--text-muted)] text-sm">
-                      Belum ada foto galeri yang sesuai dengan pencarian Anda.
-                    </td>
+                    <th className="px-6 py-4">Foto</th>
+                    <th className="px-6 py-4">Judul Foto</th>
+                    <th className="px-6 py-4">Tipe Tampilan</th>
+                    <th className="px-6 py-4">Deskripsi</th>
+                    <th className="px-6 py-4 text-right">Aksi</th>
                   </tr>
-                )}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-[var(--border-color)]">
+                  {filteredItems.map(item => (
+                    <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <img width={64} height={64} alt={item.title || 'Gallery Cover'} src={item.url || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100'} className="w-16 h-16 object-cover rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] shadow-sm" />
+                      </td>
+                      <td className="px-6 py-4 font-bold text-[var(--text-primary)] text-sm max-w-[200px] lg:max-w-xs truncate">
+                        {item.title}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider border ${
+                          item.display_type === 'showcase'
+                            ? 'bg-purple-50 text-purple-700 border-purple-200'
+                            : item.display_type === 'both'
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            : 'bg-blue-50 text-blue-700 border-blue-200'
+                        }`}>
+                          {item.display_type === 'showcase'
+                            ? 'Showcase'
+                            : item.display_type === 'both'
+                            ? 'Keduanya'
+                            : 'Gallery'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-xs text-[var(--text-secondary)] max-w-[200px] lg:max-w-sm truncate">
+                        {item.description || <span className="text-[var(--text-muted)] italic">Tidak ada keterangan</span>}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-semibold">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => handleOpenEditModal(item)}
+                            className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-colors"
+                            title="Ubah Foto"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(item.id)}
+                            className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors"
+                            title="Hapus Foto"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {filteredItems.length === 0 && (
+                    <tr>
+                      <td colSpan="5" className="px-6 py-12 text-center text-[var(--text-muted)] text-sm">
+                        Belum ada foto galeri yang sesuai dengan pencarian Anda.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Cards */}
+            <div className="md:hidden flex flex-col divide-y divide-[var(--border-color)]">
+              {filteredItems.map(item => (
+                <div key={item.id} className="p-4 flex flex-col gap-3 hover:bg-gray-50/50 transition-colors">
+                  <div className="flex gap-3 items-start min-w-0">
+                    <img width={64} height={64} alt={item.title || 'Gallery Cover'} src={item.url || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100'} className="w-16 h-16 object-cover rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] shadow-sm shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <div className="font-bold text-[var(--text-primary)] text-sm line-clamp-2 break-words">{item.title}</div>
+                      <div className="mt-1.5 flex flex-wrap gap-1">
+                        <span className={`px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider border ${
+                          item.display_type === 'showcase'
+                            ? 'bg-purple-50 text-purple-700 border-purple-200'
+                            : item.display_type === 'both'
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            : 'bg-blue-50 text-blue-700 border-blue-200'
+                        }`}>
+                          {item.display_type === 'showcase' ? 'Showcase' : item.display_type === 'both' ? 'Keduanya' : 'Gallery'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="text-xs text-[var(--text-secondary)] line-clamp-3 break-words min-w-0">
+                    {item.description || <span className="text-[var(--text-muted)] italic">Tidak ada keterangan</span>}
+                  </div>
+                  
+                  <div className="flex justify-end gap-2 pt-2 border-t border-[var(--border-color)] mt-1">
+                    <button 
+                      onClick={() => handleOpenEditModal(item)} 
+                      className="px-3 py-1.5 text-xs font-bold text-blue-600 bg-blue-50 border border-blue-100 rounded-lg flex items-center gap-1.5"
+                    >
+                      <Edit className="h-3.5 w-3.5" /> Ubah
+                    </button>
+                    <button 
+                      onClick={() => handleDelete(item.id)} 
+                      className="p-1.5 text-red-500 bg-red-50 border border-red-100 rounded-lg"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+              {filteredItems.length === 0 && (
+                <div className="px-6 py-12 text-center text-[var(--text-muted)] text-sm">
+                  Belum ada foto galeri yang sesuai dengan pencarian Anda.
+                </div>
+              )}
+            </div>
           </div>
         )}
       </Card>

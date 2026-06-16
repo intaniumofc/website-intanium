@@ -211,27 +211,108 @@ export default function AdminSchedule() {
         {isLoading ? (
           <div className="p-12"><Loading message="Memuat schedule…" /></div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-[var(--text-secondary)]">
-              <thead className="text-xs uppercase bg-[var(--bg-primary)]/80 text-[var(--text-secondary)] font-bold border-b border-[var(--border-color)]">
-                <tr>
-                  <th className="px-6 py-4">Thumbnail</th>
-                  <th className="px-6 py-4">Judul Acara / Topik</th>
-                  <th className="px-6 py-4">Waktu Acara</th>
-                  <th className="px-6 py-4">Tautan</th>
-                  <th className="px-6 py-4 text-right">Aksi</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--border-color)]">
-                {filteredItems.map(item => (
-                  <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <img width={64} height={40} alt={item.title || 'Schedule Cover'} src={item.thumbnail || 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=100'} className="w-16 h-10 object-cover rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)]" />
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="font-bold text-[var(--text-primary)] text-sm">{item.title}</div>
+          <div>
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-sm text-[var(--text-secondary)]">
+                <thead className="text-xs uppercase bg-[var(--bg-primary)]/80 text-[var(--text-secondary)] font-bold border-b border-[var(--border-color)]">
+                  <tr>
+                    <th className="px-6 py-4">Thumbnail</th>
+                    <th className="px-6 py-4">Judul Acara / Topik</th>
+                    <th className="px-6 py-4">Waktu Acara</th>
+                    <th className="px-6 py-4">Tautan</th>
+                    <th className="px-6 py-4 text-right">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[var(--border-color)]">
+                  {filteredItems.map(item => (
+                    <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <img width={64} height={40} alt={item.title || 'Schedule Cover'} src={item.thumbnail || 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=100'} className="w-16 h-10 object-cover rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)]" />
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="font-bold text-[var(--text-primary)] text-sm max-w-[200px] lg:max-w-xs truncate">{item.title}</div>
+                        <div className="flex items-center gap-2 mt-1.5">
+                          <span className={`px-2 py-0.5 text-[9px] font-extrabold rounded uppercase tracking-wider ${
+                            item.platform === 'Show Theater' ? 'bg-rose-50 text-rose-600 border border-rose-200' :
+                            item.platform === 'Video Call' ? 'bg-sky-50 text-sky-600 border border-sky-200' :
+                            item.platform === 'Birthday' ? 'bg-amber-50 text-amber-600 border border-amber-200' :
+                            'bg-purple-50 text-purple-600 border border-purple-200'
+                          }`}>
+                            {item.platform}
+                          </span>
+                          {item.duration && (
+                            <span className="text-[10px] text-[var(--text-muted)] font-semibold flex items-center gap-1">
+                              <Clock className="h-3 w-3 shrink-0" /> {item.duration}
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold text-[var(--text-primary)]">
+                        <span className="flex items-center gap-1.5">
+                          <Calendar className="h-3.5 w-3.5 text-[var(--text-muted)]" /> {new Date(item.time).toLocaleString('id-ID', {
+                            weekday: 'long',
+                            day: 'numeric',
+                            month: 'short',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })} WIB
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {item.link ? (
+                          <a 
+                            href={item.link} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="inline-flex items-center gap-1 text-xs font-bold text-[var(--color-primary)] hover:underline"
+                          >
+                            <LinkIcon className="h-3.5 w-3.5" /> Buka Detail <ExternalLink className="h-3 w-3" />
+                          </a>
+                        ) : (
+                          <span className="text-xs text-[var(--text-muted)] italic">Tidak ada link</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-semibold">
+                        <div className="flex items-center justify-end gap-2">
+                          <button 
+                            onClick={() => handleOpenEditModal(item)} 
+                            className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-colors"
+                            title="Ubah Jadwal"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </button>
+                          <button 
+                            onClick={() => handleDelete(item.id)} 
+                            className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors"
+                            title="Hapus Jadwal"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {filteredItems.length === 0 && (
+                    <tr>
+                      <td colSpan="5" className="px-6 py-12 text-center text-[var(--text-muted)] text-sm">
+                        Belum ada jadwal yang terdaftar.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+            
+            {/* Mobile Cards */}
+            <div className="md:hidden flex flex-col divide-y divide-[var(--border-color)]">
+              {filteredItems.map(item => (
+                <div key={item.id} className="p-4 flex flex-col gap-3 hover:bg-gray-50/50 transition-colors">
+                  <div className="flex gap-3 items-start min-w-0">
+                    <img width={64} height={40} alt={item.title || 'Schedule Cover'} src={item.thumbnail || 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=100'} className="w-16 h-10 object-cover rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <div className="font-bold text-[var(--text-primary)] text-sm line-clamp-2 break-words">{item.title}</div>
                       <div className="flex items-center gap-2 mt-1.5">
-                        <span className={`px-2 py-0.5 text-[9px] font-extrabold rounded uppercase tracking-wider ${
+                        <span className={`px-2 py-0.5 text-[9px] font-extrabold rounded uppercase tracking-wider truncate ${
                           item.platform === 'Show Theater' ? 'bg-rose-50 text-rose-600 border border-rose-200' :
                           item.platform === 'Video Call' ? 'bg-sky-50 text-sky-600 border border-sky-200' :
                           item.platform === 'Birthday' ? 'bg-amber-50 text-amber-600 border border-amber-200' :
@@ -240,66 +321,62 @@ export default function AdminSchedule() {
                           {item.platform}
                         </span>
                         {item.duration && (
-                          <span className="text-[10px] text-[var(--text-muted)] font-semibold flex items-center gap-1">
+                          <span className="text-[10px] text-[var(--text-muted)] font-semibold flex items-center gap-1 shrink-0">
                             <Clock className="h-3 w-3 shrink-0" /> {item.duration}
                           </span>
                         )}
                       </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold text-[var(--text-primary)]">
-                      <span className="flex items-center gap-1.5">
-                        <Calendar className="h-3.5 w-3.5 text-[var(--text-muted)]" /> {new Date(item.time).toLocaleString('id-ID', {
-                          weekday: 'long',
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-between items-center bg-[var(--bg-primary)] p-2 rounded-lg border border-[var(--border-color)]">
+                    <span className="flex items-center gap-1.5 text-xs font-semibold text-[var(--text-primary)] truncate">
+                      <Calendar className="h-3.5 w-3.5 text-[var(--text-muted)] shrink-0" /> 
+                      <span className="truncate">
+                        {new Date(item.time).toLocaleString('id-ID', {
                           day: 'numeric',
                           month: 'short',
                           hour: '2-digit',
                           minute: '2-digit'
                         })} WIB
                       </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {item.link ? (
-                        <a 
-                          href={item.link} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          className="inline-flex items-center gap-1 text-xs font-bold text-[var(--color-primary)] hover:underline"
-                        >
-                          <LinkIcon className="h-3.5 w-3.5" /> Buka Detail <ExternalLink className="h-3 w-3" />
-                        </a>
-                      ) : (
-                        <span className="text-xs text-[var(--text-muted)] italic">Tidak ada link</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-semibold">
-                      <div className="flex items-center justify-end gap-2">
-                        <button 
-                          onClick={() => handleOpenEditModal(item)} 
-                          className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-colors"
-                          title="Ubah Jadwal"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </button>
-                        <button 
-                          onClick={() => handleDelete(item.id)} 
-                          className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors"
-                          title="Hapus Jadwal"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-                {filteredItems.length === 0 && (
-                  <tr>
-                    <td colSpan="5" className="px-6 py-12 text-center text-[var(--text-muted)] text-sm">
-                      Belum ada jadwal yang terdaftar.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                    </span>
+                    {item.link ? (
+                      <a 
+                        href={item.link} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="inline-flex items-center gap-1 text-xs font-bold text-[var(--color-primary)] hover:underline shrink-0"
+                      >
+                        Buka <ExternalLink className="h-3 w-3" />
+                      </a>
+                    ) : (
+                      <span className="text-[10px] text-[var(--text-muted)] italic shrink-0">Tanpa link</span>
+                    )}
+                  </div>
+                  
+                  <div className="flex justify-end gap-2 pt-1">
+                    <button 
+                      onClick={() => handleOpenEditModal(item)} 
+                      className="px-3 py-1.5 text-xs font-bold text-blue-600 bg-blue-50 border border-blue-100 rounded-lg flex items-center gap-1.5"
+                    >
+                      <Edit className="h-3.5 w-3.5" /> Ubah
+                    </button>
+                    <button 
+                      onClick={() => handleDelete(item.id)} 
+                      className="p-1.5 text-red-500 bg-red-50 border border-red-100 rounded-lg"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+              {filteredItems.length === 0 && (
+                <div className="px-6 py-12 text-center text-[var(--text-muted)] text-sm">
+                  Belum ada jadwal yang terdaftar.
+                </div>
+              )}
+            </div>
           </div>
         )}
       </Card>

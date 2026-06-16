@@ -297,90 +297,172 @@ export default function AdminMading() {
           <p className="text-sm font-semibold text-[var(--text-secondary)]">Tidak ada pesan ditemukan.</p>
         </Card>
       ) : (
-        <div className="w-full bg-white border border-[var(--border-color)] rounded-xl overflow-x-auto shadow-md max-h-[480px] overflow-y-auto">
-          <table className="w-full text-sm border-collapse text-left">
-            <thead>
-              <tr className="border-b border-[var(--border-color)]">
-                <th
-                  onClick={() => handleSort('name')}
-                  className="sticky top-0 z-10 bg-[#f3f2fb] shadow-[inset_0_-1px_0_var(--border-color)] h-12 px-4 text-[var(--color-primary)] font-black text-xs uppercase tracking-wider align-middle cursor-pointer select-none hover:text-[var(--color-primary-hover)] transition-colors w-[150px]"
-                >
-                  Pengirim {renderSortIndicator('name')}
-                </th>
-                <th
-                  onClick={() => handleSort('message')}
-                  className="sticky top-0 z-10 bg-[#f3f2fb] shadow-[inset_0_-1px_0_var(--border-color)] h-12 px-4 text-[var(--color-primary)] font-black text-xs uppercase tracking-wider align-middle cursor-pointer select-none hover:text-[var(--color-primary-hover)] transition-colors"
-                >
-                  Pesan {renderSortIndicator('message')}
-                </th>
-                <th
-                  onClick={() => handleSort('date')}
-                  className="sticky top-0 z-10 bg-[#f3f2fb] shadow-[inset_0_-1px_0_var(--border-color)] h-12 px-4 text-[var(--color-primary)] font-black text-xs uppercase tracking-wider align-middle cursor-pointer select-none hover:text-[var(--color-primary-hover)] transition-colors w-[120px]"
-                >
-                  Tanggal {renderSortIndicator('date')}
-                </th>
-                <th
-                  onClick={() => handleSort('loves')}
-                  className="sticky top-0 z-10 bg-[#f3f2fb] shadow-[inset_0_-1px_0_var(--border-color)] h-12 px-4 text-[var(--color-primary)] font-black text-xs uppercase tracking-wider align-middle cursor-pointer select-none hover:text-[var(--color-primary-hover)] transition-colors w-[90px] text-right"
-                >
-                  Suka {renderSortIndicator('loves')}
-                </th>
-                <th
-                  onClick={() => handleSort('isApproved')}
-                  className="sticky top-0 z-10 bg-[#f3f2fb] shadow-[inset_0_-1px_0_var(--border-color)] h-12 px-4 text-[var(--color-primary)] font-black text-xs uppercase tracking-wider align-middle cursor-pointer select-none hover:text-[var(--color-primary-hover)] transition-colors w-[120px]"
-                >
-                  Status {renderSortIndicator('isApproved')}
-                </th>
-                <th className="sticky top-0 z-10 bg-[#f3f2fb] shadow-[inset_0_-1px_0_var(--border-color)] h-12 px-4 text-[var(--color-primary)] font-black text-xs uppercase tracking-wider align-middle text-right w-[140px]">
-                  Aksi
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredNotes.map((note) => {
-                const isNoteApproved = note.isApproved;
-                const isBusy = actionLoading === note.id;
-                const noteColorStyle = colorsMap[note.color] || colorsMap.yellow;
-
-                return (
-                  <tr
-                    key={note.id}
-                    className={`border-b border-[var(--border-color)]/60 hover:bg-[var(--color-primary-light)]/40 transition-colors ${isBusy ? 'opacity-50 pointer-events-none' : ''
-                      }`}
+        <div className="w-full bg-white border border-[var(--border-color)] rounded-xl shadow-md">
+          {/* Desktop Table */}
+          <div className="hidden md:block overflow-x-auto max-h-[480px] overflow-y-auto">
+            <table className="w-full text-sm border-collapse text-left">
+              <thead>
+                <tr className="border-b border-[var(--border-color)]">
+                  <th
+                    onClick={() => handleSort('name')}
+                    className="sticky top-0 z-10 bg-[#f3f2fb] shadow-[inset_0_-1px_0_var(--border-color)] h-12 px-4 text-[var(--color-primary)] font-black text-xs uppercase tracking-wider align-middle cursor-pointer select-none hover:text-[var(--color-primary-hover)] transition-colors w-[150px]"
                   >
-                    {/* Author Name */}
-                    <td className="p-4 align-middle font-extrabold text-[var(--text-primary)] truncate max-w-[150px]">
+                    Pengirim {renderSortIndicator('name')}
+                  </th>
+                  <th
+                    onClick={() => handleSort('message')}
+                    className="sticky top-0 z-10 bg-[#f3f2fb] shadow-[inset_0_-1px_0_var(--border-color)] h-12 px-4 text-[var(--color-primary)] font-black text-xs uppercase tracking-wider align-middle cursor-pointer select-none hover:text-[var(--color-primary-hover)] transition-colors"
+                  >
+                    Pesan {renderSortIndicator('message')}
+                  </th>
+                  <th
+                    onClick={() => handleSort('date')}
+                    className="sticky top-0 z-10 bg-[#f3f2fb] shadow-[inset_0_-1px_0_var(--border-color)] h-12 px-4 text-[var(--color-primary)] font-black text-xs uppercase tracking-wider align-middle cursor-pointer select-none hover:text-[var(--color-primary-hover)] transition-colors w-[120px]"
+                  >
+                    Tanggal {renderSortIndicator('date')}
+                  </th>
+                  <th
+                    onClick={() => handleSort('loves')}
+                    className="sticky top-0 z-10 bg-[#f3f2fb] shadow-[inset_0_-1px_0_var(--border-color)] h-12 px-4 text-[var(--color-primary)] font-black text-xs uppercase tracking-wider align-middle cursor-pointer select-none hover:text-[var(--color-primary-hover)] transition-colors w-[90px] text-right"
+                  >
+                    Suka {renderSortIndicator('loves')}
+                  </th>
+                  <th
+                    onClick={() => handleSort('isApproved')}
+                    className="sticky top-0 z-10 bg-[#f3f2fb] shadow-[inset_0_-1px_0_var(--border-color)] h-12 px-4 text-[var(--color-primary)] font-black text-xs uppercase tracking-wider align-middle cursor-pointer select-none hover:text-[var(--color-primary-hover)] transition-colors w-[120px]"
+                  >
+                    Status {renderSortIndicator('isApproved')}
+                  </th>
+                  <th className="sticky top-0 z-10 bg-[#f3f2fb] shadow-[inset_0_-1px_0_var(--border-color)] h-12 px-4 text-[var(--color-primary)] font-black text-xs uppercase tracking-wider align-middle text-right w-[140px]">
+                    Aksi
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredNotes.map((note) => {
+                  const isNoteApproved = note.isApproved;
+                  const isBusy = actionLoading === note.id;
+                  const noteColorStyle = colorsMap[note.color] || colorsMap.yellow;
+
+                  return (
+                    <tr
+                      key={note.id}
+                      className={`border-b border-[var(--border-color)]/60 hover:bg-[var(--color-primary-light)]/40 transition-colors ${isBusy ? 'opacity-50 pointer-events-none' : ''
+                        }`}
+                    >
+                      {/* Author Name */}
+                      <td className="p-4 align-middle font-extrabold text-[var(--text-primary)] truncate max-w-[150px]">
+                        {note.name}
+                      </td>
+
+                      {/* Message content with color dot indicator */}
+                      <td className="p-4 align-middle">
+                        <div className="flex items-start gap-2 max-w-[450px]">
+                          <span
+                            className={`inline-block shrink-0 mt-1 h-3 w-3 rounded-full border border-black/10 ${noteColorStyle.split(' ')[0]}`}
+                            title={`Warna: ${note.color}`}
+                          />
+                          <p className="text-[var(--text-secondary)] font-medium text-xs leading-relaxed break-words whitespace-pre-wrap">
+                            {note.message}
+                          </p>
+                        </div>
+                      </td>
+
+                      {/* Date */}
+                      <td className="p-4 align-middle text-[var(--text-secondary)] text-xs font-semibold">
+                        {note.date}
+                      </td>
+
+                      {/* Likes Count */}
+                      <td className="p-4 align-middle text-[var(--text-secondary)] text-xs text-right font-bold">
+                        <div className="flex items-center justify-end gap-1">
+                          <Heart className="h-3.5 w-3.5 text-red-500 fill-red-500" />
+                          <span>{note.loves}</span>
+                        </div>
+                      </td>
+
+                      {/* Approval Status Badge using native tailwind style classes */}
+                      <td className="p-4 align-middle">
+                        {isNoteApproved ? (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            <CheckCircle className="h-3 w-3" /> Approved
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                            <Clock className="h-3 w-3 animate-pulse" /> Pending
+                          </span>
+                        )}
+                      </td>
+
+                      {/* Icon-Only Action Column */}
+                      <td className="p-4 align-middle text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          {isNoteApproved ? (
+                            <button
+                              onClick={() => handleUnapprove(note.id)}
+                              className="p-2 text-amber-600 hover:text-amber-700 hover:bg-amber-50 rounded-lg transition-colors cursor-pointer"
+                              title="Batalkan Persetujuan"
+                            >
+                              <X className="h-4.5 w-4.5" />
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleApprove(note.id)}
+                              className="p-2 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors cursor-pointer"
+                              title="Setujui Pesan"
+                            >
+                              <Check className="h-4.5 w-4.5" />
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handleDelete(note.id)}
+                            className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                            title="Hapus Pesan"
+                          >
+                            <Trash2 className="h-4.5 w-4.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile Cards */}
+          <div className="md:hidden flex flex-col divide-y divide-[var(--border-color)]/60 max-h-[600px] overflow-y-auto bg-[#fdfdfd]">
+            {filteredNotes.map((note) => {
+              const isNoteApproved = note.isApproved;
+              const isBusy = actionLoading === note.id;
+              const noteColorStyle = colorsMap[note.color] || colorsMap.yellow;
+
+              return (
+                <div 
+                  key={note.id} 
+                  className={`p-4 flex flex-col gap-3 transition-colors hover:bg-[var(--color-primary-light)]/40 ${isBusy ? 'opacity-50 pointer-events-none' : ''}`}
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="font-extrabold text-[var(--text-primary)] text-sm truncate flex-1">
                       {note.name}
-                    </td>
-
-                    {/* Message content with color dot indicator */}
-                    <td className="p-4 align-middle">
-                      <div className="flex items-start gap-2 max-w-[450px]">
-                        <span
-                          className={`inline-block shrink-0 mt-1 h-3 w-3 rounded-full border border-black/10 ${noteColorStyle.split(' ')[0]}`}
-                          title={`Warna: ${note.color}`}
-                        />
-                        <p className="text-[var(--text-secondary)] font-medium text-xs leading-relaxed break-words whitespace-pre-wrap">
-                          {note.message}
-                        </p>
-                      </div>
-                    </td>
-
-                    {/* Date */}
-                    <td className="p-4 align-middle text-[var(--text-secondary)] text-xs font-semibold">
+                    </div>
+                    <div className="text-[var(--text-secondary)] text-xs font-semibold shrink-0">
                       {note.date}
-                    </td>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-2 p-3 bg-white border border-[var(--border-color)] rounded-xl shadow-xs">
+                    <span
+                      className={`inline-block shrink-0 mt-1 h-3 w-3 rounded-full border border-black/10 ${noteColorStyle.split(' ')[0]}`}
+                      title={`Warna: ${note.color}`}
+                    />
+                    <p className="text-[var(--text-secondary)] font-medium text-xs leading-relaxed break-words whitespace-pre-wrap">
+                      {note.message}
+                    </p>
+                  </div>
 
-                    {/* Likes Count */}
-                    <td className="p-4 align-middle text-[var(--text-secondary)] text-xs text-right font-bold">
-                      <div className="flex items-center justify-end gap-1">
-                        <Heart className="h-3.5 w-3.5 text-red-500 fill-red-500" />
-                        <span>{note.loves}</span>
-                      </div>
-                    </td>
-
-                    {/* Approval Status Badge using native tailwind style classes */}
-                    <td className="p-4 align-middle">
+                  <div className="flex items-center justify-between pt-1">
+                    <div className="flex items-center gap-3">
                       {isNoteApproved ? (
                         <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                           <CheckCircle className="h-3 w-3" /> Approved
@@ -390,42 +472,44 @@ export default function AdminMading() {
                           <Clock className="h-3 w-3 animate-pulse" /> Pending
                         </span>
                       )}
-                    </td>
-
-                    {/* Icon-Only Action Column */}
-                    <td className="p-4 align-middle text-right">
-                      <div className="flex items-center justify-end gap-1">
-                        {isNoteApproved ? (
-                          <button
-                            onClick={() => handleUnapprove(note.id)}
-                            className="p-2 text-amber-600 hover:text-amber-700 hover:bg-amber-50 rounded-lg transition-colors cursor-pointer"
-                            title="Batalkan Persetujuan"
-                          >
-                            <X className="h-4.5 w-4.5" />
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => handleApprove(note.id)}
-                            className="p-2 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors cursor-pointer"
-                            title="Setujui Pesan"
-                          >
-                            <Check className="h-4.5 w-4.5" />
-                          </button>
-                        )}
-                        <button
-                          onClick={() => handleDelete(note.id)}
-                          className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
-                          title="Hapus Pesan"
-                        >
-                          <Trash2 className="h-4.5 w-4.5" />
-                        </button>
+                      
+                      <div className="flex items-center gap-1 text-[var(--text-secondary)] text-xs font-bold">
+                        <Heart className="h-3.5 w-3.5 text-red-500 fill-red-500" />
+                        <span>{note.loves}</span>
                       </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                    </div>
+                    
+                    <div className="flex items-center gap-1 shrink-0">
+                      {isNoteApproved ? (
+                        <button
+                          onClick={() => handleUnapprove(note.id)}
+                          className="p-2 text-amber-600 hover:text-amber-700 bg-amber-50 rounded-lg transition-colors cursor-pointer border border-amber-100"
+                          title="Batalkan Persetujuan"
+                        >
+                          <X className="h-4.5 w-4.5" />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleApprove(note.id)}
+                          className="p-2 text-emerald-600 hover:text-emerald-700 bg-emerald-50 rounded-lg transition-colors cursor-pointer border border-emerald-100"
+                          title="Setujui Pesan"
+                        >
+                          <Check className="h-4.5 w-4.5" />
+                        </button>
+                      )}
+                      <button
+                        onClick={() => handleDelete(note.id)}
+                        className="p-2 text-red-600 hover:text-red-700 bg-red-50 rounded-lg transition-colors cursor-pointer border border-red-100"
+                        title="Hapus Pesan"
+                      >
+                        <Trash2 className="h-4.5 w-4.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
 

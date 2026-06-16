@@ -31,45 +31,79 @@ const TABS = [
 function AdminTable({ columns, data, onEdit, onDelete, emptyMessage }) {
   return (
     <Card hoverEffect={false} className="border border-(--border-color) bg-white overflow-hidden rounded-2xl shadow-sm" padding="none">
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-sm text-(--text-secondary)">
-          <thead className="text-xs uppercase bg-(--bg-primary)/80 text-(--text-secondary) font-bold border-b border-(--border-color)">
-            <tr>
-              {columns.map(col => (
-                <th key={col.key} className={`px-6 py-4 ${col.className || ''}`}>{col.header}</th>
-              ))}
-              <th className="px-6 py-4 text-right">Aksi</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-(--border-color)">
-            {data.map(item => (
-              <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
-                {columns.map(col => (
-                  <td key={col.key} className={`px-6 py-4 ${col.cellClassName || ''}`}>
-                    {col.render ? col.render(item) : item[col.key]}
-                  </td>
-                ))}
-                <td className="px-6 py-4 whitespace-nowrap text-right">
-                  <div className="flex items-center justify-end gap-2">
-                    <button onClick={() => onEdit(item)} className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-colors cursor-pointer" title="Edit">
-                      <Edit className="h-4 w-4" />
-                    </button>
-                    <button onClick={() => onDelete(item.id)} className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors cursor-pointer" title="Hapus">
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {data.length === 0 && (
+      <div>
+        {/* Desktop Table */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full text-left text-sm text-(--text-secondary)">
+            <thead className="text-xs uppercase bg-(--bg-primary)/80 text-(--text-secondary) font-bold border-b border-(--border-color)">
               <tr>
-                <td colSpan={columns.length + 1} className="px-6 py-12 text-center text-(--text-muted) text-sm">
-                  {emptyMessage || 'Belum ada data.'}
-                </td>
+                {columns.map(col => (
+                  <th key={col.key} className={`px-6 py-4 ${col.className || ''}`}>{col.header}</th>
+                ))}
+                <th className="px-6 py-4 text-right">Aksi</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-(--border-color)">
+              {data.map(item => (
+                <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
+                  {columns.map(col => (
+                    <td key={col.key} className={`px-6 py-4 ${col.cellClassName || ''}`}>
+                      {col.render ? col.render(item) : item[col.key]}
+                    </td>
+                  ))}
+                  <td className="px-6 py-4 whitespace-nowrap text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <button onClick={() => onEdit(item)} className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-lg transition-colors cursor-pointer" title="Edit">
+                        <Edit className="h-4 w-4" />
+                      </button>
+                      <button onClick={() => onDelete(item.id)} className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors cursor-pointer" title="Hapus">
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {data.length === 0 && (
+                <tr>
+                  <td colSpan={columns.length + 1} className="px-6 py-12 text-center text-(--text-muted) text-sm">
+                    {emptyMessage || 'Tidak ada data'}
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Mobile Cards */}
+        <div className="md:hidden flex flex-col divide-y divide-(--border-color)">
+          {data.map(item => (
+            <div key={item.id} className="p-4 flex flex-col gap-3 hover:bg-gray-50/50 transition-colors">
+              <div className="flex flex-col gap-3">
+                {columns.map(col => (
+                  <div key={col.key} className="flex justify-between items-start gap-4">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-(--text-muted) shrink-0 pt-0.5">{col.header}</span>
+                    <div className={`text-sm text-right break-words min-w-0 ${col.cellClassName || ''}`}>
+                      {col.render ? col.render(item) : item[col.key]}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-(--border-color)/50 mt-1">
+                <button onClick={() => onEdit(item)} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer border border-blue-100" title="Edit">
+                  <Edit className="h-3.5 w-3.5" /> Ubah
+                </button>
+                <button onClick={() => onDelete(item.id)} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-colors cursor-pointer border border-red-100" title="Hapus">
+                  <Trash2 className="h-3.5 w-3.5" /> Hapus
+                </button>
+              </div>
+            </div>
+          ))}
+          {data.length === 0 && (
+            <div className="px-6 py-12 text-center text-(--text-muted) text-sm">
+              {emptyMessage || 'Tidak ada data'}
+            </div>
+          )}
+        </div>
       </div>
     </Card>
   );
@@ -597,8 +631,8 @@ function TriviaTab() {
       <AdminTable
         columns={[
           { key: 'sort_order', header: '#', render: (item) => <span className="text-xs text-(--text-muted) font-mono">{item.sort_order}</span> },
-          { key: 'question', header: 'Pertanyaan', render: (item) => <span className="font-bold text-(--text-primary)">{item.question}</span> },
-          { key: 'answer', header: 'Jawaban', cellClassName: 'max-w-sm truncate text-xs' },
+          { key: 'question', header: 'Pertanyaan', render: (item) => <div className="font-bold text-(--text-primary) text-left md:text-right line-clamp-2 break-words max-w-[200px] lg:max-w-xs">{item.question}</div> },
+          { key: 'answer', header: 'Jawaban', render: (item) => <div className="text-xs text-left md:text-right line-clamp-3 break-words max-w-[200px] lg:max-w-sm">{item.answer}</div> },
         ]}
         data={items}
         onEdit={handleEdit}
