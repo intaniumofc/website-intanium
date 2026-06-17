@@ -315,37 +315,7 @@ export default function MenangkapKecoaPage() {
                     {state.gameMessage.text}
                   </div>
                 )}
-                {state.status === 'ended' && (
-                  <div className="game-over-overlay absolute inset-0 z-10 grid place-items-center p-4">
-                    <div className="w-full max-w-md rounded-3xl bg-white p-6 text-center shadow-2xl">
-                      <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Game Over</p>
-                      <p className="mt-2 text-sm font-extrabold text-amber-600">{getPerformanceTitle(state.score)}</p>
-                      <h2 className="mt-1 text-4xl font-black text-[#170C79]">{state.score.toLocaleString('id-ID')}</h2>
-                      <p className={`mt-2 text-xs font-bold ${isNewHighScore ? 'text-emerald-600' : 'text-slate-500'}`}>
-                        {isNewHighScore
-                          ? 'High Score Baru!'
-                          : `Belum melewati high score kamu: ${highScore.toLocaleString('id-ID')}`}
-                      </p>
-                      <div className="mt-5 grid grid-cols-2 gap-3">
-                        <StatCard icon={Bug} label="Tertangkap" value={state.caughtCount} />
-                        <StatCard icon={Sparkles} label="Max combo" value={`${state.maxCombo}x`} />
-                      </div>
-                      {badges.length > 0 && (
-                        <div className="mt-4 flex flex-wrap justify-center gap-2">
-                          {badges.map((badge) => <span key={badge} className="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-700">{badge}</span>)}
-                        </div>
-                      )}
-                      <div className="mt-5 grid gap-2 sm:grid-cols-2">
-                        <button type="button" onClick={handleStart} className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#170C79] px-4 py-3 text-sm font-bold text-white">
-                          <RotateCcw className="size-4" /> Main Lagi
-                        </button>
-                        <button type="button" onClick={() => shareScore({ ...state, resultUrl })} className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#170C79]/15 px-4 py-3 text-sm font-bold text-[#170C79]">
-                          <Send className="size-4" /> Share Skor ke X
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
+
               </div>
             </>
           )}
@@ -397,6 +367,38 @@ export default function MenangkapKecoaPage() {
           onPeriodChange={handlePeriodChange}
           onClose={() => setLeaderboardState((current) => ({ ...current, open: false }))}
         />
+      )}
+
+      {state.status === 'ended' && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[#0d0745]/70 p-4 backdrop-blur-sm animate-fade-in">
+          <div className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-3xl bg-white p-6 text-center shadow-2xl">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Game Over</p>
+            <p className="mt-2 text-sm font-extrabold text-amber-600">{getPerformanceTitle(state.score)}</p>
+            <h2 className="mt-1 text-4xl font-black text-[#170C79]">{state.score.toLocaleString('id-ID')}</h2>
+            <p className={`mt-2 text-xs font-bold ${isNewHighScore ? 'text-emerald-600' : 'text-slate-500'}`}>
+              {isNewHighScore
+                ? 'High Score Baru!'
+                : `Belum melewati high score kamu: ${highScore.toLocaleString('id-ID')}`}
+            </p>
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              <StatCard icon={Bug} label="Tertangkap" value={state.caughtCount} />
+              <StatCard icon={Sparkles} label="Max combo" value={`${state.maxCombo}x`} />
+            </div>
+            {badges.length > 0 && (
+              <div className="mt-4 flex flex-wrap justify-center gap-2">
+                {badges.map((badge) => <span key={badge} className="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-700">{badge}</span>)}
+              </div>
+            )}
+            <div className="mt-5 grid gap-2 sm:grid-cols-2">
+              <button type="button" onClick={handleStart} className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#170C79] px-4 py-3 text-sm font-bold text-white cursor-pointer hover:bg-[#2518a4] transition">
+                <RotateCcw className="size-4" /> Main Lagi
+              </button>
+              <button type="button" onClick={() => shareScore({ ...state, resultUrl })} className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#170C79]/15 px-4 py-3 text-sm font-bold text-[#170C79] cursor-pointer hover:bg-slate-50 transition">
+                <Send className="size-4" /> Share Skor ke X
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
