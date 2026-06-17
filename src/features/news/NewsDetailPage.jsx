@@ -6,6 +6,7 @@ import Button from '../../components/common/Button';
 import Loading from '../../components/common/Loading';
 import { formatDate } from '../../lib/formatDate';
 import { ROUTES } from '../../lib/constants';
+import { getOptimizedImageUrl } from '../../lib/helpers';
 import bannerIntanium from '../../assets/logos/banner-nium.webp';
 import intanOne from '../../assets/images/intan-01.webp';
 import intanTwo from '../../assets/images/intan-02.webp';
@@ -80,7 +81,7 @@ export default function NewsDetailPage() {
         {/* Banner image */}
         <div className="aspect-[21/9] w-full bg-black/20 overflow-hidden border-b border-[var(--border-color)]">
           <img
-            src={getNewsImage(news)}
+            src={getOptimizedImageUrl(getNewsImage(news), { width: 1000 })}
             alt={news.title}
             className="w-full h-full object-cover"
           />

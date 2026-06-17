@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { merchandiseService } from './merchandiseService';
-import { formatCurrency } from '../../lib/helpers';
+import { formatCurrency, getOptimizedImageUrl } from '../../lib/helpers';
 import { ROUTES } from '../../lib/constants';
 import Button from '../../components/common/Button';
 import { Search } from 'lucide-react';
@@ -703,14 +703,14 @@ function ProductCard({ product }) {
           )
         )}
 
-        <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-[#f4f4f5] transition duration-300 w-full">
+        <div className="relative aspect-3/4 overflow-hidden rounded-2xl bg-[#f4f4f5] transition duration-300 w-full">
           {images.length > 0 ? (
             images.map((src, index) => (
               <img
                 key={`${src}-${index}`}
-                src={src}
+                src={getOptimizedImageUrl(src, { width: 400 })}
                 alt={index === 0 ? product.name : ''}
-                className={`absolute inset-0 h-full w-full object-cover transition-all duration-700 ease-in-out group-hover:scale-[1.03] ${index === imgIndex ? 'opacity-100' : 'opacity-0'
+                className={`absolute inset-0 h-full w-full object-cover transition-all duration-700 ease-in-out group-hover:scale-105 ${index === imgIndex ? 'opacity-100' : 'opacity-0'
                   }`}
                 loading="lazy"
               />
@@ -767,7 +767,7 @@ function ProductCard({ product }) {
                     : 'border-slate-200 bg-white hover:border-slate-400'
                     }`}
                 >
-                  <img src={src} alt="" className="h-full w-full rounded-full object-cover" />
+                  <img src={getOptimizedImageUrl(src, { width: 64 })} alt="" className="h-full w-full rounded-full object-cover" />
                 </motion.button>
               ))}
               {extraCount > 0 ? (
@@ -867,7 +867,7 @@ function ProductGridSkeleton({ cols }) {
     <div className={`grid gap-4 sm:gap-6 ${gridClassName} animate-pulse`}>
       {Array.from({ length: 6 }).map((_, idx) => (
         <div key={idx} className="bg-white border border-[var(--border-color)] rounded-[1.75rem] p-3.5 h-[340px] flex flex-col gap-3">
-          <div className="bg-slate-100 rounded-2xl w-full aspect-[3/4]" />
+          <div className="bg-slate-100 rounded-2xl w-full aspect-square" />
           <div className="h-3.5 bg-slate-100 rounded-md w-1/3 mt-1" />
           <div className="h-4 bg-slate-100 rounded-md w-4/5" />
           <div className="flex justify-between items-center mt-auto">

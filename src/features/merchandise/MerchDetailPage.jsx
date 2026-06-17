@@ -6,7 +6,7 @@ import Button from '../../components/common/Button';
 import Loading from '../../components/common/Loading';
 import CheckoutForm from '../../components/merchandise/CheckoutForm';
 import Modal from '../../components/common/Modal';
-import { formatCurrency } from '../../lib/helpers';
+import { formatCurrency, getOptimizedImageUrl } from '../../lib/helpers';
 import { ROUTES, ADMIN_WHATSAPP_NUMBER } from '../../lib/constants';
 import { ShieldCheck, Truck, Clock } from 'lucide-react';
 
@@ -144,7 +144,7 @@ Saya melampirkan bukti transfer pembayaran di bawah ini. Mohon segera diproses y
           <div className="border border-[var(--border-color)] rounded-3xl overflow-hidden bg-white aspect-[3/4] shadow-sm relative">
             {images.length > 0 ? (
               <img
-                src={images[activeImgIndex]}
+                src={getOptimizedImageUrl(images[activeImgIndex], { width: 800 })}
                 alt={product.name}
                 className="w-full h-full object-cover transition-all duration-300"
               />
@@ -178,7 +178,7 @@ Saya melampirkan bukti transfer pembayaran di bawah ini. Mohon segera diproses y
                       : 'border-[var(--border-color)] bg-white opacity-75 hover:opacity-100'
                     }`}
                 >
-                  <img src={src} alt="" className="w-full h-full object-cover" />
+                  <img src={getOptimizedImageUrl(src, { width: 100 })} alt="" className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>

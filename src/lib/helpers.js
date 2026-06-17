@@ -79,3 +79,40 @@ export const logAdminActivity = async (actionText) => {
     console.error('Gagal mencatat log aktivitas:', err);
   }
 };
+
+/**
+ * Optimize an image URL (supports Supabase storage image transformation and Unsplash resizing).
+ * @param {string} url - The image URL
+ * @param {object} options - Optimization options (width, quality)
+ * @returns {string} Optimized image URL
+ */
+export const getOptimizedImageUrl = (url, { width = 400, quality = 80 } = {}) => {
+  if (!url) return '';
+
+  // 1. Unsplash Optimization
+  if (url.includes('images.unsplash.com')) {
+    try {
+      const urlObj = new URL(url);
+      urlObj.searchParams.set('w', width.toString());
+      urlObj.searchParams.set('q', quality.toString());
+      // Override server-side crop with max to prevent cropping
+      urlObj.searchParams.set('fit', 'max');
+      if (!urlObj.searchParams.has('auto')) {
+        urlObj.searchParams.set('auto', 'format');
+      }
+      return urlObj.toString();
+    } catch (e) {
+      return url;
+    }
+  }
+
+  // 2. Supabase Optimization
+  if (url.includes('supabase.co/storage/v1/object/public/')) {
+    const rendered = url.replace('/object/public/', '/render/image/public/');
+    const separator = rendered.includes('?') ? '&' : '?';
+    return `${rendered}${separator}width=${width}&quality=${quality}&resize=contain`;
+  }
+
+  return url;
+};
+

@@ -12,6 +12,7 @@ import {
 import { newsService } from './newsService';
 import Loading from '../../components/common/Loading';
 import { formatDate } from '../../lib/formatDate';
+import { getOptimizedImageUrl } from '../../lib/helpers';
 import bannerIntanium from '../../assets/logos/banner-nium.webp';
 import intanOne from '../../assets/images/intan-01.webp';
 import intanTwo from '../../assets/images/intan-02.webp';
@@ -121,7 +122,7 @@ function GlassNewsCard({ item, index = 0, featured = false }) {
       >
         <div className="relative aspect-video overflow-hidden bg-violet-50">
           <motion.img
-            src={item.image}
+            src={getOptimizedImageUrl(item.image, { width: 500 })}
             alt={item.title}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
             loading="lazy"

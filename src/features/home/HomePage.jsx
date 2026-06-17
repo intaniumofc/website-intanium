@@ -42,14 +42,44 @@ export default function HomePage() {
   const [featuredNews, setFeaturedNews] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [bio, setBio] = useState(null);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth < 640;
+    }
+    return false;
+  });
+  const [loadVideo, setLoadVideo] = useState(false);
+  const videoRef = React.useRef(null);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 640);
-    handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  useEffect(() => {
+    const startLoadingVideo = () => {
+      setTimeout(() => {
+        setLoadVideo(true);
+      }, 500);
+    };
+
+    if (document.readyState === 'complete') {
+      startLoadingVideo();
+    } else {
+      window.addEventListener('load', startLoadingVideo);
+      return () => window.removeEventListener('load', startLoadingVideo);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (loadVideo && videoRef.current) {
+      videoRef.current.load();
+      videoRef.current.play().catch(err => {
+        console.log("Autoplay blocked or video load error:", err);
+      });
+    }
+  }, [loadVideo]);
 
   const socialLinks = React.useMemo(() => [
     {
@@ -244,18 +274,24 @@ export default function HomePage() {
             className="mx-2 sm:mx-8 mt-12 border-2 border-[var(--color-primary)]/30 rounded-2xl overflow-hidden shadow-2xl bg-black/40"
           >
             <video
+              ref={videoRef}
+              key="hero-video"
               loop
               playsInline
               autoPlay
               muted
+              preload="auto"
               aria-label="Video profil Nur Intan JKT48"
               title="Video profil Nur Intan"
               className="relative z-10 block w-full h-auto aspect-video object-cover align-middle"
+              poster="/intan-02.webp"
             >
-              <source
-                src={intanVideo}
-                type="video/mp4"
-              />
+              {loadVideo && (
+                <source
+                  src="/intan-02.mp4"
+                  type="video/mp4"
+                />
+              )}
             </video>
           </ContainerInset>
         </ContainerScroll>

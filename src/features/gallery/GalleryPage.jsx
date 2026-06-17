@@ -4,6 +4,7 @@ import { X } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { galleryService } from './galleryService';
 import Loading from '../../components/common/Loading';
+import { getOptimizedImageUrl } from '../../lib/helpers';
 
 const SPRING_CONFIG = {
   type: "spring",
@@ -175,7 +176,7 @@ const ImageModal = ({ item, onClose }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <img
-          src={item.url}
+          src={getOptimizedImageUrl(item.url, { width: 1200 })}
           alt={item.title}
           className="h-auto max-h-[90vh] w-full rounded-2xl object-contain shadow-2xl border border-white/10 bg-slate-950"
         />
@@ -300,7 +301,7 @@ export default function GalleryPage() {
         aria-label={`Lihat foto: ${item.title}`}
       >
         <img
-          src={item.url}
+          src={getOptimizedImageUrl(item.url, { width: 500 })}
           alt={item.title}
           className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           loading="lazy"
