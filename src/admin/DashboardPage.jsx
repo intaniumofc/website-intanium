@@ -55,11 +55,12 @@ export default function DashboardPage() {
 
   const loadDashboardData = async () => {
     try {
-      // 1. Fetch merchandise count (excluding settings row)
+      // 1. Fetch merchandise count (excluding settings rows)
       const { count: merchCount } = await supabase
         .from('merchandise')
         .select('id', { count: 'exact', head: true })
-        .neq('id', 'payment_settings');
+        .neq('id', 'payment_settings')
+        .neq('id', 'game_settings');
 
       // 2. Fetch events count
       const { count: eventsCount } = await supabase
