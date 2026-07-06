@@ -2,7 +2,7 @@ import { supabase } from '../../lib/supabaseClient';
 
 export const merchandiseService = {
   getProducts: async (category = 'All', search = '') => {
-    let query = supabase.from('merchandise').select('*').neq('id', 'payment_settings');
+    let query = supabase.from('merchandise').select('*').neq('id', 'payment_settings').neq('id', 'game_settings');
     
     if (category !== 'All') {
       query = query.eq('category', category);

@@ -179,9 +179,7 @@ export default function HomeNewsSection({ articles = [] }) {
           variants={shouldAnimate ? cardContainerVariants : {}}
         >
           {formattedArticles.map((article) => {
-            if (selectedArticle?.id === article.id) {
-              return null;
-            }
+
 
             return (
               <motion.article
@@ -301,7 +299,7 @@ export default function HomeNewsSection({ articles = [] }) {
               {/* Centered paper layout */}
               <motion.div
                 layoutId={`article-${selectedArticle.id}`}
-                className="fixed inset-4 z-[1000] flex flex-col overflow-hidden rounded-2xl border border-indigo-100 bg-[#fffdfd] shadow-2xl md:inset-10 lg:inset-x-32 lg:inset-y-16"
+                className="fixed top-24 bottom-4 inset-x-4 z-[1000] flex flex-col overflow-hidden rounded-2xl border border-[#170C79]/15 bg-[#fffdfd] shadow-2xl md:inset-auto md:top-[53%] md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-full md:max-w-3xl md:h-[75vh]"
               >
                 {/* Float close button */}
                 <motion.button

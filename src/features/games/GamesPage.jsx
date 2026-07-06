@@ -641,7 +641,7 @@ export default function GamesPage() {
                   </div>
 
                   {/* Bottom Content & Meta Info (Slides up slightly on hover) */}
-                  <div className="relative z-10 p-6 sm:p-8 space-y-6 transition-transform duration-500 ease-in-out group-hover:-translate-y-16">
+                  <div className="relative z-10 p-6 sm:p-8 space-y-6 transition-transform duration-500 ease-in-out md:group-hover:-translate-y-16 pb-20 md:pb-8">
                     <div className="space-y-2 text-left">
                       <h3 className="text-3xl font-black text-white tracking-tight leading-tight">{game.title}</h3>
 
@@ -672,7 +672,7 @@ export default function GamesPage() {
                   </div>
 
                   {/* CTA Button */}
-                  <div className="absolute -bottom-20 left-0 right-0 p-6 sm:p-8 opacity-0 transition-all duration-500 ease-in-out group-hover:bottom-0 group-hover:opacity-100 z-20">
+                  <div className="absolute bottom-0 md:-bottom-20 left-0 right-0 p-6 sm:p-8 opacity-100 md:opacity-0 transition-all duration-500 ease-in-out md:group-hover:bottom-0 md:group-hover:opacity-100 z-20">
                     {game.active ? (
                       game.link?.startsWith('modal:') ? (
                         <button
