@@ -1,4 +1,5 @@
 import { supabase } from '../../lib/supabaseClient';
+import { proxyR2Url } from '../../lib/helpers';
 
 export const recapService = {
   getRecaps: async () => {
@@ -14,10 +15,10 @@ export const recapService = {
     return data.map(r => ({
       ...r,
       publishDate: r.publish_date,
-      thumbnailUrl: r.thumbnail_url,
+      thumbnailUrl: proxyR2Url(r.thumbnail_url),
       pages: (r.recap_pages || []).sort((a,b) => a.page_number - b.page_number).map(p => ({
         ...p,
-        imageUrl: p.image_url
+        imageUrl: proxyR2Url(p.image_url)
       }))
     }));
   },
@@ -37,10 +38,10 @@ export const recapService = {
     return {
       ...data,
       publishDate: data.publish_date,
-      thumbnailUrl: data.thumbnail_url,
+      thumbnailUrl: proxyR2Url(data.thumbnail_url),
       pages: (data.recap_pages || []).sort((a,b) => a.page_number - b.page_number).map(p => ({
         ...p,
-        imageUrl: p.image_url
+        imageUrl: proxyR2Url(p.image_url)
       }))
     };
   },

@@ -1,4 +1,5 @@
 import { supabase } from '../../lib/supabaseClient';
+import { proxyR2Url } from '../../lib/helpers';
 
 export const galleryService = {
   getGalleryPhotos: async (limit = null, offset = 0) => {
@@ -17,6 +18,7 @@ export const galleryService = {
     
     return data.map(item => ({
       ...item,
+      url: proxyR2Url(item.url),
       display_type: item.display_type || 'gallery'
     }));
   },
