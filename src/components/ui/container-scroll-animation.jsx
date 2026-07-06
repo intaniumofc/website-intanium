@@ -6,9 +6,9 @@ export const ContainerScroll = ({
   titleComponent,
   children,
 }) => {
-  const containerRef = useRef(null);
+  const [element, setElement] = useState(null);
   const { scrollYProgress } = useScroll({
-    target: containerRef,
+    target: element ? { current: element } : undefined,
   });
   const [isMobile, setIsMobile] = useState(false);
 
@@ -34,7 +34,7 @@ export const ContainerScroll = ({
   return (
     <div
       className="h-[38rem] md:h-[48rem] flex items-center justify-center relative p-2 md:p-6 z-10"
-      ref={containerRef}
+      ref={setElement}
     >
       <div
         className="py-6 md:py-12 w-full relative"

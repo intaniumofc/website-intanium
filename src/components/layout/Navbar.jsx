@@ -1,5 +1,9 @@
+'use client';
+
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import Link from 'next/link';
+import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { ROUTES } from '../../lib/constants';
 import Button from '../common/Button';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -10,20 +14,20 @@ import {
   Calendar,
   BookOpen,
   Newspaper,
-  ChatCenteredText,
-  Image,
+  MessageSquare as ChatCenteredText,
+  Image as ImageIcon,
   Palette,
   ShoppingBag,
   CreditCard,
-  GameController,
+  Gamepad2 as GameController,
   Trophy,
-  CaretDown
-} from "@phosphor-icons/react";
+  ChevronDown as CaretDown
+} from "lucide-react";
 import logoNobg from '../../assets/logos/logo-nobg.webp';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const location = useLocation();
+  const pathname = usePathname();
   const [activeAccordion, setActiveAccordion] = useState(null);
 
   const toggleAccordion = (index) => {
@@ -127,7 +131,7 @@ export default function Navbar() {
             {
               label: "Galeri Foto",
               description: "Arsip screenshot kenangan momen-momen stream seru",
-              icon: Image,
+              icon: ImageIcon,
               link: ROUTES.GALLERY,
             },
           ],
@@ -176,10 +180,13 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
-            <Link to="/" className="flex items-center gap-2 group">
-              <img
+            <Link href="/" className="flex items-center gap-2 group">
+              <Image
                 src={logoNobg}
                 alt="Intanium"
+                width={40}
+                height={40}
+                priority
                 className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
               />
               <motion.span
@@ -204,7 +211,7 @@ export default function Navbar() {
 
           {/* Action buttons (Admin Portal) */}
           <div className="hidden lg:flex items-center space-x-3">
-            <Link to={ROUTES.ADMIN_LOGIN}>
+            <Link href={ROUTES.ADMIN_LOGIN}>
               <Button size="sm" variant="outline" className="border-white/25 text-white hover:bg-white/10 hover:border-white/50">
                 Admin Panel
               </Button>
@@ -280,11 +287,11 @@ export default function Navbar() {
                                 <div className="space-y-1">
                                   {sub.items.map((subItem) => {
                                     const Icon = subItem.icon;
-                                    const isSubActive = location.pathname === subItem.link;
+                                    const isSubActive = pathname === subItem.link;
                                     return (
                                       <Link
                                         key={subItem.label}
-                                        to={subItem.link || "#"}
+                                        href={subItem.link || "#"}
                                         onClick={() => setIsOpen(false)}
                                         className={`flex items-center gap-3 p-2 min-h-[44px] rounded-lg transition-all ${
                                           isSubActive
@@ -315,12 +322,12 @@ export default function Navbar() {
                     </div>
                   );
                 } else {
-                  const isActive = location.pathname === item.link;
+                  const isActive = pathname === item.link;
                   const Icon = item.icon;
                   return (
                     <Link
                       key={item.label}
-                      to={item.link || "#"}
+                      href={item.link || "#"}
                       onClick={() => setIsOpen(false)}
                       className={`flex items-center gap-3 py-2 px-3 min-h-[44px] rounded-lg text-base font-semibold transition-all ${
                         isActive
@@ -337,7 +344,7 @@ export default function Navbar() {
 
               <div className="pt-4 pb-2 border-t border-white/15">
                 <Link
-                  to={ROUTES.ADMIN_LOGIN}
+                  href={ROUTES.ADMIN_LOGIN}
                   onClick={() => setIsOpen(false)}
                   className="flex items-center justify-center w-full px-4 min-h-[44px] border border-white/20 rounded-lg text-base font-semibold text-white hover:bg-white/10 transition-all"
                 >
@@ -396,7 +403,7 @@ function DropdownNavigation({ navItems }) {
             </button>
           ) : (
             <Link
-              to={navItem.link || "#"}
+              href={navItem.link || "#"}
               className="text-sm py-2 px-4 flex cursor-pointer group transition-colors duration-300 items-center justify-center gap-1 text-white/85 hover:text-white font-semibold relative rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#170C79]"
               onMouseEnter={() => setIsHover(navItem.id)}
               onMouseLeave={() => setIsHover(null)}
@@ -435,7 +442,7 @@ function DropdownNavigation({ navItems }) {
                             return (
                               <li key={item.label}>
                                 <Link
-                                  to={item.link || "#"}
+                                  href={item.link || "#"}
                                   className="flex items-start gap-3 group/item p-1.5 rounded-xl hover:bg-purple-50/50 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#170C79] focus-visible:ring-offset-2"
                                 >
                                   <div className="border border-gray-200 text-gray-500 rounded-lg flex items-center justify-center size-9 shrink-0 group-hover/item:bg-[#170C79] group-hover/item:text-white group-hover/item:border-[#170C79] transition-colors duration-200">

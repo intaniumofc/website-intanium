@@ -1,10 +1,11 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { PortfolioGallery } from '../../components/ui/portfolio-gallery';
 import { ROUTES } from '../../lib/constants';
 import { galleryService } from './galleryService';
-import { getOptimizedImageUrl } from '../../lib/helpers';
 
 const GALLERY_PHOTOS = [
   {
@@ -88,7 +89,7 @@ export default function HomeGallerySection() {
 
   // Map to format required by PortfolioGallery
   const mappedImages = photos.map(photo => ({
-    src: getOptimizedImageUrl(photo.url, { width: 400 }),
+    src: photo.url,
     alt: photo.title,
     title: photo.title
   }));
@@ -149,7 +150,7 @@ export default function HomeGallerySection() {
                 className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl max-w-full"
               >
                 <img
-                  src={getOptimizedImageUrl(photos[activePhotoIdx].url, { width: 1000 })}
+                  src={(photos[activePhotoIdx].url)?.src || (photos[activePhotoIdx].url)}
                   alt={photos[activePhotoIdx].title}
                   className="max-w-full max-h-[70vh] object-contain rounded-2xl block"
                 />

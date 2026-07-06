@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { scheduleService } from './scheduleService';
 import ScheduleFilter from '../../components/schedule/ScheduleFilter';

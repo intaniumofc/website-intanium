@@ -1,6 +1,7 @@
 import { FaInstagram, FaTiktok, FaYoutube } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import logoNobg from "../../assets/logos/logo-nobg.webp";
 import { SOCIALS } from "../../lib/constants";
 
@@ -66,11 +67,13 @@ export default function Footer({
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-6">
             <a href={logo.url} className="group flex shrink-0 items-center gap-3">
               {logo.src ? (
-                <img
+                <Image
                   src={logo.src}
                   alt={logo.alt}
                   title={logo.title}
-                  className="h-10 w-auto transition-transform duration-300 group-hover:scale-105"
+                  width={40}
+                  height={40}
+                  className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
                 />
               ) : (
                 <span className="flex size-10 items-center justify-center rounded-xl border border-white/20 bg-white/10 text-sm font-extrabold">

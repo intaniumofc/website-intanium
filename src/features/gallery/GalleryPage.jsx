@@ -1,10 +1,11 @@
+'use client';
+
 import { useState, useEffect, useRef, createContext, useContext, forwardRef, useMemo } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { X } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { galleryService } from './galleryService';
 import Loading from '../../components/common/Loading';
-import { getOptimizedImageUrl } from '../../lib/helpers';
 
 const SPRING_CONFIG = {
   type: "spring",
@@ -39,15 +40,15 @@ function useContainerScrollContext() {
 }
 
 export const ContainerScroll = ({ children, className, style, ...props }) => {
-  const scrollRef = useRef(null);
+  const [scrollElement, setScrollElement] = useState(null);
   const { scrollYProgress } = useScroll({
-    target: scrollRef,
+    target: scrollElement ? { current: scrollElement } : undefined,
     offset: ["start end", "end start"]
   });
   return (
     <ContainerScrollContext.Provider value={{ scrollYProgress }}>
       <div
-        ref={scrollRef}
+        ref={setScrollElement}
         className={cn("relative min-h-[140vh] w-full", className)}
         style={{
           perspective: "1000px",
@@ -176,7 +177,7 @@ const ImageModal = ({ item, onClose }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <img
-          src={getOptimizedImageUrl(item.url, { width: 1200 })}
+          src={(item.url)?.src || (item.url)}
           alt={item.title}
           className="h-auto max-h-[90vh] w-full rounded-2xl object-contain shadow-2xl border border-white/10 bg-slate-950"
         />
@@ -301,7 +302,7 @@ export default function GalleryPage() {
         aria-label={`Lihat foto: ${item.title}`}
       >
         <img
-          src={getOptimizedImageUrl(item.url, { width: 500 })}
+          src={(item.url)?.src || (item.url)}
           alt={item.title}
           className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           loading="lazy"

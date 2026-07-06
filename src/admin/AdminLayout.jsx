@@ -1,7 +1,12 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import Link from 'next/link';
+import Loading from '../components/common/Loading';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import Image from 'next/image';
 import { ROUTES } from '../lib/constants';
-import { supabase } from '../lib/supabaseClient';
+import { createClient } from '../utils/supabase/client';
 import { 
   LayoutDashboard, 
   ShoppingBag, 
@@ -31,9 +36,11 @@ import { useAdminToast } from '../components/common/useAdminToast';
 
 
 export default function AdminLayout({ children }) {
-  const location = useLocation();
-  const navigate = useNavigate();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const notify = useAdminToast();
+  const supabase = createClient();
   
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -41,10 +48,11 @@ export default function AdminLayout({ children }) {
   const [userRole, setUserRole] = useState('staff');
   const [permissions, setPermissions] = useState([]);
   const [adminProfile, setAdminProfile] = useState(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   // Dropdown menus states
-  const isPathMerch = location.pathname.startsWith('/admin/merchandise') || location.pathname.startsWith('/admin/orders') || location.pathname.startsWith('/admin/categories');
-  const isPathProfile = location.pathname.startsWith('/admin/about-intan') || location.pathname.startsWith('/admin/schedule') || location.pathname.startsWith('/admin/intan-shining-star');
+  const isPathMerch = pathname.startsWith('/admin/merchandise') || pathname.startsWith('/admin/orders') || pathname.startsWith('/admin/categories');
+  const isPathProfile = pathname.startsWith('/admin/about-intan') || pathname.startsWith('/admin/schedule') || pathname.startsWith('/admin/intan-shining-star');
 
   const [openDropdowns, setOpenDropdowns] = useState({
     merchandise_group: isPathMerch,
@@ -53,13 +61,13 @@ export default function AdminLayout({ children }) {
 
   // Sync state if pathname changes
   useEffect(() => {
-    if (location.pathname.startsWith('/admin/merchandise') || location.pathname.includes('/admin/merchandise')) {
+    if (pathname.startsWith('/admin/merchandise') || pathname.includes('/admin/merchandise')) {
       setOpenDropdowns(prev => ({ ...prev, merchandise_group: true }));
     }
-    if (location.pathname.startsWith('/admin/about-intan') || location.pathname.startsWith('/admin/schedule') || location.pathname.startsWith('/admin/intan-shining-star')) {
+    if (pathname.startsWith('/admin/about-intan') || pathname.startsWith('/admin/schedule') || pathname.startsWith('/admin/intan-shining-star')) {
       setOpenDropdowns(prev => ({ ...prev, 'about-intan_group': true }));
     }
-  }, [location.pathname]);
+  }, [pathname]);
 
   const toggleDropdown = (id) => {
     setOpenDropdowns(prev => ({
@@ -109,10 +117,10 @@ export default function AdminLayout({ children }) {
 
   const isSubLinkActive = (subHref) => {
     const [subPath, subSearch] = subHref.split('?');
-    if (location.pathname !== subPath) return false;
+    if (pathname !== subPath) return false;
     
     if (subPath === '/admin/about-intan') {
-      const activeTab = new URLSearchParams(location.search).get('tab') || 'stats';
+      const activeTab = searchParams?.get('tab') || 'stats';
       const subTab = new URLSearchParams(subSearch).get('tab') || 'stats';
       return activeTab === subTab;
     }
@@ -123,36 +131,43 @@ export default function AdminLayout({ children }) {
   // Auth checking logic
   useEffect(() => {
     const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        localStorage.removeItem('isAdminAuthenticated');
-        navigate(ROUTES.ADMIN_LOGIN);
-      } else {
-        // Fetch custom admin profile details
-        const { data, error } = await supabase
-          .from('admin_profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single();
-        
-        if (data) {
-          setAdminProfile(data);
-          setUserRole(data.role);
-          setPermissions(data.permissions || []);
+      try {
+        setIsAuthLoading(true);
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          localStorage.removeItem('isAdminAuthenticated');
+          router.push(ROUTES.ADMIN_LOGIN);
         } else {
-          // Default fallback logic in case profile triggers aren't run
-          setUserRole('staff');
-          setPermissions(['dashboard']);
+          // Fetch custom admin profile details
+          const { data, error } = await supabase
+            .from('admin_profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+          
+          if (data) {
+            setAdminProfile(data);
+            setUserRole(data.role);
+            setPermissions(data.permissions || []);
+          } else {
+            // Default fallback logic in case profile triggers aren't run
+            setUserRole('staff');
+            setPermissions(['dashboard']);
+          }
+          setIsAuthLoading(false);
         }
+      } catch (err) {
+        console.error('Error verifying auth:', err);
+        setIsAuthLoading(false);
       }
     };
     checkAuth();
-  }, [navigate]);
+  }, [router]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     localStorage.removeItem('isAdminAuthenticated');
-    navigate(ROUTES.ADMIN_LOGIN);
+    router.push(ROUTES.ADMIN_LOGIN);
   };
 
   const adminLinks = [
@@ -201,6 +216,10 @@ export default function AdminLayout({ children }) {
   const toggleSidebar = () => setIsMobileOpen(!isMobileOpen);
   const toggleCollapse = () => setIsCollapsed(!isCollapsed);
 
+  if (isAuthLoading) {
+    return <Loading message="Memverifikasi hak akses admin..." />;
+  }
+
   return (
     <div 
       className="min-h-screen text-[var(--text-primary)] flex overflow-x-hidden"
@@ -238,7 +257,7 @@ export default function AdminLayout({ children }) {
         {/* Header with logo and collapse button */}
         <div className="flex items-center justify-between p-5 border-b border-white/5 bg-white/5 h-20 shrink-0">
           <div className="flex items-center space-x-2.5 overflow-hidden w-full">
-            <img width={40} height={40} alt="Logo Intanium" src={logoNobg} className={`w-10 h-10 object-contain shrink-0 transition-all duration-300 ${isCollapsed ? "mx-auto" : ""}`} />
+            <Image width={40} height={40} alt="Logo Intanium" src={logoNobg} className={`w-10 h-10 object-contain shrink-0 transition-all duration-300 ${isCollapsed ? "mx-auto" : ""}`} />
             <div className={`flex flex-col text-left transition-all duration-300 ${isCollapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"}`}>
               <span className="font-extrabold text-sm tracking-tight text-white select-none whitespace-nowrap">
                 Intanium Admin
@@ -326,7 +345,7 @@ export default function AdminLayout({ children }) {
                               return (
                                 <li key={sub.name}>
                                   <Link
-                                    to={sub.href}
+                                    href={sub.href}
                                     onClick={(e) => handleLinkClick(e, sub.href)}
                                     className={`
                                       block px-3.5 py-2 text-[11px] rounded-lg transition-colors duration-150
@@ -366,7 +385,7 @@ export default function AdminLayout({ children }) {
                             return (
                               <Link
                                 key={sub.name}
-                                  to={sub.href}
+                                  href={sub.href}
                                   onClick={(e) => handleLinkClick(e, sub.href)}
                                   className={`block px-3.5 py-2 hover:bg-white/5 transition-colors font-bold ${
                                     isSubItemActive ? "text-white bg-white/5" : "text-indigo-200/80 hover:text-white"
@@ -384,12 +403,12 @@ export default function AdminLayout({ children }) {
                 );
               }
 
-              const isActive = location.pathname === item.href;
+              const isActive = pathname === item.href;
 
               return (
                 <li key={item.id} className="relative">
                   <Link
-                    to={item.href}
+                    href={item.href}
                     onClick={(e) => handleLinkClick(e, item.href)}
                     className={`
                       w-full flex items-center rounded-xl transition-all duration-200 group
@@ -462,7 +481,7 @@ export default function AdminLayout({ children }) {
           <div className="flex items-center gap-2 sm:gap-4 shrink-0">
             {/* View Site Quick Access */}
             <Link 
-              to="/" 
+              href="/" 
               className="flex items-center gap-1.5 text-xs font-extrabold text-[#170C79] hover:bg-[#170C79]/8 border border-slate-200 p-2.5 sm:px-4 sm:py-2.5 rounded-xl bg-white transition-colors shadow-xs"
               title="Web Publik"
             >
@@ -498,7 +517,7 @@ export default function AdminLayout({ children }) {
         {/* Content Viewport */}
         <main data-lenis-prevent className="flex-1 p-4 sm:p-6 md:p-8 max-w-7xl w-full mx-auto overflow-y-auto overflow-x-auto">
           <motion.div
-            key={location.pathname}
+            key={pathname}
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, ease: 'easeOut' }}

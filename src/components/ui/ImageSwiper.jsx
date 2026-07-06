@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 
 export const ImageSwiper = ({
@@ -14,7 +16,11 @@ export const ImageSwiper = ({
   const hasMoved = useRef(false);
   const clickDirection = useRef(1);
 
-  const imageList = images.split(',').map(img => img.trim()).filter(img => img);
+  const imageList = Array.isArray(images)
+    ? images
+    : typeof images === 'string'
+      ? images.split(',').map(img => img.trim()).filter(img => img)
+      : [];
   const [cardOrder, setCardOrder] = useState(() =>
     Array.from({ length: imageList.length }, (_, i) => i)
   );
@@ -214,7 +220,7 @@ export const ImageSwiper = ({
 
         return (
           <article
-            key={`${imageList[originalIndex]}-${originalIndex}`}
+            key={`${(imageList[originalIndex])?.src || imageList[originalIndex]}-${originalIndex}`}
             className={`image-card absolute select-none will-change-transform ${isFront
               ? 'cursor-pointer active:scale-[0.98] transition-transform'
               : 'pointer-events-none'
@@ -243,7 +249,7 @@ export const ImageSwiper = ({
             }}
           >
             <img
-              src={imageList[originalIndex]}
+              src={(imageList[originalIndex])?.src || (imageList[originalIndex])}
               alt={`Photo ${originalIndex + 1}`}
               className="w-full h-full object-cover select-none pointer-events-none"
               draggable={false}

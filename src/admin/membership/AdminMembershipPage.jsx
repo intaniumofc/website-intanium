@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
@@ -676,7 +678,7 @@ export default function AdminMembershipPage() {
                           <td className="px-6 py-4 whitespace-nowrap">
                             {member.avatar_url ? (
                               <img
-                                src={member.avatar_url}
+                                src={(member.avatar_url)?.src || (member.avatar_url)}
                                 alt={member.name}
                                 className="h-10 w-10 rounded-full object-cover border border-slate-200 shadow-sm"
                                 onError={(e) => {
@@ -759,7 +761,7 @@ export default function AdminMembershipPage() {
                       <div className="flex items-center gap-3">
                         {member.avatar_url ? (
                           <img
-                            src={member.avatar_url}
+                            src={(member.avatar_url)?.src || (member.avatar_url)}
                             alt={member.name}
                             className="h-12 w-12 rounded-full object-cover border border-slate-200 shadow-sm shrink-0"
                             onError={(e) => {
@@ -1263,7 +1265,7 @@ export default function AdminMembershipPage() {
               >
                 {avatarUpload.previewUrl ? (
                   <>
-                    <img src={avatarUpload.previewUrl} alt="Preview Foto" className="w-full h-full object-cover" />
+                    <img src={(avatarUpload.previewUrl)?.src || (avatarUpload.previewUrl)} alt="Preview Foto" className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-[10px] font-bold transition-opacity">
                       Ubah Foto
                     </div>

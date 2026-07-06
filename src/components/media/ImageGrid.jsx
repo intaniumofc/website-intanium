@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import Card from '../common/Card';
 import Modal from '../common/Modal';
@@ -33,7 +35,7 @@ export default function ImageGrid({
           >
             {/* Gallery Image */}
             <img
-              src={img.url}
+              src={(img.url)?.src || (img.url)}
               alt={img.title || 'Gallery image'}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               loading="lazy"
@@ -64,7 +66,7 @@ export default function ImageGrid({
           <div className="flex flex-col items-center">
             <div className="border border-[var(--border-color)] rounded-xl overflow-hidden bg-black/40 max-w-full">
               <img
-                src={activeImage.url}
+                src={(activeImage.url)?.src || (activeImage.url)}
                 alt={activeImage.title}
                 className="max-h-[60vh] object-contain mx-auto"
               />

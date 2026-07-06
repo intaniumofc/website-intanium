@@ -1,6 +1,8 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { merchandiseService } from './merchandiseService';
 import Card from '../../components/common/Card';
 import { formatCurrency } from '../../lib/helpers';
@@ -15,8 +17,9 @@ import { StatusBadge } from '../../components/ui/status-badge';
 import { OrderStatus } from '../../components/ui/order-status-tracker';
 
 export default function PaymentConfirmPage() {
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const navigate = (path) => router.push(path);
 
   const invoiceParam = searchParams.get('inv') || '';
   const amountParam = searchParams.get('total') || '';

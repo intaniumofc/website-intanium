@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, Search, Plus, Info, ShieldCheck, CheckCircle } from 'lucide-react';
@@ -28,7 +30,7 @@ export default function MadingPage() {
       // Load Supabase notes
       const dbNotes = await madingService.getNotes();
 
-      const savedLoves = JSON.parse(localStorage.getItem('mading_loves') || '{}');
+      const savedLoves = JSON.parse((typeof window !== 'undefined' ? (...args) => localStorage.getItem(...args) : () => null)('mading_loves') || '{}');
 
       // Map database notes
       const mappedDbNotes = dbNotes.map((note) => {
@@ -60,7 +62,7 @@ export default function MadingPage() {
 
       // Set notes list
       setNotes(mappedDbNotes);
-      localStorage.setItem('mading_loves', JSON.stringify(savedLoves));
+      (typeof window !== 'undefined' ? (...args) => localStorage.setItem(...args) : () => {})('mading_loves', JSON.stringify(savedLoves));
     } catch (err) {
       console.error('Failed loading notes:', err);
       // Fail-safe
@@ -93,9 +95,9 @@ export default function MadingPage() {
         const noteId = createdNote.id;
 
         // Initialize likes locally
-        const savedLoves = JSON.parse(localStorage.getItem('mading_loves') || '{}');
+        const savedLoves = JSON.parse((typeof window !== 'undefined' ? (...args) => localStorage.getItem(...args) : () => null)('mading_loves') || '{}');
         savedLoves[noteId] = 0;
-        localStorage.setItem('mading_loves', JSON.stringify(savedLoves));
+        (typeof window !== 'undefined' ? (...args) => localStorage.setItem(...args) : () => {})('mading_loves', JSON.stringify(savedLoves));
 
         const dateObj = new Date(createdNote.createdAt);
         newNoteFormatted = {
@@ -114,9 +116,9 @@ export default function MadingPage() {
         // eslint-disable-next-line react-hooks/purity
         const localId = `local-${Date.now()}`;
 
-        const savedLoves = JSON.parse(localStorage.getItem('mading_loves') || '{}');
+        const savedLoves = JSON.parse((typeof window !== 'undefined' ? (...args) => localStorage.getItem(...args) : () => null)('mading_loves') || '{}');
         savedLoves[localId] = 0;
-        localStorage.setItem('mading_loves', JSON.stringify(savedLoves));
+        (typeof window !== 'undefined' ? (...args) => localStorage.setItem(...args) : () => {})('mading_loves', JSON.stringify(savedLoves));
 
         newNoteFormatted = {
           id: localId,
@@ -143,23 +145,23 @@ export default function MadingPage() {
   // Love / Like incrementation handler
   const handleLoveNote = (noteId) => {
     // Check if user has liked already
-    const userLiked = JSON.parse(localStorage.getItem('mading_user_liked_ids') || '[]');
+    const userLiked = JSON.parse((typeof window !== 'undefined' ? (...args) => localStorage.getItem(...args) : () => null)('mading_user_liked_ids') || '[]');
     if (userLiked.includes(noteId)) {
       return; // prevent duplicate likes
     }
 
     // Save likes count
-    const savedLoves = JSON.parse(localStorage.getItem('mading_loves') || '{}');
+    const savedLoves = JSON.parse((typeof window !== 'undefined' ? (...args) => localStorage.getItem(...args) : () => null)('mading_loves') || '{}');
     const note = notes.find(n => n.id === noteId);
     if (!note) return;
 
     const nextLoves = (note.loves || 0) + 1;
     savedLoves[noteId] = nextLoves;
-    localStorage.setItem('mading_loves', JSON.stringify(savedLoves));
+    (typeof window !== 'undefined' ? (...args) => localStorage.setItem(...args) : () => {})('mading_loves', JSON.stringify(savedLoves));
 
     // Mark as liked by current user
     userLiked.push(noteId);
-    localStorage.setItem('mading_user_liked_ids', JSON.stringify(userLiked));
+    (typeof window !== 'undefined' ? (...args) => localStorage.setItem(...args) : () => {})('mading_user_liked_ids', JSON.stringify(userLiked));
 
     // Update state
     setNotes(prev => prev.map(n => n.id === noteId ? { ...n, loves: nextLoves } : n));

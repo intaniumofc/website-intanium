@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
@@ -8,6 +10,7 @@ import ConfirmDialog from '../../components/common/ConfirmDialog';
 import { useAdminToast } from '../../components/common/useAdminToast';
 import { Plus, Edit, Trash2, Search, ImageIcon, Upload, Loader } from 'lucide-react';
 import { useSupabaseUpload } from '../../hooks/useSupabaseUpload';
+import { FileUploadCard } from '../../components/ui/FileUploadCard';
 
 export default function AdminGallery() {
   const notify = useAdminToast();
@@ -288,7 +291,7 @@ export default function AdminGallery() {
                   {filteredItems.map(item => (
                     <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <img width={64} height={64} alt={item.title || 'Gallery Cover'} src={item.url || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100'} className="w-16 h-16 object-cover rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] shadow-sm" />
+                        <img width={64} height={64} alt={item.title || 'Gallery Cover'} src={(item.url || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100')?.src || (item.url || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100')} className="w-16 h-16 object-cover rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] shadow-sm" />
                       </td>
                       <td className="px-6 py-4 font-bold text-[var(--text-primary)] text-sm max-w-[200px] lg:max-w-xs truncate">
                         {item.title}
@@ -347,7 +350,7 @@ export default function AdminGallery() {
               {filteredItems.map(item => (
                 <div key={item.id} className="p-4 flex flex-col gap-3 hover:bg-gray-50/50 transition-colors">
                   <div className="flex gap-3 items-start min-w-0">
-                    <img width={64} height={64} alt={item.title || 'Gallery Cover'} src={item.url || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100'} className="w-16 h-16 object-cover rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] shadow-sm shrink-0" />
+                    <img width={64} height={64} alt={item.title || 'Gallery Cover'} src={(item.url || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100')?.src || (item.url || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100')} className="w-16 h-16 object-cover rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] shadow-sm shrink-0" />
                     <div className="min-w-0 flex-1">
                       <div className="font-bold text-[var(--text-primary)] text-sm line-clamp-2 break-words">{item.title}</div>
                       <div className="mt-1.5 flex flex-wrap gap-1">
@@ -426,39 +429,38 @@ export default function AdminGallery() {
           {/* File Upload Zone */}
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Unggah Berkas Gambar</label>
-            <div className="relative border-2 border-dashed border-[var(--border-color)] rounded-2xl p-6 bg-[var(--bg-primary)] hover:border-[var(--color-primary)] transition-colors flex flex-col items-center justify-center text-center group cursor-pointer">
-              <input name="file_input" type="file" accept="image/*" onChange={handleFileChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" disabled={isSubmitting || isFileUploading || isConverting} />
-              <Upload className="h-8 w-8 text-[var(--text-muted)] group-hover:text-[var(--color-primary)] transition-colors mb-2" />
-              <span className="font-extrabold text-xs text-[var(--text-secondary)]">
-                {selectedFile ? selectedFile.name : 'Pilih atau Seret Foto ke Sini'}
-              </span>
-              <span className="text-[10px] text-[var(--text-muted)] mt-1">
-                Akan otomatis dikonversi menjadi format WebP (.webp)
-              </span>
-            </div>
+            <FileUploadCard
+              files={selectedFile ? [{
+                id: 'gallery-upload',
+                file: selectedFile,
+                progress: isConverting ? 15 : uploadProgress,
+                status: (isConverting || isFileUploading) ? 'uploading' : 'completed'
+              }] : []}
+              onFilesChange={(newFiles) => {
+                if (newFiles && newFiles.length > 0) {
+                  const file = newFiles[0];
+                  if (!file.type.startsWith('image/')) {
+                    notify.warning('Berkas tidak valid', 'Hanya diperbolehkan mengunggah berkas gambar.');
+                    return;
+                  }
+                  setSelectedFile(file);
+                  setFilePreview(URL.createObjectURL(file));
+                }
+              }}
+              onFileRemove={() => {
+                setSelectedFile(null);
+                setFilePreview('');
+              }}
+              accept="image/*"
+              multiple={false}
+              className="max-w-full"
+            />
           </div>
 
-          {/* Progress / Status Indicators */}
-          {(isConverting || isFileUploading) && (
-            <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl flex flex-col gap-2">
-              <div className="flex items-center gap-2 text-xs font-bold text-blue-700">
-                <Loader className="h-4 w-4 animate-spin text-blue-600" />
-                <span>
-                  {isConverting ? 'Mengompres gambar ke format WebP (Canvas)…' : 'Mengunggah gambar ke Supabase Storage…'}
-                </span>
-              </div>
-              {!isConverting && (
-                <div className="w-full bg-blue-200/50 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-blue-600 h-full transition-[width] duration-300" style={{ width: `${uploadProgress}%` }} />
-                </div>
-              )}
-            </div>
-          )}
-
           {/* Image Preview */}
-          {filePreview && (
+          {filePreview && !isConverting && !isFileUploading && (
             <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-[var(--border-color)] bg-[var(--bg-primary)] mt-2">
-              <img width={400} height={300} src={filePreview} alt="Preview" className="w-full h-full object-contain" />
+              <img width={400} height={300} src={(filePreview)?.src || (filePreview)} alt="Preview" className="w-full h-full object-contain" />
             </div>
           )}
 

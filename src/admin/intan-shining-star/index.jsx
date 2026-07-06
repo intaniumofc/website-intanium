@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useMemo, useState } from 'react';
 import {
   Edit,
@@ -260,7 +262,7 @@ export default function AdminIntanShiningStar() {
                         <div className="flex min-w-72 items-center gap-3">
                           <div className="h-14 w-20 shrink-0 overflow-hidden rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)]">
                             {item.image ? (
-                              <img width={80} height={56} src={item.image} alt="Achievement Thumbnail" className="h-full w-full object-cover" />
+                              <img width={80} height={56} src={(item.image)?.src || (item.image)} alt="Achievement Thumbnail" className="h-full w-full object-cover" />
                             ) : (
                               <ImageIcon className="m-auto h-full w-5 text-[var(--text-muted)]" />
                             )}
@@ -309,7 +311,7 @@ export default function AdminIntanShiningStar() {
                   <div className="flex gap-3 items-start min-w-0">
                     <div className="h-14 w-20 shrink-0 overflow-hidden rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)]">
                       {item.image ? (
-                        <img width={80} height={56} src={item.image} alt="Achievement Thumbnail" className="h-full w-full object-cover" />
+                        <img width={80} height={56} src={(item.image)?.src || (item.image)} alt="Achievement Thumbnail" className="h-full w-full object-cover" />
                       ) : (
                         <ImageIcon className="m-auto h-full w-5 text-[var(--text-muted)]" />
                       )}
@@ -404,7 +406,7 @@ export default function AdminIntanShiningStar() {
             </div>
             <div className="overflow-hidden rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)]">
               {preview || formData.image ? (
-                <img width={400} height={208} src={preview || formData.image} alt="Preview achievement" className="h-full min-h-52 w-full object-cover" />
+                <img width={400} height={208} src={(preview || formData.image)?.src || (preview || formData.image)} alt="Preview achievement" className="h-full min-h-52 w-full object-cover" />
               ) : (
                 <div className="flex min-h-52 flex-col items-center justify-center text-[var(--text-muted)]">
                   <ImageIcon className="h-7 w-7" /><span className="mt-2 text-xs">Preview gambar</span>

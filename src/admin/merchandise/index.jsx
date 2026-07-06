@@ -804,33 +804,56 @@ export default function AdminMerchandise() {
                       <div key={imgSlot.key} className="space-y-2 border-b border-slate-100/80 pb-4 last:border-b-0 last:pb-0">
                         <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">{imgSlot.label}</span>
                         
-                        {/* Image preview box */}
-                        <div className="aspect-[4/3] w-full rounded-2xl overflow-hidden bg-slate-50 border border-dashed border-slate-300 flex items-center justify-center relative shadow-inner">
-                          {hasVal ? (
-                            <img width={400} height={300} alt="Product Gallery Slot" src={formData[imgSlot.key]} className="w-full h-full object-cover" />
-                          ) : (
-                            <div className="text-center text-slate-300 flex flex-col items-center">
-                              <ImageIcon className="h-6 w-6 stroke-1 mb-1" />
-                              <span className="text-[9px] font-bold tracking-wider uppercase">Belum Ada Foto</span>
+                        {hasVal ? (
+                          <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden bg-slate-50 border border-slate-200 flex items-center justify-center group shadow-sm">
+                            <img width={400} height={300} alt="Product Gallery Slot" src={(formData[imgSlot.key])?.src || (formData[imgSlot.key])} className="w-full h-full object-cover" />
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setFormData(prev => ({ ...prev, [imgSlot.key]: '' }));
+                                  setSelectedFiles(prev => {
+                                    const copy = { ...prev };
+                                    delete copy[imgSlot.key];
+                                    return copy;
+                                  });
+                                }}
+                                className="px-3 py-1.5 bg-red-600 text-white rounded-lg text-xs font-bold cursor-pointer hover:bg-red-700 transition-colors flex items-center gap-1"
+                              >
+                                <X className="h-3.5 w-3.5" />
+                                <span>Hapus</span>
+                              </button>
                             </div>
-                          )}
-                          {uploadingKey === imgSlot.key && (
-                            <div className="absolute inset-0 bg-white/85 flex flex-col items-center justify-center p-3">
-                              <Clock className="animate-spin h-5 w-5 text-[var(--color-primary)] mb-1" />
-                              <span className="text-[9px] font-bold text-slate-500">MENGUNGGAH ({progress}%)</span>
-                            </div>
-                          )}
-                        </div>
+                          </div>
+                        ) : (
+                          <FileUploadCard
+                            files={selectedFiles[imgSlot.key] ? [{
+                              id: imgSlot.key,
+                              file: selectedFiles[imgSlot.key],
+                              progress: uploadingKey === imgSlot.key ? progress : 0,
+                              status: uploadingKey === imgSlot.key ? 'uploading' : 'completed'
+                            }] : []}
+                            onFilesChange={(newFiles) => {
+                              if (newFiles && newFiles.length > 0) {
+                                handleImageUpload(imgSlot.key, newFiles[0]);
+                              }
+                            }}
+                            onFileRemove={() => {
+                              setFormData(prev => ({ ...prev, [imgSlot.key]: '' }));
+                              setSelectedFiles(prev => {
+                                const copy = { ...prev };
+                                delete copy[imgSlot.key];
+                                return copy;
+                              });
+                            }}
+                            accept="image/*"
+                            multiple={false}
+                            className="max-w-full"
+                          />
+                        )}
 
                         {/* Image URL text input */}
                         <input autoComplete="off" /* autocomplete="off" */  type="text" name={imgSlot.key} value={formData[imgSlot.key]} onChange={handleInputChange} placeholder="Paste URL foto dari internet…" className="w-full px-3.5 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] font-semibold text-[10px] transition-colors" />
-
-                        {/* File Upload Selector Button */}
-                        <label className="flex cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white py-2 text-[10px] font-bold text-slate-700 hover:border-slate-400 transition select-none">
-                          <ImageIcon className="w-3.5 h-3.5 text-purple-400" />
-                          <span>Unggah File Foto</span>
-                          <input name="file_input" type="file" accept="image/*" onChange={(e) => void handleImageUpload(imgSlot.key, e.target.files?.[0] || null)} className="hidden" />
-                        </label>
                       </div>
                     );
                   })}
@@ -909,33 +932,56 @@ export default function AdminMerchandise() {
                   </h3>
                   
                   <div className="space-y-4">
-                    {/* QRIS image preview */}
-                    <div className="aspect-[4/3] w-full rounded-2xl overflow-hidden bg-slate-50 border border-dashed border-slate-300 flex items-center justify-center relative shadow-inner">
-                      {paymentSettings.qris_url ? (
-                        <img width={400} height={300} alt="Preview QRIS" src={paymentSettings.qris_url} className="w-full h-full object-contain" />
-                      ) : (
-                        <div className="text-center text-slate-300 flex flex-col items-center">
-                          <ImageIcon className="h-6 w-6 stroke-1 mb-1" />
-                          <span className="text-[9px] font-bold tracking-wider uppercase">Menggunakan QRIS Default</span>
+                    {paymentSettings.qris_url ? (
+                      <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden bg-slate-50 border border-slate-200 flex items-center justify-center group shadow-sm">
+                        <img width={400} height={300} alt="Preview QRIS" src={(paymentSettings.qris_url)?.src || (paymentSettings.qris_url)} className="w-full h-full object-contain" />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setPaymentSettings(prev => ({ ...prev, qris_url: '' }));
+                              setSelectedFiles(prev => {
+                                const copy = { ...prev };
+                                delete copy.payment_qris;
+                                return copy;
+                              });
+                            }}
+                            className="px-3 py-1.5 bg-red-600 text-white rounded-lg text-xs font-bold cursor-pointer hover:bg-red-700 transition-colors flex items-center gap-1"
+                          >
+                            <X className="h-3.5 w-3.5" />
+                            <span>Hapus</span>
+                          </button>
                         </div>
-                      )}
-                      {uploadingKey === 'payment_qris' && (
-                        <div className="absolute inset-0 bg-white/85 flex flex-col items-center justify-center p-3">
-                          <Clock className="animate-spin h-5 w-5 text-[var(--color-primary)] mb-1" />
-                          <span className="text-[9px] font-bold text-slate-500">MENGUNGGAH ({progress}%)</span>
-                        </div>
-                      )}
-                    </div>
+                      </div>
+                    ) : (
+                      <FileUploadCard
+                        files={selectedFiles.payment_qris ? [{
+                          id: 'payment_qris',
+                          file: selectedFiles.payment_qris,
+                          progress: uploadingKey === 'payment_qris' ? progress : 0,
+                          status: uploadingKey === 'payment_qris' ? 'uploading' : 'completed'
+                        }] : []}
+                        onFilesChange={(newFiles) => {
+                          if (newFiles && newFiles.length > 0) {
+                            handleQrisUpload(newFiles[0]);
+                          }
+                        }}
+                        onFileRemove={() => {
+                          setPaymentSettings(prev => ({ ...prev, qris_url: '' }));
+                          setSelectedFiles(prev => {
+                            const copy = { ...prev };
+                            delete copy.payment_qris;
+                            return copy;
+                          });
+                        }}
+                        accept="image/*"
+                        multiple={false}
+                        className="max-w-full"
+                      />
+                    )}
 
                     {/* QRIS URL input */}
                     <input autoComplete="off" /* autocomplete="off" */  name="qris_url" type="text" placeholder="Paste URL foto QRIS dari internet…" value={paymentSettings.qris_url} onChange={(e) => setPaymentSettings(prev => ({ ...prev, qris_url: e.target.value }))} className="w-full px-3.5 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] font-semibold text-[10px] transition-colors" />
-
-                    {/* QRIS Upload Button */}
-                    <label className="flex cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white py-2 text-[10px] font-bold text-slate-700 hover:border-slate-400 transition select-none">
-                      <ImageIcon className="w-3.5 h-3.5 text-purple-400" />
-                      <span>Unggah Foto QRIS</span>
-                      <input name="file_input" type="file" accept="image/*" onChange={(e) => void handleQrisUpload(e.target.files?.[0] || null)} className="hidden" />
-                    </label>
                   </div>
                 </Card>
               </div>

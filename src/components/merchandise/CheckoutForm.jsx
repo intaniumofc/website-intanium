@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import Button from '../common/Button';
 import Card from '../common/Card';
@@ -542,7 +544,7 @@ export default function CheckoutForm({
                 <span className="text-[9px] font-extrabold text-[var(--text-muted)] block uppercase tracking-widest mb-2">Scan QRIS Intanium</span>
                 <div className="w-48 h-64 border border-slate-200 rounded-xl overflow-hidden bg-white shadow-xs p-2 flex items-center justify-center">
                   <img
-                    src={paymentSettings.qris_url || qrisImage}
+                    src={(paymentSettings.qris_url || qrisImage)?.src || (paymentSettings.qris_url || qrisImage)}
                     alt="QRIS Pembayaran Intanium"
                     className="w-full h-full object-contain"
                   />
@@ -568,7 +570,7 @@ export default function CheckoutForm({
 
           <div className="flex items-center gap-4 mb-6">
             <img
-              src={product.image_url ?? product.imageUrl}
+              src={(product.image_url ?? product.imageUrl)?.src || (product.image_url ?? product.imageUrl)}
               alt={product.name}
               className="w-16 h-16 object-cover rounded-lg border border-[var(--border-color)]"
             />

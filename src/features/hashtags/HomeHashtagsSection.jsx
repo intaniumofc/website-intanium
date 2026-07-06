@@ -1,7 +1,11 @@
-import React, { useState, useEffect } from 'react';
+'use client';
+
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Copy, Check, Sparkles, X } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 const FALLBACK_HASHTAGS_ROW_1 = [
   { text: '#INTANIUM', count: '14.2K Tweets', explanation: 'Tagar resmi untuk fanclub Intan.' },
@@ -27,6 +31,9 @@ export default function HomeHashtagsSection() {
   const [hashtagsR2, setHashtagsR2] = useState(FALLBACK_HASHTAGS_ROW_2);
   const [selectedHashtag, setSelectedHashtag] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const row1Ref = useRef(null);
+  const row2Ref = useRef(null);
 
   useEffect(() => {
     fetchHashtags();
@@ -55,6 +62,76 @@ export default function HomeHashtagsSection() {
     }
   };
 
+  // GSAP Ticker Loop with Velocity Tracking and Hover Slowdown
+  useEffect(() => {
+    if (isLoading) return;
+    gsap.registerPlugin(ScrollTrigger);
+
+    let ctx = gsap.context(() => {
+      // Row 1 loops to the left
+      const tween1 = gsap.to(row1Ref.current, {
+        xPercent: -50,
+        ease: 'none',
+        duration: 25,
+        repeat: -1,
+      });
+
+      // Row 2 loops to the right
+      const tween2 = gsap.fromTo(
+        row2Ref.current,
+        { xPercent: -50 },
+        { xPercent: 0, ease: 'none', duration: 28, repeat: -1 }
+      );
+
+      // Slow down on mouse hover
+      const setupHoverSpeed = (el, tween) => {
+        if (!el) return;
+        const onEnter = () => gsap.to(tween, { timeScale: 0.15, duration: 0.4, overwrite: 'auto' });
+        const onLeave = () => gsap.to(tween, { timeScale: 1, duration: 0.4, overwrite: 'auto' });
+        el.addEventListener('mouseenter', onEnter);
+        el.addEventListener('mouseleave', onLeave);
+        return () => {
+          el.removeEventListener('mouseenter', onEnter);
+          el.removeEventListener('mouseleave', onLeave);
+        };
+      };
+
+      const cleanup1 = setupHoverSpeed(row1Ref.current, tween1);
+      const cleanup2 = setupHoverSpeed(row2Ref.current, tween2);
+
+      // Increase speed based on scrolling velocity
+      const scrollTriggerInstance = ScrollTrigger.create({
+        onUpdate: (self) => {
+          const velocity = self.getVelocity();
+          // Map velocity to speed factor (max 4.5x normal speed)
+          const speedFactor = 1 + Math.min(Math.abs(velocity) * 0.0008, 3.5);
+          
+          gsap.to([tween1, tween2], {
+            timeScale: speedFactor,
+            duration: 0.35,
+            overwrite: 'auto',
+          });
+          
+          // Smoothly return to cruising speed
+          gsap.to([tween1, tween2], {
+            timeScale: 1,
+            duration: 0.8,
+            delay: 0.25,
+            overwrite: 'auto',
+          });
+        },
+      });
+
+      return () => {
+        if (cleanup1) cleanup1();
+        if (cleanup2) cleanup2();
+        scrollTriggerInstance.kill();
+      };
+    });
+
+    return () => ctx.revert();
+  }, [isLoading, hashtagsR1, hashtagsR2]);
+
   const handleCopyHashtag = (e, text) => {
     e.stopPropagation();
     navigator.clipboard.writeText(text);
@@ -69,13 +146,12 @@ export default function HomeHashtagsSection() {
     window.open(url, '_blank');
   };
 
-  // We duplicate arrays to make infinite scroll smooth
+  // We duplicate arrays to make infinite scroll seamless (L + L + L + L)
   const doubleRow1 = [...hashtagsR1, ...hashtagsR1, ...hashtagsR1, ...hashtagsR1];
   const doubleRow2 = [...hashtagsR2, ...hashtagsR2, ...hashtagsR2, ...hashtagsR2];
 
   return (
     <section className="mx-auto w-full max-w-[1440px] px-0 pb-4 space-y-6 overflow-hidden">
-
       {/* Section Header */}
       <div className="flex justify-between items-end border-b border-[var(--border-color)]/60 pb-3 select-none px-4 sm:px-6">
         <div className="space-y-1">
@@ -96,17 +172,9 @@ export default function HomeHashtagsSection() {
 
         {/* Row 1 - Scroll Left */}
         <div className="flex w-full overflow-hidden select-none">
-          <motion.div
-            animate={{ x: [0, -1000] }}
-            transition={{
-              x: {
-                repeat: Infinity,
-                repeatType: "loop",
-                duration: 25,
-                ease: "linear",
-              },
-            }}
-            className="flex gap-4 shrink-0 pr-4"
+          <div
+            ref={row1Ref}
+            className="flex gap-4 shrink-0 pr-4 will-change-transform"
           >
             {doubleRow1.map((hash, idx) => (
               <div
@@ -143,22 +211,14 @@ export default function HomeHashtagsSection() {
                 </div>
               </div>
             ))}
-          </motion.div>
+          </div>
         </div>
 
         {/* Row 2 - Scroll Right */}
         <div className="flex w-full overflow-hidden select-none">
-          <motion.div
-            animate={{ x: [-1000, 0] }}
-            transition={{
-              x: {
-                repeat: Infinity,
-                repeatType: "loop",
-                duration: 28,
-                ease: "linear",
-              },
-            }}
-            className="flex gap-4 shrink-0 pr-4"
+          <div
+            ref={row2Ref}
+            className="flex gap-4 shrink-0 pr-4 will-change-transform"
           >
             {doubleRow2.map((hash, idx) => (
               <div
@@ -195,7 +255,7 @@ export default function HomeHashtagsSection() {
                 </div>
               </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </div>
 
@@ -286,7 +346,6 @@ export default function HomeHashtagsSection() {
           </div>
         )}
       </AnimatePresence>
-
     </section>
   );
 }

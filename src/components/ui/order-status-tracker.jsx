@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from "react";
 import { motion } from "framer-motion";
 import { cn } from "../../lib/utils";
@@ -60,7 +62,7 @@ export const OrderStatus = ({
           <ThreeDBox status={status} className="w-32 h-32 mx-auto" />
         ) : (
           <img
-            src={illustrationUrl}
+            src={(illustrationUrl)?.src || (illustrationUrl)}
             alt="Order Status Illustration"
             className="w-32 h-32 mx-auto object-contain drop-shadow-sm"
           />
@@ -74,7 +76,7 @@ export const OrderStatus = ({
         <InfoCard>
           <div className="flex items-center space-x-4">
             <img
-              src={item.imageUrl}
+              src={(item.imageUrl)?.src || (item.imageUrl)}
               alt={item.name}
               className="w-16 h-16 rounded-xl bg-slate-50 object-cover border border-slate-100 shrink-0"
             />

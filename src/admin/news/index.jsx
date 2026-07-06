@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
@@ -6,10 +8,14 @@ import { newsService } from '../../features/news/newsService';
 import Loading from '../../components/common/Loading';
 import ConfirmDialog from '../../components/common/ConfirmDialog';
 import { useAdminToast } from '../../components/common/useAdminToast';
-import { Plus, Edit, Trash2, Calendar, Search, Newspaper } from 'lucide-react';
+import { Plus, Edit, Trash2, Calendar, Search, Newspaper, Upload, Loader, X } from 'lucide-react';
+import { useMediaUpload } from '../../hooks/useMediaUpload';
+import { FileUploadCard } from '../../components/ui/FileUploadCard';
 
 export default function AdminNews() {
   const notify = useAdminToast();
+  const { uploadFile, isUploading, progress: uploadProgress } = useMediaUpload();
+  const [selectedFile, setSelectedFile] = useState(null);
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -45,6 +51,7 @@ export default function AdminNews() {
   const handleOpenAddModal = () => {
     setModalMode('add');
     setEditingId(null);
+    setSelectedFile(null);
     setFormData({
       title: '',
       date: new Date().toISOString().split('T')[0],
@@ -59,6 +66,7 @@ export default function AdminNews() {
   const handleOpenEditModal = (item) => {
     setModalMode('edit');
     setEditingId(item.id);
+    setSelectedFile(null);
     setFormData({
       title: item.title,
       date: item.date || '',
@@ -89,6 +97,20 @@ export default function AdminNews() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleUploadImage = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setSelectedFile(file);
+    try {
+      notify.info('Mengunggah…', 'Sedang memproses dan mengunggah gambar banner ke Cloudflare R2…');
+      const publicUrl = await uploadFile(file, 'assets', 'news');
+      setFormData(prev => ({ ...prev, image_url: publicUrl }));
+      notify.success('Berhasil', 'Gambar banner berhasil diunggah.');
+    } catch (err) {
+      notify.error('Gagal mengunggah', err.message || 'Terjadi kesalahan.');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -154,7 +176,7 @@ export default function AdminNews() {
       <div className="flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center">
         <div className="flex items-center gap-2 px-3 py-2 bg-white border border-[var(--border-color)] rounded-xl text-sm w-full md:w-80 shadow-sm">
           <Search className="h-4 w-4 text-[var(--text-muted)]" />
-          <input autoComplete="off" /* autocomplete="off" */ name="searchQuery" type="text" placeholder="Cari pengumuman…" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-transparent border-none focus:outline-none focus:ring-0 flex-1 text-[var(--text-primary)] placeholder-[var(--text-muted)]" />
+          <input autoComplete="off" name="searchQuery" type="text" placeholder="Cari pengumuman…" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-transparent border-none focus:outline-none focus:ring-0 flex-1 text-[var(--text-primary)] placeholder-[var(--text-muted)]" />
         </div>
 
         {/* Category Filters */}
@@ -308,14 +330,14 @@ export default function AdminNews() {
           {/* Title */}
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Judul Artikel / Pengumuman</label>
-            <input autoComplete="off" /* autocomplete="off" */ type="text" name="title" placeholder="Masukkan judul artikel yang menarik…" value={formData.title} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" required />
+            <input autoComplete="off" type="text" name="title" placeholder="Masukkan judul artikel yang menarik…" value={formData.title} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" required />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Date */}
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Tanggal Rilis</label>
-              <input autoComplete="off" /* autocomplete="off" */ type="date" name="date" value={formData.date} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" required />
+              <input autoComplete="off" type="date" name="date" value={formData.date} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" required />
             </div>
 
             {/* Category */}
@@ -334,11 +356,73 @@ export default function AdminNews() {
             </div>
           </div>
 
-          {/* Banner URL */}
+          {/* Banner Image Upload */}
           <div className="flex flex-col gap-1.5">
-            <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">URL Gambar Banner Utama</label>
-            <input autoComplete="off" /* autocomplete="off" */ type="text" name="image_url" placeholder="Masukkan URL foto banner dari internet…" value={formData.image_url} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" />
-            <p className="text-[10px] text-[var(--text-muted)]">Kosongkan jika ingin menggunakan banner default.</p>
+            <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Gambar Banner</label>
+            
+            {formData.image_url ? (
+              <div className="relative rounded-xl overflow-hidden border border-[var(--border-color)] bg-gray-50 aspect-[21/9] flex items-center justify-center group">
+                <img 
+                  src={formData.image_url} 
+                  alt="Preview Banner" 
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                  <label className="px-3 py-1.5 bg-white text-gray-800 rounded-lg text-xs font-bold cursor-pointer hover:bg-gray-100 transition-colors flex items-center gap-1">
+                    <Upload className="h-3.5 w-3.5" />
+                    <span>Ganti Foto</span>
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      onChange={handleUploadImage} 
+                      className="hidden" 
+                      disabled={isUploading} 
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFormData(prev => ({ ...prev, image_url: '' }));
+                      setSelectedFile(null);
+                    }}
+                    className="px-3 py-1.5 bg-red-600 text-white rounded-lg text-xs font-bold cursor-pointer hover:bg-red-700 transition-colors flex items-center gap-1"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                    <span>Hapus</span>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <FileUploadCard
+                files={selectedFile ? [{
+                  id: 'news-banner-upload',
+                  file: selectedFile,
+                  progress: uploadProgress,
+                  status: isUploading ? 'uploading' : 'completed'
+                }] : []}
+                onFilesChange={async (newFiles) => {
+                  if (newFiles && newFiles.length > 0) {
+                    const file = newFiles[0];
+                    setSelectedFile(file);
+                    try {
+                      notify.info('Mengunggah…', 'Sedang memproses dan mengunggah gambar banner ke Cloudflare R2…');
+                      const publicUrl = await uploadFile(file, 'assets', 'news');
+                      setFormData(prev => ({ ...prev, image_url: publicUrl }));
+                      notify.success('Berhasil', 'Gambar banner berhasil diunggah.');
+                    } catch (err) {
+                      notify.error('Gagal mengunggah', err.message || 'Terjadi kesalahan.');
+                    }
+                  }
+                }}
+                onFileRemove={() => {
+                  setSelectedFile(null);
+                  setFormData(prev => ({ ...prev, image_url: '' }));
+                }}
+                accept="image/*"
+                multiple={false}
+                className="max-w-full"
+              />
+            )}
           </div>
 
           {/* Summary */}
@@ -387,4 +471,3 @@ export default function AdminNews() {
     </div>
   );
 }
-

@@ -1,15 +1,15 @@
-import React, { useEffect } from 'react';
-import { BrowserRouter } from 'react-router-dom';
-import AppRoutes from './routes/AppRoutes';
+'use client';
+
+import { useEffect } from 'react';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-// Register ScrollTrigger to connect with GSAP scroll animations
-gsap.registerPlugin(ScrollTrigger);
-
-export default function App() {
+export default function SmoothScroll() {
   useEffect(() => {
+    // Register ScrollTrigger on client side
+    gsap.registerPlugin(ScrollTrigger);
+
     // Only initialize Lenis smooth scrolling on desktop to save mobile CPU
     if (window.innerWidth < 768) {
       return;
@@ -44,9 +44,5 @@ export default function App() {
     };
   }, []);
 
-  return (
-    <BrowserRouter>
-      <AppRoutes />
-    </BrowserRouter>
-  );
+  return null;
 }

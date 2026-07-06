@@ -1,8 +1,14 @@
+'use client';
+
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useCustomSearchParams } from '../../hooks/useCustomSearchParams';
+
+import Link from 'next/link';
+
+
 import { AnimatePresence, motion } from 'framer-motion';
 import { merchandiseService } from './merchandiseService';
-import { formatCurrency, getOptimizedImageUrl } from '../../lib/helpers';
+import { formatCurrency } from '../../lib/helpers';
 import { ROUTES } from '../../lib/constants';
 import Button from '../../components/common/Button';
 import { Search } from 'lucide-react';
@@ -99,7 +105,7 @@ function buildProductsLink(options) {
 }
 
 export default function MerchandisePage() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useCustomSearchParams();
   const query = searchParams.get('q') ?? '';
   const category = searchParams.get('category') ?? '';
   const newOnly = searchParams.get('new') === '1';
@@ -260,7 +266,7 @@ export default function MerchandisePage() {
             {hasFilter ? (
               <motion.div whileTap={{ scale: 0.98 }}>
                 <Link
-                  to="/merchandise"
+                  href="/merchandise"
                   className="flex items-center gap-1.5 rounded-xl border border-[var(--border-color)] bg-white px-5 py-2.5 text-xs font-bold text-[var(--text-secondary)] transition hover:bg-slate-50 cursor-pointer shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2"
                 >
                   <IconClose />
@@ -269,7 +275,7 @@ export default function MerchandisePage() {
               </motion.div>
             ) : null}
 
-            <Link to={ROUTES.PAYMENT_CONFIRM} className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 rounded-lg">
+            <Link href={ROUTES.PAYMENT_CONFIRM} className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 rounded-lg">
               <Button variant="primary" size="md" className="flex items-center gap-2 shadow-md font-bold px-6">
                 <Search className="h-4 w-4" /> Cek Pesanan
               </Button>
@@ -552,7 +558,7 @@ function SidebarContent({
           return (
             <Link
               key={option.value || 'all-products'}
-              to={buildProductsLink({ query, category: option.value, newOnly })}
+              href={buildProductsLink({ query, category: option.value, newOnly })}
               onClick={onLinkClick}
               className={`flex items-center justify-between rounded-xl px-4 py-2.5 text-xs font-bold transition ${active
                 ? 'bg-[var(--color-primary)] text-white shadow-sm'
@@ -570,7 +576,7 @@ function SidebarContent({
         <h3 className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Mode Katalog</h3>
         <div className="mt-3.5 space-y-2">
           <Link
-            to={buildProductsLink({ query, category, newOnly: false })}
+            href={buildProductsLink({ query, category, newOnly: false })}
             onClick={onLinkClick}
             className={`flex items-center justify-between rounded-xl px-4 py-2.5 text-xs font-bold transition ${!newOnly
               ? 'bg-[var(--color-primary)] text-white shadow-sm'
@@ -581,7 +587,7 @@ function SidebarContent({
             {!newOnly ? <IconChevronRight /> : null}
           </Link>
           <Link
-            to={buildProductsLink({ query, category, newOnly: true })}
+            href={buildProductsLink({ query, category, newOnly: true })}
             onClick={onLinkClick}
             className={`flex items-center justify-between rounded-xl px-4 py-2.5 text-xs font-bold transition ${newOnly
               ? 'bg-amber-500 text-white shadow-sm shadow-amber-200'
@@ -688,7 +694,7 @@ function ProductCard({ product }) {
       transition={{ duration: 0.3, ease: 'easeOut' }}
       className="group text-center [backface-visibility:hidden] h-full flex flex-col bg-white border border-[var(--border-color)] rounded-[1.75rem] p-3.5 shadow-sm hover:shadow-md transition-all relative"
     >
-      <Link to={`/merchandise/${product.id}`} className="block relative w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 rounded-2xl">
+      <Link href={`/merchandise/${product.id}`} className="block relative w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 rounded-2xl">
         {/* Out of Stock Label */}
         {!isAvailable ? (
           <span className="absolute top-2.5 left-2.5 z-30 px-2 py-0.5 rounded bg-black/60 backdrop-blur-sm text-[8px] uppercase tracking-widest font-black text-white border border-white/10 select-none pointer-events-none">
@@ -703,14 +709,14 @@ function ProductCard({ product }) {
           )
         )}
 
-        <div className="relative aspect-3/4 overflow-hidden rounded-2xl bg-[#f4f4f5] transition duration-300 w-full">
+        <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-[#f4f4f5] transition duration-300 w-full">
           {images.length > 0 ? (
             images.map((src, index) => (
               <img
                 key={`${src}-${index}`}
-                src={getOptimizedImageUrl(src, { width: 400 })}
+                src={(src)?.src || (src)}
                 alt={index === 0 ? product.name : ''}
-                className={`absolute inset-0 h-full w-full object-cover transition-all duration-700 ease-in-out group-hover:scale-105 ${index === imgIndex ? 'opacity-100' : 'opacity-0'
+                className={`absolute inset-0 h-full w-full object-cover transition-all duration-700 ease-in-out group-hover:scale-[1.03] ${index === imgIndex ? 'opacity-100' : 'opacity-0'
                   }`}
                 loading="lazy"
               />
@@ -739,7 +745,7 @@ function ProductCard({ product }) {
           <span className="text-[9px] uppercase font-extrabold tracking-wider text-slate-400 block text-left mb-1">
             {product.category}
           </span>
-          <Link to={`/merchandise/${product.id}`} className="block">
+          <Link href={`/merchandise/${product.id}`} className="block">
             <h3 className="text-left font-extrabold text-xs sm:text-sm text-slate-800 leading-snug line-clamp-2 min-h-[2.5rem] group-hover:text-[var(--color-primary)] transition-colors">
               {product.name}
             </h3>
@@ -767,7 +773,7 @@ function ProductCard({ product }) {
                     : 'border-slate-200 bg-white hover:border-slate-400'
                     }`}
                 >
-                  <img src={getOptimizedImageUrl(src, { width: 64 })} alt="" className="h-full w-full rounded-full object-cover" />
+                  <img src={(src)?.src || (src)} alt="" className="h-full w-full rounded-full object-cover" />
                 </motion.button>
               ))}
               {extraCount > 0 ? (
@@ -867,7 +873,7 @@ function ProductGridSkeleton({ cols }) {
     <div className={`grid gap-4 sm:gap-6 ${gridClassName} animate-pulse`}>
       {Array.from({ length: 6 }).map((_, idx) => (
         <div key={idx} className="bg-white border border-[var(--border-color)] rounded-[1.75rem] p-3.5 h-[340px] flex flex-col gap-3">
-          <div className="bg-slate-100 rounded-2xl w-full aspect-square" />
+          <div className="bg-slate-100 rounded-2xl w-full aspect-[3/4]" />
           <div className="h-3.5 bg-slate-100 rounded-md w-1/3 mt-1" />
           <div className="h-4 bg-slate-100 rounded-md w-4/5" />
           <div className="flex justify-between items-center mt-auto">

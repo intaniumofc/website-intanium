@@ -1,3 +1,5 @@
+'use client';
+
 import {
   useEffect,
   useRef,
@@ -271,7 +273,7 @@ const ScrollExpandMedia = ({
           >
             {bgImageSrc && (
               <img
-                src={bgImageSrc}
+                src={(bgImageSrc)?.src || (bgImageSrc)}
                 alt='Background'
                 className='w-full h-full object-cover object-center'
               />
@@ -349,7 +351,7 @@ const ScrollExpandMedia = ({
                 ) : (
                   <div className='relative w-full h-full'>
                     <img
-                      src={mediaSrc}
+                      src={(mediaSrc)?.src || (mediaSrc)}
                       alt={title || 'Media content'}
                       className='w-full h-full object-cover rounded-xl'
                     />

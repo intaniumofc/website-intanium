@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import { esportService } from '../../features/esport/esportService';
@@ -363,7 +365,7 @@ export default function AdminEsportPage() {
                       {/* Wallpaper Card Header Banner */}
                       <div className="relative h-36 bg-slate-900 overflow-hidden">
                         {div.wallpaper ? (
-                          <img src={div.wallpaper} alt={div.name} className="w-full h-full object-cover" />
+                          <img src={(div.wallpaper)?.src || (div.wallpaper)} alt={div.name} className="w-full h-full object-cover" />
                         ) : (
                           <div className="w-full h-full bg-gradient-to-br from-[#170C79]/40 to-[#1a0e8a]/20 flex items-center justify-center">
                             <span className="text-white/40 text-xs font-semibold">Belum Ada Wallpaper</span>
@@ -422,7 +424,7 @@ export default function AdminEsportPage() {
                           <tr key={r.id} className="hover:bg-slate-50/50 transition-colors">
                             <td className="p-4 pl-6">
                               <div className="flex items-center gap-3">
-                                <img src={r.image_url || 'https://api.dicebear.com/7.x/adventurer/svg?seed=placeholder'} alt={r.name} className="w-8 h-8 rounded-full object-cover border border-slate-200" />
+                                <img src={(r.image_url || 'https://api.dicebear.com/7.x/adventurer/svg?seed=placeholder')?.src || (r.image_url || 'https://api.dicebear.com/7.x/adventurer/svg?seed=placeholder')} alt={r.name} className="w-8 h-8 rounded-full object-cover border border-slate-200" />
                                 <span className="font-bold text-slate-800 text-sm max-w-[150px] lg:max-w-[200px] truncate">{r.name}</span>
                               </div>
                             </td>
@@ -480,7 +482,7 @@ export default function AdminEsportPage() {
                     return (
                       <div key={r.id} className="p-4 flex flex-col gap-3 hover:bg-slate-50/50 transition-colors">
                         <div className="flex items-center gap-3 min-w-0">
-                          <img src={r.image_url || 'https://api.dicebear.com/7.x/adventurer/svg?seed=placeholder'} alt={r.name} className="w-12 h-12 rounded-full object-cover border border-slate-200 shrink-0" />
+                          <img src={(r.image_url || 'https://api.dicebear.com/7.x/adventurer/svg?seed=placeholder')?.src || (r.image_url || 'https://api.dicebear.com/7.x/adventurer/svg?seed=placeholder')} alt={r.name} className="w-12 h-12 rounded-full object-cover border border-slate-200 shrink-0" />
                           <div className="flex flex-col min-w-0 flex-1">
                             <div className="font-bold text-slate-800 text-sm truncate">{r.name}</div>
                             <div className="text-xs font-semibold text-slate-600 truncate mt-0.5">{r.ign}</div>
@@ -564,7 +566,7 @@ export default function AdminEsportPage() {
                             <td className="p-4">
                               <div className="flex items-center gap-2">
                                 {m.opponent_logo && (m.opponent_logo.startsWith('http') || m.opponent_logo.startsWith('blob:')) ? (
-                                  <img src={m.opponent_logo} alt={m.opponent} className="w-8 h-8 object-contain rounded-full border border-slate-200 bg-white" />
+                                  <img src={(m.opponent_logo)?.src || (m.opponent_logo)} alt={m.opponent} className="w-8 h-8 object-contain rounded-full border border-slate-200 bg-white" />
                                 ) : (
                                   <span className="text-lg">{m.opponent_logo}</span>
                                 )}
@@ -632,7 +634,7 @@ export default function AdminEsportPage() {
                         <div className="flex justify-between items-start">
                           <div className="flex items-center gap-3">
                             {m.opponent_logo && (m.opponent_logo.startsWith('http') || m.opponent_logo.startsWith('blob:')) ? (
-                              <img src={m.opponent_logo} alt={m.opponent} className="w-10 h-10 object-contain rounded-full border border-slate-200 bg-white" />
+                              <img src={(m.opponent_logo)?.src || (m.opponent_logo)} alt={m.opponent} className="w-10 h-10 object-contain rounded-full border border-slate-200 bg-white" />
                             ) : (
                               <span className="text-2xl">{m.opponent_logo}</span>
                             )}
@@ -728,7 +730,7 @@ export default function AdminEsportPage() {
                             </td>
                             <td className="p-4">
                               {a.badge && (a.badge.startsWith('http') || a.badge.startsWith('blob:')) ? (
-                                <img src={a.badge} alt={a.title} className="w-8 h-8 object-contain rounded-lg border border-slate-200 bg-white" />
+                                <img src={(a.badge)?.src || (a.badge)} alt={a.title} className="w-8 h-8 object-contain rounded-lg border border-slate-200 bg-white" />
                               ) : (
                                 <span className="text-lg">{a.badge}</span>
                               )}
@@ -774,7 +776,7 @@ export default function AdminEsportPage() {
                         <div className="flex justify-between items-start">
                           <div className="flex items-center gap-3 min-w-0">
                             {a.badge && (a.badge.startsWith('http') || a.badge.startsWith('blob:')) ? (
-                              <img src={a.badge} alt={a.title} className="w-10 h-10 object-contain rounded-lg border border-slate-200 bg-white shrink-0" />
+                              <img src={(a.badge)?.src || (a.badge)} alt={a.title} className="w-10 h-10 object-contain rounded-lg border border-slate-200 bg-white shrink-0" />
                             ) : (
                               <span className="text-2xl shrink-0">{a.badge}</span>
                             )}
@@ -875,7 +877,7 @@ export default function AdminEsportPage() {
                           title="Klik untuk memilih gambar"
                         >
                           {wallpaperUpload.previewUrl ? (
-                            <img src={wallpaperUpload.previewUrl} alt="Preview Wallpaper" className="w-full h-full object-cover" />
+                            <img src={(wallpaperUpload.previewUrl)?.src || (wallpaperUpload.previewUrl)} alt="Preview Wallpaper" className="w-full h-full object-cover" />
                           ) : (
                             <Plus className="w-5 h-5 text-slate-400" />
                           )}
@@ -944,7 +946,7 @@ export default function AdminEsportPage() {
                           title="Klik untuk memilih gambar"
                         >
                           {avatarUpload.previewUrl ? (
-                            <img src={avatarUpload.previewUrl} alt="Preview Avatar" className="w-full h-full object-cover" />
+                            <img src={(avatarUpload.previewUrl)?.src || (avatarUpload.previewUrl)} alt="Preview Avatar" className="w-full h-full object-cover" />
                           ) : (
                             <Plus className="w-4 h-4 text-slate-400" />
                           )}
@@ -1019,7 +1021,7 @@ export default function AdminEsportPage() {
                           >
                             {opponentLogoUpload.previewUrl ? (
                               opponentLogoUpload.previewUrl.startsWith('http') || opponentLogoUpload.previewUrl.startsWith('blob:') ? (
-                                <img src={opponentLogoUpload.previewUrl} alt="Preview Opponent Logo" className="w-full h-full object-contain" />
+                                <img src={(opponentLogoUpload.previewUrl)?.src || (opponentLogoUpload.previewUrl)} alt="Preview Opponent Logo" className="w-full h-full object-contain" />
                               ) : (
                                 <span className="text-3xl">{opponentLogoUpload.previewUrl}</span>
                               )
@@ -1132,7 +1134,7 @@ export default function AdminEsportPage() {
                           >
                             {badgeUpload.previewUrl ? (
                               badgeUpload.previewUrl.startsWith('http') || badgeUpload.previewUrl.startsWith('blob:') ? (
-                                <img src={badgeUpload.previewUrl} alt="Preview Badge" className="w-full h-full object-contain" />
+                                <img src={(badgeUpload.previewUrl)?.src || (badgeUpload.previewUrl)} alt="Preview Badge" className="w-full h-full object-contain" />
                               ) : (
                                 <span className="text-3xl">{badgeUpload.previewUrl}</span>
                               )
@@ -1181,7 +1183,7 @@ export default function AdminEsportPage() {
                           title="Klik untuk memilih gambar"
                         >
                           {photoUpload.previewUrl ? (
-                            <img src={photoUpload.previewUrl} alt="Preview Photo" className="w-full h-full object-cover" />
+                            <img src={(photoUpload.previewUrl)?.src || (photoUpload.previewUrl)} alt="Preview Photo" className="w-full h-full object-cover" />
                           ) : (
                             <Plus className="w-4 h-4 text-slate-400" />
                           )}

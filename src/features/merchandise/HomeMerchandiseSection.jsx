@@ -1,7 +1,10 @@
+'use client';
+
 import { useState, useMemo, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
+
 import { motion, AnimatePresence } from 'framer-motion';
-import { formatCurrency, getOptimizedImageUrl } from '../../lib/helpers';
+import { formatCurrency } from '../../lib/helpers';
 import { ROUTES } from '../../lib/constants';
 import { ArrowRight } from 'lucide-react';
 import Card from '../../components/common/Card';
@@ -60,7 +63,7 @@ const ProductCard = ({ product }) => {
       whileHover={{ y: -5, transition: { duration: 0.25 } }}
       className="group h-full select-none"
     >
-      <Link to={`/merchandise/${product.id}`} className="block h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 rounded-[1.75rem]">
+      <Link href={`/merchandise/${product.id}`} className="block h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 rounded-[1.75rem]">
         <Card
           padding="none"
           hoverEffect={true}
@@ -81,11 +84,11 @@ const ProductCard = ({ product }) => {
           )}
 
           {/* Image container inside the padded card */}
-          <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-black/5">
+          <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl bg-black/5">
             {images.map((src, index) => (
               <img
                 key={`${src}-${index}`}
-                src={getOptimizedImageUrl(src, { width: 400 })}
+                src={(src)?.src || (src)}
                 alt={index === 0 ? product.name : ''}
                 className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-in-out group-hover:scale-105 ${
                   index === imgIndex ? 'opacity-100' : 'opacity-0'
@@ -144,7 +147,7 @@ const ProductCard = ({ product }) => {
                           : 'border-slate-200 bg-white hover:border-slate-400'
                       }`}
                     >
-                      <img src={getOptimizedImageUrl(src, { width: 64 })} alt="" className="h-full w-full rounded-full object-cover" />
+                      <img src={(src)?.src || (src)} alt="" className="h-full w-full rounded-full object-cover" />
                     </motion.button>
                   ))}
                   {extraCount > 0 ? (
@@ -199,7 +202,7 @@ export default function HomeMerchandiseSection({ products = [] }) {
           </h3>
         </div>
         <Link
-          to={ROUTES.MERCHANDISE}
+          href={ROUTES.MERCHANDISE}
           className="text-xs font-bold text-[var(--color-primary-hover)] hover:underline flex items-center gap-1 cursor-pointer pb-0.5 transition-all"
         >
           Lihat semua <span className="text-[var(--color-primary-hover)] font-bold">→</span>

@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect, useRef, useCallback, useId, useMemo, useReducer } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { playlistService } from './playlistService';
@@ -646,7 +648,7 @@ function Disc({
           return (
             <img
               key={l.id}
-              src={l.track.cover}
+              src={(l.track.cover)?.src || (l.track.cover)}
               alt={`${l.track.title} — ${l.track.artist}`}
               className={cls}
               draggable={false}
@@ -1004,7 +1006,7 @@ export function MusicPlayer({ tracks, crossOrigin = 'anonymous' }) {
                   <div className="flex items-center min-w-0 flex-1">
                     {/* Cover Thumbnail */}
                     <div className="relative w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-slate-900 border border-slate-200/60 shadow-sm">
-                      <img src={track.cover} alt={track.title} className="w-full h-full object-cover animate-none" />
+                      <img src={(track.cover)?.src || (track.cover)} alt={track.title} className="w-full h-full object-cover animate-none" />
                       <div className={`absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity duration-300 ${isCurrent ? 'opacity-100' : 'opacity-0 group-hover/row:opacity-100'}`}>
                         {isPlaying ? (
                           <Pause className="w-4 h-4 text-white" />

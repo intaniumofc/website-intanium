@@ -27,3 +27,7 @@ dist-ssr
 skills-lock.json
 migration_org_structure_and_rbac.sql
 bun.lockb
+
+# Next.js
+.next/
+out/

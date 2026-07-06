@@ -1,5 +1,7 @@
+'use client';
+
 import React, { useEffect, useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { motion, AnimatePresence, useReducedMotion, useScroll, useTransform, useInView } from 'framer-motion';
 import {
   Play,
@@ -17,27 +19,30 @@ import {
   Plus,
   ChevronLeft,
   ChevronRight,
-  Music
+  Music,
+  Droplet,
+  Ruler,
+  Users
 } from 'lucide-react';
 import { aboutIntanService } from './aboutIntanService';
 import { scheduleService } from '../schedule/scheduleService';
 import { FaThreads } from 'react-icons/fa6';
 import Loading from '../../components/common/Loading';
 import ScrollExpandMedia from '../../components/media/ScrollExpandMedia';
-import intanVideo from '../../assets/images/intan-02.mp4';
+const intanVideo = '/assets/videos/intan-02.mp4';
 import intanPoster from '../../assets/images/intan-02.webp';
 import intanBg from '../../assets/images/intan-04.webp';
 import intanProfile from '../../assets/images/Nur_Intan.webp';
 import intan1 from '../../assets/images/intan-01.webp';
 import { ImageSwiper } from '../../components/ui/ImageSwiper';
-import {
-  CalendarBlank as PhCalendarBlank,
-  Drop as PhDrop,
-  Ruler as PhRuler,
-  MapPin as PhMapPin,
-  UsersThree as PhUsersThree,
-  ShootingStar as PhShootingStar
-} from '@phosphor-icons/react';
+
+// Map to Lucide icons to remove @phosphor-icons/react dependency
+const PhCalendarBlank = Calendar;
+const PhDrop = Droplet;
+const PhRuler = Ruler;
+const PhMapPin = MapPin;
+const PhUsersThree = Users;
+const PhShootingStar = Sparkles;
 
 const PREMIUM_EASE = [0.16, 1, 0.3, 1];
 
@@ -1071,7 +1076,7 @@ export default function AboutIntanPage() {
                   <div className="absolute inset-0 bg-(--color-primary-light) opacity-20 blur-3xl rounded-3xl -m-6 pointer-events-none" />
 
                   <ImageSwiper
-                    images={`${intanProfile},${intan1},${intanPoster}`}
+                    images={[intanProfile, intan1, intanPoster]}
                     cardWidth={270}
                     cardHeight={360}
                     className="z-10"
@@ -1094,7 +1099,7 @@ export default function AboutIntanPage() {
                   {/* Caption & CTA */}
                   <motion.div variants={fadeUp} className="mt-8 text-center flex flex-col items-center gap-5">
                     <Link
-                      to="/shining-star"
+                      href="/shining-star"
                       className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-(--color-primary) text-white hover:bg-(--color-accent) font-bold text-sm tracking-wide shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer"
                     >
                       Lihat Perjalanan Nur Intan

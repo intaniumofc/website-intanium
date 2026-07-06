@@ -57,7 +57,12 @@ export const newsService = {
       .single();
       
     if (error) {
-      console.error('Error creating news:', error);
+      console.error('Error creating news detailed:', {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        hint: error.hint
+      });
       return { success: false, error: error.message };
     }
     return { success: true, data };
@@ -79,7 +84,12 @@ export const newsService = {
       .single();
       
     if (error) {
-      console.error('Error updating news:', error);
+      console.error('Error updating news detailed:', {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        hint: error.hint
+      });
       return { success: false, error: error.message };
     }
     return { success: true, data };
@@ -88,7 +98,12 @@ export const newsService = {
   deleteNews: async (id) => {
     const { error } = await supabase.from('news').delete().eq('id', id);
     if (error) {
-      console.error('Error deleting news:', error);
+      console.error('Error deleting news detailed:', {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        hint: error.hint
+      });
       return { success: false, error: error.message };
     }
     return { success: true };

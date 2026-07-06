@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
@@ -470,7 +472,7 @@ export default function AdminRecaps() {
                       {filteredItems.map(item => (
                         <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <img width={48} height={64} alt={item.title || 'Zine Cover'} src={item.thumbnailUrl || 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=100'} className="w-12 h-16 object-cover rounded-lg border border-[var(--border-color)] shadow-sm bg-[var(--bg-primary)]" />
+                            <img width={48} height={64} alt={item.title || 'Zine Cover'} src={(item.thumbnailUrl || 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=100')?.src || (item.thumbnailUrl || 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=100')} className="w-12 h-16 object-cover rounded-lg border border-[var(--border-color)] shadow-sm bg-[var(--bg-primary)]" />
                           </td>
                           <td className="px-6 py-4">
                             <div className="font-bold text-[var(--text-primary)] text-sm max-w-[200px] lg:max-w-sm truncate">{item.title}</div>
@@ -523,7 +525,7 @@ export default function AdminRecaps() {
                 <div className="md:hidden flex flex-col divide-y divide-[var(--border-color)]">
                   {filteredItems.map(item => (
                     <div key={item.id} className="p-4 flex gap-4 hover:bg-gray-50/50 transition-colors">
-                      <img width={60} height={80} alt={item.title || 'Zine Cover'} src={item.thumbnailUrl || 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=100'} className="w-[60px] h-[80px] shrink-0 object-cover rounded-lg border border-[var(--border-color)] shadow-sm bg-[var(--bg-primary)]" />
+                      <img width={60} height={80} alt={item.title || 'Zine Cover'} src={(item.thumbnailUrl || 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=100')?.src || (item.thumbnailUrl || 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=100')} className="w-[60px] h-[80px] shrink-0 object-cover rounded-lg border border-[var(--border-color)] shadow-sm bg-[var(--bg-primary)]" />
                       <div className="flex-1 flex flex-col gap-2 min-w-0">
                         <div className="min-w-0">
                           <div className="font-bold text-[var(--text-primary)] text-sm line-clamp-2 break-words min-w-0">{item.title}</div>

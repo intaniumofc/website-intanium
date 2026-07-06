@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight, Clock, MapPin, ArrowRight, Calendar as CalendarIcon, Sparkles, X, PlayCircle, Bell } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -326,7 +328,7 @@ export default function ScheduleCalendarView({ events }) {
               <div className="w-full aspect-video bg-black/20 border-b border-[var(--border-color)] relative">
                 {selectedEventDetail.thumbnail ? (
                   <img
-                    src={selectedEventDetail.thumbnail}
+                    src={(selectedEventDetail.thumbnail)?.src || (selectedEventDetail.thumbnail)}
                     alt={`Poster ${selectedEventDetail.title}`}
                     className="w-full h-full object-cover"
                   />

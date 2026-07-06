@@ -1,6 +1,10 @@
+'use client';
+
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { motion, AnimatePresence, useReducedMotion, LayoutGroup } from 'framer-motion';
+import Link from 'next/link';
+
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
+import { useSafeReducedMotion } from '../../hooks/useSafeReducedMotion';
 import { BookmarkIcon, X, ArrowRight, Newspaper } from 'lucide-react';
 import { ROUTES } from '../../lib/constants';
 import Card from '../../components/common/Card';
@@ -66,10 +70,23 @@ function getArticleImage(article) {
   return isGenericImage ? CATEGORY_IMAGES[article.category] || bannerIntanium : article.imageUrl;
 }
 
+function formatDateSafely(dateStr) {
+  if (!dateStr) return '1 Jan 2024';
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) {
+      return dateStr;
+    }
+    return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+  } catch (e) {
+    return dateStr;
+  }
+}
+
 export default function HomeNewsSection({ articles = [] }) {
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [bookmarkedArticles, setBookmarkedArticles] = useState(() => new Set());
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useSafeReducedMotion();
   const shouldAnimate = !shouldReduceMotion;
 
   const toggleBookmark = (articleId, e) => {
@@ -99,11 +116,11 @@ export default function HomeNewsSection({ articles = [] }) {
     return {
       ...art,
       image: getArticleImage(art),
-      published: art.date ? new Date(art.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '1 Jan 2024',
+      published: formatDateSafely(art.date),
       timeAgo: art.date ? 'Baru Rilis' : 'Baru saja',
       author: 'Official Admin',
       location: 'Online',
-      contentParagraphs: art.content ? art.content.split('\n\n') : [art.summary],
+      contentParagraphs: art.content ? art.content.split('\n\n') : [art.summary || ''],
       badgeClass: theme.badgeClass,
       gradientColors: theme.gradientColors
     };
@@ -146,7 +163,7 @@ export default function HomeNewsSection({ articles = [] }) {
           <Newspaper className="h-5 w-5 text-[var(--color-primary)]" /> Berita & Update Terbaru
         </h2>
         <Link 
-          to={ROUTES.NEWS} 
+          href={ROUTES.NEWS} 
           className="text-xs text-[var(--color-primary-hover)] hover:underline font-bold flex items-center gap-1 transition-all"
         >
           Lihat Semua <ArrowRight className="h-3 w-3" />
@@ -156,6 +173,9 @@ export default function HomeNewsSection({ articles = [] }) {
       <LayoutGroup>
         <motion.div
           className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 w-full"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }}
           variants={shouldAnimate ? cardContainerVariants : {}}
         >
           {formattedArticles.map((article) => {
@@ -188,7 +208,7 @@ export default function HomeNewsSection({ articles = [] }) {
                     className="aspect-[4/3] w-full relative overflow-hidden bg-black/5"
                   >
                     <img
-                      src={article.image}
+                      src={(article.image)?.src || (article.image)}
                       alt={article.title}
                       className="h-full w-full object-cover object-center transition-transform duration-500 hover:scale-105"
                       loading="lazy"
@@ -304,7 +324,7 @@ export default function HomeNewsSection({ articles = [] }) {
                     className="relative h-56 md:h-72 lg:h-80 w-full flex-shrink-0 bg-black/10"
                   >
                     <img
-                      src={selectedArticle.image}
+                      src={(selectedArticle.image)?.src || (selectedArticle.image)}
                       alt={selectedArticle.title}
                       className="w-full h-full object-cover"
                     />

@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
@@ -227,7 +229,7 @@ export default function AdminSchedule() {
                   {filteredItems.map(item => (
                     <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <img width={64} height={40} alt={item.title || 'Schedule Cover'} src={item.thumbnail || 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=100'} className="w-16 h-10 object-cover rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)]" />
+                        <img width={64} height={40} alt={item.title || 'Schedule Cover'} src={(item.thumbnail || 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=100')?.src || (item.thumbnail || 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=100')} className="w-16 h-10 object-cover rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)]" />
                       </td>
                       <td className="px-6 py-4">
                         <div className="font-bold text-[var(--text-primary)] text-sm max-w-[200px] lg:max-w-xs truncate">{item.title}</div>
@@ -308,7 +310,7 @@ export default function AdminSchedule() {
               {filteredItems.map(item => (
                 <div key={item.id} className="p-4 flex flex-col gap-3 hover:bg-gray-50/50 transition-colors">
                   <div className="flex gap-3 items-start min-w-0">
-                    <img width={64} height={40} alt={item.title || 'Schedule Cover'} src={item.thumbnail || 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=100'} className="w-16 h-10 object-cover rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] shrink-0" />
+                    <img width={64} height={40} alt={item.title || 'Schedule Cover'} src={(item.thumbnail || 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=100')?.src || (item.thumbnail || 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=100')} className="w-16 h-10 object-cover rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] shrink-0" />
                     <div className="min-w-0 flex-1">
                       <div className="font-bold text-[var(--text-primary)] text-sm line-clamp-2 break-words">{item.title}</div>
                       <div className="flex items-center gap-2 mt-1.5">

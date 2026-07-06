@@ -1,13 +1,16 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
+
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
 import Loading from '../components/common/Loading';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 import { ROUTES } from '../lib/constants';
 import { formatCurrency, logAdminActivity } from '../lib/helpers';
-import { supabase } from '../lib/supabaseClient';
+import { createClient } from '../utils/supabase/client';
 import { madingService } from '../features/mading/madingService';
 import { useAdminToast } from '../components/common/useAdminToast';
 import {
@@ -30,6 +33,7 @@ import {
 const PREMIUM_EASE = [0.16, 1, 0.3, 1];
 
 export default function DashboardPage() {
+  const supabase = createClient();
   const notify = useAdminToast();
   const [isLoading, setIsLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
@@ -587,7 +591,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="border-t border-slate-100 pt-3 text-right">
-            <Link to={ROUTES.ADMIN_MADING} className="inline-flex items-center gap-1 text-xs font-black text-[#170C79] hover:underline">
+            <Link href={ROUTES.ADMIN_MADING} className="inline-flex items-center gap-1 text-xs font-black text-[#170C79] hover:underline">
               Kelola Mading Lengkap <ArrowUpRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -637,7 +641,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="border-t border-slate-100 pt-3 text-right">
-            <Link to={ROUTES.ADMIN_ORDERS} className="inline-flex items-center gap-1 text-xs font-black text-[#170C79] hover:underline">
+            <Link href={ROUTES.ADMIN_ORDERS} className="inline-flex items-center gap-1 text-xs font-black text-[#170C79] hover:underline">
               Semua Pesanan <ArrowUpRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -734,28 +738,28 @@ export default function DashboardPage() {
         </h4>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 
-          <Link to={ROUTES.ADMIN_MERCHANDISE} className="group">
+          <Link href={ROUTES.ADMIN_MERCHANDISE} className="group">
             <Card hoverEffect={false} className="p-4 bg-white border border-slate-200/80 rounded-2xl text-center font-bold text-slate-700 hover:text-[#170C79] hover:border-[#170C79]/40 hover:shadow-xs transition-colors duration-200 flex items-center justify-center gap-2 text-xs cursor-pointer">
               <ShoppingBag className="w-4 h-4 text-blue-600" />
               <span>Tambah Produk</span>
             </Card>
           </Link>
 
-          <Link to={ROUTES.ADMIN_RECAPS} className="group">
+          <Link href={ROUTES.ADMIN_RECAPS} className="group">
             <Card hoverEffect={false} className="p-4 bg-white border border-slate-200/80 rounded-2xl text-center font-bold text-slate-700 hover:text-[#170C79] hover:border-[#170C79]/40 hover:shadow-xs transition-colors duration-200 flex items-center justify-center gap-2 text-xs cursor-pointer">
               <BookOpen className="w-4 h-4 text-purple-600" />
               <span>Unggah Zine</span>
             </Card>
           </Link>
 
-          <Link to={ROUTES.ADMIN_SCHEDULE} className="group">
+          <Link href={ROUTES.ADMIN_SCHEDULE} className="group">
             <Card hoverEffect={false} className="p-4 bg-white border border-slate-200/80 rounded-2xl text-center font-bold text-slate-700 hover:text-[#170C79] hover:border-[#170C79]/40 hover:shadow-xs transition-colors duration-200 flex items-center justify-center gap-2 text-xs cursor-pointer">
               <Calendar className="w-4 h-4 text-emerald-600" />
               <span>Buat Jadwal</span>
             </Card>
           </Link>
 
-          <Link to={ROUTES.ADMIN_NEWS} className="group">
+          <Link href={ROUTES.ADMIN_NEWS} className="group">
             <Card hoverEffect={false} className="p-4 bg-white border border-slate-200/80 rounded-2xl text-center font-bold text-slate-700 hover:text-[#170C79] hover:border-[#170C79]/40 hover:shadow-xs transition-colors duration-200 flex items-center justify-center gap-2 text-xs cursor-pointer">
               <Newspaper className="w-4 h-4 text-rose-500" />
               <span>Tulis Berita</span>
