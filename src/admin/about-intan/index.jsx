@@ -141,7 +141,7 @@ function StatsTab() {
 
   const handleAdd = () => { setModalMode('add'); setEditingId(null); setFormData({ label: '', value: '', icon: '', description: '', sort_order: items.length + 1 }); setIsModalOpen(true); };
   const handleEdit = (item) => { setModalMode('edit'); setEditingId(item.id); setFormData({ label: item.label, value: item.value, icon: item.icon || '', description: item.description || '', sort_order: item.sort_order || 0 }); setIsModalOpen(true); };
-  
+
   const handleDelete = (id) => {
     setConfirmDelete({ isOpen: true, id });
   };
@@ -179,7 +179,7 @@ function StatsTab() {
   return (
     <>
       <div className="flex justify-between items-center mb-4">
-        <p className="text-xs text-(--text-secondary)">Kelola angka-angka statistik yang tampil di halaman profil Intan.</p>
+        <p className="text-xs text-(--text-secondary)">Kelola angka-angka statistik yang tampil di halaman Intan.</p>
         <Button variant="primary" size="sm" className="flex items-center gap-1.5 shadow-md cursor-pointer" onClick={handleAdd}>
           <Plus className="h-4 w-4" /> Tambah Statistik
         </Button>
@@ -273,7 +273,7 @@ function SetlistsTab() {
     setFormData({ name: item.name, period: item.period, shows: item.shows || '', theme: item.theme || '', image_url: item.image_url || '', status: item.status || 'Aktif', note: item.note || '', sort_order: item.sort_order || 0, unitSongsText: songs });
     setIsModalOpen(true);
   };
-  
+
   const handleDelete = (id) => {
     setConfirmDelete({ isOpen: true, id });
   };
@@ -451,7 +451,7 @@ function VideosTab() {
     setMetadataError('');
     setFormData(previous => ({ ...previous, youtube_url: event.target.value, title: '', duration: '' }));
   };
-  
+
   const handleDelete = (id) => {
     setConfirmDelete({ isOpen: true, id });
   };
@@ -501,9 +501,11 @@ function VideosTab() {
 
       <AdminTable
         columns={[
-          { key: 'thumbnail', header: 'Preview', render: (item) => (
-            <img width={96} height={56} src={(getYouTubeThumbnailUrl(item.youtube_id))?.src || (getYouTubeThumbnailUrl(item.youtube_id))} alt={item.title || 'YouTube Thumbnail'} className="w-24 h-14 object-cover rounded-lg border border-(--border-color)" />
-          )},
+          {
+            key: 'thumbnail', header: 'Preview', render: (item) => (
+              <img width={96} height={56} src={(getYouTubeThumbnailUrl(item.youtube_id))?.src || (getYouTubeThumbnailUrl(item.youtube_id))} alt={item.title || 'YouTube Thumbnail'} className="w-24 h-14 object-cover rounded-lg border border-(--border-color)" />
+            )
+          },
           { key: 'title', header: 'Judul Video', render: (item) => <span className="font-bold text-(--text-primary) line-clamp-1">{item.title}</span> },
           { key: 'category', header: 'Kategori', render: (item) => <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-(--color-primary-light) text-(--color-primary)">{item.category}</span> },
           { key: 'youtube_id', header: 'Link YouTube', render: (item) => <a href={getYouTubeWatchUrl(item.youtube_id)} target="_blank" rel="noreferrer" className="text-xs font-bold text-blue-600 hover:underline">Buka video</a> },
@@ -588,7 +590,7 @@ function TriviaTab() {
 
   const handleAdd = () => { setModalMode('add'); setEditingId(null); setFormData({ question: '', answer: '', sort_order: items.length + 1 }); setIsModalOpen(true); };
   const handleEdit = (item) => { setModalMode('edit'); setEditingId(item.id); setFormData({ question: item.question, answer: item.answer, sort_order: item.sort_order || 0 }); setIsModalOpen(true); };
-  
+
   const handleDelete = (id) => {
     setConfirmDelete({ isOpen: true, id });
   };
@@ -704,11 +706,10 @@ export default function AdminAboutIntan() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-colors border cursor-pointer ${
-                isActive
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-colors border cursor-pointer ${isActive
                   ? 'bg-(--color-primary) border-(--color-primary) text-white shadow-sm'
                   : 'bg-white border-(--border-color) text-(--text-secondary) hover:bg-gray-50'
-              }`}
+                }`}
             >
               <Icon className="h-4 w-4" />
               {tab.label}
