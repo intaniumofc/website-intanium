@@ -1,5 +1,8 @@
+'use client';
+
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import Link from 'next/link';
+
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { cn } from "../../lib/utils";
@@ -80,7 +83,7 @@ export function PortfolioGallery({
           <h2 className="text-3xl md:text-5xl font-black text-slate-800 mb-6 text-balance">{title}</h2>
 
           <Link
-            to={archiveButton.href}
+            href={archiveButton.href}
             className="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white px-6 py-3 rounded-full font-bold transition-all duration-300 shadow-md active:scale-95 group mb-14"
           >
             <span>{archiveButton.text}</span>
@@ -142,7 +145,7 @@ export function PortfolioGallery({
                     }}
                   >
                     <img
-                      src={image.src || "/placeholder.svg"}
+                      src={(image.src || "/placeholder.svg")?.src || (image.src || "/placeholder.svg")}
                       alt={image.alt}
                       className="w-full h-full object-cover object-center"
                       loading="lazy"
@@ -200,7 +203,7 @@ export function PortfolioGallery({
                         }}
                       >
                         <img
-                          src={image.src || "/placeholder.svg"}
+                          src={(image.src || "/placeholder.svg")?.src || (image.src || "/placeholder.svg")}
                           alt={image.alt}
                           className="w-full h-full object-cover object-center"
                           loading="lazy"

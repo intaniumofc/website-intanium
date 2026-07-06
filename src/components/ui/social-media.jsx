@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { cn } from "../../lib/utils";
 
@@ -47,7 +49,7 @@ const SocialTooltip = React.forwardRef(({ className, items, ...props }, ref) => 
                   typeof item.icon === 'function' ? item.icon() : item.icon
                 ) : (
                   <img
-                    src={item.svgUrl}
+                    src={(item.svgUrl)?.src || (item.svgUrl)}
                     alt={item.ariaLabel}
                     className="w-4 h-4 sm:w-4.5 sm:h-4.5 object-contain"
                   />

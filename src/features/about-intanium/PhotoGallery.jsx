@@ -1,7 +1,10 @@
+'use client';
+
 import { useState, useEffect, useMemo } from "react";
 import { motion, useMotionValue } from "framer-motion";
 
-import { Link } from "react-router-dom";
+import Link from 'next/link';
+
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ROUTES } from "@/lib/constants";
@@ -209,7 +212,7 @@ export const PhotoGallery = () => {
       </div>
       <div className="flex w-full justify-center mt-6">
         <Link
-          to={ROUTES.GALLERY}
+          href={ROUTES.GALLERY}
           className="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white px-8 py-3.5 rounded-full font-extrabold uppercase tracking-wider text-xs transition-all duration-300 shadow-md hover:shadow-[var(--neon-glow-primary)] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 group animate-fade-in"
         >
           <span>Buka Galeri Foto</span>
@@ -294,7 +297,7 @@ export const Photo = ({
       <div className="relative h-full w-full overflow-hidden rounded-3xl shadow-sm border border-[var(--border-color)] bg-white p-1">
         <motion.img
           className={cn("rounded-2xl object-cover absolute inset-1 w-[calc(100%-8px)] h-[calc(100%-8px)]")}
-          src={src}
+          src={(src)?.src || (src)}
           alt={alt}
           draggable={false}
           {...props}

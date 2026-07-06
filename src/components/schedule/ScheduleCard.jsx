@@ -1,3 +1,5 @@
+'use client';
+
 import { motion, useMotionValue, useTransform } from 'framer-motion';
 import Card from '../common/Card';
 import Button from '../common/Button';
@@ -149,7 +151,7 @@ export default function ScheduleCard({ event, className = '', isHorizontal = fal
         }`}>
           {thumbnail ? (
             <img
-              src={thumbnail}
+              src={(thumbnail)?.src || (thumbnail)}
               alt={`Poster ${title}`}
               className="w-full h-full object-cover transition-transform duration-600 group-hover:scale-110"
             />

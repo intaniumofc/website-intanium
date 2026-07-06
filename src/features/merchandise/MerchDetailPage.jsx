@@ -1,5 +1,8 @@
+'use client';
+
 import { useState, useEffect, useMemo } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { merchandiseService } from './merchandiseService';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
@@ -12,7 +15,8 @@ import { ShieldCheck, Truck, Clock } from 'lucide-react';
 
 export default function MerchDetailPage() {
   const { id } = useParams();
-  const navigate = useNavigate();
+  const router = useRouter();
+  const navigate = (path) => router.push(path);
 
   const [product, setProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -58,7 +62,7 @@ export default function MerchDetailPage() {
         <span className="text-4xl mb-3 block">🔎</span>
         <h3 className="text-lg font-bold mb-1 text-[var(--color-primary)]">Produk Tidak Ditemukan</h3>
         <p className="text-xs text-[var(--text-secondary)] mb-6">Kemungkinan produk telah dihapus atau tidak pernah terdaftar.</p>
-        <Link to={ROUTES.MERCHANDISE}>
+        <Link href={ROUTES.MERCHANDISE}>
           <Button variant="outline" size="sm">Kembali ke Toko</Button>
         </Link>
       </Card>
@@ -131,7 +135,7 @@ Saya melampirkan bukti transfer pembayaran di bawah ini. Mohon segera diproses y
       {/* Back button */}
       <div>
         <Link
-          to={ROUTES.MERCHANDISE}
+          href={ROUTES.MERCHANDISE}
           className="inline-flex items-center gap-1 text-xs font-bold text-[var(--text-secondary)] hover:text-[var(--color-primary)] transition-colors"
         >
           ← Kembali ke Toko

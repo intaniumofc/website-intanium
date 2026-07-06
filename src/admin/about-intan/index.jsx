@@ -1,5 +1,9 @@
+'use client';
+
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useCustomSearchParams } from '../../hooks/useCustomSearchParams';
+
+
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
@@ -498,7 +502,7 @@ function VideosTab() {
       <AdminTable
         columns={[
           { key: 'thumbnail', header: 'Preview', render: (item) => (
-            <img width={96} height={56} src={getYouTubeThumbnailUrl(item.youtube_id)} alt={item.title || 'YouTube Thumbnail'} className="w-24 h-14 object-cover rounded-lg border border-(--border-color)" />
+            <img width={96} height={56} src={(getYouTubeThumbnailUrl(item.youtube_id))?.src || (getYouTubeThumbnailUrl(item.youtube_id))} alt={item.title || 'YouTube Thumbnail'} className="w-24 h-14 object-cover rounded-lg border border-(--border-color)" />
           )},
           { key: 'title', header: 'Judul Video', render: (item) => <span className="font-bold text-(--text-primary) line-clamp-1">{item.title}</span> },
           { key: 'category', header: 'Kategori', render: (item) => <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-(--color-primary-light) text-(--color-primary)">{item.category}</span> },
@@ -531,7 +535,7 @@ function VideosTab() {
           {metadataError && <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-medium text-red-600">{metadataError}</p>}
           {parsedYouTubeId && (
             <div className="rounded-xl overflow-hidden border border-(--border-color) bg-white">
-              <img width={320} height={160} src={getYouTubeThumbnailUrl(parsedYouTubeId)} alt="Preview" className="w-full h-40 object-cover" />
+              <img width={320} height={160} src={(getYouTubeThumbnailUrl(parsedYouTubeId))?.src || (getYouTubeThumbnailUrl(parsedYouTubeId))} alt="Preview" className="w-full h-40 object-cover" />
               <div className="p-3">
                 <p className="font-bold text-(--text-primary)">{formData.title || 'Menunggu judul video…'}</p>
                 <p className="mt-1 text-xs text-(--text-muted)">Durasi: {formData.duration || 'Membaca…'}</p>
@@ -672,7 +676,7 @@ function TriviaTab() {
 // MAIN ADMIN PAGE
 // ==========================================
 export default function AdminAboutIntan() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useCustomSearchParams();
   const activeTab = searchParams.get('tab') || 'stats';
 
   const setActiveTab = (tabId) => {

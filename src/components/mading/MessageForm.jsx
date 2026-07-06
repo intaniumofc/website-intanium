@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import Card from '../common/Card';
 import Button from '../common/Button';

@@ -1,5 +1,8 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'next/navigation';
+
 import { recapService } from './recapService';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
@@ -34,7 +37,7 @@ export default function RecapDetailPage() {
         <Search className="h-12 w-12 text-[var(--color-primary)] mx-auto mb-3" />
         <h3 className="text-lg font-bold mb-2">Arsip Recap Tidak Ditemukan</h3>
         <p className="text-sm text-[var(--text-secondary)] mb-4">Kami gagal menemukan zine dengan kode pengenal ini.</p>
-        <Link to={ROUTES.RECAPS}>
+        <Link href={ROUTES.RECAPS}>
           <Button variant="outline" size="sm">Kembali ke Daftar</Button>
         </Link>
       </Card>
@@ -44,7 +47,7 @@ export default function RecapDetailPage() {
   return (
     <div className="space-y-8 max-w-4xl mx-auto animate-fade-in">
       <div>
-        <Link to={ROUTES.RECAPS} className="text-sm text-[var(--text-secondary)] hover:text-[var(--color-primary)] font-semibold transition-colors">
+        <Link href={ROUTES.RECAPS} className="text-sm text-[var(--text-secondary)] hover:text-[var(--color-primary)] font-semibold transition-colors">
           ← Kembali ke Arsip Recap
         </Link>
       </div>

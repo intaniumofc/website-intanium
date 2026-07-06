@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import Card from '../common/Card';
 import Button from '../common/Button';
@@ -49,7 +51,7 @@ export default function ZineViewer({
         <div className="w-full flex-grow flex items-center justify-center p-4 relative">
           {activePage.imageUrl ? (
             <img
-              src={activePage.imageUrl}
+              src={(activePage.imageUrl)?.src || (activePage.imageUrl)}
               alt={`Zine page ${currentPageIdx + 1}`}
               className="max-h-full max-w-full object-contain rounded shadow-lg animate-fade-in"
             />

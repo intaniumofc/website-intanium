@@ -74,9 +74,9 @@ const ContainerScroll = ({
   className,
   ...props
 }) => {
-  const scrollRef = React.useRef(null)
+  const [scrollElement, setScrollElement] = React.useState(null)
   const { scrollYProgress } = useScroll({
-    target: scrollRef,
+    target: scrollElement ? { current: scrollElement } : undefined,
   })
 
   React.useEffect(() => {
@@ -105,7 +105,7 @@ const ContainerScroll = ({
           className
         )}
         {...props}
-        ref={scrollRef}
+        ref={setScrollElement}
       >
         {children}
       </section>

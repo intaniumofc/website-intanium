@@ -1,5 +1,8 @@
+'use client';
+
 import React, { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
+
 import { motion } from 'framer-motion';
 import { cva } from 'class-variance-authority';
 import { cn } from '../../lib/utils';
@@ -203,7 +206,7 @@ export default function MadingPreviewSection() {
         const mapped = data.map((note, idx) => {
           const noteId = note.id;
           
-          const savedLoves = JSON.parse(localStorage.getItem('mading_loves') || '{}');
+          const savedLoves = JSON.parse((typeof window !== 'undefined' ? (...args) => localStorage.getItem(...args) : () => null)('mading_loves') || '{}');
           let loves = savedLoves[noteId];
           if (loves === undefined) {
             loves = (Math.abs(noteId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)) % 28) + 5;
@@ -291,7 +294,7 @@ export default function MadingPreviewSection() {
         {/* Right Side: Link CTA */}
         <motion.div variants={ctaCardVariant}>
           <Link
-            to={ROUTES.MADING}
+            href={ROUTES.MADING}
             className="text-xs font-bold text-[var(--color-primary-hover)] hover:underline flex items-center gap-1 cursor-pointer pb-0.5 transition-all group"
           >
             Buka Mading <span className="inline-block transition-transform duration-200 group-hover:translate-x-1">→</span>
@@ -390,7 +393,7 @@ export default function MadingPreviewSection() {
           className="bg-white border border-[var(--border-color)]"
         >
           <p className="text-xs text-[var(--text-secondary)] text-left leading-relaxed">
-            Ini hanya preview. Untuk membaca semua pesan dan menambahkan pesanmu sendiri, kunjungi halaman <Link to={ROUTES.MADING} className="font-extrabold text-indigo-700 hover:underline">Mading Intanium ↗</Link>.
+            Ini hanya preview. Untuk membaca semua pesan dan menambahkan pesanmu sendiri, kunjungi halaman <Link href={ROUTES.MADING} className="font-extrabold text-indigo-700 hover:underline">Mading Intanium ↗</Link>.
           </p>
         </Banner>
       </div>

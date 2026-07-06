@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { merchandiseService } from '../../features/merchandise/merchandiseService';
 import { formatCurrency } from '../../lib/helpers';

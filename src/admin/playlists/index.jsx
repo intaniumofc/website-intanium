@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
@@ -471,7 +473,7 @@ export default function AdminPlaylists() {
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-3">
                               {item.imageUrl ? (
-                                <img width={40} height={40} alt="Playlist Cover" src={item.imageUrl} className="w-10 h-10 object-cover rounded-lg shadow-sm border border-slate-100 flex-shrink-0" />
+                                <img width={40} height={40} alt="Playlist Cover" src={(item.imageUrl)?.src || (item.imageUrl)} className="w-10 h-10 object-cover rounded-lg shadow-sm border border-slate-100 flex-shrink-0" />
                               ) : (
                                 <span className="w-10 h-10 rounded-lg bg-[var(--color-primary-light)] text-[var(--color-primary)] flex items-center justify-center flex-shrink-0 shadow-inner">
                                   <Music className="h-5 w-5" />
@@ -548,7 +550,7 @@ export default function AdminPlaylists() {
                     <div key={item.id} className="p-4 flex flex-col gap-3 hover:bg-gray-50/50 transition-colors">
                       <div className="flex gap-3 items-start min-w-0">
                         {item.imageUrl ? (
-                          <img width={40} height={40} alt="Playlist Cover" src={item.imageUrl} className="w-10 h-10 object-cover rounded-lg shadow-sm border border-slate-100 shrink-0" />
+                          <img width={40} height={40} alt="Playlist Cover" src={(item.imageUrl)?.src || (item.imageUrl)} className="w-10 h-10 object-cover rounded-lg shadow-sm border border-slate-100 shrink-0" />
                         ) : (
                           <span className="w-10 h-10 rounded-lg bg-[var(--color-primary-light)] text-[var(--color-primary)] flex items-center justify-center shrink-0 shadow-inner">
                             <Music className="h-5 w-5" />

@@ -1,5 +1,8 @@
+'use client';
+
 import { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
+
 import { motion, AnimatePresence } from 'framer-motion';
 import { ROUTES } from '../../lib/constants';
 import { getGameLeaderboard, getGameSettings } from './menangkap-kecoa/gameService';
@@ -474,7 +477,7 @@ export default function GamesPage() {
                   </button>
                 ) : (
                   <Link
-                    to={featuredGame.link || '#'}
+                    href={featuredGame.link || '#'}
                     className={`inline-flex items-center gap-3 ${heroTheme.button} transition-all duration-300 font-extrabold text-base px-8 py-4 rounded-2xl shadow-lg hover:scale-105`}
                   >
                     <Play className="size-4.5 fill-current" /> Main Sekarang <ChevronRight className="size-5" />
@@ -504,7 +507,7 @@ export default function GamesPage() {
                     }}
                     className="w-48 sm:w-56 relative z-10 filter drop-shadow-[0_12px_28px_rgba(0,0,0,0.5)]"
                   >
-                    <img src={cockroachImage} alt="Kecoa Raksasa" className="w-full h-auto object-contain" />
+                    <img src={(cockroachImage)?.src || (cockroachImage)} alt="Kecoa Raksasa" className="w-full h-auto object-contain" />
                   </motion.div>
 
                   {/* Floating Score Numbers */}
@@ -612,7 +615,7 @@ export default function GamesPage() {
                   {/* Background Image & Overlay */}
                   {bgUrl ? (
                     <img
-                      src={bgUrl}
+                      src={(bgUrl)?.src || (bgUrl)}
                       alt={game.title}
                       className={`absolute inset-0 h-full w-full object-cover transition-transform duration-550 group-hover:scale-105 ${!game.active ? 'filter grayscale opacity-20 blur-[2px]' : 'opacity-40 group-hover:opacity-50'
                         }`}
@@ -683,7 +686,7 @@ export default function GamesPage() {
                         </button>
                       ) : (
                         <Link
-                          to={game.link || '#'}
+                          href={game.link || '#'}
                           className={`flex w-full items-center justify-center gap-2 rounded-xl py-3.5 font-black text-sm ${gameTheme.button} transition-all duration-305`}
                         >
                           <Play className="size-3.5 fill-current" /> Main Sekarang <ArrowRight className="size-4" />
@@ -742,7 +745,7 @@ export default function GamesPage() {
 
               <div className="pt-4 border-t border-[#170C79]/5 mt-4">
                 <Link
-                  to={ROUTES.GAME_MENANGKAP_KECOA}
+                  href={ROUTES.GAME_MENANGKAP_KECOA}
                   className="flex w-full items-center justify-center gap-2 rounded-xl py-3.5 font-extrabold text-sm border border-[#170C79]/10 text-[#170C79] hover:bg-[#170C79] hover:text-white transition-all duration-300"
                 >
                   Lihat Papan Skor Utama <ArrowRight className="size-4 animate-bounce-horizontal" />

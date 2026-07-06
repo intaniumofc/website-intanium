@@ -1,3 +1,5 @@
+'use client';
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Bug,
@@ -57,7 +59,7 @@ function Roach({ cockroach, onCatch }) {
       >
         <img
           className={`roach-image ${cockroach.state === 'fly' ? 'roach-image--flying' : ''}`}
-          src={activeImage}
+          src={(activeImage)?.src || (activeImage)}
           alt=""
           draggable="false"
         />
@@ -126,8 +128,8 @@ export default function MenangkapKecoaPage() {
   const areaRef = useRef(null);
   const submittedRef = useRef(false);
   const { state, start, catchCockroach } = useGameLoop(areaRef);
-  const [username, setUsername] = useState(() => localStorage.getItem(PLAYER_KEY) || '');
-  const [highScore, setHighScore] = useState(() => Number(localStorage.getItem(HIGH_SCORE_KEY) || 0));
+  const [username, setUsername] = useState(() => (typeof window !== 'undefined' ? (...args) => localStorage.getItem(...args) : () => null)(PLAYER_KEY) || '');
+  const [highScore, setHighScore] = useState(() => Number((typeof window !== 'undefined' ? (...args) => localStorage.getItem(...args) : () => null)(HIGH_SCORE_KEY) || 0));
   const [scores, setScores] = useState([]);
   const [period, setPeriod] = useState('weekly');
   const [leaderboardState, setLeaderboardState] = useState({ open: false, loading: false, error: false });
@@ -165,9 +167,9 @@ export default function MenangkapKecoaPage() {
       return;
     }
     setNameError('');
-    localStorage.setItem(PLAYER_KEY, cleanName);
+    (typeof window !== 'undefined' ? (...args) => localStorage.setItem(...args) : () => {})(PLAYER_KEY, cleanName);
     setUsername(cleanName);
-    setHighScore(Number(localStorage.getItem(HIGH_SCORE_KEY) || 0));
+    setHighScore(Number((typeof window !== 'undefined' ? (...args) => localStorage.getItem(...args) : () => null)(HIGH_SCORE_KEY) || 0));
     setResultUrl('');
     setHitEffects([]);
     start();
@@ -218,7 +220,7 @@ export default function MenangkapKecoaPage() {
 
     submittedRef.current = true;
     if (state.score > highScore) {
-      localStorage.setItem(HIGH_SCORE_KEY, String(state.score));
+      (typeof window !== 'undefined' ? (...args) => localStorage.setItem(...args) : () => {})(HIGH_SCORE_KEY, String(state.score));
     }
 
     submitGameScore({
@@ -257,7 +259,7 @@ export default function MenangkapKecoaPage() {
             <div className="game-start-arena game-main-arena relative grid min-h-[520px] place-items-center overflow-hidden rounded-[1.5rem] px-5 py-10 text-center text-white">
               <div className="game-start-panel relative z-10 w-full max-w-md rounded-[1.75rem] border border-white/15 px-5 py-8 sm:px-8">
                 <div className="game-start-hero mx-auto grid size-28 place-items-center">
-                  <img src={cockroachImage} alt="Kecoa" className="game-start-hero-roach w-24" />
+                  <img src={(cockroachImage)?.src || (cockroachImage)} alt="Kecoa" className="game-start-hero-roach w-24" />
                 </div>
                 <h2 className="mt-6 text-3xl font-black">Berani seperti Intan?</h2>
                 <p className="mt-3 text-sm leading-relaxed text-white/70">

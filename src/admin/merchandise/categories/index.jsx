@@ -1,5 +1,8 @@
+'use client';
+
 import React, { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
+
 import { merchandiseService } from '../../../features/merchandise/merchandiseService';
 import { formatCurrency } from '../../../lib/helpers';
 import { ROUTES, MERCH_CATEGORIES } from '../../../lib/constants';
@@ -251,7 +254,7 @@ export default function AdminCategories() {
           </h1>
         </div>
         <div>
-          <Link to={ROUTES.ADMIN_MERCHANDISE}>
+          <Link href={ROUTES.ADMIN_MERCHANDISE}>
             <Button variant="outline" size="sm" className="flex items-center gap-1.5 font-bold cursor-pointer">
               <LayoutGrid className="h-4 w-4" /> Kelola Produk
             </Button>
@@ -451,7 +454,7 @@ export default function AdminCategories() {
                           <tr key={prod.id} className="hover:bg-slate-50/30 transition-colors">
                             <td className="px-5 py-3.5 whitespace-nowrap">
                               <div className="flex items-center gap-3">
-                                <img width={40} height={40} alt="Product Category Preview" src={prod.image_url || 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=100'} className="w-10 h-10 object-cover rounded-xl border border-slate-200" />
+                                <img width={40} height={40} alt="Product Category Preview" src={(prod.image_url || 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=100')?.src || (prod.image_url || 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=100')} className="w-10 h-10 object-cover rounded-xl border border-slate-200" />
                                 <div className="min-w-0">
                                   <div className="font-extrabold text-slate-800 truncate max-w-[200px]">{prod.name}</div>
                                   <div className="font-mono text-[9px] text-slate-400 mt-0.5">{prod.id}</div>
@@ -472,7 +475,7 @@ export default function AdminCategories() {
                             </td>
                             <td className="px-5 py-3.5 text-right whitespace-nowrap font-bold">
                               <Link 
-                                to={ROUTES.ADMIN_MERCHANDISE}
+                                href={ROUTES.ADMIN_MERCHANDISE}
                                 className="inline-flex items-center gap-1 text-[10px] text-[var(--color-primary)] hover:underline"
                               >
                                 Edit Produk <ArrowRight className="h-3 w-3" />

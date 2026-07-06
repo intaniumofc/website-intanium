@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { AlertToast } from './AlertToast';

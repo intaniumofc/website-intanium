@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import { fanartService } from './fanartService';
 import ImageGrid from '../../components/media/ImageGrid';
@@ -6,6 +8,7 @@ import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
 import Card from '../../components/common/Card';
 import { useSupabaseUpload } from '../../hooks/useSupabaseUpload';
+import { FileUploadCard } from '../../components/ui/FileUploadCard';
 import { Palette } from 'lucide-react';
 
 export default function FanartPage() {
@@ -194,42 +197,31 @@ export default function FanartPage() {
           </div>
 
           <div>
-            <label htmlFor="fanart-form-file" className="block text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1.5 cursor-pointer">
+            <label className="block text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1.5">
               Pilih Berkas Gambar (JPG/PNG)
             </label>
-            <div className="mt-1 flex justify-center px-6 pt-4 pb-5 border-2 border-[var(--border-color)] border-dashed rounded-lg bg-[var(--bg-primary)] hover:border-[var(--color-primary)] transition-all">
-              <div className="space-y-1 text-center">
-                <Palette className="h-8 w-8 text-purple-400 block mx-auto mb-1" />
-                <div className="flex text-sm text-gray-400 justify-center">
-                  <label className="relative cursor-pointer rounded-md font-semibold text-[var(--color-primary-hover)] hover:underline focus-within:outline-none">
-                    <span>Pilih file gambar</span>
-                    <input
-                      type="file"
-                      id="fanart-form-file"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                      className="sr-only"
-                    />
-                  </label>
-                </div>
-                {file && (
-                  <p className="mt-2 text-xs font-semibold text-emerald-400 truncate max-w-xs mx-auto">
-                    ✓ {file.name}
-                  </p>
-                )}
-              </div>
-            </div>
+            <FileUploadCard
+              files={file ? [{
+                id: 'fanart-upload',
+                file: file,
+                progress: progress,
+                status: isUploading ? 'uploading' : 'completed'
+              }] : []}
+              onFilesChange={(newFiles) => {
+                if (newFiles && newFiles.length > 0) {
+                  setFile(newFiles[0]);
+                  if (errors.url) {
+                    setErrors((prev) => ({ ...prev, url: '' }));
+                  }
+                }
+              }}
+              onFileRemove={() => setFile(null)}
+              accept="image/*"
+              multiple={false}
+              className="max-w-full"
+            />
             {errors.url && <p className="mt-1 text-xs text-red-500 font-medium">{errors.url}</p>}
           </div>
-
-          {isUploading && (
-            <div className="w-full bg-[var(--border-color)] rounded-full h-1 overflow-hidden">
-              <div
-                className="bg-purple-500 h-1 rounded-full transition-all duration-300"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          )}
 
           <Button
             type="submit"

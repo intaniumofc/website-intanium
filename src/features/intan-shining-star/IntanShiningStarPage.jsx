@@ -1,5 +1,8 @@
+'use client';
+
 import { useEffect, useRef, useState } from 'react';
-import { motion, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { useSafeReducedMotion } from '../../hooks/useSafeReducedMotion';
 import {
   ArrowDown,
   ArrowUp,
@@ -45,7 +48,7 @@ function CategoryBadge({ category }) {
 }
 
 function TimelineCard({ achievement, side }) {
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useSafeReducedMotion();
 
   return (
     <motion.article
@@ -63,7 +66,7 @@ function TimelineCard({ achievement, side }) {
     >
       {achievement.image && (
         <div className="shining-timeline-image">
-          <img src={achievement.image} alt={achievement.title} loading="lazy" />
+          <img src={(achievement.image)?.src || (achievement.image)} alt={achievement.title} loading="lazy" />
         </div>
       )}
       <div className="shining-timeline-content">
@@ -76,14 +79,14 @@ function TimelineCard({ achievement, side }) {
 }
 
 function JourneyTimeline({ achievements }) {
-  const timelineRef = useRef(null);
+  const [element, setElement] = useState(null);
   const scrollAnimationRef = useRef(null);
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useSafeReducedMotion();
   const reversedAchievements = achievements
     .filter((achievement) => achievement.showInTimeline !== false)
     .reverse();
   const { scrollYProgress } = useScroll({
-    target: timelineRef,
+    target: element ? { current: element } : undefined,
     offset: ['start end', 'end start'],
   });
   const upwardProgress = useTransform(scrollYProgress, [0, 1], [1, 0]);
@@ -139,7 +142,7 @@ function JourneyTimeline({ achievements }) {
   };
 
   return (
-    <section ref={timelineRef} id="journey-timeline" className="shining-timeline-section shining-scroll-target">
+    <section ref={setElement} id="journey-timeline" className="shining-timeline-section shining-scroll-target">
       <SectionHeading
         eyebrow="The Journey"
         title="Jejak Cahaya Intan"
@@ -238,7 +241,7 @@ function AchievementCollection({ achievements }) {
           >
             {item.image && (
               <div className="shining-achievement-image">
-                <img src={item.image} alt={item.title} loading="lazy" />
+                <img src={(item.image)?.src || (item.image)} alt={item.title} loading="lazy" />
               </div>
             )}
             <div className="shining-achievement-content">
@@ -260,7 +263,7 @@ function AchievementCollection({ achievements }) {
 export default function IntanShiningStarPage() {
   const [achievements, setAchievements] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useSafeReducedMotion();
 
   useEffect(() => {
     document.title = 'Intan Shining Star | JKT48 Official Achievement & Journey';

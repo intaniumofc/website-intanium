@@ -1,6 +1,10 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import { Bug, Gamepad2, Send, Sparkles, Target } from 'lucide-react';
-import { Link, useParams } from 'react-router-dom';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+
 import { ROUTES } from '../../../lib/constants';
 import { getGameScore } from './gameService';
 import { shareScore } from './gameUtils';
@@ -45,7 +49,7 @@ export default function ScoreResultPage() {
             </button>
           </>
         )}
-        <Link to={ROUTES.GAME_MENANGKAP_KECOA} className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#170C79] px-5 py-3 font-bold text-white">
+        <Link href={ROUTES.GAME_MENANGKAP_KECOA} className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#170C79] px-5 py-3 font-bold text-white">
           <Gamepad2 className="size-4" /> Main Sekarang
         </Link>
       </div>

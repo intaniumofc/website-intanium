@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -7,9 +8,10 @@ import { Checkbox } from "../components/ui/checkbox";
 import { Eye, EyeOff, Mail, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "../lib/utils";
-import { supabase } from "../lib/supabaseClient";
+import { createClient } from "../utils/supabase/client";
 import { ROUTES } from "../lib/constants";
 import logoNobg from "../assets/logos/logo-nobg.webp";
+import Image from "next/image";
 
 const Pupil = ({
   size = 12,
@@ -153,8 +155,19 @@ const EyeBall = ({
 };
 
 export default function LoginPage() {
-  const navigate = useNavigate();
+  const router = useRouter();
+  const supabase = createClient();
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    const checkActiveSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        router.push(ROUTES.ADMIN_DASHBOARD);
+      }
+    };
+    checkActiveSession();
+  }, [router, supabase]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -292,7 +305,7 @@ export default function LoginPage() {
     } else if (data.session) {
       localStorage.setItem("isAdminAuthenticated", "true");
       setIsLoading(false);
-      navigate(ROUTES.ADMIN_DASHBOARD);
+      router.push(ROUTES.ADMIN_DASHBOARD);
     }
   };
 
@@ -301,8 +314,8 @@ export default function LoginPage() {
       {/* Left Content Section */}
       <div className="relative hidden lg:flex flex-col justify-between bg-gradient-to-br from-[#170C79] via-[#2112a3] to-[#0e074e] p-12 text-white overflow-hidden">
         <div className="relative z-20">
-          <Link to="/" className="flex items-center gap-2 text-lg font-semibold group w-fit">
-            <img width={32} height={32} alt="Logo Intanium" src={logoNobg} className="h-8 w-8 object-contain transition-transform duration-300 group-hover:scale-105" />
+          <Link href="/" className="flex items-center gap-2 text-lg font-semibold group w-fit">
+            <Image width={32} height={32} alt="Logo Intanium" src={logoNobg} className="h-8 w-8 object-contain transition-transform duration-300 group-hover:scale-105" />
             <motion.span
               className="text-xl font-extrabold tracking-tight bg-[linear-gradient(110deg,#ffffff,35%,#a5b4fc,50%,#ffffff,75%,#ffffff)] bg-[length:200%_100%] bg-clip-text text-transparent select-none"
               initial={{ backgroundPosition: "200% 0" }}
@@ -504,7 +517,7 @@ export default function LoginPage() {
         <div className="w-full max-w-[420px] space-y-6">
           {/* Mobile Logo */}
           <div className="lg:hidden flex items-center justify-center gap-2 text-lg font-semibold mb-12">
-            <img width={32} height={32} alt="Logo Intanium" src={logoNobg} className="h-8 w-8 object-contain" />
+            <Image width={32} height={32} alt="Logo Intanium" src={logoNobg} className="h-8 w-8 object-contain" />
             <motion.span
               className="text-xl font-extrabold tracking-tight bg-[linear-gradient(110deg,#1e293b,35%,#6366f1,50%,#1e293b,75%,#1e293b)] bg-[length:200%_100%] bg-clip-text text-transparent select-none"
               initial={{ backgroundPosition: "200% 0" }}
@@ -602,7 +615,7 @@ export default function LoginPage() {
 
           {/* Back Link */}
           <div className="text-center pt-2">
-            <Link to="/" className="text-xs text-slate-500 hover:text-[#170C79] transition-colors font-semibold">
+            <Link href="/" className="text-xs text-slate-500 hover:text-[#170C79] transition-colors font-semibold">
               ← Kembali ke Halaman Utama
             </Link>
           </div>

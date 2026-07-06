@@ -1,5 +1,8 @@
+'use client';
+
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
+
 import { motion } from 'framer-motion';
 import {
   AlertCircle,
@@ -116,12 +119,12 @@ function GlassNewsCard({ item, index = 0, featured = false }) {
       className={`h-full w-full ${featured ? 'max-w-[420px]' : ''}`}
     >
       <Link
-        to={`/news/${item.id}`}
+        href={`/news/${item.id}`}
         className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-violet-100/80 bg-white/55 shadow-sm backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-violet-300 hover:shadow-xl hover:shadow-violet-900/10"
       >
         <div className="relative aspect-video overflow-hidden bg-violet-50">
           <motion.img
-            src={item.image}
+            src={(item.image)?.src || (item.image)}
             alt={item.title}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
             loading="lazy"
@@ -160,7 +163,7 @@ function GlassNewsCard({ item, index = 0, featured = false }) {
           <div className="mt-auto flex items-center justify-between border-t border-violet-100 pt-4">
             <div className="flex min-w-0 items-center gap-2.5">
               <div className="flex size-8 shrink-0 items-center justify-center rounded-full border border-violet-100 bg-[#170C79]">
-                <img src={logoNobg} alt="" className="size-5 object-contain" />
+                <img src={(logoNobg)?.src || (logoNobg)} alt="" className="size-5 object-contain" />
               </div>
               <div className="min-w-0 text-[10px]">
                 <p className="truncate font-black text-[#170C79]">INTANIUM Official</p>
@@ -287,7 +290,7 @@ export default function NewsPage() {
                 {latestUpdates.map((item) => (
                   <Link
                     key={item.id}
-                    to={`/news/${item.id}`}
+                    href={`/news/${item.id}`}
                     className="group grid gap-3 px-1 py-4 transition hover:bg-violet-50/60 md:grid-cols-[145px_1fr_auto] md:items-center md:px-3"
                   >
                     <div>
@@ -321,7 +324,7 @@ export default function NewsPage() {
                 <h3 className="mt-1 font-black text-[#170C79]">{importantNews.title}</h3>
                 <p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-600">{importantNews.excerpt}</p>
               </div>
-              <Link to={`/news/${importantNews.id}`} className="flex items-center gap-1 text-xs font-black text-[#170C79]">
+              <Link href={`/news/${importantNews.id}`} className="flex items-center gap-1 text-xs font-black text-[#170C79]">
                 Baca Detail <ArrowRight className="size-3.5" />
               </Link>
             </section>

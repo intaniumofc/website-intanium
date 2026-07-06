@@ -1,6 +1,9 @@
+'use client';
+
 import { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import HTMLFlipBook from 'react-pageflip';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
+
 import {
   ArrowLeft,
   ArrowRight,
@@ -421,13 +424,13 @@ function DigitalZineList() {
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-5xl mx-auto animate-fade-in p-4">
       {zines.map((zine) => (
         <Link
-          to={`/recaps/${zine.id}`}
+          href={`/recaps/${zine.id}`}
           key={zine.id}
           className="group flex flex-col bg-white border border-[var(--border-color)] rounded-2xl overflow-hidden hover:border-[var(--color-primary)]/40 hover:shadow-xl transition-all duration-300"
         >
           <div className="aspect-[3/4] w-full overflow-hidden bg-gray-100 relative">
             <img
-              src={zine.thumbnailUrl || 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400'}
+              src={(zine.thumbnailUrl || 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400')?.src || (zine.thumbnailUrl || 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400')}
               alt={zine.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               loading="lazy"
@@ -488,7 +491,7 @@ export default function RecapListPage() {
   const handleOpenBook = useCallback(() => {
     if (readerState !== 'closed') return;
 
-    const shouldRespectReducedMotion = import.meta.env.PROD;
+    const shouldRespectReducedMotion = process.env.NODE_ENV === 'production';
     const prefersReducedMotion =
       shouldRespectReducedMotion &&
       window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
@@ -567,7 +570,7 @@ export default function RecapListPage() {
   return (
     <div
       className={`recap-book-page ${readerState === 'opening' ? 'is-cinematic-opening' : ''}`}
-      data-force-motion={import.meta.env.DEV ? 'true' : undefined}
+      data-force-motion={process.env.NODE_ENV !== 'production' ? 'true' : undefined}
     >
       <header className="recap-intro">
         <span className="recap-kicker">INTANIUM Editorial Archive</span>

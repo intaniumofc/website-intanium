@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -148,7 +150,7 @@ export default function HomeGallerySection() {
                 className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl max-w-full"
               >
                 <img
-                  src={photos[activePhotoIdx].url}
+                  src={(photos[activePhotoIdx].url)?.src || (photos[activePhotoIdx].url)}
                   alt={photos[activePhotoIdx].title}
                   className="max-w-full max-h-[70vh] object-contain rounded-2xl block"
                 />

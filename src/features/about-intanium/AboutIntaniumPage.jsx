@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import logoNobg from '../../assets/logos/logo-nobg.webp';
@@ -238,7 +240,7 @@ function LogoPngViewer({ fallbackImage, className = 'w-72 h-72 sm:w-80 sm:h-80' 
         className="w-1/2 h-1/2 flex items-center justify-center z-20 pointer-events-none"
       >
         <img
-          src={fallbackImage}
+          src={(fallbackImage)?.src || (fallbackImage)}
           alt="Intanium Official Logo"
           className="w-full h-full object-contain filter drop-shadow-[0_0_14px_rgba(221,214,254,0.55)]"
         />

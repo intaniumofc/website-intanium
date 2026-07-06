@@ -1,3 +1,5 @@
+'use client';
+
 import { useMemo, useState } from 'react';
 import { ChevronLeft, ChevronRight, Crown, Medal, Trophy } from 'lucide-react';
 import { cn } from '../../../lib/utils';

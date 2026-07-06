@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { madingService } from '../../features/mading/madingService';
 import Card from '../../components/common/Card';
@@ -32,7 +34,7 @@ export default function AdminMading() {
     setIsLoading(true);
     madingService.getNotes(false) // Fetch ALL notes (approved & unapproved)
       .then((data) => {
-        const savedLoves = JSON.parse(localStorage.getItem('mading_loves') || '{}');
+        const savedLoves = JSON.parse((typeof window !== 'undefined' ? (...args) => localStorage.getItem(...args) : () => null)('mading_loves') || '{}');
         const mapped = data.map((note) => {
           const noteId = note.id;
           let loves = savedLoves[noteId];
@@ -52,7 +54,7 @@ export default function AdminMading() {
             loves: loves
           };
         });
-        localStorage.setItem('mading_loves', JSON.stringify(savedLoves));
+        (typeof window !== 'undefined' ? (...args) => localStorage.setItem(...args) : () => {})('mading_loves', JSON.stringify(savedLoves));
         setNotes(mapped);
         setIsLoading(false);
       })

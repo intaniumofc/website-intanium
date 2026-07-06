@@ -1,5 +1,8 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
+
 import { motion } from 'framer-motion';
 import { FaThreads } from 'react-icons/fa6';
 import Button from '../../components/common/Button';
@@ -15,7 +18,7 @@ import {
 } from 'lucide-react';
 import { ContainerScroll, ContainerStagger, ContainerAnimated, ContainerInset } from '../../components/ui/hero-video';
 import { AnimatedText } from '../../components/ui/animated-text';
-import intanVideo from '../../assets/images/intan-02.mp4';
+const intanVideo = '/assets/videos/intan-02.mp4';
 import { ImageSwiper } from '../../components/ui/ImageSwiper';
 import { aboutIntanService } from '../about-intan/aboutIntanService';
 import { SocialTooltip } from '../../components/ui/social-media';
@@ -228,7 +231,7 @@ export default function HomePage() {
               >
                 Kenali Sosok Intan <ArrowDown className="h-4 w-4 transition-transform duration-300 group-hover:translate-y-1" />
               </Button>
-              <Link to={ROUTES.ABOUT_INTANIUM}>
+              <Link href={ROUTES.ABOUT_INTANIUM}>
                 <Button variant="outline" size="md" className="group gap-2 border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white transition-all duration-300 hover:scale-105 shadow-sm hover:shadow-[var(--neon-glow-primary)]">
                   Tentang Kami <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                 </Button>
@@ -316,7 +319,7 @@ export default function HomePage() {
                   {/* CTA Button */}
                   <div className="pt-4">
                     <Link
-                      to={ROUTES.ABOUT_INTAN}
+                      href={ROUTES.ABOUT_INTAN}
                       className="inline-flex items-center gap-3.5 px-8 py-3.5 rounded-full bg-white text-[#4A7ABF] font-extrabold text-[10px] sm:text-xs uppercase tracking-[0.15em] shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#345B8B]"
                     >
                       Yuk Kenali Lebih Lanjut
@@ -332,7 +335,7 @@ export default function HomePage() {
                   <div className="relative">
                     <div className="absolute inset-0 bg-white/10 opacity-20 blur-2xl rounded-2xl -m-4 pointer-events-none" />
                     <ImageSwiper
-                      images={`${intan1},${intan2},${intan3},${intan4}`}
+                      images={[intan1, intan2, intan3, intan4]}
                       cardWidth={isMobile ? 220 : 280}
                       cardHeight={isMobile ? 310 : 390}
                       className="z-10"

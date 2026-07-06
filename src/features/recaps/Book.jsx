@@ -1,3 +1,5 @@
+'use client';
+
 import { forwardRef, useEffect, useRef } from 'react';
 
 const Book = forwardRef(function Book(

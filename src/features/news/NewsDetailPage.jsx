@@ -1,5 +1,8 @@
+'use client';
+
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'next/navigation';
+
 import { newsService } from './newsService';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
@@ -61,7 +64,7 @@ export default function NewsDetailPage() {
         <span className="text-4xl mb-2">🔎</span>
         <h3 className="text-lg font-bold mb-2">Artikel Tidak Ditemukan</h3>
         <p className="text-sm text-[var(--text-secondary)] mb-4">Kami tidak dapat menemukan berita dengan kode pengenal ini.</p>
-        <Link to={ROUTES.NEWS}>
+        <Link href={ROUTES.NEWS}>
           <Button variant="outline" size="sm">Kembali ke Berita</Button>
         </Link>
       </Card>
@@ -71,7 +74,7 @@ export default function NewsDetailPage() {
   return (
     <div className="space-y-8 max-w-3xl mx-auto animate-fade-in">
       <div>
-        <Link to={ROUTES.NEWS} className="text-sm text-[var(--text-secondary)] hover:text-[var(--color-primary)] font-semibold transition-colors">
+        <Link href={ROUTES.NEWS} className="text-sm text-[var(--text-secondary)] hover:text-[var(--color-primary)] font-semibold transition-colors">
           ← Kembali ke Semua Berita
         </Link>
       </div>
@@ -80,7 +83,7 @@ export default function NewsDetailPage() {
         {/* Banner image */}
         <div className="aspect-[21/9] w-full bg-black/20 overflow-hidden border-b border-[var(--border-color)]">
           <img
-            src={getNewsImage(news)}
+            src={(getNewsImage(news))?.src || (getNewsImage(news))}
             alt={news.title}
             className="w-full h-full object-cover"
           />

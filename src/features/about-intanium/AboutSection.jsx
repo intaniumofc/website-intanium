@@ -161,7 +161,7 @@ export default function AboutSection3() {
                 preserveAspectRatio="xMidYMid slice"
                 width={"100%"}
                 height={"100%"}
-                href={bannerNium}
+                href={bannerNium?.src || bannerNium}
               ></image>
             </svg>
           </TimelineContent>

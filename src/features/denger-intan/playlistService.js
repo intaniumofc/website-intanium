@@ -68,8 +68,8 @@ export const playlistService = {
   getPlaylists: async () => {
     // If Supabase URL is missing or placeholder, fallback immediately
     if (
-      !import.meta.env.VITE_SUPABASE_URL ||
-      import.meta.env.VITE_SUPABASE_URL.includes('placeholder')
+      !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+      process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder')
     ) {
       return MOCK_PLAYLISTS;
     }
@@ -179,8 +179,8 @@ export const playlistService = {
 
   getMostPlayedSongs: async () => {
     if (
-      !import.meta.env.VITE_SUPABASE_URL ||
-      import.meta.env.VITE_SUPABASE_URL.includes('placeholder')
+      !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+      process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder')
     ) {
       return [];
     }
