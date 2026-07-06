@@ -263,9 +263,18 @@
   border: 1px solid rgba(23, 12, 121, 0.1);
 }
 
-/* Mobile responsive horizontal scrolling */
+/* Default mobile surface wrapper should be hidden on desktop */
+.corkboard-surface-mobile {
+  display: none;
+}
+
 /* Mobile responsive horizontal scrolling and scaling adjustments */
 @media (max-width: 640px) {
+  /* Sembunyikan grid mading desktop di mobile */
+  .corkboard-surface-desktop {
+    display: none !important;
+  }
+
   .corkboard-outer {
     padding: 8px;
     border-radius: 12px;
@@ -276,123 +285,158 @@
     border-radius: 6px;
   }
 
-  .corkboard-surface {
+  /* Tampilkan surface mobile dengan overflow hidden agar track berjalan rapi */
+  .corkboard-surface-mobile {
     display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    gap: 10px;
+    overflow: hidden;
     padding: 16px 12px;
-    padding-top: 44px; /* Space for the scaled-down title banner overlay */
-    min-height: 170px; /* Gives the board a natural aspect ratio even with few notes */
+    padding-top: 48px; /* Space for the scaled-down title banner overlay */
+    min-height: 200px;
     box-shadow: inset 0 4px 12px rgba(0,0,0,0.3);
+    background-color: #cb9b6c; /* Warm cork */
+    background-image: 
+      radial-gradient(rgba(92, 44, 4, 0.18) 12%, transparent 16%),
+      radial-gradient(rgba(92, 44, 4, 0.12) 15%, transparent 16%),
+      radial-gradient(rgba(255, 255, 255, 0.25) 15%, transparent 20%);
+    background-size: 12px 12px, 8px 8px, 10px 10px;
+    background-position: 0 0, 4px 4px, 5px 2px;
   }
 
-  /* Compact sticky notes on mobile */
-  .sticky-note-item {
-    min-width: 95px;
-    max-width: 100px;
-    width: 95px;
-    min-height: 95px;
-    padding: 8px;
-    scroll-snap-align: center;
+  /* Container lintasan marquee */
+  .mading-marquee-container {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Lintasan Track Flexbox berjalan */
+  .mading-marquee-track {
+    display: flex;
+    gap: 16px;
+    animation: mading-marquee-left 25s linear infinite;
+    width: max-content;
+    will-change: transform;
+    padding: 8px 0;
+  }
+
+  /* Efek Jeda saat disentuh/tekan lama */
+  .mading-marquee-track:hover,
+  .mading-marquee-track:active {
+    animation-play-state: paused;
+  }
+
+  /* Keyframe animasi geser kiri mading */
+  @keyframes mading-marquee-left {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* Readable sticky notes on mobile */
+  .corkboard-surface-mobile .sticky-note-item {
+    min-width: 140px;
+    max-width: 140px;
+    width: 140px;
+    min-height: 140px;
+    height: 140px;
+    padding: 10px;
     flex-shrink: 0;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
   }
 
-  .sticky-note-item .note-content {
+  .corkboard-surface-mobile .sticky-note-item .note-content {
     padding-top: 8px;
     padding-bottom: 0px;
   }
 
   /* Smaller pins and washi tape on mobile */
-  .note-push-pin {
-    width: 10px;
-    height: 10px;
-    top: -5px;
+  .corkboard-surface-mobile .note-push-pin {
+    width: 11px;
+    height: 11px;
+    top: -6px;
   }
-  .note-push-pin::after {
-    top: 2.5px;
-    left: 2.5px;
+  .corkboard-surface-mobile .note-push-pin::after {
+    top: 3px;
+    left: 3px;
     width: 2px;
     height: 2px;
   }
 
-  .note-washi-tape {
-    width: 35px;
-    height: 10px;
+  .corkboard-surface-mobile .note-washi-tape {
+    width: 38px;
+    height: 11px;
   }
-  .note-washi-tape.washi {
+  .corkboard-surface-mobile .note-washi-tape.washi {
     top: -6px;
   }
 
-  /* Micro text formatting for compact note layout */
-  .note-text {
-    font-size: 9.5px;
-    line-height: 1.3;
+  /* Readable text formatting for mobile sticky note */
+  .corkboard-surface-mobile .note-text {
+    font-size: 11px !important;
+    line-height: 1.4;
     display: -webkit-box;
-    -webkit-line-clamp: 4;
-    line-clamp: 4;
+    -webkit-line-clamp: 5;
+    line-clamp: 5;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
 
-  .note-footer {
-    margin-top: 2px !important;
-    padding-top: 1px !important;
+  .corkboard-surface-mobile .note-footer {
+    margin-top: 4px !important;
+    padding-top: 2px !important;
+    font-size: 9px !important;
+  }
+
+  .corkboard-surface-mobile .note-footer .note-author {
+    font-size: 9px;
+  }
+
+  .corkboard-surface-mobile .note-footer .text-slate-500 {
     font-size: 7.5px !important;
   }
 
-  .note-footer .note-author {
-    font-size: 8px;
-  }
-
-  .note-footer .text-slate-500 {
-    font-size: 6.5px !important;
-  }
-
-  .note-footer .h-3 {
+  .corkboard-surface-mobile .note-footer svg {
     width: 10px;
     height: 10px;
   }
 
-  .note-doodle {
-    font-size: 9px;
+  .corkboard-surface-mobile .note-doodle {
+    font-size: 10px;
   }
 
   /* Scaled-down paper banner */
-  .corkboard-banner {
-    left: 12px;
+  .corkboard-surface-mobile .corkboard-banner {
+    left: 50%;
     top: 10px;
-    transform: none;
+    transform: translateX(-50%);
   }
 
-  .banner-paper {
+  .corkboard-surface-mobile .banner-paper {
     font-size: 13px;
     padding: 2.5px 12px;
     border-radius: 1px;
     box-shadow: 0 1.5px 3px rgba(0,0,0,0.1);
   }
 
-  .banner-washi {
+  .corkboard-surface-mobile .banner-washi {
     width: 22px;
     height: 9px;
   }
-  .banner-washi.left {
+  .corkboard-surface-mobile .banner-washi.left {
     left: -12px;
     top: -2px;
   }
-  .banner-washi.right {
+  .corkboard-surface-mobile .banner-washi.right {
     right: -12px;
     top: -2px;
   }
 
   /* Scaled-down butterfly badge */
-  .butterfly-pin-badge {
+  .corkboard-surface-mobile .butterfly-pin-badge {
     right: 10px;
     top: 10px;
   }
 
-  .butterfly-pin-circle {
+  .corkboard-surface-mobile .butterfly-pin-circle {
     width: 22px;
     height: 22px;
     font-size: 11px;

@@ -308,9 +308,9 @@ export default function MadingPreviewSection() {
         className="corkboard-outer shadow-2xl relative overflow-hidden"
       >
         <div className="corkboard-bevel-frame">
-          <div className="corkboard-surface p-6 md:p-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5 justify-center items-start content-start justify-items-center relative">
-
-            {/* Banner Tape di atas tengah */}
+          {/* ── DESKTOP SURFACE: Grid layout (>= 640px) ── */}
+          <div className="corkboard-surface corkboard-surface-desktop p-6 md:p-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5 justify-center items-start content-start justify-items-center relative">
+            {/* Banner Tape */}
             <div className="corkboard-banner">
               <span className="banner-washi left"></span>
               <div className="banner-paper">
@@ -319,7 +319,7 @@ export default function MadingPreviewSection() {
               <span className="banner-washi right"></span>
             </div>
 
-            {/* Butterfly Badge di atas kanan */}
+            {/* Butterfly Badge */}
             <div className="butterfly-pin-badge">
               <div className="butterfly-pin-circle">🦋</div>
             </div>
@@ -342,33 +342,26 @@ export default function MadingPreviewSection() {
                   whileHover={{
                     y: -4,
                     scale: 1.02,
-                    rotate: note.rotate * 0.15, // Flatten slightly but natural
+                    rotate: note.rotate * 0.15,
                     boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.15)"
                   }}
                   className={`sticky-note-item pastel-${note.theme} ${note.tape ? 'has-tape' : ''} w-full max-w-[280px] mx-auto aspect-square h-auto`}
                 >
-                  {/* Render Pin or Washi tape */}
                   {note.tape ? (
                     <div className={`note-washi-tape ${note.tape}`}></div>
                   ) : (
                     <div className={`note-push-pin ${note.pin}`}></div>
                   )}
 
-                  {/* Content */}
                   <div className="note-content flex flex-col justify-between h-full pt-4 pb-2 px-1">
                     <p className="note-text text-sm font-semibold text-slate-800 leading-relaxed text-left flex-grow">
                       {note.message}
                     </p>
 
-                    {/* Footer metadata */}
                     <div className="note-footer flex justify-between items-center mt-4 pt-1.5 border-t border-black/5 text-[10px] text-slate-600 font-bold select-none">
                       <div className="flex flex-col truncate max-w-[65%] text-left">
-                        <span className="note-author truncate">
-                          - {note.author}
-                        </span>
-                        <span className="text-slate-500 font-semibold text-[8px] mt-0.5">
-                          {note.date}
-                        </span>
+                        <span className="note-author truncate">- {note.author}</span>
+                        <span className="text-slate-500 font-semibold text-[8px] mt-0.5">{note.date}</span>
                       </div>
                       <div className="flex items-center gap-0.5 text-slate-500 font-bold">
                         <Heart className="h-3 w-3 text-red-500 fill-red-500" />
@@ -378,6 +371,100 @@ export default function MadingPreviewSection() {
                   </div>
                 </motion.div>
               ))
+            )}
+          </div>
+
+          {/* ── MOBILE SURFACE: Infinite Marquee layout (< 640px) ── */}
+          <div className="corkboard-surface-mobile relative">
+            {/* Banner Tape */}
+            <div className="corkboard-banner">
+              <span className="banner-washi left"></span>
+              <div className="banner-paper">
+                <span>Mading Intanium</span>
+              </div>
+              <span className="banner-washi right"></span>
+            </div>
+
+            {/* Butterfly Badge */}
+            <div className="butterfly-pin-badge">
+              <div className="butterfly-pin-circle">🦋</div>
+            </div>
+
+            {/* Sticky Notes Marquee Track */}
+            {isLoading ? (
+              <div className="py-8 flex justify-center items-center">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-700" />
+              </div>
+            ) : allNotes.length === 0 ? (
+              <div className="py-8 text-center text-xs font-semibold text-slate-700 font-sans">
+                Belum ada pesan pendukung.
+              </div>
+            ) : (
+              <div className="mading-marquee-container overflow-hidden w-full">
+                <div className="mading-marquee-track">
+                  {/* First iteration */}
+                  {displayedNotes.map((note) => (
+                    <div
+                      key={note.id}
+                      className={`sticky-note-item pastel-${note.theme} ${note.tape ? 'has-tape' : ''}`}
+                      style={{ transform: `rotate(${note.rotate}deg)` }}
+                    >
+                      {note.tape ? (
+                        <div className={`note-washi-tape ${note.tape}`}></div>
+                      ) : (
+                        <div className={`note-push-pin ${note.pin}`}></div>
+                      )}
+
+                      <div className="note-content flex flex-col justify-between h-full pt-3 pb-1 px-0.5">
+                        <p className="note-text text-[11px] font-semibold text-slate-800 leading-snug text-left flex-grow">
+                          {note.message}
+                        </p>
+                        <div className="note-footer flex justify-between items-center mt-2 pt-1 border-t border-black/5 text-[9px] text-slate-600 font-bold select-none">
+                          <div className="flex flex-col truncate max-w-[65%] text-left">
+                            <span className="note-author truncate">- {note.author}</span>
+                            <span className="text-slate-500 font-semibold text-[7px] mt-0.5">{note.date}</span>
+                          </div>
+                          <div className="flex items-center gap-0.5 text-slate-500 font-bold">
+                            <Heart className="h-2.5 w-2.5 text-red-500 fill-red-500" />
+                            <span>{note.loves}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Second iteration (for seamless infinite loop) */}
+                  {displayedNotes.map((note) => (
+                    <div
+                      key={`${note.id}-dup`}
+                      className={`sticky-note-item pastel-${note.theme} ${note.tape ? 'has-tape' : ''}`}
+                      style={{ transform: `rotate(${note.rotate}deg)` }}
+                    >
+                      {note.tape ? (
+                        <div className={`note-washi-tape ${note.tape}`}></div>
+                      ) : (
+                        <div className={`note-push-pin ${note.pin}`}></div>
+                      )}
+
+                      <div className="note-content flex flex-col justify-between h-full pt-3 pb-1 px-0.5">
+                        <p className="note-text text-[11px] font-semibold text-slate-800 leading-snug text-left flex-grow">
+                          {note.message}
+                        </p>
+                        <div className="note-footer flex justify-between items-center mt-2 pt-1 border-t border-black/5 text-[9px] text-slate-600 font-bold select-none">
+                          <div className="flex flex-col truncate max-w-[65%] text-left">
+                            <span className="note-author truncate">- {note.author}</span>
+                            <span className="text-slate-500 font-semibold text-[7px] mt-0.5">{note.date}</span>
+                          </div>
+                          <div className="flex items-center gap-0.5 text-slate-500 font-bold">
+                            <Heart className="h-2.5 w-2.5 text-red-500 fill-red-500" />
+                            <span>{note.loves}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
         </div>

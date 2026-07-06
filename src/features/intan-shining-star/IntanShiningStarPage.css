@@ -75,7 +75,7 @@
 .shining-timeline-card {
   background: rgba(255,255,255,.94); border: 1px solid var(--shine-border); border-radius: 1rem; box-shadow: 0 10px 30px rgba(23,16,95,.06);
   display: grid; grid-template-columns: 96px minmax(0,1fr); min-height: 112px; overflow: hidden; position: relative;
-  transition: background-color .55s cubic-bezier(.22,1,.36,1), border-color .55s cubic-bezier(.22,1,.36,1), box-shadow .6s cubic-bezier(.22,1,.36,1);
+  transition: transform .48s cubic-bezier(.25,1,.35,1), background-color .48s cubic-bezier(.25,1,.35,1), border-color .48s cubic-bezier(.25,1,.35,1), box-shadow .48s cubic-bezier(.25,1,.35,1);
 }
 .shining-timeline-card::after {
   background: linear-gradient(105deg, transparent 20%, rgba(109,92,255,.055) 48%, transparent 76%); content: ''; inset: 0; pointer-events: none;

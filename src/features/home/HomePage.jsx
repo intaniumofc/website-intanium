@@ -16,13 +16,10 @@ import {
   User,
   ChevronRight
 } from 'lucide-react';
-import { ContainerScroll, ContainerStagger, ContainerAnimated, ContainerInset } from '../../components/ui/hero-video';
-import { AnimatedText } from '../../components/ui/animated-text';
-import SplitTextReveal from '../../components/ui/SplitTextReveal';
-const intanVideo = '/assets/videos/intan-02.mp4';
 import { ImageSwiper } from '../../components/ui/ImageSwiper';
 import { aboutIntanService } from '../about-intan/aboutIntanService';
 import { SocialTooltip } from '../../components/ui/social-media';
+import HomeHeroSection from './HomeHeroSection';
 const HomeNewsSection = React.lazy(() => import('../news/HomeNewsSection'));
 const HomeMerchandiseSection = React.lazy(() => import('../merchandise/HomeMerchandiseSection'));
 const HomeGallerySection = React.lazy(() => import('../gallery/HomeGallerySection'));
@@ -180,122 +177,11 @@ export default function HomePage() {
   }, []);
   return (
     <div className="relative min-h-screen">
-      <div className="relative z-10 space-y-12 animate-fade-in max-w-6xl mx-auto">
-        {/* ================= HERO INTRO SECTION ================= */}
-        <ContainerScroll className="text-center text-[var(--text-primary)] pt-4 pb-12">
-          <ContainerStagger viewport={{ once: true }}>
-            <ContainerAnimated animation="top">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 text-[10px] uppercase font-extrabold tracking-widest rounded-full bg-[var(--color-primary-light)] text-[var(--color-primary)] border border-[var(--color-primary)]/20 shadow-sm mb-4">
-                <Sparkles className="h-3 w-3" /> Official Website Fanbase of Nur Intan.
-              </span>
-            </ContainerAnimated>
+      {/* ================= HERO INTRO SECTION (FULLSCREEN) ================= */}
+      <HomeHeroSection />
 
-            <ContainerAnimated animation="top" className="flex justify-center my-7 select-none">
-              <div className="relative pb-6 flex flex-col sm:flex-row items-center justify-center gap-x-4 gap-y-2">
-                <SplitTextReveal
-                  text="INTANIUM"
-                  wordClassName="text-5xl sm:text-7xl md:text-8xl font-black leading-none tracking-tight bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-hover)] bg-clip-text text-transparent"
-                  delay={0.2}
-                />
-                <SplitTextReveal
-                  text="#BERKILAU"
-                  wordClassName="text-5xl sm:text-7xl md:text-8xl font-black leading-none tracking-tight text-transparent"
-                  style={{ WebkitTextStroke: '2px var(--color-primary)' }}
-                  delay={0.4}
-                />
-                {/* Unified, glowing premium bottom divider line */}
-                <motion.div
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1 }}
-                  transition={{ delay: 0.8, duration: 0.8, ease: "easeOut" }}
-                  style={{ transformOrigin: "center" }}
-                  className="absolute bottom-0 w-full h-1.5 sm:h-2 md:h-2.5 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-hover)] rounded-full shadow-[0_0_12px_rgba(74,122,191,0.4)]"
-                />
-              </div>
-            </ContainerAnimated>
-
-            <ContainerAnimated animation="blur" className="my-4 max-w-2xl mx-auto">
-              <p className="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
-                Ruang interaksi resmi dan pusat informasi bagi seluruh penikmat karya Intan. Dapatkan pembaruan jadwal streaming, rilisan eksklusif, serta ruang diskusi interaktif bersama komunitas INTANIUM di sini.
-              </p>
-            </ContainerAnimated>
-
-            <ContainerAnimated
-              animation="bottom"
-              className="flex justify-center gap-4 pt-2"
-            >
-              <Button
-                variant="primary"
-                size="md"
-                className="group gap-2 hover:scale-105 transition-all duration-300 cursor-pointer"
-                onClick={() => {
-                  const target = document.getElementById('kenalan-intan');
-                  if (target) {
-                    const headerOffset = 90; // Exclude header height so section header is visible
-                    const targetPosition = target.getBoundingClientRect().top + window.scrollY;
-                    const startPosition = window.scrollY;
-                    const distance = targetPosition - startPosition - headerOffset;
-
-                    let startTime = null;
-                    const duration = 1200; // 1.2 seconds smooth flow
-                    const easeOutQuart = (x) => 1 - Math.pow(1 - x, 4); // Silky Quart Deceleration
-
-                    const step = (currentTime) => {
-                      if (startTime === null) startTime = currentTime;
-                      const elapsed = currentTime - startTime;
-                      const progress = Math.min(elapsed / duration, 1);
-
-                      window.scrollTo(0, startPosition + distance * easeOutQuart(progress));
-
-                      if (elapsed < duration) {
-                        requestAnimationFrame(step);
-                      }
-                    };
-
-                    requestAnimationFrame(step);
-                  }
-                }}
-              >
-                Kenali Sosok Intan <ArrowDown className="h-4 w-4 transition-transform duration-300 group-hover:translate-y-1" />
-              </Button>
-              <Link href={ROUTES.ABOUT_INTANIUM}>
-                <Button variant="outline" size="md" className="group gap-2 border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white transition-all duration-300 hover:scale-105 shadow-sm hover:shadow-[var(--neon-glow-primary)]">
-                  Tentang Kami <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                </Button>
-              </Link>
-            </ContainerAnimated>
-          </ContainerStagger>
-
-          <ContainerInset
-            insetXRange={isMobile ? [0, 0] : [20, 0]}
-            insetTopRange={isMobile ? [0, 0] : [0, 0]}
-            insetBottomRange={isMobile ? [0, 0] : [45, 0]}
-            roundednessRange={isMobile ? [16, 16] : [1000, 16]}
-            className="mx-2 sm:mx-8 mt-12 border-2 border-[var(--color-primary)]/30 rounded-2xl overflow-hidden shadow-2xl bg-black/40"
-          >
-            <video
-              ref={videoRef}
-              key="hero-video"
-              loop
-              playsInline
-              autoPlay
-              muted
-              preload="auto"
-              aria-label="Video profil Nur Intan JKT48"
-              title="Video profil Nur Intan"
-              className="relative z-10 block w-full h-auto aspect-video object-cover align-middle"
-              poster="/intan-02.webp"
-            >
-              {loadVideo && (
-                <source
-                  src="/intan-02.mp4"
-                  type="video/mp4"
-                />
-              )}
-            </video>
-          </ContainerInset>
-        </ContainerScroll>
-
+      {/* ================= BODY CONTENT SECTION (CONTAINED) ================= */}
+      <div className="relative z-10 space-y-16 animate-fade-in max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* ================= KENALAN DENGAN NURINTAN SECTION ================= */}
         {bio && (
           <motion.section

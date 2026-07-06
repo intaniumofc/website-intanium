@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -25,10 +25,20 @@ import {
 } from "lucide-react";
 import logoNobg from '../../assets/logos/logo-nobg.webp';
 
-export default function Navbar() {
+export default function Navbar({ isHome = false }) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const [activeAccordion, setActiveAccordion] = useState(null);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    if (!isHome) return;
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 60);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isHome]);
 
   const toggleAccordion = (index) => {
     setActiveAccordion(activeAccordion === index ? null : index);
@@ -174,8 +184,12 @@ export default function Navbar() {
     },
   ];
 
+  const navBackground = isHome && !scrolled
+    ? 'bg-transparent border-transparent shadow-none'
+    : 'bg-[#170C79]/90 border-[#170C79]/20 shadow-lg backdrop-blur-md';
+
   return (
-    <nav className="fixed top-0 left-0 z-50 w-full bg-[#170C79]/90 border-b border-[#170C79]/20 shadow-lg backdrop-blur-md">
+    <nav className={`fixed top-0 left-0 z-50 w-full border-b transition-all duration-500 ${navBackground}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}

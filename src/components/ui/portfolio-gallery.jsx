@@ -75,6 +75,23 @@ export function PortfolioGallery({
           display: flex;
           animation: marquee-scroll var(--duration, 35s) linear infinite;
         }
+        .mobile-gallery-track-3d {
+          transform-style: preserve-3d;
+          gap: 0px !important;
+        }
+        .mobile-gallery-card-3d {
+          transform: perspective(800px) rotateY(-18deg) rotateX(3deg) rotateZ(-3deg) scale(0.92) !important;
+          transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease !important;
+          box-shadow: -8px 5px 12px rgba(0, 0, 0, 0.35) !important;
+          margin-right: -24px !important; /* Overlap cards slightly */
+          transform-style: preserve-3d;
+        }
+        .mobile-gallery-card-3d:hover,
+        .mobile-gallery-card-3d:active {
+          transform: perspective(800px) rotateY(0deg) rotateX(0deg) rotateZ(0deg) scale(1.08) translateY(-8px) !important;
+          box-shadow: 0 16px 28px rgba(74, 122, 191, 0.4) !important;
+          z-index: 99 !important;
+        }
       `}} />
 
       <div className="max-w-7xl mx-auto bg-white/40 backdrop-blur-md rounded-[2.5rem] border border-[var(--border-color)] overflow-hidden shadow-xl shadow-[var(--color-primary)]/5">
@@ -166,12 +183,16 @@ export function PortfolioGallery({
         </div>
 
         {/* Mobile marquee layout */}
-        <div className="block md:hidden relative pb-10">
+        <div 
+          className="block md:hidden relative pb-10"
+          style={{ perspective: '1000px', transformStyle: 'preserve-3d' }}
+        >
           <div
             className={cn(
-              "group flex overflow-hidden p-2 [--duration:35s] [--gap:1rem] [gap:var(--gap)]",
+              "group flex overflow-hidden p-2 [--duration:35s] [--gap:0.75rem] [gap:var(--gap)]",
               "flex-row"
             )}
+            style={{ transformStyle: 'preserve-3d' }}
           >
             {Array(marqueeRepeat)
               .fill(0)
@@ -180,7 +201,7 @@ export function PortfolioGallery({
                   key={i}
                   className={cn(
                     "flex shrink-0 justify-around [gap:var(--gap)]",
-                    "animate-marquee-custom flex-row",
+                    "animate-marquee-custom flex-row mobile-gallery-track-3d",
                     {
                       "group-hover:[animation-play-state:paused]": pauseOnHover,
                     }
@@ -191,21 +212,15 @@ export function PortfolioGallery({
                       key={`${i}-${index}`}
                       className="group cursor-pointer flex-shrink-0"
                       onClick={() => onImageClick?.(index)}
+                      style={{ transformStyle: 'preserve-3d' }}
                     >
                       <div
-                        className="relative aspect-[4/3] w-48 rounded-xl overflow-hidden transition-transform duration-300 group-hover:scale-105 border-2 border-white shadow-md"
-                        style={{
-                          boxShadow: `
-                            rgba(0, 0, 0, 0.01) 0.796192px 0px 0.796192px 0px,
-                            rgba(0, 0, 0, 0.03) 2.41451px 0px 2.41451px 0px,
-                            rgba(74, 122, 191, 0.12) 10px 0px 10px 0px
-                          `,
-                        }}
+                        className="relative aspect-[4/3] w-44 rounded-xl overflow-hidden border-2 border-white mobile-gallery-card-3d"
                       >
                         <img
                           src={(image.src || "/placeholder.svg")?.src || (image.src || "/placeholder.svg")}
                           alt={image.alt}
-                          className="w-full h-full object-cover object-center"
+                          className="w-full h-full object-cover object-center pointer-events-none"
                           loading="lazy"
                           decoding="async"
                         />
