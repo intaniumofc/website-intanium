@@ -1076,7 +1076,7 @@ export default function AboutIntanPage() {
                   <div className="absolute inset-0 bg-(--color-primary-light) opacity-20 blur-3xl rounded-3xl -m-6 pointer-events-none" />
 
                   <ImageSwiper
-                    images={`${intanProfile},${intan1},${intanPoster}`}
+                    images={[intanProfile, intan1, intanPoster]}
                     cardWidth={270}
                     cardHeight={360}
                     className="z-10"

@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import Loading from '../../components/common/Loading';
 import { achievementService } from './achievementService';
+import HorizontalTimeline from '../../components/timeline/HorizontalTimeline';
 import './IntanShiningStarPage.css';
 
 const CATEGORY_CLASS = {
@@ -282,7 +283,16 @@ export default function IntanShiningStarPage() {
   return (
     <div className={`shining-page ${reduceMotion ? 'reduce-motion' : ''}`}>
       <AchievementCollection achievements={achievements} />
-      <JourneyTimeline achievements={achievements} />
+      
+      {/* Desktop: Horizontal GSAP Timeline */}
+      <div className="hidden md:block">
+        <HorizontalTimeline achievements={achievements} />
+      </div>
+
+      {/* Mobile: Vertical Framer Motion Timeline */}
+      <div className="md:hidden">
+        <JourneyTimeline achievements={achievements} />
+      </div>
     </div>
   );
 }

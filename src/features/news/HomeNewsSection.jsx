@@ -70,6 +70,19 @@ function getArticleImage(article) {
   return isGenericImage ? CATEGORY_IMAGES[article.category] || bannerIntanium : article.imageUrl;
 }
 
+function formatDateSafely(dateStr) {
+  if (!dateStr) return '1 Jan 2024';
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) {
+      return dateStr;
+    }
+    return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+  } catch (e) {
+    return dateStr;
+  }
+}
+
 export default function HomeNewsSection({ articles = [] }) {
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [bookmarkedArticles, setBookmarkedArticles] = useState(() => new Set());
@@ -103,11 +116,11 @@ export default function HomeNewsSection({ articles = [] }) {
     return {
       ...art,
       image: getArticleImage(art),
-      published: art.date ? new Date(art.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '1 Jan 2024',
+      published: formatDateSafely(art.date),
       timeAgo: art.date ? 'Baru Rilis' : 'Baru saja',
       author: 'Official Admin',
       location: 'Online',
-      contentParagraphs: art.content ? art.content.split('\n\n') : [art.summary],
+      contentParagraphs: art.content ? art.content.split('\n\n') : [art.summary || ''],
       badgeClass: theme.badgeClass,
       gradientColors: theme.gradientColors
     };

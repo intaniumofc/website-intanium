@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { ContainerScroll, ContainerStagger, ContainerAnimated, ContainerInset } from '../../components/ui/hero-video';
 import { AnimatedText } from '../../components/ui/animated-text';
+import SplitTextReveal from '../../components/ui/SplitTextReveal';
 const intanVideo = '/assets/videos/intan-02.mp4';
 import { ImageSwiper } from '../../components/ui/ImageSwiper';
 import { aboutIntanService } from '../about-intan/aboutIntanService';
@@ -161,20 +162,16 @@ export default function HomePage() {
 
             <ContainerAnimated animation="top" className="flex justify-center my-7 select-none">
               <div className="relative pb-6 flex flex-col sm:flex-row items-center justify-center gap-x-4 gap-y-2">
-                <AnimatedText
+                <SplitTextReveal
                   text="INTANIUM"
-                  underlineHeight="h-0"
-                  textClassName="text-5xl sm:text-7xl md:text-8xl font-black leading-none tracking-tight bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-hover)] bg-clip-text text-transparent"
-                  duration={0.12}
+                  wordClassName="text-5xl sm:text-7xl md:text-8xl font-black leading-none tracking-tight bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-hover)] bg-clip-text text-transparent"
                   delay={0.2}
                 />
-                <AnimatedText
+                <SplitTextReveal
                   text="#BERKILAU"
-                  underlineHeight="h-0"
-                  textClassName="text-5xl sm:text-7xl md:text-8xl font-black leading-none tracking-tight text-transparent"
+                  wordClassName="text-5xl sm:text-7xl md:text-8xl font-black leading-none tracking-tight text-transparent"
                   style={{ WebkitTextStroke: '2px var(--color-primary)' }}
-                  duration={0.12}
-                  delay={0.5}
+                  delay={0.4}
                 />
                 {/* Unified, glowing premium bottom divider line */}
                 <motion.div
