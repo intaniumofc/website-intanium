@@ -1,4 +1,5 @@
 import { supabase } from '../../lib/supabaseClient';
+import { proxyR2Url } from '../../lib/helpers';
 
 export const merchandiseService = {
   getProducts: async (category = 'All', search = '') => {
@@ -17,7 +18,11 @@ export const merchandiseService = {
       console.error('Error fetching merchandise:', error);
       return [];
     }
-    return data;
+    return data.map(item => ({
+      ...item,
+      image_url: proxyR2Url(item.image_url),
+      image_urls: proxyR2Url(item.image_urls)
+    }));
   },
 
   getProductById: async (id) => {
@@ -31,7 +36,11 @@ export const merchandiseService = {
       console.error(`Error fetching merchandise with id ${id}:`, error);
       return null;
     }
-    return data;
+    return {
+      ...data,
+      image_url: proxyR2Url(data.image_url),
+      image_urls: proxyR2Url(data.image_urls)
+    };
   },
 
   getOrderByInvoice: async (invoiceNumber) => {
@@ -484,7 +493,7 @@ export const merchandiseService = {
       bank_name: data.name,
       account_number: parsedDesc.account_number || '',
       account_holder: parsedDesc.account_holder || '',
-      qris_url: data.image_url || ''
+      qris_url: proxyR2Url(data.image_url || '')
     };
   },
 

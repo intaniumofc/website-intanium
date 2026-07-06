@@ -81,6 +81,22 @@ export const logAdminActivity = async (actionText) => {
 };
 
 /**
+ * Proxies a Cloudflare R2 URL through Next.js server-side endpoint if it matches *.r2.dev
+ * @param {string|string[]} url - The image URL or array of URLs
+ * @returns {string|string[]} Proxied URL or array of URLs
+ */
+export const proxyR2Url = (url) => {
+  if (!url) return '';
+  if (Array.isArray(url)) {
+    return url.map(u => proxyR2Url(u));
+  }
+  if (typeof url === 'string' && url.includes('.r2.dev')) {
+    return `/api/media?url=${encodeURIComponent(url)}`;
+  }
+  return url;
+};
+
+/**
  * Optimize an image URL (supports Supabase storage image transformation and Unsplash resizing).
  * @param {string} url - The image URL
  * @param {object} options - Optimization options (width, quality)
@@ -111,6 +127,11 @@ export const getOptimizedImageUrl = (url, { width = 400, quality = 80 } = {}) =>
     const rendered = url.replace('/object/public/', '/render/image/public/');
     const separator = rendered.includes('?') ? '&' : '?';
     return `${rendered}${separator}width=${width}&quality=${quality}&resize=contain`;
+  }
+
+  // 3. R2 Optimization & Proxying
+  if (url.includes('.r2.dev')) {
+    return proxyR2Url(url);
   }
 
   return url;

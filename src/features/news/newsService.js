@@ -1,4 +1,5 @@
 import { supabase } from '../../lib/supabaseClient';
+import { proxyR2Url } from '../../lib/helpers';
 
 export const newsService = {
   getNews: async () => {
@@ -15,7 +16,7 @@ export const newsService = {
     } else if (data) {
       dbNews = data.map(n => ({
         ...n,
-        imageUrl: n.image_url
+        imageUrl: proxyR2Url(n.image_url)
       }));
     }
 
@@ -36,7 +37,7 @@ export const newsService = {
     
     return {
       ...data,
-      imageUrl: data.image_url
+      imageUrl: proxyR2Url(data.image_url)
     };
   },
 
