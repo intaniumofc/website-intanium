@@ -1,7 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import {
+  ArrowLeft,
   Bug,
   Clock3,
   Crown,
@@ -242,6 +244,13 @@ export default function MenangkapKecoaPage() {
 
   return (
     <div className="game-page-shell mx-auto pb-10">
+      {/* Navigation back */}
+      <div className="mb-6 text-left">
+        <Link href="/games" className="inline-flex items-center gap-2 text-sm text-[#170C79] hover:text-[#2518a4] font-extrabold transition-colors">
+          <ArrowLeft className="size-4" /> Kembali ke Arena Game
+        </Link>
+      </div>
+
       <header className="game-console-header">
         <span className="inline-flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[0.2em] text-[#170C79]/65">
           <Gamepad2 className="size-3.5" /> Intanium Mini Game

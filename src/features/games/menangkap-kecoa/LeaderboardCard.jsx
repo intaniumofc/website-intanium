@@ -67,7 +67,7 @@ function LeaderboardPodium({ rankings }) {
   );
 }
 
-function LeaderboardRankings({ rankings, currentUserId, pageSize = 10 }) {
+function LeaderboardRankings({ rankings, currentUserId, pageSize = 10, gameMode }) {
   const [page, setPage] = useState(0);
   const pageCount = Math.max(1, Math.ceil(rankings.length / pageSize));
   const visibleRankings = rankings.slice(page * pageSize, (page + 1) * pageSize);
@@ -95,7 +95,11 @@ function LeaderboardRankings({ rankings, currentUserId, pageSize = 10 }) {
                 <InitialAvatar name={item.username} className="size-9 shrink-0 text-xs" />
                 <div className="min-w-0">
                   <p className="truncate text-sm font-bold text-slate-800">{item.username}</p>
-                  <p className="truncate text-[11px] text-slate-400">{item.caught_count} kecoa, combo {item.max_combo}x</p>
+                  <p className="truncate text-[11px] text-slate-400">
+                    {gameMode === 'gosok-intan'
+                      ? `${item.caught_count} diamond, combo ${item.max_combo}x`
+                      : `${item.caught_count} kecoa, combo ${item.max_combo}x`}
+                  </p>
                 </div>
               </div>
               <p className="font-black text-[#170C79]">{item.score.toLocaleString('id-ID')}</p>
@@ -129,6 +133,7 @@ export default function LeaderboardCard({
   period = 'weekly',
   onPeriodChange,
   className,
+  gameMode = 'classic',
 }) {
   const dateRange = useMemo(() => {
     if (scores.length === 0) return '';
@@ -174,7 +179,7 @@ export default function LeaderboardCard({
       ) : (
         <>
           <LeaderboardPodium rankings={podium} />
-          {rankings.length > 0 && <LeaderboardRankings rankings={rankings} currentUserId={currentUser?.id} />}
+          {rankings.length > 0 && <LeaderboardRankings rankings={rankings} currentUserId={currentUser?.id} gameMode={gameMode} />}
         </>
       )}
     </div>
