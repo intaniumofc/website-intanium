@@ -32,11 +32,11 @@ export function getStartOfWeekUTC() {
   return startOfWeek.toISOString();
 }
 
-export async function getGameLeaderboard(limit = 20, period = 'weekly') {
+export async function getGameLeaderboard(limit = 20, period = 'weekly', mode = 'classic') {
   let query = supabase
     .from('game_scores')
     .select('id, username, score, caught_count, max_combo, title, created_at')
-    .eq('mode', 'classic');
+    .eq('mode', mode);
 
   if (period === 'weekly') {
     const startOfWeek = getStartOfWeekUTC();
@@ -142,12 +142,12 @@ export async function getGameSettings() {
     challengeReward: 'Hall of Fame',
     challengeActive: true,
     games: {
-      'menangkap-kecoa': { 
-        active: true, 
+      'menangkap-kecoa': {
+        active: true,
         title: 'Menangkap Kecoa',
         description: 'Uji kecepatan tanganmu menangkap kecoa-kecoa terbang sebelum mereka lolos dan raih skor tertinggi!',
-        badge: 'Populer', 
-        difficulty: 'Mudah', 
+        badge: 'Populer',
+        difficulty: 'Mudah',
         playTime: '60 Detik',
         theme: 'amber',
         emoji: '🐜',
@@ -156,33 +156,17 @@ export async function getGameSettings() {
         bgImage: 'cockroachBg',
         layoutSpan: 2
       },
-      'tebak-kata': { 
-        active: false, 
-        title: 'Tebak Kata',
-        description: 'Seberapa kenal kamu dengan lore komunitas Intanium dan Kak Intan? Susun huruf dan pecahkan teka-teki kata ini.',
-        badge: 'Segera Hadir', 
-        difficulty: 'Sedang', 
-        playTime: '3 Menit',
+      'gosok-intan': {
+        active: true,
+        title: 'Gosok Intan',
+        description: 'Gosok dan Temukan foto Intan sebanyak-banyaknya di balik titik hitam. Hindari bom peledak!',
+        badge: 'Baru',
+        difficulty: 'Sedang',
         theme: 'cyan',
-        emoji: '🧩',
-        icon: 'HelpCircle',
-        link: 'modal:tebak-kata',
+        emoji: '💎',
+        icon: 'Sparkles',
+        link: '/games/gosok-intan',
         bgImage: 'tebakKataBg',
-        layoutSpan: 1
-      },
-      'intan-run': { 
-        active: false, 
-        title: 'Intanium Adventure',
-        description: 'Game petualangan platformer seru menjelajahi dunia fantasi Intanium dan mengumpulkan batu permata indah.',
-        badge: 'Segera Hadir', 
-        difficulty: 'Sulit', 
-        playTime: 'Tanpa Batas',
-        theme: 'purple',
-        emoji: '⚡',
-        icon: 'Zap',
-        link: '#',
-        bgImage: 'intanRunBg',
-        layoutSpan: 1
       }
     },
     stats: {

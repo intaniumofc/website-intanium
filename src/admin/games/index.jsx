@@ -6,16 +6,16 @@ import Button from '../../components/common/Button';
 import Loading from '../../components/common/Loading';
 import ConfirmDialog from '../../components/common/ConfirmDialog';
 import { useAdminToast } from '../../components/common/useAdminToast';
-import { 
-  Gamepad2, 
-  Search, 
-  Trash2, 
-  Trophy, 
-  Calendar, 
-  RefreshCw, 
-  Sparkles, 
-  Bug, 
-  Trash, 
+import {
+  Gamepad2,
+  Search,
+  Trash2,
+  Trophy,
+  Calendar,
+  RefreshCw,
+  Sparkles,
+  Bug,
+  Trash,
   AlertTriangle,
   ChevronLeft,
   ChevronRight,
@@ -35,10 +35,10 @@ import {
   Music,
   Info
 } from 'lucide-react';
-import { 
-  getAdminGameScores, 
-  adminDeleteGameScore, 
-  adminResetLeaderboard, 
+import {
+  getAdminGameScores,
+  adminDeleteGameScore,
+  adminResetLeaderboard,
   adminPruneGameScores,
   getStartOfWeekUTC,
   getGameSettings,
@@ -47,27 +47,27 @@ import {
 
 export default function AdminGames() {
   const notify = useAdminToast();
-  
+
   // Navigation State
   const [activeTab, setActiveTab] = useState('scores'); // 'scores' | 'settings'
-  
+
   // Scores Data State
   const [scores, setScores] = useState([]);
   const [isLoadingScores, setIsLoadingScores] = useState(true);
-  
+
   // Search & Filter State
   const [searchQuery, setSearchQuery] = useState('');
   const [period, setPeriod] = useState('all-time'); // 'weekly' | 'all-time'
   const [sortBy, setSortBy] = useState('score_desc'); // 'score_desc' | 'score_asc' | 'newest' | 'oldest'
-  
+
   // Pagination State
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 15;
-  
+
   // Dialog Confirm State
   const [confirmDelete, setConfirmDelete] = useState({ isOpen: false, id: null, username: '' });
   const [confirmBulk, setConfirmBulk] = useState({ isOpen: false, type: '', title: '', message: '' });
-  
+
   // Game Settings State
   const [gameSettings, setGameSettings] = useState({
     featuredGameId: 'menangkap-kecoa',
@@ -75,12 +75,12 @@ export default function AdminGames() {
     challengeReward: 'Hall of Fame',
     challengeActive: true,
     games: {
-      'menangkap-kecoa': { 
-        active: true, 
+      'menangkap-kecoa': {
+        active: true,
         title: 'Menangkap Kecoa',
         description: 'Uji kecepatan tanganmu menangkap kecoa-kecoa terbang sebelum mereka lolos dan raih skor tertinggi!',
-        badge: 'Populer', 
-        difficulty: 'Mudah', 
+        badge: 'Populer',
+        difficulty: 'Mudah',
         playTime: '60 Detik',
         theme: 'amber',
         emoji: '🐜',
@@ -89,33 +89,17 @@ export default function AdminGames() {
         bgImage: 'cockroachBg',
         layoutSpan: 2
       },
-      'tebak-kata': { 
-        active: false, 
-        title: 'Tebak Kata',
-        description: 'Seberapa kenal kamu dengan lore komunitas Intanium dan Kak Intan? Susun huruf dan pecahkan teka-teki kata ini.',
-        badge: 'Segera Hadir', 
-        difficulty: 'Sedang', 
-        playTime: '3 Menit',
+      'gosok-intan': {
+        active: true,
+        title: 'Gosok Intan',
+        description: 'Gosok dan Temukan foto Intan sebanyak-banyaknya di balik titik hitam. Hindari bom peledak!',
+        badge: 'Baru',
+        difficulty: 'Sedang',
         theme: 'cyan',
-        emoji: '🧩',
-        icon: 'HelpCircle',
-        link: 'modal:tebak-kata',
+        emoji: '💎',
+        icon: 'Sparkles',
+        link: '/games/gosok-intan',
         bgImage: 'tebakKataBg',
-        layoutSpan: 1
-      },
-      'intan-run': { 
-        active: false, 
-        title: 'Intanium Adventure',
-        description: 'Game petualangan platformer seru menjelajahi dunia fantasi Intanium dan mengumpulkan batu permata indah.',
-        badge: 'Segera Hadir', 
-        difficulty: 'Sulit', 
-        playTime: 'Tanpa Batas',
-        theme: 'purple',
-        emoji: '⚡',
-        icon: 'Zap',
-        link: '#',
-        bgImage: 'intanRunBg',
-        layoutSpan: 1
       }
     },
     stats: {
@@ -216,16 +200,16 @@ export default function AdminGames() {
     if (scores.length === 0) {
       return { totalCount: 0, highestScore: 0, avgScore: 0, weeklyCount: 0 };
     }
-    
+
     const startOfWeek = new Date(getStartOfWeekUTC());
     let highest = 0;
     let sum = 0;
     let wCount = 0;
-    
+
     scores.forEach(item => {
       if (item.score > highest) highest = item.score;
       sum += item.score;
-      
+
       const createdAt = new Date(item.created_at);
       if (createdAt >= startOfWeek) {
         wCount++;
@@ -271,7 +255,7 @@ export default function AdminGames() {
   const handleOpenBulkAction = (type) => {
     let title = '';
     let message = '';
-    
+
     if (type === 'reset-weekly') {
       title = 'Reset Leaderboard Mingguan';
       message = 'Apakah Anda yakin ingin menghapus semua data skor pada minggu berjalan ini? Langkah ini tidak dapat dibatalkan.';
@@ -282,7 +266,7 @@ export default function AdminGames() {
       title = 'Reset Semua Skor (All-Time)';
       message = 'PERINGATAN: Tindakan ini akan menghapus SELURUH data skor dari database secara permanen. Apakah Anda yakin?';
     }
-    
+
     setConfirmBulk({ isOpen: true, type, title, message });
   };
 
@@ -352,7 +336,7 @@ export default function AdminGames() {
 
   return (
     <div className="space-y-6 text-sm text-[var(--text-primary)]">
-      
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-[var(--border-color)]">
         <div>
@@ -369,22 +353,20 @@ export default function AdminGames() {
       <div className="flex flex-wrap border-b border-[var(--border-color)]">
         <button
           onClick={() => setActiveTab('scores')}
-          className={`px-5 py-3 font-bold text-sm border-b-2 transition-colors flex items-center gap-2 cursor-pointer ${
-            activeTab === 'scores'
+          className={`px-5 py-3 font-bold text-sm border-b-2 transition-colors flex items-center gap-2 cursor-pointer ${activeTab === 'scores'
               ? 'border-[var(--color-primary)] text-[var(--color-primary)] bg-[var(--color-primary-light)]/30'
               : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-          }`}
+            }`}
         >
           <Trophy className="h-4 w-4" />
           Riwayat Skor & Klasemen
         </button>
         <button
           onClick={() => setActiveTab('settings')}
-          className={`px-5 py-3 font-bold text-sm border-b-2 transition-colors flex items-center gap-2 cursor-pointer ${
-            activeTab === 'settings'
+          className={`px-5 py-3 font-bold text-sm border-b-2 transition-colors flex items-center gap-2 cursor-pointer ${activeTab === 'settings'
               ? 'border-[var(--color-primary)] text-[var(--color-primary)] bg-[var(--color-primary-light)]/30'
               : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-          }`}
+            }`}
         >
           <Settings className="h-4 w-4" />
           Pengaturan Portal Game
@@ -396,27 +378,27 @@ export default function AdminGames() {
         <div className="space-y-6 animate-fade-in">
           {/* Quick Actions Row */}
           <div className="flex justify-end gap-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               className="flex items-center gap-1.5 text-xs font-semibold cursor-pointer"
               onClick={() => handleOpenBulkAction('prune')}
             >
               <Trash className="h-3.5 w-3.5 text-amber-500" />
               <span>Pangkas Skor &gt;30 Hari</span>
             </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               className="flex items-center gap-1.5 text-xs font-semibold cursor-pointer"
               onClick={() => handleOpenBulkAction('reset-weekly')}
             >
               <RefreshCw className="h-3.5 w-3.5 text-orange-500" />
               <span>Reset Mingguan</span>
             </Button>
-            <Button 
-              variant="danger" 
-              size="sm" 
+            <Button
+              variant="danger"
+              size="sm"
               className="flex items-center gap-1.5 text-xs font-semibold cursor-pointer"
               onClick={() => handleOpenBulkAction('reset-all')}
             >
@@ -436,7 +418,7 @@ export default function AdminGames() {
                 <p className="text-xl font-extrabold mt-0.5">{stats.totalCount}</p>
               </div>
             </Card>
-            
+
             <Card padding="md" className="border border-[var(--border-color)] bg-white flex items-center gap-4">
               <div className="p-3 rounded-xl bg-amber-50 text-amber-500">
                 <Trophy className="h-5 w-5" />
@@ -564,8 +546,8 @@ export default function AdminGames() {
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-semibold">
                               <div className="flex items-center justify-end gap-2">
-                                <button 
-                                  onClick={() => handleOpenDelete(item)} 
+                                <button
+                                  onClick={() => handleOpenDelete(item)}
                                   className="p-1.5 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors cursor-pointer"
                                   title="Hapus Skor"
                                 >
@@ -607,7 +589,7 @@ export default function AdminGames() {
                             {item.score.toLocaleString('id-ID')}
                           </span>
                         </div>
-                        
+
                         <div className="flex justify-between items-center bg-slate-50 p-2 rounded-lg border border-slate-100">
                           <div className="flex gap-3 text-[10px] font-semibold text-[var(--text-secondary)]">
                             <span className="flex items-center gap-1"><Bug className="h-3 w-3" /> {item.caught_count} kecoa</span>
@@ -621,8 +603,8 @@ export default function AdminGames() {
                               day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
                             })}
                           </span>
-                          <button 
-                            onClick={() => handleOpenDelete(item)} 
+                          <button
+                            onClick={() => handleOpenDelete(item)}
                             className="p-1.5 text-red-500 bg-red-50 border border-red-100 rounded-lg flex items-center gap-1"
                           >
                             <Trash2 className="h-3.5 w-3.5" /> <span className="text-[10px] font-bold">Hapus</span>
@@ -646,18 +628,18 @@ export default function AdminGames() {
             <div className="flex items-center justify-between text-xs text-[var(--text-secondary)]">
               <span>Menampilkan halaman {currentPage + 1} dari {pageCount} ({scores.length} total skor)</span>
               <div className="flex gap-2">
-                <button 
-                  type="button" 
-                  disabled={currentPage === 0} 
-                  onClick={() => setCurrentPage((c) => c - 1)} 
+                <button
+                  type="button"
+                  disabled={currentPage === 0}
+                  onClick={() => setCurrentPage((c) => c - 1)}
                   className="rounded-lg border border-[var(--border-color)] bg-white p-2 disabled:opacity-30 cursor-pointer shadow-xs"
                 >
                   <ChevronLeft className="size-4" />
                 </button>
-                <button 
-                  type="button" 
-                  disabled={currentPage + 1 === pageCount} 
-                  onClick={() => setCurrentPage((c) => c + 1)} 
+                <button
+                  type="button"
+                  disabled={currentPage + 1 === pageCount}
+                  onClick={() => setCurrentPage((c) => c + 1)}
                   className="rounded-lg border border-[var(--border-color)] bg-white p-2 disabled:opacity-30 cursor-pointer shadow-xs"
                 >
                   <ChevronRight className="size-4" />
@@ -675,7 +657,7 @@ export default function AdminGames() {
             <>
               {/* Row 1: Featured Game & Challenge */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
+
                 {/* 1. Featured Game Hero Config */}
                 <Card className="border border-[var(--border-color)] bg-white space-y-4">
                   <h3 className="font-extrabold text-base text-[var(--color-primary)] flex items-center gap-2">
@@ -684,7 +666,7 @@ export default function AdminGames() {
                   <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
                     Pilih game yang akan dipajang secara menonjol di bagian atas halaman Game Hub.
                   </p>
-                  
+
                   <div className="space-y-2">
                     <label className="text-xs font-bold text-[var(--text-secondary)] block" htmlFor="select-featured-game">
                       Pilih Game Unggulan
@@ -711,7 +693,7 @@ export default function AdminGames() {
                   <h3 className="font-extrabold text-base text-[var(--color-primary)] flex items-center gap-2">
                     <Trophy className="h-5 w-5 text-purple-500" /> Spanduk Tantangan Mingguan
                   </h3>
-                  
+
                   <div className="flex items-center gap-3 pb-2 border-b border-[var(--border-color)]">
                     <input name="file_input" type="checkbox" id="challenge-active" checked={gameSettings.challengeActive} onChange={(e) => setGameSettings(prev => ({ ...prev, challengeActive: e.target.checked }))} className="h-4.5 w-4.5 rounded border-gray-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)] cursor-pointer" />
                     <label htmlFor="challenge-active" className="text-xs font-bold text-[var(--text-primary)] cursor-pointer">
@@ -775,9 +757,9 @@ export default function AdminGames() {
                   <h3 className="font-extrabold text-base text-[var(--color-primary)] flex items-center gap-2">
                     <Gamepad2 className="h-5 w-5 text-cyan-500" /> Pengaturan Katalog Game Arena
                   </h3>
-                  <Button 
-                    type="button" 
-                    variant="outline" 
+                  <Button
+                    type="button"
+                    variant="outline"
                     size="sm"
                     className="flex items-center gap-1 text-xs font-bold border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-primary-light)]/20 cursor-pointer"
                     onClick={handleAddNewGame}
@@ -785,7 +767,7 @@ export default function AdminGames() {
                     <Plus className="h-3.5 w-3.5" /> Tambah Game Baru
                   </Button>
                 </div>
-                
+
                 <div className="space-y-3">
                   {Object.keys(gameSettings.games).map((gameId) => {
                     const game = gameSettings.games[gameId];
@@ -806,19 +788,17 @@ export default function AdminGames() {
                     return (
                       <div
                         key={gameId}
-                        className={`border rounded-2xl overflow-hidden transition-colors duration-300 ease-in-out ${
-                          isExpanded
+                        className={`border rounded-2xl overflow-hidden transition-colors duration-300 ease-in-out ${isExpanded
                             ? 'border-[var(--color-primary)]/40 shadow-lg shadow-[var(--color-primary)]/8 bg-white'
                             : 'border-[var(--border-color)] shadow-sm bg-slate-50/40 hover:shadow-md hover:border-slate-300 hover:bg-white'
-                        }`}
+                          }`}
                       >
                         {/* Accordion Header */}
-                        <div 
-                          className={`flex justify-between items-center p-4 cursor-pointer select-none transition-colors duration-200 ${
-                            isExpanded
+                        <div
+                          className={`flex justify-between items-center p-4 cursor-pointer select-none transition-colors duration-200 ${isExpanded
                               ? 'bg-gradient-to-r from-[var(--color-primary)]/5 to-transparent'
                               : 'bg-transparent hover:bg-slate-50/60'
-                          }`}
+                            }`}
                           onClick={() => setExpandedGameId(isExpanded ? null : gameId)}
                         >
                           <div className="flex items-center gap-3">
@@ -858,8 +838,8 @@ export default function AdminGames() {
                               </button>
                             )}
 
-                            <button 
-                              type="button" 
+                            <button
+                              type="button"
                               onClick={() => setExpandedGameId(isExpanded ? null : gameId)}
                               className="p-1.5 rounded-lg text-slate-400 hover:text-[var(--color-primary)] hover:bg-[var(--color-primary)]/8 border border-transparent hover:border-[var(--color-primary)]/20 transition-colors duration-200 cursor-pointer"
                             >
@@ -870,11 +850,10 @@ export default function AdminGames() {
 
                         {/* Accordion Content */}
                         <div
-                          className={`transition-colors duration-300 ease-in-out overflow-hidden ${
-                            isExpanded ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'
-                          }`}
+                          className={`transition-colors duration-300 ease-in-out overflow-hidden ${isExpanded ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'
+                            }`}
                         >
-                        <div className="p-4 border-t border-[var(--color-primary)]/15 bg-gradient-to-b from-[var(--color-primary)]/3 to-white space-y-4 text-left">
+                          <div className="p-4 border-t border-[var(--color-primary)]/15 bg-gradient-to-b from-[var(--color-primary)]/3 to-white space-y-4 text-left">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div className="space-y-1">
                                 <label className="text-xs font-bold text-slate-500" htmlFor={`edit-title-${gameId}`}>Nama / Judul Game</label>
@@ -993,7 +972,7 @@ export default function AdminGames() {
                             </div>
                           </div>
                         </div>
-                        </div>
+                      </div>
                     );
                   })}
                 </div>
