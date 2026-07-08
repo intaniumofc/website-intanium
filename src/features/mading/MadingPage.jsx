@@ -246,7 +246,7 @@ export default function MadingPage() {
       </AnimatePresence>
 
       {/* HERO HERO SECTION */}
-      <section className="text-center relative max-w-4xl mx-auto py-8 select-none">
+      <section className="text-center relative max-w-4xl mx-auto pb-8 pt-0 select-none">
         <div className="space-y-4">
           <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-[var(--color-primary)]">
             Mading Intanium

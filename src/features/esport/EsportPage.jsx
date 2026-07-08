@@ -209,7 +209,7 @@ export default function EsportPage() {
 
       <div className="relative z-10 max-w-6xl mx-auto space-y-16 animate-fade-in">
         {/* ================= HERO SECTION ================= */}
-        <div className="text-center pt-4 pb-4">
+        <div className="text-center pt-0 pb-4">
           <h1 className="text-5xl sm:text-7xl md:text-8xl font-black leading-none tracking-tight bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-hover)] bg-clip-text text-transparent mb-4 drop-shadow-sm">
             INTANIUM ESPORT
           </h1>

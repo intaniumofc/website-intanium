@@ -298,7 +298,7 @@ export default function GamesPage() {
   const scratchTheme = getThemeStyles(scratchGame.theme || 'cyan');
 
   return (
-    <div className="relative min-h-[90vh] py-12 px-4 sm:px-6 lg:px-8 overflow-hidden font-sans">
+    <div className="relative min-h-[90vh] pb-12 pt-0 px-4 sm:px-6 lg:px-8 overflow-hidden font-sans">
       <h1 className="sr-only">Arena Game Intanium - Ruang Komunitas Resmi</h1>
 
       {/* Ambient Morphing Background Glow Orbs */}

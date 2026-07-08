@@ -35,6 +35,7 @@ import intanBg from '../../assets/images/intan-04.webp';
 import intanProfile from '../../assets/images/Nur_Intan.webp';
 import intan1 from '../../assets/images/intan-01.webp';
 import { ImageSwiper } from '../../components/ui/ImageSwiper';
+import StickyNavSection from './StickyNavSection';
 
 // Map to Lucide icons to remove @phosphor-icons/react dependency
 const PhCalendarBlank = Calendar;
@@ -66,19 +67,19 @@ const staggerContainer = {
 
 // scaleIn removed as it was unused
 
-// Reusable IconCrystalTile Component for crystal glass badges
+// Reusable IconCrystalTile Component for crystal glass badges - enlarged to 72px for better proportion
 function IconCrystalTile({ icon: IconComp }) {
   return (
-    <div className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-[1.35rem] border border-white/70 bg-white/65 text-[#17105F] shadow-[0_18px_40px_rgba(23,16,95,0.12),inset_0_1.5px_3px_rgba(255,255,255,0.85)] backdrop-blur-xl transition-all duration-300 group-hover:border-purple-200/50 group-hover:bg-white/75 group-hover:shadow-[0_22px_45px_rgba(124,58,237,0.18),inset_0_1.5px_3px_rgba(255,255,255,0.95)]">
+    <div className="relative flex h-18 w-18 shrink-0 items-center justify-center rounded-[1.5rem] border border-white/70 bg-white/65 text-[#17105F] shadow-[0_18px_40px_rgba(23,16,95,0.12),inset_0_1.5px_3px_rgba(255,255,255,0.85)] backdrop-blur-xl transition-all duration-300 group-hover:border-purple-200/50 group-hover:bg-white/75 group-hover:shadow-[0_22px_45px_rgba(124,58,237,0.18),inset_0_1.5px_3px_rgba(255,255,255,0.95)]">
       {/* Radial Highlight */}
-      <span className="absolute inset-0 rounded-[1.35rem] bg-[radial-gradient(circle_at_35%_25%,rgba(255,255,255,0.95),transparent_58%)] opacity-80 pointer-events-none" />
+      <span className="absolute inset-0 rounded-[1.5rem] bg-[radial-gradient(circle_at_35%_25%,rgba(255,255,255,0.95),transparent_58%)] opacity-80 pointer-events-none" />
       
       {/* Subtle Inner Glow */}
-      <span className="absolute inset-[1px] rounded-[1.28rem] border border-white/40 pointer-events-none" />
+      <span className="absolute inset-[1px] rounded-[1.4rem] border border-white/40 pointer-events-none" />
 
-      {/* Phosphor Icon with Duotone styling */}
+      {/* Phosphor Icon with Duotone styling - adjusted to 32px */}
       <IconComp
-        size={30}
+        size={32}
         weight="duotone"
         className="relative z-10 text-[#17105F] transition-transform duration-350 ease-out group-hover:scale-105 group-hover:rotate-[2deg] select-none"
       />
@@ -89,7 +90,7 @@ function IconCrystalTile({ icon: IconComp }) {
   );
 }
 
-// Reusable ProfileFactItem Component for premium profile stats
+// Reusable ProfileFactItem Component for premium profile stats - improved typography minimum size (12px)
 function ProfileFactItem({ fact, delay = 0 }) {
   const { label, value, icon: IconComp, position } = fact;
   const isRight = position === 'right';
@@ -105,7 +106,7 @@ function ProfileFactItem({ fact, delay = 0 }) {
     >
       <IconCrystalTile icon={IconComp} />
       <div className={`flex flex-col justify-center pt-0.5 ${isRight ? 'md:items-end' : 'items-start'}`}>
-        <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-widest transition-colors duration-300 group-hover:text-(--color-primary) mb-1">
+        <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest transition-colors duration-300 group-hover:text-(--color-primary) mb-1 select-none">
           {label}
         </h3>
         <p className="text-base sm:text-lg font-black text-(--color-primary) leading-tight transition-colors duration-300 group-hover:text-indigo-950">
@@ -164,12 +165,12 @@ function StatCounter({ icon: IconComp, value, label, description, delay = 0 }) {
       >
         <IconComp className="w-6 h-6" />
       </motion.div>
-      <div className="text-3.5xl font-black text-(--color-primary) flex items-center justify-center font-mono tracking-tight leading-none">
+      <div className="text-3.5xl font-black text-(--color-primary) flex items-center justify-center font-heading tracking-tight leading-none">
         <span>{count}</span>
         <span className="text-(--color-secondary) font-sans text-xl ml-0.5">{suffix}</span>
       </div>
-      <h4 className="text-xs font-bold text-(--text-primary) mt-3 line-clamp-1">{label}</h4>
-      <p className="text-[10px] text-(--text-muted) mt-1.5 leading-relaxed line-clamp-2 max-w-50">{description}</p>
+      <h4 className="text-sm font-bold text-(--text-primary) mt-3 line-clamp-1">{label}</h4>
+      <p className="text-xs text-(--text-muted) mt-1.5 leading-relaxed line-clamp-2 max-w-50">{description}</p>
       <motion.div className="w-8 h-0.5 bg-(--color-secondary) mt-4 group-hover:w-16 transition-all duration-300" />
     </motion.div>
   );
@@ -205,19 +206,19 @@ function VideoModal({ video, onClose }) {
   );
 }
 
-// Reusable Section Header Component
+// Reusable SectionHeader Component - modern editorial styling with consistent hierarchy
 function SectionHeader({ label, title, description, id }) {
   return (
     <motion.div
       id={id}
       variants={fadeUp}
-      className="mb-8 border-b border-(--border-color) pb-5 scroll-mt-24"
+      className="mb-10 border-b border-(--border-color) pb-6 scroll-mt-24"
     >
       <div>
-        {label && <p className="text-[10px] font-black uppercase tracking-widest text-(--color-secondary) mb-0.5">{label}</p>}
-        <h3 className="text-2xl font-black text-(--color-primary) tracking-tight sm:text-3xl font-heading">{title}</h3>
+        {label && <p className="text-xs font-black uppercase tracking-widest text-(--color-secondary) mb-1.5 select-none">{label}</p>}
+        <h3 className="text-3xl font-black text-(--color-primary) tracking-tight sm:text-4xl lg:text-5xl font-heading">{title}</h3>
       </div>
-      {description && <p className="mt-2 text-sm text-(--text-secondary) leading-relaxed max-w-2xl">{description}</p>}
+      {description && <p className="mt-3 text-base text-(--text-secondary) leading-relaxed max-w-3xl">{description}</p>}
     </motion.div>
   );
 }
@@ -448,7 +449,7 @@ const TriviaItem = ({ question, answer }) => {
     <motion.div
       animate={isOpen ? "open" : "closed"}
       className={`rounded-2xl border transition-colors duration-300 ${isOpen
-        ? "border-(--color-primary)/40 bg-(--color-primary-light)/40"
+        ? "border-(--color-primary)/40 bg-(--color-primary-light)/40 shadow-[0_10px_25px_-5px_rgba(23,12,121,0.06)]"
         : "border-(--border-color) bg-(--bg-card)/60"
         }`}
     >
@@ -607,11 +608,12 @@ const ScheduleSection = () => {
 
   return (
     <motion.section
+      id="schedule-section"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
       variants={staggerContainer}
-      className="space-y-5"
+      className="space-y-5 scroll-mt-32"
     >
       <SectionHeader
         label="Jadwal Acara"
@@ -806,8 +808,14 @@ export default function AboutIntanPage() {
 
   // Scrolling reference and transforms for floating parallax elements
   const pageRef = useRef(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // We omit target option to fallback to window scrolling, preventing target hydration mismatch errors entirely
   const { scrollYProgress } = useScroll({
-    target: pageRef,
     offset: ["start end", "end start"]
   });
 
@@ -962,6 +970,9 @@ export default function AboutIntanPage() {
 
   return (
     <div ref={pageRef} className="relative -mt-8 space-y-16 overflow-visible">
+      {/* Sticky Section Pills Nav - placed outside ScrollExpandMedia to prevent overflow clip */}
+      <StickyNavSection />
+
       {/* Decorative background elements driven by page scroll */}
       <motion.div
         className="absolute top-24 -left-40 w-72 h-72 rounded-full bg-(--color-primary-light)/5 blur-3xl pointer-events-none -z-10"
@@ -1007,7 +1018,7 @@ export default function AboutIntanPage() {
         textBlend={false}
         soundOnFirstPlayOnly={true}
       >
-        <div className="mx-auto max-w-7xl space-y-20 px-4 pb-20 pt-10 text-(--text-primary) relative">
+        <div className="mx-auto max-w-7xl space-y-28 px-4 pb-24 pt-10 text-(--text-primary) relative">
 
           {/* Subtle decorative elements for premium light-theme style */}
           <div className="absolute inset-0 bg-[radial-gradient(rgba(23,12,121,0.035)_1.5px,transparent_1.5px)] bg-size-[20px_20px] pointer-events-none -z-10" />
@@ -1021,7 +1032,7 @@ export default function AboutIntanPage() {
             whileInView="visible"
             viewport={{ once: true, amount: 0.15 }}
             variants={staggerContainer}
-            className="space-y-12 scroll-mt-32"
+            className="space-y-16 scroll-mt-32"
           >
             {/* Centered Page Header inspired by Reference Component */}
             <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-6">
@@ -1052,7 +1063,7 @@ export default function AboutIntanPage() {
                   {bio.description}
                   <span className="absolute -bottom-2 -right-1 text-4xl text-(--color-secondary) opacity-40 font-serif leading-none">"</span>
                 </p>
-                <p className="text-[10px] md:text-xs font-bold text-(--color-secondary) mt-5 tracking-widest uppercase">
+                <p className="text-xs font-bold text-(--color-secondary) mt-5 tracking-widest uppercase">
                   — Jikoshoukai Nur Intan
                 </p>
               </motion.div>
@@ -1070,15 +1081,15 @@ export default function AboutIntanPage() {
                 ))}
               </div>
 
-              {/* Center Portrait Image Swiper Frame */}
+              {/* Center Portrait Image Swiper Frame (enlarged for better screen proportion) */}
               <div className="flex flex-col justify-center items-center order-1 md:order-2 mb-8 md:mb-0 shrink-0">
                 <motion.div className="relative" variants={fadeUp}>
                   <div className="absolute inset-0 bg-(--color-primary-light) opacity-20 blur-3xl rounded-3xl -m-6 pointer-events-none" />
 
                   <ImageSwiper
                     images={[intanProfile, intan1, intanPoster]}
-                    cardWidth={270}
-                    cardHeight={360}
+                    cardWidth={320}
+                    cardHeight={420}
                     className="z-10"
                   />
 
@@ -1095,21 +1106,10 @@ export default function AboutIntanPage() {
                     animate={{ opacity: 1 }}
                     style={{ y: y2 }}
                   />
-
-                  {/* Caption & CTA */}
-                  <motion.div variants={fadeUp} className="mt-8 text-center flex flex-col items-center gap-5">
-                    <Link
-                      href="/shining-star"
-                      className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-(--color-primary) text-white hover:bg-(--color-accent) font-bold text-sm tracking-wide shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer"
-                    >
-                      Lihat Perjalanan Nur Intan
-                      <PlayCircle className="w-4 h-4" />
-                    </Link>
-                  </motion.div>
                 </motion.div>
               </div>
 
-              {/* Right Column: Bio Details (3 items) */}
+              {/* Right Column: Bio Details (3 items) + Call To Action */}
               <div className="space-y-6 md:space-y-12 order-3 md:order-3 flex-1 w-full max-w-sm">
                 {PROFILE_FACTS.filter(fact => fact.position === 'right').map((fact) => (
                   <ProfileFactItem
@@ -1121,16 +1121,16 @@ export default function AboutIntanPage() {
               </div>
             </div>
 
-            {/* Social Media Bar (No Card, Positioned Above Stats) */}
+            {/* Social Media Bar (Compact, Icon-only on small mobile, clean layout) */}
             <motion.div
               variants={fadeUp}
-              className="mt-16 text-center space-y-5"
+              className="mt-12 text-center space-y-6"
             >
-              <div className="space-y-1.5">
-                <h3 className="text-2xl font-black text-(--color-primary) tracking-tight font-heading">
+              <div className="space-y-2">
+                <h3 className="text-xl font-black text-(--color-primary) tracking-tight font-heading">
                   Saluran Resmi Nur Intan
                 </h3>
-                <p className="text-(--text-secondary) text-xs font-medium leading-relaxed max-w-xl mx-auto">
+                <p className="text-(--text-secondary) text-xs sm:text-sm font-medium leading-relaxed max-w-xl mx-auto">
                   Dapatkan kabar aktivitas langsung dan postingan harian resmi dari Intan JKT48.
                 </p>
               </div>
@@ -1142,17 +1142,43 @@ export default function AboutIntanPage() {
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{ '--hover-color': social.color }}
-                    className="group flex items-center justify-center gap-2.5 px-5 py-2.5 rounded-2xl border border-(--border-color) text-(--text-primary) font-bold text-xs bg-(--bg-card) hover:bg-(--hover-color) hover:border-(--hover-color) hover:text-white transition-all duration-300 cursor-pointer shadow-xs"
+                    className="group flex items-center justify-center gap-2 px-3 py-2 sm:px-5 sm:py-2.5 rounded-2xl border border-(--border-color) text-(--text-primary) font-bold text-xs bg-(--bg-card) hover:bg-(--hover-color) hover:border-(--hover-color) hover:text-white transition-all duration-300 cursor-pointer shadow-xs"
                   >
                     {social.icon}
-                    <span>{social.name}</span>
+                    <span className="hidden sm:inline">{social.name}</span>
                   </a>
                 ))}
               </div>
             </motion.div>
 
-            {/* Stats Counter Grid (directly below Bio layout) */}
-            <div id="stats-section" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-16 scroll-mt-24">
+            {/* CTA Button placed prominently at section end */}
+            <motion.div variants={fadeUp} className="text-center pt-8">
+              <Link
+                href="/shining-star"
+                className="inline-flex items-center gap-2.5 px-8 py-4 rounded-2xl bg-(--color-primary) text-white hover:bg-(--color-accent) font-bold text-sm tracking-wide shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+              >
+                Lihat Perjalanan Nur Intan
+                <PlayCircle className="w-5 h-5" />
+              </Link>
+            </motion.div>
+          </motion.section>
+
+          {/* ================= 3. STATS SECTION (KARIR DALAM ANGKA) ================= */}
+          <motion.section
+            id="stats-section"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.15 }}
+            variants={staggerContainer}
+            className="space-y-8 scroll-mt-32 pt-6"
+          >
+            <SectionHeader
+              label="Karir Nur Intan"
+              title="Performa & Jam Terbang"
+              description="Rangkuman kontribusi panggung dan statistik keaktifan Nur Intan selama berkarir di JKT48."
+            />
+            {/* Stats Counter Grid with flexible grid adjustment based on item count */}
+            <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${Math.min(bio.stats.length, 4)} gap-8 justify-center`}>
               {bio.stats.map((stat, index) => {
                 const IconComp = statIcons[stat.label] || Award;
                 return (
@@ -1169,73 +1195,16 @@ export default function AboutIntanPage() {
             </div>
           </motion.section>
 
-          {/* ================= NEW SCHEDULE SECTION ================= */}
-          <ScheduleSection />
-
-          {/* ================= 8. FUN FACTS & TRIVIA ================= */}
+          {/* ================= 4. GALERI KONTEN & YOUTUBE ================= */}
           <motion.section
+            id="highlights-section"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.15 }}
             variants={staggerContainer}
-            className="space-y-8"
+            className="space-y-8 scroll-mt-32"
           >
             <SectionHeader
-              label="Trivia & Fakta"
-              title="Fakta Menarik & Kebiasaan Unik"
-              description="Kumpulan anekdot kecil, quote inspiratif, cerita di balik layar teater, serta chemistry bersama rekan member lainnya."
-            />
-
-            {/* FAQ Tabs */}
-            {/* FAQ List */}
-            <motion.div
-              variants={fadeUp}
-              className="mx-auto mt-4 max-w-3xl w-full space-y-2.5"
-            >
-              {bio.triviaDetails.map((faq, index) => (
-                <TriviaItem key={index} {...faq} />
-              ))}
-            </motion.div>
-          </motion.section>
-
-          {/* ================= 6. SETLIST & UNIT SONGS ================= */}
-          <motion.section
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.2 }}
-            variants={staggerContainer}
-            className="space-y-8"
-          >
-            <SectionHeader
-              label="Karya Panggung"
-              title="Setlist & Unit Songs"
-              description="Daftar setlist teater resmi JKT48 beserta lagu unit (unit songs) yang dibawakan. Klik kartu poster untuk membalikkan kartu dan melihat daftar lagunya."
-            />
-
-            <motion.div
-              variants={staggerContainer}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-center items-start pt-4"
-            >
-              {bio.setlistsAndUnitSongs.map((setlist) => {
-                return (
-                  <motion.div key={setlist.id} variants={fadeUp}>
-                    <SetlistPosterCard setlist={setlist} />
-                  </motion.div>
-                );
-              })}
-            </motion.div>
-          </motion.section>
-
-          {/* ================= 7. GALERI KONTEN & YOUTUBE ================= */}
-          <motion.section
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.2 }}
-            variants={staggerContainer}
-            className="space-y-8"
-          >
-            <SectionHeader
-              id="highlights-section"
               label="Galeri Video"
               title="Intan’s Highlights & Dokumentasi"
               description="Kurasi video dokumentasi pilihan seputar aktivitas panggung, vlog keseharian, serta performa menarik Nur Intan."
@@ -1257,74 +1226,141 @@ export default function AboutIntanPage() {
               ))}
             </motion.div>
 
-            {/* Video Cards Grid */}
+            {/* Video Cards Grid - Featured Layout for the first item */}
             <motion.div
               layout
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
             >
               <AnimatePresence mode="popLayout">
-                {filteredVideos.map((video) => (
-                  <motion.div
-                    layout
-                    key={video.id}
-                    initial={{ opacity: 0, scale: 0.97 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.97 }}
-                    transition={{ duration: 0.45 }}
-                    whileHover={{ y: -4, scale: 1.02 }}
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => setActiveVideo(video)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        setActiveVideo(video);
-                      }
-                    }}
-                    className="group flex flex-col justify-between overflow-hidden rounded-3xl border border-(--border-color) bg-(--bg-card) shadow-(--box-shadow-sm) hover:shadow-(--box-shadow-md) transition-all duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary) focus-visible:ring-offset-2"
-                  >
-                    <div>
-                      {/* Image Thumbnail wrapper with Zoom and Play overlay */}
-                      <div className="relative aspect-video overflow-hidden bg-black/10">
-                        <img
-                          src={video.thumbnail}
-                          alt={video.title}
-                          className="w-full h-full object-cover object-center group-hover:scale-104 transition-transform duration-500"
-                        />
+                {filteredVideos.map((video, index) => {
+                  const isFeatured = index === 0 && videoFilter === 'All';
+                  return (
+                    <motion.div
+                      layout
+                      key={video.id}
+                      initial={{ opacity: 0, scale: 0.97 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.97 }}
+                      transition={{ duration: 0.45 }}
+                      whileHover={{ y: -4, scale: 1.015 }}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => setActiveVideo(video)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          setActiveVideo(video);
+                        }
+                      }}
+                      className={`group flex flex-col justify-between overflow-hidden rounded-3xl border border-(--border-color) bg-(--bg-card) shadow-(--box-shadow-sm) hover:shadow-(--box-shadow-md) transition-all duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary) focus-visible:ring-offset-2 ${
+                        isFeatured ? 'md:col-span-2 lg:col-span-2 lg:flex-row' : ''
+                      }`}
+                    >
+                      <div className={isFeatured ? 'flex flex-col lg:flex-row w-full h-full' : 'flex flex-col w-full h-full'}>
+                        {/* Image Thumbnail wrapper with Zoom and Play overlay */}
+                        <div className={`relative overflow-hidden bg-black/10 shrink-0 ${isFeatured ? 'aspect-video lg:w-3/5' : 'aspect-video'}`}>
+                          <img
+                            src={video.thumbnail}
+                            alt={video.title}
+                            className="w-full h-full object-cover object-center group-hover:scale-104 transition-transform duration-500"
+                          />
 
-                        {/* Minimalist Play Button Overlay */}
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition-colors duration-300">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-(--color-primary) shadow-md transform group-hover:scale-108 transition-transform duration-300">
-                            <Play className="h-5.5 w-5.5 fill-current ml-0.5" />
+                          {/* Minimalist Play Button Overlay */}
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition-colors duration-300">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-(--color-primary) shadow-md transform group-hover:scale-108 transition-transform duration-300">
+                              <Play className="h-5.5 w-5.5 fill-current ml-0.5" />
+                            </div>
                           </div>
+
+                          {/* Video Duration Badge */}
+                          <span className="absolute bottom-3 right-3 px-2 py-0.5 rounded-md text-[10px] font-black text-white bg-black/60 tracking-wider">
+                            {video.duration}
+                          </span>
                         </div>
 
-                        {/* Video Duration Badge */}
-                        <span className="absolute bottom-3 right-3 px-2 py-0.5 rounded-md text-[10px] font-black text-white bg-black/60 tracking-wider">
-                          {video.duration}
-                        </span>
-                      </div>
+                        {/* Text info */}
+                        <div className="p-5 flex flex-col justify-between flex-1 min-w-0">
+                          <div className="space-y-2">
+                            <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase border border-(--color-secondary)/15 text-(--color-secondary) bg-[rgba(8,145,178,0.04)] tracking-wide">
+                              {video.category}
+                            </span>
+                            <h4 className={`font-black text-(--color-primary) tracking-tight leading-snug pt-1 group-hover:text-(--color-primary-hover) transition-colors ${
+                              isFeatured ? 'text-lg lg:text-xl line-clamp-3' : 'text-sm line-clamp-2'
+                            }`}>
+                              {video.title}
+                            </h4>
+                          </div>
 
-                      {/* Text info */}
-                      <div className="p-5 space-y-2">
-                        <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase border border-(--color-secondary)/15 text-(--color-secondary) bg-[rgba(8,145,178,0.04)] tracking-wide">
-                          {video.category}
-                        </span>
-                        <h4 className="text-sm font-black text-(--color-primary) tracking-tight leading-snug line-clamp-2 pt-1 group-hover:text-(--color-primary-hover) transition-colors">
-                          {video.title}
-                        </h4>
+                          <div className="pt-4 flex items-center justify-between text-xs font-bold text-(--color-primary) border-t border-(--border-color)/60 mt-3">
+                            <span>Tonton Sekarang</span>
+                            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                          </div>
+                        </div>
                       </div>
-                    </div>
-
-                    <div className="px-5 pb-5 pt-2 flex items-center justify-between text-xs font-bold text-(--color-primary) border-t border-(--border-color)/60">
-                      <span>Tonton Sekarang</span>
-                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                    </div>
-                  </motion.div>
-                ))}
+                    </motion.div>
+                  );
+                })}
               </AnimatePresence>
             </motion.div>
           </motion.section>
+
+          {/* ================= 5. SETLIST & UNIT SONGS ================= */}
+          <motion.section
+            id="setlist-section"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.15 }}
+            variants={staggerContainer}
+            className="space-y-8 scroll-mt-32"
+          >
+            <SectionHeader
+              label="Karya Panggung"
+              title="Setlist & Unit Songs"
+              description="Daftar setlist teater resmi JKT48 beserta lagu unit (unit songs) yang dibawakan. Klik kartu poster untuk membalikkan kartu dan melihat daftar lagunya."
+            />
+
+            <motion.div
+              variants={staggerContainer}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-center items-start pt-4"
+            >
+              {bio.setlistsAndUnitSongs.map((setlist) => {
+                return (
+                  <motion.div key={setlist.id} variants={fadeUp}>
+                    <SetlistPosterCard setlist={setlist} />
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          </motion.section>
+
+          {/* ================= 6. FUN FACTS & TRIVIA ================= */}
+          <motion.section
+            id="trivia-section"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.15 }}
+            variants={staggerContainer}
+            className="space-y-8 scroll-mt-32"
+          >
+            <SectionHeader
+              label="Trivia & Fakta"
+              title="Fakta Menarik & Kebiasaan Unik"
+              description="Kumpulan anekdot kecil, quote inspiratif, cerita di balik layar teater, serta chemistry bersama rekan member lainnya."
+            />
+
+            {/* FAQ List */}
+            <motion.div
+              variants={fadeUp}
+              className="mx-auto mt-4 max-w-3xl w-full space-y-2.5"
+            >
+              {bio.triviaDetails.map((faq, index) => (
+                <TriviaItem key={index} {...faq} />
+              ))}
+            </motion.div>
+          </motion.section>
+
+          {/* ================= 7. NEW SCHEDULE SECTION (PLACED AT THE END) ================= */}
+          <ScheduleSection />
 
         </div>
       </ScrollExpandMedia>
@@ -1340,5 +1376,4 @@ export default function AboutIntanPage() {
       </AnimatePresence>
     </div>
   );
-}
-
+};
