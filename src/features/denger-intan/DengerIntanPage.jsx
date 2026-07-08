@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback, useId, useMemo, useReducer } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { playlistService } from './playlistService';
+import './DengerIntanPage.css';
 import {
   Share2,
   ArrowLeft,
@@ -11,8 +12,17 @@ import {
   Sparkles,
   ExternalLink,
   Play,
-  Pause
+  Pause,
+  Heart,
+  Repeat,
+  Shuffle,
+  SkipBack,
+  SkipForward,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import Loading from '../../components/common/Loading';
 import { ContainerScroll } from '../../components/ui/container-scroll-animation';
 
@@ -60,6 +70,107 @@ const staggerSection = {
 const paperTex = { background: 'radial-gradient(circle at 20% 50%, rgba(139,92,246,0.03) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(59,130,246,0.03) 0%, transparent 50%)' };
 const vp1 = { once: true, amount: 0.15, margin: '-40px' };
 const containerV = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.12, delayChildren: 0.05 } } };
+
+const FALLBACK_MOST_PLAYED = [
+  {
+    id: "track-1",
+    title: "Helaf El Amar",
+    artist: "George Wassouf",
+    mood: "Classic",
+    note: "Lagu George Wassouf terpopuler pilihan Intan.",
+    coverUrl: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&auto=format&fit=crop&q=80",
+    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+    playCount: "6:40",
+    spotifyUrl: "https://open.spotify.com/track/5L2ELXkO17Iu9J8hwMktVJ",
+    embedUrl: "https://open.spotify.com/embed/track/5L2ELXkO17Iu9J8hwMktVJ?utm_source=generator",
+  },
+  {
+    id: "track-2",
+    title: "Levitating",
+    artist: "Dua Lipa",
+    mood: "Energetic",
+    note: "Lagu upbeat Dua Lipa penambah semangat.",
+    coverUrl: "https://images.unsplash.com/photo-1487180142328-054b783fc471?w=600&auto=format&fit=crop&q=80",
+    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+    playCount: "3:23",
+    spotifyUrl: "https://open.spotify.com/track/2Z8WuEywRWYTKe1NybPQEW",
+    embedUrl: "https://open.spotify.com/embed/track/2Z8WuEywRWYTKe1NybPQEW?utm_source=generator",
+  },
+  {
+    id: "track-3",
+    title: "Heat Waves",
+    artist: "Glass Animals",
+    mood: "Chill",
+    note: "Alunan lo-fi Glass Animals yang cozy.",
+    coverUrl: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&auto=format&fit=crop&q=80",
+    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+    playCount: "3:58",
+    spotifyUrl: "https://open.spotify.com/track/02MWAaffLxlfxAUY7c5dvx",
+    embedUrl: "https://open.spotify.com/embed/track/02MWAaffLxlfxAUY7c5dvx?utm_source=generator",
+  },
+  {
+    id: "track-4",
+    title: "good 4 u",
+    artist: "Olivia Rodrigo",
+    mood: "Pop Rock",
+    note: "Nyanyian emosional Olivia Rodrigo favorit Intan.",
+    coverUrl: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=600&auto=format&fit=crop&q=80",
+    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
+    playCount: "2:58",
+    spotifyUrl: "https://open.spotify.com/track/4ZtFanR9U6ndgddUvNcjcG",
+    embedUrl: "https://open.spotify.com/embed/track/4ZtFanR9U6ndgddUvNcjcG?utm_source=generator",
+  }
+];
+// Reusable Lazy Loading Spotify Iframe component to maximize layout load speed
+function LazySpotifyIframe({ src, title, height = "352" }) {
+  const containerRef = useRef(null);
+  const [shouldLoad, setShouldLoad] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldLoad(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "250px 0px" } // trigger loading before user scrolls to view
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={containerRef}
+      style={{ minHeight: `${height}px` }}
+      className="w-full rounded-xl bg-black/30 flex items-center justify-center relative overflow-hidden"
+    >
+      {shouldLoad ? (
+        <iframe
+          style={{ borderRadius: '12px' }}
+          src={src}
+          width="100%"
+          height={height}
+          frameBorder="0"
+          allowFullScreen=""
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"
+          title={title}
+        ></iframe>
+      ) : (
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-500 text-xs gap-3 select-none">
+          <div className="w-6 h-6 border-2 border-slate-500 border-t-transparent rounded-full animate-spin" />
+          <span className="font-bold tracking-wide text-slate-400">Memuat Spotify Player...</span>
+        </div>
+      )}
+    </div>
+  );
+}
 
 /* ------------------------------------------------------------- useRafLoop */
 
@@ -850,32 +961,13 @@ export function MusicPlayer({ tracks, crossOrigin = 'anonymous' }) {
     cycleLoop,
     getFrequencyData,
     loadTrack,
+    volume,
+    isMuted,
+    adjustVolume,
+    toggleMute,
   } = useAudioPlayer(tracks);
-  const [isZoomed, setIsZoomed] = useState(false);
 
-  const [layers, setLayers] = useState(() => [
-    { id: 0, track: tracks[0], dir: null },
-  ]);
-  const lastIndex = useRef(0);
-  const idRef = useRef(1);
-
-  useEffect(() => {
-    if (playerState.currentIndex === lastIndex.current) return;
-    lastIndex.current = playerState.currentIndex;
-    const id = idRef.current++;
-    setLayers((prev) => [
-      ...prev,
-      { id, track: currentTrack, dir: playerState.direction },
-    ]);
-    const t = setTimeout(() => {
-      setLayers((prev) => prev.filter((l) => l.id === id));
-    }, 760);
-    return () => clearTimeout(t);
-  }, [
-    playerState.currentIndex,
-    currentTrack,
-    playerState.direction,
-  ]);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   const seekForward = useCallback(() => {
     const a = audioRef.current;
@@ -908,148 +1000,319 @@ export function MusicPlayer({ tracks, crossOrigin = 'anonymous' }) {
   );
   useKeyboardShortcuts(shortcuts);
 
+  // Formatting helper for duration
+  const fmt = (s) => {
+    if (!isFinite(s)) return '0:00';
+    return `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+  };
+
+  const progressPercent = duration ? (currentTime / duration) * 100 : 0;
+
+
   return (
-    <div className="flex flex-col lg:flex-row gap-8 items-start w-full">
-      {/* Left Column: Music Player Widget */}
-      <div className="w-full lg:w-[45%] flex flex-col justify-start">
-        <div
-          className={`card ${playerState.isPlaying ? 'is-playing' : ''} ${isZoomed ? 'is-zoomed' : ''
-            } !mr-0 !ml-0 w-full relative`}
-          onClick={(e) => {
-            if (!e.target.closest('.mask'))
-              setIsZoomed(false);
-          }}
-        >
-          {/* Absolute positioned Now Playing badge */}
-          <div className="absolute top-4 left-4 z-20 flex items-center gap-1.5 text-[9px] uppercase font-extrabold tracking-widest text-sky-400 bg-sky-500/10 px-2.5 py-1 rounded-full select-none border border-sky-500/20">
-            <span className={`w-1.5 h-1.5 rounded-full bg-sky-400 ${playerState.isPlaying ? 'animate-pulse' : ''}`} />
-            <span>Now Playing</span>
-          </div>
+    <div className="relative overflow-hidden w-full">
+      {/* Background decorations */}
+      <div className="absolute inset-0 -z-10 pointer-events-none">
+        <div className="absolute left-1/2 top-0 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-indigo-500/[0.03] blur-3xl" />
+        <div className="absolute bottom-0 right-0 h-[420px] w-[420px] rounded-full bg-sky-500/[0.02] blur-3xl" />
+      </div>
+
+      <div className="mx-auto max-w-7xl">
+        <div className="relative overflow-hidden border border-slate-200/40 bg-white/30 dark:bg-black/20 p-8 sm:p-10 md:p-14 rounded-[32px] shadow-[0_40px_120px_rgba(15,23,42,0.15)] backdrop-blur-2xl">
+          <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/[0.04] via-transparent to-transparent pointer-events-none" />
 
           <audio
             ref={audioRef}
             preload="metadata"
             crossOrigin={crossOrigin}
           />
-          <Disc
-            layers={layers}
-            isPlaying={playerState.isPlaying}
-            isZoomed={isZoomed}
-            trackKey={playerState.currentIndex}
-            direction={playerState.direction}
-            onZoomToggle={() => setIsZoomed((z) => !z)}
-          />
-          <div className="info">
-            <ScalesMixer
-              isPlaying={playerState.isPlaying}
-              getFrequencyData={getFrequencyData}
-            />
-            <TrackInfo layers={layers} />
-            <ProgressBar
-              currentTime={currentTime}
-              duration={duration}
-              onSeek={seek}
-            />
-            <Controls
-              isPlaying={playerState.isPlaying}
-              shuffled={playerState.shuffled}
-              loopMode={playerState.loopMode}
-              onToggle={toggle}
-              onNext={next}
-              onPrev={prev}
-              onShuffle={toggleShuffle}
-              onLoop={cycleLoop}
-            />
-          </div>
-        </div>
-      </div>
 
-      {/* Right Column: Songs Queue List */}
-      <div className="w-full lg:w-[55%] flex flex-col">
-        <div className="p-6 flex flex-col">
-          <h3 className="text-lg font-bold text-[var(--color-primary)] mb-4 flex items-center gap-2">
-            <Headphones className="w-5 h-5 text-[var(--color-primary)]" />
-            Daftar Lagu Terpopuler
-          </h3>
-          <div className="space-y-3 max-h-[360px] overflow-y-auto pr-2 hide-scrollbar">
-            {tracks.map((track, index) => {
-              const isCurrent = playerState.currentIndex === index;
-              const isPlaying = isCurrent && playerState.isPlaying;
-              return (
-                <div
-                  key={track.id || index}
-                  tabIndex={0}
-                  role="button"
-                  aria-label={`Putar lagu ${track.title} oleh ${track.artist}`}
-                  onClick={() => {
-                    if (isCurrent) {
-                      toggle();
-                    } else {
-                      loadTrack(index, true, index > playerState.currentIndex ? 'next' : 'prev');
-                    }
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      if (isCurrent) {
-                        toggle();
-                      } else {
-                        loadTrack(index, true, index > playerState.currentIndex ? 'next' : 'prev');
-                      }
-                    }
-                  }}
-                  className={`flex items-center justify-between p-3.5 rounded-2xl border transition-all duration-300 cursor-pointer group/row focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 ${isCurrent
-                    ? 'active-music-card border-indigo-400/40 ring-1 ring-indigo-400/20'
-                    : 'bg-transparent border-slate-200/40 hover:bg-white/30 hover:border-slate-350'
-                    }`}
+          <div className="relative z-10 grid gap-12 lg:grid-cols-[1.1fr_0.9fr] items-start">
+            {/* Left Column: Intro text and highlights */}
+            <div className="space-y-8 text-left">
+              <div className="space-y-4">
+                <Badge
+                  variant="outline"
+                  className="w-fit border-indigo-400/35 bg-indigo-500/5 text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-indigo-500 select-none px-3.5 py-1 rounded-full"
                 >
-                  <div className="flex items-center min-w-0 flex-1">
-                    {/* Cover Thumbnail */}
-                    <div className="relative w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-slate-900 border border-slate-200/60 shadow-sm">
-                      <img src={(track.cover)?.src || (track.cover)} alt={track.title} className="w-full h-full object-cover animate-none" />
-                      <div className={`absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity duration-300 ${isCurrent ? 'opacity-100' : 'opacity-0 group-hover/row:opacity-100'}`}>
-                        {isPlaying ? (
-                          <Pause className="w-4 h-4 text-white" />
-                        ) : (
-                          <Play className="w-4 h-4 text-white fill-white" />
-                        )}
-                      </div>
-                    </div>
+                  🎧 MOST PLAYED
+                </Badge>
+                <div className="space-y-4">
+                  <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-[var(--color-primary)] leading-tight">
+                    Lagu Terpopuler Pilihan Intan
+                  </h2>
+                  <p className="max-w-xl text-sm sm:text-base leading-relaxed text-[var(--text-secondary)]">
+                    Dengarkan kurasi lagu-lagu yang paling sering diputar dan menemani aktivitas keseharian Nur Intan JKT48. Biarkan alunannya mengalir selaras dengan duniamu.
+                  </p>
+                </div>
+              </div>
 
-                    {/* Metadata */}
-                    <div className="flex-1 min-w-0 ml-3.5">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className={`font-bold text-sm truncate block ${isCurrent ? 'text-[var(--color-primary)] font-extrabold' : 'text-slate-800'}`}>
-                          {track.title}
-                        </span>
-                        {track.mood && (
-                          <span className="text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider bg-slate-100 text-slate-500 border border-slate-200/50">
-                            {track.mood}
-                          </span>
-                        )}
-                      </div>
-                      <span className="text-xs text-slate-500 truncate block mt-0.5">{track.artist}</span>
-                      {track.note && (
-                        <span className="text-[10px] text-slate-400 italic truncate block mt-1">
-                          "{track.note}"
-                        </span>
-                      )}
-                    </div>
-                  </div>
+              <div className="flex flex-wrap gap-4 pt-2">
+                <Button 
+                  size="lg" 
+                  onClick={toggle}
+                  className="h-12 rounded-full px-8 text-sm font-extrabold bg-indigo-600 hover:bg-indigo-700 text-white cursor-pointer transition-all duration-300"
+                >
+                  {playerState.isPlaying ? 'Jeda Musik' : 'Mulai Mendengarkan'}
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={() => {
+                    const el = document.getElementById('playlist-koleksi');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="h-12 rounded-full px-8 text-sm font-extrabold border-slate-200 text-slate-700 bg-white/40 hover:bg-slate-50 hover:text-indigo-600 cursor-pointer transition-all duration-300"
+                >
+                  Jelajahi Playlist Bulanan
+                </Button>
+              </div>
 
-                  {/* Right: Bouncing equalizer */}
-                  <div className="flex items-center gap-3 ml-2 shrink-0">
-                    {isCurrent && (
-                      <div className="flex items-end gap-0.5 h-3.5 w-4 overflow-hidden mb-0.5">
-                        <div className={`w-0.5 h-full bg-indigo-500 rounded-full ${isPlaying ? 'animate-bar1' : 'h-1.5'}`} />
-                        <div className={`w-0.5 h-full bg-indigo-500 rounded-full ${isPlaying ? 'animate-bar2' : 'h-3'}`} />
-                        <div className={`w-0.5 h-full bg-indigo-500 rounded-full ${isPlaying ? 'animate-bar3' : 'h-2'}`} />
+
+            </div>
+
+            {/* Right Column: Immersive Player App widget */}
+            <div className="space-y-6">
+              {/* Glassmorphic Player Card */}
+              <div className="rounded-3xl border border-slate-200/40 bg-white/60 dark:bg-slate-900/60 p-6 shadow-[0_25px_80px_rgba(15,23,42,0.15)] backdrop-blur-2xl text-left relative overflow-hidden">
+                
+                {/* Equalizer Visualizer overlay at the player top */}
+                <div className="absolute top-0 right-0 left-0 h-1.5 opacity-35">
+                  <div className="w-full h-full bg-gradient-to-r from-sky-400 via-indigo-500 to-pink-500 animate-pulse" />
+                </div>
+
+                <div className="flex items-start gap-4">
+                  {/* Album Cover art art block */}
+                  <div className="relative h-20 w-20 overflow-hidden rounded-2xl border border-slate-200/40 bg-gradient-to-br from-indigo-500/10 via-slate-100 to-transparent flex-shrink-0 shadow-sm">
+                    <img 
+                      src={currentTrack.cover?.src || currentTrack.cover} 
+                      alt={currentTrack.title} 
+                      className={`w-full h-full object-cover select-none transition-transform duration-700 ${playerState.isPlaying ? 'animate-none scale-105' : 'scale-100'}`} 
+                    />
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.4),_transparent_60%)]" />
+                    {playerState.isPlaying && (
+                      <div className="absolute bottom-1 right-1 flex items-end gap-0.5 h-3.5 w-4 overflow-hidden bg-black/40 rounded px-0.5 py-0.5">
+                        <div className="w-0.5 h-full bg-sky-400 rounded-full animate-bar1" />
+                        <div className="w-0.5 h-full bg-sky-400 rounded-full animate-bar2" />
+                        <div className="w-0.5 h-full bg-sky-400 rounded-full animate-bar3" />
                       </div>
                     )}
                   </div>
+
+                  <div className="flex-1 space-y-3.5 min-w-0">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="text-[10px] uppercase tracking-[0.25em] font-extrabold text-indigo-500 select-none">
+                          Now playing
+                        </p>
+                        <h3 className="mt-1 text-xl font-black tracking-tight text-slate-800 dark:text-white truncate">
+                          {currentTrack.title}
+                        </h3>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                          {currentTrack.artist} {currentTrack.mood && `· ${currentTrack.mood}`}
+                        </p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          setIsFavorite(!isFavorite);
+                          // Show custom notification
+                        }}
+                        className={`rounded-full border border-slate-200/50 bg-white/60 text-slate-500 backdrop-blur hover:text-rose-500 transition-colors h-9 w-9 shrink-0 ${isFavorite ? 'text-rose-500 border-rose-200 bg-rose-50/40' : ''}`}
+                      >
+                        <Heart className={`h-4 w-4 ${isFavorite ? 'fill-rose-500' : ''}`} />
+                      </Button>
+                    </div>
+
+                    {currentTrack.spotifyUrl && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-8 rounded-full border-slate-200 bg-white/70 px-4 text-[10px] uppercase font-black tracking-[0.2em] text-slate-700 hover:text-indigo-600 transition-colors cursor-pointer"
+                        asChild
+                      >
+                        <a
+                          href={currentTrack.spotifyUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          Open in Spotify
+                        </a>
+                      </Button>
+                    )}
+                  </div>
                 </div>
-              );
-            })}
+
+                {/* Progress bar info slider */}
+                <div className="space-y-2 pt-5 select-none">
+                  <div className="flex items-center justify-between text-[11px] font-bold tracking-wide text-slate-400">
+                    <span>{fmt(currentTime)}</span>
+                    <span>{fmt(duration)}</span>
+                  </div>
+                  <div 
+                    onClick={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      seek(Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width)));
+                    }}
+                    className="h-1.5 w-full rounded-full bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer relative"
+                  >
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-sky-400 transition-[width] duration-100"
+                      style={{ width: `${progressPercent}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* Controls options */}
+                <div className="flex items-center justify-between pt-5">
+                  <div className="flex items-center gap-1.5">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={toggleShuffle}
+                      className={`h-9 w-9 rounded-full border border-slate-200/50 bg-white/60 text-slate-500 backdrop-blur hover:text-indigo-600 transition-colors ${playerState.shuffled ? 'text-indigo-600 border-indigo-200 bg-indigo-50/40' : ''}`}
+                    >
+                      <Shuffle className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={prev}
+                      className="h-9 w-9 rounded-full border border-slate-200/50 bg-white/60 text-slate-500 backdrop-blur hover:text-indigo-600 transition-colors"
+                    >
+                      <SkipBack className="h-4 w-4" />
+                    </Button>
+                  </div>
+
+                  <Button 
+                    onClick={toggle}
+                    className="h-11 w-11 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white cursor-pointer flex items-center justify-center transition-transform hover:scale-105 active:scale-95 shadow-md"
+                  >
+                    {playerState.isPlaying ? <Pause className="h-4.5 w-4.5 fill-white" /> : <Play className="h-4.5 w-4.5 fill-white" />}
+                  </Button>
+
+                  <div className="flex items-center gap-1.5">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={next}
+                      className="h-9 w-9 rounded-full border border-slate-200/50 bg-white/60 text-slate-500 backdrop-blur hover:text-indigo-600 transition-colors"
+                    >
+                      <SkipForward className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={cycleLoop}
+                      className={`h-9 w-9 rounded-full border border-slate-200/50 bg-white/60 text-slate-500 backdrop-blur hover:text-indigo-600 transition-colors relative ${playerState.loopMode !== 'off' ? 'text-indigo-600 border-indigo-200 bg-indigo-50/40' : ''}`}
+                    >
+                      <Repeat className="h-4 w-4" />
+                      {playerState.loopMode === 'one' && (
+                        <span className="absolute -top-0.5 -right-0.5 text-[7px] font-black bg-indigo-600 text-white rounded-full w-3.5 h-3.5 flex items-center justify-center border border-white">1</span>
+                      )}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={toggleMute}
+                      className={`h-9 w-9 rounded-full border border-slate-200/50 bg-white/60 text-slate-500 backdrop-blur hover:text-indigo-600 transition-colors ${isMuted ? 'text-rose-600 border-rose-200 bg-rose-50/40' : ''}`}
+                    >
+                      {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Optional Spotify track embed overlay below controls */}
+                {currentTrack.embedUrl && (
+                  <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200/40 bg-white/80 shadow-[0_20px_60px_rgba(15,23,42,0.15)] backdrop-blur">
+                    <LazySpotifyIframe
+                      src={currentTrack.embedUrl}
+                      title={`${currentTrack.title} - Spotify`}
+                      height="152"
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Playlist queue buttons scrollable deck */}
+              <div className="relative">
+                <div className="max-h-[22rem] space-y-2.5 overflow-y-auto pr-1 hide-scrollbar relative z-10">
+                  {tracks.map((track, index) => {
+                    const isActive = index === playerState.currentIndex;
+                    const isPlaying = isActive && playerState.isPlaying;
+
+                    return (
+                      <button
+                        key={track.id || index}
+                        type="button"
+                        onClick={() => {
+                          if (isActive) {
+                            toggle();
+                          } else {
+                            loadTrack(index, true, index > playerState.currentIndex ? 'next' : 'prev');
+                          }
+                        }}
+                        className={`group flex w-full items-center gap-4 rounded-2xl border border-slate-200/40 bg-white/60 dark:bg-black/10 p-4 text-left backdrop-blur-xl transition-all duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 ${
+                          isActive
+                            ? "border-indigo-400 bg-gradient-to-r from-indigo-500/10 to-indigo-500/5 shadow-[0_15px_35px_rgba(15,23,42,0.1)] active-music-card"
+                            : "hover:-translate-y-0.5 hover:border-slate-350 hover:bg-white/80"
+                        }`}
+                      >
+                        <div
+                          className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border border-slate-200 text-xs font-black transition-colors relative overflow-hidden select-none ${
+                            isActive
+                              ? "bg-indigo-600 text-white border-indigo-500"
+                              : "bg-white/80 text-slate-700"
+                          }`}
+                        >
+                          <img 
+                            src={track.cover?.src || track.cover} 
+                            alt="" 
+                            className="absolute inset-0 w-full h-full object-cover opacity-15"
+                          />
+                          <span className="relative z-10">{track.title.charAt(0)}</span>
+                        </div>
+                        <div className="flex flex-1 items-center justify-between gap-4 min-w-0">
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-1.5">
+                              <p className={`text-sm font-black truncate ${isActive ? 'text-indigo-600 font-extrabold' : 'text-slate-800'}`}>
+                                {track.title}
+                              </p>
+                              {track.mood && (
+                                <Badge className="text-[9px] px-1.5 py-0.5 bg-slate-100 text-slate-500 hover:bg-slate-100 scale-90 border border-slate-200/30">
+                                  {track.mood}
+                                </Badge>
+                              )}
+                            </div>
+                            <p className="text-xs text-slate-500 truncate mt-0.5">
+                              {track.artist}
+                            </p>
+                          </div>
+                          
+                          <div className="shrink-0 flex items-center gap-2">
+                            {isActive && (
+                              <div className="flex items-end gap-0.5 h-3.5 w-4 overflow-hidden mb-0.5">
+                                <div className={`w-0.5 h-full bg-indigo-500 rounded-full ${isPlaying ? 'animate-bar1' : 'h-1.5'}`} />
+                                <div className={`w-0.5 h-full bg-indigo-500 rounded-full ${isPlaying ? 'animate-bar2' : 'h-3'}`} />
+                                <div className={`w-0.5 h-full bg-indigo-500 rounded-full ${isPlaying ? 'animate-bar3' : 'h-2'}`} />
+                              </div>
+                            )}
+                            <span className="text-[11px] font-bold tracking-wide text-slate-400">
+                              {track.playCount || '3:00'}
+                            </span>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+                
+                {/* Gradient Masks */}
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-white/90 via-white/20 to-transparent z-20 opacity-40" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-white/90 via-white/20 to-transparent z-20 opacity-40" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1064,7 +1327,8 @@ export default function DengerIntanPage() {
   const [mostPlayedSongs, setMostPlayedSongs] = useState([]);
 
   const tracksForPlayer = useMemo(() => {
-    return mostPlayedSongs.map((song) => {
+    const rawList = mostPlayedSongs && mostPlayedSongs.length > 0 ? mostPlayedSongs : FALLBACK_MOST_PLAYED;
+    return rawList.map((song) => {
       return {
         title: song.title,
         artist: song.artist,
@@ -1073,7 +1337,9 @@ export default function DengerIntanPage() {
         mood: song.mood,
         playCount: song.playCount,
         note: song.note,
-        id: song.id
+        id: song.id,
+        spotifyUrl: song.spotifyUrl,
+        embedUrl: song.embedUrl
       };
     });
   }, [mostPlayedSongs]);
@@ -1168,7 +1434,7 @@ export default function DengerIntanPage() {
     return <Loading message="Mengunduh daftar putar musik..." />;
   }
   return (
-    <div className="space-y-16 max-w-7xl mx-auto py-6 relative">
+    <div className="space-y-16 max-w-7xl mx-auto pb-6 relative">
 
       <ContainerScroll
         titleComponent={
@@ -1285,17 +1551,10 @@ export default function DengerIntanPage() {
                     exit={{ opacity: 0, y: -12, scale: 0.98 }}
                     transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
                   >
-                    <iframe
-                      data-testid="embed-iframe"
-                      style={{ borderRadius: '12px' }}
+                    <LazySpotifyIframe
                       src={activePlaylist.spotifyEmbedUrl}
-                      width="100%"
-                      height="352"
-                      frameBorder="0"
-                      allowFullScreen=""
-                      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                      loading="lazy"
-                    ></iframe>
+                      title={activePlaylist.title}
+                    />
                   </motion.div>
                 </AnimatePresence>
               </div>
@@ -1310,379 +1569,11 @@ export default function DengerIntanPage() {
               }}
             />
 
-            <style>{`
-              @keyframes pulse-border {
-                0%, 100% {
-                  opacity: 0.3;
-                  transform: scale(1);
-                }
-                50% {
-                  opacity: 0.7;
-                  transform: scale(1.002);
-                }
-              }
-              @keyframes waveform {
-                0% {
-                  transform: scaleY(0.25);
-                }
-                100% {
-                  transform: scaleY(1.15);
-                }
-              }
-              /* Custom MusicPlayer Styling */
-              .card {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 2rem;
-                width: 100%;
-                max-width: 800px;
-                margin: 0 auto;
-                padding: 2.5rem;
-                border-radius: 2.5rem;
-                border: 1px solid rgba(255, 255, 255, 0.12);
-                background: linear-gradient(135deg, #09062b 0%, #170c79 50%, #220f4f 100%);
-                box-shadow: 0 30px 70px -15px rgba(23, 12, 121, 0.35);
-                backdrop-filter: blur(20px);
-                transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-                position: relative;
-                overflow: hidden;
-              }
-              @media (min-width: 768px) and (max-width: 1023px) {
-                .card {
-                  flex-direction: row;
-                  padding: 3rem;
-                }
-              }
-              .card::before {
-                content: '';
-                position: absolute;
-                inset: 0;
-                background: radial-gradient(circle at 20% 50%, rgba(8, 145, 178, 0.15) 0%, transparent 60%);
-                pointer-events: none;
-                z-index: 0;
-              }
-              .card::after {
-                content: '';
-                position: absolute;
-                inset: 0;
-                background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-                opacity: 0.08;
-                pointer-events: none;
-                z-index: 1;
-              }
-              .card.is-zoomed {
-                transform: scale(1.02);
-                border-color: rgba(139, 92, 246, 0.3);
-                box-shadow: 0 35px 80px -10px rgba(139, 92, 246, 0.3);
-              }
-              .mask {
-                width: 200px;
-                height: 200px;
-                border-radius: 50%;
-                position: relative;
-                overflow: hidden;
-                cursor: pointer;
-                box-shadow: 0 15px 35px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.2);
-                flex-shrink: 0;
-                transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-                z-index: 10;
-                background: #000;
-              }
-              @media (min-width: 640px) {
-                .mask {
-                  width: 240px;
-                  height: 240px;
-                }
-              }
-              .mask.is-zoomed {
-                transform: scale(1.1) rotate(5deg);
-                box-shadow: 0 25px 45px rgba(0,0,0,0.7), inset 0 0 0 1.5px rgba(255,255,255,0.3);
-              }
-              .spin {
-                width: 100%;
-                height: 100%;
-                border-radius: 50%;
-                position: relative;
-                transition: transform 0.1s linear;
-                background: radial-gradient(circle, #333 1px, #0f0f0f 4px, #1c1c1c 8px, #0f0f0f 16px, #262626 18px, #0a0a0a 28px, #1a1a1a 30px, #0a0a0a 40px, #262626 42px, #0a0a0a 52px, #1c1c1c 54px, #050505 100%);
-              }
-              .cover {
-                position: absolute;
-                inset: 0;
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                border-radius: 50%;
-                clip-path: circle(35% at 50% 50%);
-                pointer-events: none;
-                transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-              }
-              .cover-enter {
-                opacity: 0;
-                transform: scale(0.85) rotate(-30deg);
-              }
-              .cover-exit {
-                opacity: 0;
-                transform: scale(1.15) rotate(30deg);
-              }
-              .hole {
-                position: absolute;
-                inset: 0;
-                margin: auto;
-                width: 16px;
-                height: 16px;
-                background: #09062b;
-                border-radius: 50%;
-                border: 3px solid rgba(255,255,255,0.25);
-                box-shadow: 0 0 10px rgba(0,0,0,0.5);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                z-index: 20;
-                pointer-events: none;
-              }
-              .hole-inner {
-                width: 4px;
-                height: 4px;
-                background: #fff;
-                border-radius: 50%;
-              }
-              .info {
-                display: flex;
-                flex-direction: column;
-                gap: 1.5rem;
-                flex-grow: 1;
-                width: 100%;
-                text-align: left;
-                z-index: 10;
-              }
-              .scales {
-                width: 100%;
-                height: 60px;
-                opacity: 0.15;
-                transition: opacity 0.5s ease;
-              }
-              .is-playing .scales {
-                opacity: 0.55;
-              }
-              .scales circle {
-                fill: #818cf8;
-                stroke: rgba(255, 255, 255, 0.05);
-                transition: fill 0.3s ease;
-              }
-              .track-info {
-                position: relative;
-                overflow: hidden;
-                height: 64px;
-              }
-              .ti-layer {
-                display: flex;
-                flex-direction: column;
-                transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-              }
-              .ti-abs {
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-              }
-              .ti-layer .artist {
-                font-size: 0.65rem;
-                font-weight: 800;
-                text-transform: uppercase;
-                letter-spacing: 0.2em;
-                color: rgba(255, 255, 255, 0.45);
-                margin: 0;
-                transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-              }
-              .ti-layer .track {
-                font-size: 1.5rem;
-                font-weight: 900;
-                color: #fff;
-                line-height: 1.25;
-                margin-top: 4px;
-                margin-bottom: 0;
-                transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-              }
-              .ti-enter {
-                opacity: 0;
-                transform: translateY(var(--dx, 20px));
-              }
-              .ti-enter.artist, .ti-enter.track {
-                opacity: 1;
-                transform: translateY(0);
-              }
-              .ti-exit {
-                opacity: 0;
-                transform: translateY(calc(-1 * var(--dx, 20px)));
-              }
-              .bar {
-                width: 100%;
-                height: 4px;
-                background: rgba(255, 255, 255, 0.15);
-                border-radius: 99px;
-                cursor: pointer;
-                position: relative;
-                transition: height 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-              }
-              .bar:hover {
-                height: 6px;
-              }
-              .bar-fill {
-                height: 100%;
-                background: linear-gradient(90deg, #38bdf8, #818cf8);
-                border-radius: 99px;
-                position: absolute;
-                top: 0;
-                left: 0;
-              }
-              .time {
-                display: flex;
-                justify-content: flex-end;
-                gap: 0.3rem;
-                font-family: var(--font-mono);
-                font-size: 10px;
-                font-weight: 700;
-                color: rgba(255, 255, 255, 0.4);
-                margin-top: 6px;
-              }
-              .time .current {
-                color: rgba(255, 255, 255, 0.65);
-              }
-              .controls {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                width: 100%;
-                max-width: 320px;
-                margin: 0 auto;
-              }
-              .ctrl {
-                background: transparent;
-                border: none;
-                color: rgba(255, 255, 255, 0.5);
-                cursor: pointer;
-                width: 44px;
-                height: 44px;
-                border-radius: 50%;
-                transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                position: relative;
-                flex-shrink: 0;
-              }
-              .ctrl:hover {
-                color: #fff;
-                background: rgba(255, 255, 255, 0.08);
-                transform: scale(1.08);
-              }
-              .ctrl:active {
-                transform: scale(0.95);
-              }
-              .ctrl-play {
-                width: 48px;
-                height: 48px;
-                background: #fff;
-                color: #09062b;
-                box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-              }
-              .ctrl-play:hover {
-                background: #f1f5f9;
-                color: #09062b;
-                transform: scale(1.12);
-                box-shadow: 0 10px 25px rgba(255,255,255,0.25);
-              }
-              .ctrl-toggle.is-active {
-                color: #38bdf8;
-                background: rgba(56, 189, 248, 0.08);
-              }
-              .ctrl-loop {
-                position: relative;
-              }
-              .loop-one {
-                position: absolute;
-                top: 1px;
-                right: 1px;
-                font-size: 8px;
-                font-weight: 950;
-                background: #38bdf8;
-                color: #000;
-                border-radius: 50%;
-                width: 11px;
-                height: 11px;
-                display: none;
-                align-items: center;
-                justify-content: center;
-              }
-              .mode-one .loop-one {
-                display: flex;
-              }
-              /* Bouncing EQ equalizer animation for playlist items */
-              @keyframes bar1 {
-                0%, 100% { height: 3px; }
-                50% { height: 14px; }
-              }
-              @keyframes bar2 {
-                0%, 100% { height: 14px; }
-                50% { height: 6px; }
-              }
-              @keyframes bar3 {
-                0%, 100% { height: 6px; }
-                50% { height: 12px; }
-              }
-              .animate-bar1 { animation: bar1 0.8s ease-in-out infinite; }
-              .animate-bar2 { animation: bar2 0.8s ease-in-out infinite; }
-              .animate-bar3 { animation: bar3 0.8s ease-in-out infinite; }
-
-              /* Musical glow animation for active card */
-              @keyframes musicalGlow {
-                0%, 100% {
-                  box-shadow: 0 0 15px rgba(99, 102, 241, 0.25), 0 0 5px rgba(139, 92, 246, 0.15);
-                  border-color: rgba(129, 140, 248, 0.45);
-                }
-                50% {
-                  box-shadow: 0 0 25px rgba(99, 102, 241, 0.5), 0 0 12px rgba(139, 92, 246, 0.35);
-                  border-color: rgba(139, 92, 246, 0.85);
-                }
-              }
-              .active-music-card {
-                animation: musicalGlow 2s infinite ease-in-out;
-                background: linear-gradient(90deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.15) 100%) !important;
-              }
-            `}</style>
+            {/* Inline CSS styling removed in favor of external DengerIntanPage.css */}
           </div>
         </div>
       </ContainerScroll>
 
-
-      {/* ======================================================================== */}
-      {/* Most Played Songs by Nur Intan */}
-      <motion.section className="relative py-20 select-none z-10 border-t border-[var(--border-color)]/40 pt-16" id="most-played-song" style={paperTex}>
-        <motion.div viewport={vp1} initial="hidden" whileInView="visible" variants={containerV} className="w-full">
-          {/* Section Header aligned with Koleksi Playlist */}
-          <motion.div variants={fadeUp} className="mb-6 flex justify-between items-end border-b border-[var(--border-color)]/60 pb-3">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-[var(--color-primary)] mb-1">
-                Most Played Songs by Nur Intan
-              </h2>
-              <p className="text-xs sm:text-sm text-[var(--text-secondary)]">
-                Koleksi lagu pilihan yang paling sering didengarkan oleh Nur Intan saat ini.
-              </p>
-            </div>
-          </motion.div>
-
-          {tracksForPlayer && tracksForPlayer.length > 0 ? (
-            <MusicPlayer tracks={tracksForPlayer} crossOrigin="anonymous" />
-          ) : (
-            <div className="w-full flex flex-col items-center justify-center p-12 bg-black/40 rounded-[32px] border border-white/5 text-white/50 text-sm font-semibold relative overflow-hidden min-h-[300px]">
-              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-sky-400 mb-4" />
-              <span>Memuat pemutar musik...</span>
-            </div>
-          )}
-        </motion.div>
-      </motion.section>
       {/* Archives of Past Monthly Playlists / Koleksi Playlist */}
       <motion.section
         className="relative mt-16 select-none relative z-10 border-t border-[var(--border-color)]/40 pt-16"
@@ -1690,6 +1581,7 @@ export default function DengerIntanPage() {
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
         variants={staggerSection}
+        id="playlist-koleksi"
       >
         <motion.div variants={fadeUp} className="mb-6 flex justify-between items-end border-b border-[var(--border-color)]/60 pb-3">
           <div>
@@ -1713,7 +1605,7 @@ export default function DengerIntanPage() {
             <button
               onClick={() => scrollContainer('right')}
               className="w-11 h-11 rounded-full border border-[var(--color-primary)]/25 flex items-center justify-center text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white transition-all shadow-sm cursor-pointer active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2"
-              title="Scroll Kanan"
+              title="Scroll Rian"
               aria-label="Scroll Kanan"
             >
               <ArrowRight className="w-4 h-4" />
@@ -1739,42 +1631,50 @@ export default function DengerIntanPage() {
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 className={`snap-start shrink-0 w-[290px] sm:w-[320px] glass-panel p-4 rounded-[28px] border transition-all duration-300 relative overflow-hidden flex flex-col justify-between ${isActivePlaylist ? 'border-[var(--color-primary)] shadow-md ring-2 ring-[var(--color-primary)]/10 scale-[0.98]' : 'border-[var(--border-color)]/60 bg-white/40 shadow-sm hover:shadow-md hover:scale-[1.01] cursor-pointer'}`}
               >
-                <div className="flex justify-between items-start mb-3">
+                <div className="flex justify-between items-start mb-3.5">
                   <div className="min-w-0 pr-2">
-                    <span className="bg-[var(--color-secondary)]/90 text-white text-[8px] font-extrabold px-2 py-0.5 rounded-full inline-block mb-1 shadow-sm uppercase tracking-wider">
+                    <span className="bg-[var(--color-secondary)]/90 text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-full inline-block mb-1 shadow-sm uppercase tracking-wider select-none">
                       {play.category}
                     </span>
-                    <h3 className="text-xs font-extrabold text-[var(--color-primary)] truncate leading-tight mt-0.5">
+                    <h3 className="text-sm font-black text-[var(--color-primary)] truncate leading-tight mt-1">
                       {play.title}
                     </h3>
                   </div>
                   {isActivePlaylist ? (
-                    <span className="bg-[var(--color-primary)] text-white text-[8px] font-extrabold px-1.5 py-0.5 rounded-full flex items-center gap-1 uppercase shrink-0 tracking-wider shadow-[0_0_8px_rgba(23,12,121,0.25)] animate-pulse">
-                      <Headphones className="w-2.5 h-2.5 animate-bounce" />
+                    <span className="bg-[var(--color-primary)] text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-1.5 uppercase shrink-0 tracking-wider shadow-[0_0_8px_rgba(23,12,121,0.25)] animate-pulse">
+                      <Headphones className="w-3 h-3 animate-bounce" />
                       Sedang Diputar
                     </span>
                   ) : (
-                    <span className="text-[var(--text-muted)] text-[8px] font-bold px-1.5 py-0.5 rounded-full border border-slate-200 select-none">
+                    <span className="text-[var(--text-muted)] text-[10px] font-bold px-2 py-0.5 rounded-full border border-slate-200 select-none">
                       Putar
                     </span>
                   )}
                 </div>
                 <div className="w-full rounded-xl overflow-hidden shadow-sm border border-white/5 bg-black/10">
-                  <iframe
-                    data-testid="embed-iframe"
-                    style={{ borderRadius: '12px' }}
+                  <LazySpotifyIframe
                     src={play.spotifyEmbedUrl}
-                    width="100%"
-                    height="352"
-                    frameBorder="0"
-                    allowFullScreen=""
-                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                    loading="lazy"
-                  ></iframe>
+                    title={play.title}
+                  />
                 </div>
               </motion.div>
             );
           })}
+        </motion.div>
+      </motion.section>
+
+      {/* ======================================================================== */}
+      {/* Most Played Songs by Nur Intan */}
+      <motion.section className="relative py-20 select-none z-10 border-t border-[var(--border-color)]/40 pt-16" id="most-played-song" style={paperTex}>
+        <motion.div viewport={vp1} initial="hidden" whileInView="visible" variants={containerV} className="w-full">
+          {tracksForPlayer && tracksForPlayer.length > 0 ? (
+            <MusicPlayer tracks={tracksForPlayer} crossOrigin="anonymous" />
+          ) : (
+            <div className="w-full flex flex-col items-center justify-center p-12 bg-black/40 rounded-[32px] border border-white/5 text-white/50 text-sm font-semibold relative overflow-hidden min-h-[300px]">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-sky-400 mb-4" />
+              <span>Memuat pemutar musik...</span>
+            </div>
+          )}
         </motion.div>
       </motion.section>
 

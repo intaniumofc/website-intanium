@@ -33,11 +33,11 @@ export const ContainerScroll = ({
 
   return (
     <div
-      className="h-[38rem] md:h-[48rem] flex items-center justify-center relative p-2 md:p-6 z-10"
+      className="min-h-[40rem] md:min-h-[50rem] flex flex-col items-center justify-start relative p-2 md:p-6 z-10 pt-0 md:pt-0"
       ref={setElement}
     >
       <div
-        className="py-6 md:py-12 w-full relative"
+        className="pb-6 md:pb-12 pt-0 w-full relative"
         style={{
           perspective: "1000px",
         }}

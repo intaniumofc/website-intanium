@@ -250,7 +250,7 @@ export default function MerchandisePage() {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
-          className="text-center space-y-4 max-w-4xl mx-auto mb-10 pt-4"
+          className="text-center space-y-4 max-w-4xl mx-auto mb-10 pt-0"
         >
           <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[var(--text-muted)]">
             {resultLabel}

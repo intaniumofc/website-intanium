@@ -85,7 +85,7 @@ export default function SchedulePage() {
   }, [activePlatform]);
 
   return (
-    <div className="relative space-y-12 max-w-5xl mx-auto py-6 overflow-visible">
+    <div className="relative space-y-12 max-w-5xl mx-auto pb-6 overflow-visible">
 
       {/* ========= PAGE HEADER & CONTROLS SECTION (Unified Row on Desktop) ========= */}
       <motion.div
