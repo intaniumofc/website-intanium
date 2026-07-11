@@ -28,7 +28,8 @@ import {
   Users,
   Hash,
   Gamepad2,
-  Trophy
+  Trophy,
+  Camera
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import logoNobg from '../assets/logos/logo-nobg.webp';
@@ -92,8 +93,9 @@ export default function AdminLayout({ children }) {
     if (href === ROUTES.ADMIN_HASHTAGS) return 'hashtags';
     if (href === ROUTES.ADMIN_GAMES) return 'games';
     if (href === ROUTES.ADMIN_ESPORT) return 'esport';
-    // Halaman keanggotaan dapat dibaca oleh semua staff, proteksi edit/hapus diatur di halaman
+    // Halaman keanggotaan dan photobooth dapat dibaca oleh semua staff, proteksi edit/hapus diatur di halaman
     if (href === ROUTES.ADMIN_MEMBERSHIP) return '';
+    if (href === ROUTES.ADMIN_PHOTOBOOTH) return '';
     return '';
   };
 
@@ -204,6 +206,7 @@ export default function AdminLayout({ children }) {
     { id: 'games', name: 'Kelola Game', href: ROUTES.ADMIN_GAMES, icon: Gamepad2 },
     { id: 'esport', name: 'Kelola Esport', href: ROUTES.ADMIN_ESPORT, icon: Trophy },
     { id: 'keanggotaan', name: 'Kelola Keanggotaan', href: ROUTES.ADMIN_MEMBERSHIP, icon: Users },
+    { id: 'photobooth', name: 'Kelola Photobooth', href: ROUTES.ADMIN_PHOTOBOOTH, icon: Camera },
   ];
 
   // Filter links based on sidebar search input
