@@ -3,7 +3,10 @@ import { proxyR2Url } from '../../lib/helpers';
 
 export const merchandiseService = {
   getProducts: async (category = 'All', search = '') => {
-    let query = supabase.from('merchandise').select('*').neq('id', 'payment_settings').neq('id', 'game_settings');
+    let query = supabase.from('merchandise').select('*')
+      .neq('id', 'payment_settings')
+      .neq('id', 'game_settings')
+      .neq('id', 'photobooth_settings');
     
     if (category !== 'All') {
       query = query.eq('category', category);

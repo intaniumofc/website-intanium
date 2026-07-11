@@ -5,7 +5,7 @@ export const FRAMES_CONFIG: FrameConfig[] = [
     id: "frame-classic",
     name: "Klasik Vertikal (4 Foto)",
     thumbnail: "/assets/frames/thumbs/frame-classic-thumb.png",
-    src: "/assets/frames/frame-classic.png",
+    src: "/assets/frames/frame-classic.webp",
     canvasWidth: 1686,
     canvasHeight: 2528,
     slots: [
@@ -23,8 +23,8 @@ export const FRAMES_CONFIG: FrameConfig[] = [
   {
     id: "frame-2",
     name: "Vertikal Baru (3 Foto)",
-    thumbnail: "/assets/frames/frame-2.png", // Use the frame image directly as thumbnail
-    src: "/assets/frames/frame-2.png",
+    thumbnail: "/assets/frames/frame-2.webp", // Use the webp frame image directly as thumbnail
+    src: "/assets/frames/frame-2.webp",
     canvasWidth: 1620,
     canvasHeight: 4860,
     slots: [

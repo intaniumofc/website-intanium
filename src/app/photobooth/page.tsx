@@ -4,11 +4,11 @@ import MainLayout from "@/components/layout/MainLayout";
 import PhotoboothStudio from "./components/PhotoboothStudio";
 
 export const metadata: Metadata = {
-  title: "Studio Foto Online Intanium - Cekrek & Halu Bareng Intan!",
+  title: "Studio Foto Online Intanium - Cekrek Bareng Intan!",
   description: "Ambil 4 pose foto berurutan menggunakan webcam Anda, lalu susun secara otomatis ke dalam bingkai photostrip bertema Intanium eksklusif Nur Intan JKT48.",
   keywords: ["intanium", "nur intan", "jkt48", "photobooth online", "studio foto", "photostrip online"],
   openGraph: {
-    title: "Studio Foto Online Intanium - Cekrek & Halu Bareng Intan!",
+    title: "Studio Foto Online Intanium - Cekrek Bareng Intan!",
     description: "Ambil 4 pose foto berurutan menggunakan webcam Anda, lalu susun secara otomatis ke dalam bingkai photostrip bertema Intanium eksklusif Nur Intan JKT48.",
     type: "website",
     url: "https://intanium.com/photobooth",
