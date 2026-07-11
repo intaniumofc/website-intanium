@@ -34,7 +34,10 @@ const cardVariants = {
 
 const ProductCard = ({ product }) => {
   const images = useMemo(() => {
-    const urls = (product.image_urls ?? product.imageUrls ?? []).filter(Boolean);
+    const rawUrls = product.image_urls ?? product.imageUrls ?? [];
+    const urls = Array.isArray(rawUrls)
+      ? rawUrls.filter(Boolean)
+      : (typeof rawUrls === 'string' && rawUrls.trim() ? [rawUrls.trim()] : []);
     return urls.length > 0 ? urls : [product.image_url ?? product.imageUrl].filter(Boolean);
   }, [product.image_url, product.imageUrl, product.image_urls, product.imageUrls]);
 

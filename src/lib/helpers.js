@@ -86,12 +86,15 @@ export const logAdminActivity = async (actionText) => {
  * @returns {string|string[]} Proxied URL or array of URLs
  */
 export const proxyR2Url = (url) => {
-  if (!url) return '';
+  if (url === null || url === undefined) return url;
   if (Array.isArray(url)) {
     return url.map(u => proxyR2Url(u));
   }
-  if (typeof url === 'string' && url.includes('.r2.dev')) {
-    return `/api/media?url=${encodeURIComponent(url)}`;
+  if (typeof url === 'string') {
+    if (!url) return '';
+    if (url.includes('.r2.dev')) {
+      return `/api/media?url=${encodeURIComponent(url)}`;
+    }
   }
   return url;
 };

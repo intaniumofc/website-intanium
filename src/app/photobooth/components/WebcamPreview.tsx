@@ -35,7 +35,7 @@ export default function WebcamPreview({
   const confirmPhoto = showConfirm && capturedPhotos && capturedPhotos[photoIndex];
 
   return (
-    <div className="glass-panel rounded-2xl overflow-hidden p-4 aspect-video md:aspect-[4/3] flex flex-col relative w-full max-w-md mx-auto">
+    <div className="glass-panel rounded-2xl overflow-hidden p-4 aspect-square md:aspect-[4/3] flex flex-col relative w-full max-w-md mx-auto">
       {/* Title Bar */}
       <div className="flex items-center justify-between mb-3 text-[var(--text-primary)] font-medium text-sm border-b border-[var(--border-color)] pb-2">
         <div className="flex items-center gap-2">

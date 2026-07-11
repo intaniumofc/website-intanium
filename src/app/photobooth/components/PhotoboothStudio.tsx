@@ -405,6 +405,11 @@ export default function PhotoboothStudio() {
   const isUploadPreview = state.state === "UPLOAD_PREVIEW";
   const isReview = state.state === "REVIEW";
 
+  // Dynamic order for mobile layout optimization
+  const leftColOrder = isReview ? "order-3 md:order-none" : "order-1 md:order-none";
+  const centerColOrder = isReview ? "order-1 md:order-none" : "order-3 md:order-none";
+  const rightColOrder = "order-2 md:order-none";
+
   // Handle clicking on specific slot in step 3
   const handleSlotClick = (idx: number) => {
     if (state.inputMode === "camera" && (state.state === "LIVE_PREVIEW" || state.state === "CONFIRM_CAPTURE")) {
@@ -495,7 +500,7 @@ export default function PhotoboothStudio() {
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={frame.src}
+                      src={frame.thumbnail ?? frame.src}
                       alt={frame.name}
                       className="w-full h-full object-cover"
                     />
@@ -542,20 +547,20 @@ export default function PhotoboothStudio() {
   return (
     <div className="flex flex-col items-center w-full">
       {/* Header Decoration */}
-      <div className="text-center space-y-4 max-w-4xl mx-auto mb-10">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-(--color-primary) sm:text-5xl tracking-tight">
+      <div className="text-center space-y-2 sm:space-y-4 max-w-4xl mx-auto mb-6 sm:mb-10 px-2">
+        <h1 className="text-2xl sm:text-4xl font-extrabold text-(--color-primary) sm:text-5xl tracking-tight">
           Studio Foto Online Intanium
         </h1>
-        <p className="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed max-w-2xl mx-auto font-body">
+        <p className="text-xs sm:text-base text-[var(--text-secondary)] leading-relaxed max-w-2xl mx-auto font-body">
           Wujudkan momen impianmu satu frame bersama Intan! Ambil {activeFrame.slots.length} pose ter-kece kamu dan abadikan kenangan manis ini ke dalam bingkai eksklusif pilihanmu.
         </p>
       </div>
 
       {/* Main Responsive Grid Layout */}
-      <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-12 gap-8 items-start justify-center flex-1">
+      <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-12 gap-8 items-start justify-center flex-1 px-2">
 
         {/* Left Column: Camera/Upload Preview, Steps Guide, or Export Help */}
-        <div className="md:col-span-4 flex justify-center w-full">
+        <div className={`md:col-span-4 flex justify-center w-full ${leftColOrder}`}>
           {isSelectInput ? (
             <div className="glass-panel rounded-2xl p-5 bg-[var(--bg-card)] border border-[var(--border-color)] text-center w-full max-w-md">
               <h4 className="font-bold text-[var(--text-primary)] text-sm mb-3">PANDUAN STUDIO FOTO</h4>
@@ -619,7 +624,7 @@ export default function PhotoboothStudio() {
         </div>
 
         {/* Center Column: Photostrip Canvas / Placeholder */}
-        <div className="md:col-span-4 flex justify-center w-full order-first md:order-none">
+        <div className={`md:col-span-4 flex justify-center w-full ${centerColOrder}`}>
           {isReview ? (
             <div className="flex flex-col items-center">
               <canvas
@@ -660,7 +665,7 @@ export default function PhotoboothStudio() {
                   const canClick = state.state === "LIVE_PREVIEW" || state.state === "CONFIRM_CAPTURE" || state.state === "UPLOAD_PREVIEW";
 
                   return (
-                    <div
+                     <div
                       key={idx}
                       onClick={() => handleSlotClick(idx)}
                       className={`absolute flex items-center justify-center overflow-hidden text-xs font-bold transition-all duration-300 bg-black/5 text-[var(--text-muted)] border border-dashed border-[var(--border-color)] ${canClick ? "cursor-pointer pointer-events-auto hover:bg-[var(--color-primary-light)]/20" : "pointer-events-none"
@@ -700,7 +705,7 @@ export default function PhotoboothStudio() {
         </div>
 
         {/* Right Column: Context Action Controls */}
-        <div className="md:col-span-4 flex justify-center w-full">
+        <div className={`md:col-span-4 flex justify-center w-full ${rightColOrder}`}>
           <ControlPanel
             state={state.state}
             onSelectFrameNext={() => dispatch({ type: "SELECT_FRAME_NEXT" })}

@@ -48,31 +48,31 @@ export default function Navbar({ isHome = false }) {
   const NAV_ITEMS = [
     {
       id: 1,
-      label: "Tentang",
+      label: "About",
       subMenus: [
         {
-          title: "Profil & Karakter",
+          title: "Profile & Character",
           items: [
             {
-              label: "Tentang Nur Intan",
-              description: "Profil lengkap, biodata, dan fakta menarik seputar Intan",
+              label: "About Nur Intan",
+              description: "Complete profile, bio, and fun facts about Intan",
               icon: User,
               link: ROUTES.ABOUT_INTAN,
             },
             {
               label: "#IntanShiningStar",
-              description: "Arsip perjalanan dan milestone bersejarah Intan",
+              description: "Journey archive and historic milestones of Intan",
               icon: Sparkle,
               link: ROUTES.SHINING_STAR,
             },
           ],
         },
         {
-          title: "Komunitas",
+          title: "Community",
           items: [
             {
-              label: "Tentang Intanium",
-              description: "Asal usul, filosofi, pedoman, dan cara gabung Discord",
+              label: "About IRIS",
+              description: "Origins, philosophy, guidelines, and how to join Discord",
               icon: Globe,
               link: ROUTES.ABOUT_INTANIUM,
             },
@@ -82,26 +82,26 @@ export default function Navbar({ isHome = false }) {
     },
     {
       id: 2,
-      label: "Jadwal & Berita",
+      label: "Schedule & News",
       subMenus: [
         {
-          title: "Update & Kegiatan",
+          title: "Updates & Activities",
           items: [
             {
-              label: "Jadwal Acara",
-              description: "Kalender theater, video call, birthday, dan event Nur Intan",
+              label: "Event Schedule",
+              description: "Theater calendar, video calls, birthdays, and Nur Intan events",
               icon: Calendar,
               link: ROUTES.SCHEDULE,
             },
             {
-              label: "Berita & Pengumuman",
-              description: "Rilis pengumuman, agenda event resmi terkini",
+              label: "News & Announcements",
+              description: "Official announcements and latest event updates",
               icon: Newspaper,
               link: ROUTES.NEWS,
             },
             {
               label: "Zine & Recap",
-              description: "Arsip e-magazine digital recap aktivitas bulanan",
+              description: "Digital e-magazine archive of monthly recaps",
               icon: BookOpen,
               link: ROUTES.RECAPS,
             },
@@ -111,43 +111,43 @@ export default function Navbar({ isHome = false }) {
     },
     {
       id: 3,
-      label: "Komunitas",
+      label: "Community",
       subMenus: [
         {
-          title: "Aktivitas & Kreativitas",
+          title: "Activities & Creativity",
           items: [
             {
-              label: "Papan Mading",
-              description: "Tempelkan pesan dukungan hangat Anda di mading digital",
+              label: "Message Board",
+              description: "Post your warm messages of support on the digital board",
               icon: ChatCenteredText,
               link: ROUTES.MADING,
             },
             {
-              label: "Karya Fanart",
-              description: "Koleksi lukisan indah sumbangan dari para artist fans",
+              label: "Fanart Gallery",
+              description: "Beautiful fanart gallery contributed by fan artists",
               icon: Palette,
               link: ROUTES.FANART,
             },
             {
-              label: "Intanium Esport",
-              description: "Hub divisi olahraga elektronik resmi komunitas Intanium",
+              label: "IRIS Esport",
+              description: "Official e-sports hub of the IRIS community",
               icon: Trophy,
               link: ROUTES.ESPORT,
             },
             {
-              label: "Studio Foto",
-              description: "Cekrek foto bersama Intan dengan photostrip eksklusif",
+              label: "Photo Studio",
+              description: "Snap photos with Intan using exclusive photostrips",
               icon: Camera,
               link: ROUTES.PHOTOBOOTH,
             },
           ],
         },
         {
-          title: "Arsip Dokumentasi",
+          title: "Documentation Archive",
           items: [
             {
-              label: "Galeri Foto",
-              description: "Arsip screenshot kenangan momen-momen stream seru",
+              label: "Photo Gallery",
+              description: "Screenshot archive of fun streaming moments",
               icon: ImageIcon,
               link: ROUTES.GALLERY,
             },
@@ -157,20 +157,20 @@ export default function Navbar({ isHome = false }) {
     },
     {
       id: 4,
-      label: "Toko Resmi",
+      label: "Official Store",
       subMenus: [
         {
           title: "Merchandise Shop",
           items: [
             {
               label: "Pre-Order Merchandise",
-              description: "Miliki merchandise intanium sekarang!",
+              description: "Get your IRIS merchandise now!",
               icon: ShoppingBag,
               link: ROUTES.MERCHANDISE,
             },
             {
-              label: "Cek Status Pesanan",
-              description: "Pantau status pesanan merchandise",
+              label: "Check Order Status",
+              description: "Track your merchandise order status",
               icon: CreditCard,
               link: ROUTES.PAYMENT_CONFIRM,
             },
@@ -204,7 +204,7 @@ export default function Navbar({ isHome = false }) {
             <Link href="/" className="flex items-center gap-2 group">
               <Image
                 src={logoNobg}
-                alt="Intanium"
+                alt="IRIS"
                 width={40}
                 height={40}
                 priority
@@ -220,7 +220,7 @@ export default function Navbar({ isHome = false }) {
                   ease: "linear",
                 }}
               >
-                INTANIUM
+                IRIS
               </motion.span>
             </Link>
           </div>
@@ -314,8 +314,8 @@ export default function Navbar({ isHome = false }) {
                                         href={subItem.link || "#"}
                                         onClick={() => setIsOpen(false)}
                                         className={`flex items-center gap-3 p-2 min-h-[44px] rounded-lg transition-all ${isSubActive
-                                            ? "text-white bg-white/20 font-semibold"
-                                            : "text-white/70 hover:text-white hover:bg-white/5"
+                                          ? "text-white bg-white/20 font-semibold"
+                                          : "text-white/70 hover:text-white hover:bg-white/5"
                                           }`}
                                       >
                                         <div className="rounded-md flex items-center justify-center p-1.5 bg-white/10 text-white/80 shrink-0">
@@ -349,8 +349,8 @@ export default function Navbar({ isHome = false }) {
                       href={item.link || "#"}
                       onClick={() => setIsOpen(false)}
                       className={`flex items-center gap-3 py-2 px-3 min-h-[44px] rounded-lg text-base font-semibold transition-all ${isActive
-                          ? "text-white bg-white/20 shadow-md"
-                          : "text-white/80 hover:text-white hover:bg-white/10"
+                        ? "text-white bg-white/20 shadow-md"
+                        : "text-white/80 hover:text-white hover:bg-white/10"
                         }`}
                     >
                       {Icon && <Icon className="h-5 w-5 text-white/80" />}
