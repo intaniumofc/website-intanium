@@ -21,7 +21,8 @@ import {
   CreditCard,
   Gamepad2 as GameController,
   Trophy,
-  ChevronDown as CaretDown
+  ChevronDown as CaretDown,
+  Camera
 } from "lucide-react";
 import logoNobg from '../../assets/logos/logo-nobg.webp';
 
@@ -132,6 +133,12 @@ export default function Navbar({ isHome = false }) {
               description: "Hub divisi olahraga elektronik resmi komunitas Intanium",
               icon: Trophy,
               link: ROUTES.ESPORT,
+            },
+            {
+              label: "Studio Foto",
+              description: "Cekrek foto bersama Intan dengan photostrip eksklusif",
+              icon: Camera,
+              link: ROUTES.PHOTOBOOTH,
             },
           ],
         },
@@ -279,9 +286,8 @@ export default function Navbar({ isHome = false }) {
                       >
                         <span>{item.label}</span>
                         <CaretDown
-                          className={`h-4 w-4 transition-transform duration-300 ${
-                            isExpanded ? "rotate-180 text-white" : "text-white/60"
-                          }`}
+                          className={`h-4 w-4 transition-transform duration-300 ${isExpanded ? "rotate-180 text-white" : "text-white/60"
+                            }`}
                         />
                       </button>
                       <AnimatePresence initial={false}>
@@ -307,11 +313,10 @@ export default function Navbar({ isHome = false }) {
                                         key={subItem.label}
                                         href={subItem.link || "#"}
                                         onClick={() => setIsOpen(false)}
-                                        className={`flex items-center gap-3 p-2 min-h-[44px] rounded-lg transition-all ${
-                                          isSubActive
+                                        className={`flex items-center gap-3 p-2 min-h-[44px] rounded-lg transition-all ${isSubActive
                                             ? "text-white bg-white/20 font-semibold"
                                             : "text-white/70 hover:text-white hover:bg-white/5"
-                                        }`}
+                                          }`}
                                       >
                                         <div className="rounded-md flex items-center justify-center p-1.5 bg-white/10 text-white/80 shrink-0">
                                           <Icon className="h-4 w-4" />
@@ -343,11 +348,10 @@ export default function Navbar({ isHome = false }) {
                       key={item.label}
                       href={item.link || "#"}
                       onClick={() => setIsOpen(false)}
-                      className={`flex items-center gap-3 py-2 px-3 min-h-[44px] rounded-lg text-base font-semibold transition-all ${
-                        isActive
+                      className={`flex items-center gap-3 py-2 px-3 min-h-[44px] rounded-lg text-base font-semibold transition-all ${isActive
                           ? "text-white bg-white/20 shadow-md"
                           : "text-white/80 hover:text-white hover:bg-white/10"
-                      }`}
+                        }`}
                     >
                       {Icon && <Icon className="h-5 w-5 text-white/80" />}
                       <span>{item.label}</span>

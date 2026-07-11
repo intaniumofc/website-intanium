@@ -25,6 +25,7 @@ export const ROUTES = {
   GAME_MENANGKAP_KECOA: '/games/menangkap-kecoa',
   GAME_MENANGKAP_KECOA_RESULT: '/games/menangkap-kecoa/result/:scoreId',
   ESPORT: '/esport',
+  PHOTOBOOTH: '/photobooth',
 
   // Admin Routes
   ADMIN_LOGIN: '/admin/login',
@@ -44,6 +45,7 @@ export const ROUTES = {
   ADMIN_GAMES: '/admin/games',
   ADMIN_ESPORT: '/admin/esport',
   ADMIN_MEMBERSHIP: '/admin/keanggotaan',
+  ADMIN_PHOTOBOOTH: '/admin/photobooth',
 };
 
 export const SOCIALS = {

@@ -5,6 +5,28 @@
   --font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
   --font-heading: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  
+  --color-intanium-bg: #FFF9FB;
+  --color-intanium-blue: #AEE2FF;
+  --color-intanium-mint: #B8F2E6;
+  --color-intanium-pink: #FFD6E8;
+  --color-intanium-accent: #FF8FB1;
+  --color-intanium-accent-2: #7FD8BE;
+  --color-intanium-text: #3A2E39;
+  --color-intanium-muted: #7C6E77;
+
+  --animate-flash: flash 0.25s ease-out forwards;
+  --animate-pulse-slow: pulse-slow 1.5s ease-in-out infinite;
+
+  @keyframes flash {
+    0% { opacity: 0; }
+    50% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  @keyframes pulse-slow {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.08); }
+  }
 }
 
 @layer base {
