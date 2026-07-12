@@ -87,7 +87,7 @@ export async function fetchScheduleList() {
   // Normalize each item to match details parsing requirements
   const normalized = json.data.map(item => {
     if (!item.link) return null;
-    let platform = 'Theater Show';
+    let platform = 'Show Theater';
     if (item.type !== 'SHOW') {
       platform = item.type || 'Other Events';
     }
