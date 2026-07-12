@@ -12,7 +12,7 @@ import {
   Clock,
   Newspaper,
 } from 'lucide-react';
-import { newsService } from './newsService';
+import { newsService } from '../../services/public/newsService';
 import Loading from '../../components/common/Loading';
 import { formatDate } from '../../lib/formatDate';
 import bannerIntanium from '../../assets/logos/banner-nium.webp';

@@ -24,8 +24,8 @@ import {
   Ruler,
   Users
 } from 'lucide-react';
-import { aboutIntanService } from './aboutIntanService';
-import { scheduleService } from '../schedule/scheduleService';
+import { aboutIntanService } from '../../services/public/aboutIntanService';
+import { scheduleService } from '../../services/public/scheduleService';
 import { FaThreads } from 'react-icons/fa6';
 import Loading from '../../components/common/Loading';
 import ScrollExpandMedia from '../../components/media/ScrollExpandMedia';

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback, useId, useMemo, useReducer } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { playlistService } from './playlistService';
+import { playlistService } from '../../services/public/playlistService';
 import './DengerIntanPage.css';
 import {
   Share2,

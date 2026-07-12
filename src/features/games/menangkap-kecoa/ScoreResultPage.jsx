@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
 import { ROUTES } from '../../../lib/constants';
-import { getGameScore } from './gameService';
+import { getGameScore } from '../../../services/public/gameService';
 import { shareScore } from './gameUtils';
 
 export default function ScoreResultPage() {

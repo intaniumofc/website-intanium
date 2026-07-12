@@ -1,7 +1,7 @@
 import React from 'react';
 import MainLayout from '../../../components/layout/MainLayout';
 import NewsDetailPage from '../../../features/news/NewsDetailPage';
-import { newsService } from '../../../features/news/newsService';
+import { newsService } from '../../../services/public/newsService';
 
 export async function generateMetadata({ params }) {
   const { id } = await params;

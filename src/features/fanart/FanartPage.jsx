@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { fanartService } from './fanartService';
+import { fanartService } from '../../services/public/fanartService';
 import ImageGrid from '../../components/media/ImageGrid';
 import Loading from '../../components/common/Loading';
 import Button from '../../components/common/Button';

@@ -5,7 +5,7 @@ import { PhotoboothState, FrameConfig } from "@/lib/photobooth/types";
 import { FRAMES_CONFIG } from "@/lib/photobooth/frames";
 import { startCamera, stopCamera } from "@/lib/photobooth/camera";
 import { compositePhotostrip } from "@/lib/photobooth/compositor";
-import { photoboothService } from "../../../features/photobooth/photoboothService";
+import { photoboothService } from "../../../services/public/photoboothService";
 import WebcamPreview from "./WebcamPreview";
 import ControlPanel from "./ControlPanel";
 import UploadPanel from "./UploadPanel";

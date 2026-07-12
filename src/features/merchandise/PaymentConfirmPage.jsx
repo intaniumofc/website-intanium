@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { merchandiseService } from './merchandiseService';
+import { merchandiseService } from '../../services/public/merchandiseService';
 import Card from '../../components/common/Card';
 import { formatCurrency } from '../../lib/helpers';
 import { ROUTES, ADMIN_WHATSAPP_NUMBER } from '../../lib/constants';

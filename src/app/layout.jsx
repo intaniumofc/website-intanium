@@ -2,8 +2,8 @@ import '../index.css';
 import SmoothScroll from '../components/common/SmoothScroll';
 
 export const metadata = {
-  title: 'Intanium Official Website',
-  description: 'Website resmi Fanbase Nur Intan JKT48 (INTANIUM). Temukan jadwal pertunjukan, merchandise eksklusif, berita terbaru, galeri foto, dan mini-game interaktif.',
+  title: 'IRIS Official Website',
+  description: 'Website resmi Fanbase Nur Intan JKT48 (IRIS). Temukan jadwal pertunjukan, merchandise eksklusif, berita terbaru, galeri foto, dan mini-game interaktif.',
 };
 
 export default function RootLayout({ children }) {

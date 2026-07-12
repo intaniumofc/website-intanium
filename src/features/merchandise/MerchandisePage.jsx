@@ -7,7 +7,7 @@ import Link from 'next/link';
 
 
 import { AnimatePresence, motion } from 'framer-motion';
-import { merchandiseService } from './merchandiseService';
+import { merchandiseService } from '../../services/public/merchandiseService';
 import { formatCurrency } from '../../lib/helpers';
 import { ROUTES } from '../../lib/constants';
 import Button from '../../components/common/Button';

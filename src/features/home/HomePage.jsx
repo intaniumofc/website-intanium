@@ -6,8 +6,8 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { FaThreads } from 'react-icons/fa6';
 import Button from '../../components/common/Button';
-import { newsService } from '../news/newsService';
-import { merchandiseService } from '../merchandise/merchandiseService';
+import { newsService } from '../../services/public/newsService';
+import { merchandiseService } from '../../services/public/merchandiseService';
 import { ROUTES } from '../../lib/constants';
 import {
   Sparkles,
@@ -17,7 +17,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { ImageSwiper } from '../../components/ui/ImageSwiper';
-import { aboutIntanService } from '../about-intan/aboutIntanService';
+import { aboutIntanService } from '../../services/public/aboutIntanService';
 import { SocialTooltip } from '../../components/ui/social-media';
 import HomeHeroSection from './HomeHeroSection';
 const HomeNewsSection = React.lazy(() => import('../news/HomeNewsSection'));

@@ -46,6 +46,8 @@ export const ROUTES = {
   ADMIN_ESPORT: '/admin/esport',
   ADMIN_MEMBERSHIP: '/admin/keanggotaan',
   ADMIN_PHOTOBOOTH: '/admin/photobooth',
+  ADMIN_MEDIA_MANAGER: '/admin/media',
+  ADMIN_AUDIT_LOGS: '/admin/audit-logs',
 };
 
 export const SOCIALS = {

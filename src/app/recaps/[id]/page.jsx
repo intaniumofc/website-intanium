@@ -1,7 +1,7 @@
 import React from 'react';
 import MainLayout from '../../../components/layout/MainLayout';
 import RecapDetailPage from '../../../features/recaps/RecapDetailPage';
-import { recapService } from '../../../features/recaps/recapService';
+import { recapService } from '../../../services/public/recapService';
 
 export async function generateMetadata({ params }) {
   const { id } = await params;

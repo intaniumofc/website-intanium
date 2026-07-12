@@ -9,7 +9,7 @@ import {
   Star,
 } from 'lucide-react';
 import Loading from '../../components/common/Loading';
-import { achievementService } from './achievementService';
+import { achievementService } from '../../services/public/achievementService';
 import HorizontalTimeline from '../../components/timeline/HorizontalTimeline';
 import './IntanShiningStarPage.css';
 

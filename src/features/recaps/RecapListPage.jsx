@@ -17,7 +17,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import Book from './Book';
 import { monthlyRecaps } from './monthlyRecaps';
-import { recapService } from './recapService';
+import { recapService } from '../../services/public/recapService';
 import Loading from '../../components/common/Loading';
 import './RecapBookPage.css';
 

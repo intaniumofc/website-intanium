@@ -24,7 +24,7 @@ import {
 import { supabase } from '../../../lib/supabaseClient';
 import CanvasScratch from './CanvasScratch';
 import LeaderboardCard from '../menangkap-kecoa/LeaderboardCard';
-import { getGameLeaderboard } from '../menangkap-kecoa/gameService';
+import { getGameLeaderboard } from '../../../services/public/gameService';
 
 // Import shared stylesheet from menangkap-kecoa to unify visual style guidelines
 import '../menangkap-kecoa/MenangkapKecoaPage.css';

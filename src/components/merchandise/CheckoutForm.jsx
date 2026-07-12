@@ -6,7 +6,7 @@ import Card from '../common/Card';
 import { formatCurrency, isValidEmail } from '../../lib/helpers';
 import { MapPin, Truck, ExternalLink, Info, ArrowLeft, Copy, Check } from 'lucide-react';
 import qrisImage from '../../assets/images/qris-intanium.webp';
-import { merchandiseService } from '../../features/merchandise/merchandiseService';
+import { merchandiseService } from '../../services/public/merchandiseService';
 
 export default function CheckoutForm({
   product,

@@ -25,8 +25,9 @@ dist-ssr
 .env
 .agents/
 skills-lock.json
-migration_org_structure_and_rbac.sql
 bun.lockb
+docs/
+database/
 
 # Next.js
 .next/
