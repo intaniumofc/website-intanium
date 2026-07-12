@@ -1,0 +1,20 @@
+name: JKT48 Schedule Sync Cron
+
+on:
+  schedule:
+    # Berjalan setiap 2 jam sekali (bisa diubah sesuai keinginan)
+    # Gunakan sintaks cron standard UTC. Contoh '0 */2 * * *' = setiap 2 jam
+    - cron: '0 */2 * * *'
+  workflow_dispatch: # Mengizinkan trigger manual dari tab Actions di GitHub
+
+jobs:
+  sync-schedule:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Sync API Endpoint
+        run: |
+          # Silakan ganti URL di bawah dengan domain production Vercel Anda yang sebenarnya
+          # Contoh: https://website-intanium.vercel.app
+          curl -X GET "https://website-intanium.vercel.app/api/admin/schedule/sync" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json"
