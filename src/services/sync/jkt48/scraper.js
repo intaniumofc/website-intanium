@@ -67,6 +67,18 @@ function normalizeItem(item) {
   };
 }
 
+function parseJakartaDateTime(dateStr, timeStr) {
+  if (!dateStr) return null;
+  const cleanTime = timeStr && timeStr.includes(':') ? timeStr : '00:00:00';
+  // Jika string tanggal sudah memiliki penanda timezone (Z atau +/-), parsing apa adanya.
+  // Jika tidak, asumsikan sebagai Waktu Indonesia Barat (WIB / UTC+7).
+  const combined = `${dateStr}T${cleanTime}`;
+  const hasTimezone = dateStr.includes('Z') || dateStr.includes('+') || (dateStr.includes('-') && dateStr.split('-').length > 3) || cleanTime.includes('Z') || cleanTime.includes('+') || cleanTime.includes('-');
+  
+  const d = hasTimezone ? new Date(combined) : new Date(`${combined}+07:00`);
+  return !isNaN(d.getTime()) ? d.toISOString() : null;
+}
+
 export async function fetchScheduleList() {
   const now = new Date();
   const month = now.getMonth() + 1;
@@ -94,7 +106,7 @@ export async function fetchScheduleList() {
     return {
       link: item.link,
       title: item.title || '(Tanpa Judul)',
-      timeIso: item.date && item.start_time ? new Date(`${item.date}T${item.start_time}`).toISOString() : null,
+      timeIso: parseJakartaDateTime(item.date, item.start_time),
       platform,
       raw: item
     };
@@ -174,9 +186,8 @@ export async function fetchIntanSchedulesFromJKT48() {
     }
     let timeIso = item.timeIso;
     if (detail.date) {
-      const cleanTime = detail.start_time && detail.start_time.includes(':') ? detail.start_time : '00:00:00';
-      const d = new Date(`${detail.date}T${cleanTime}`);
-      if (!isNaN(d.getTime())) timeIso = d.toISOString();
+      const parsed = parseJakartaDateTime(detail.date, detail.start_time);
+      if (parsed) timeIso = parsed;
     }
 
     matched.push({
