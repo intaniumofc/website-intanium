@@ -1,7 +1,7 @@
 import React from 'react';
 import MainLayout from '../../../../../components/layout/MainLayout';
 import ScoreResultPage from '../../../../../features/games/menangkap-kecoa/ScoreResultPage';
-import { getGameScore } from '../../../../../features/games/menangkap-kecoa/gameService';
+import { getGameScore } from '../../../../../services/public/gameService';
 
 export async function generateMetadata({ params }) {
   const { scoreId } = await params;

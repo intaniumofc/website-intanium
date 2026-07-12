@@ -8,10 +8,23 @@ export async function GET(request) {
     return new Response('Missing url parameter', { status: 400 });
   }
 
-  // Security: only proxy R2 URLs to avoid open proxy vulnerability
+  // Security: strict hostname validation for R2 URLs
   const publicUrlBase = process.env.NEXT_PUBLIC_R2_PUBLIC_URL || '';
-  const isAllowedHost = mediaUrl.includes('.r2.dev') || (publicUrlBase && mediaUrl.startsWith(publicUrlBase));
-  
+
+  let isAllowedHost = false;
+  try {
+    const parsed = new URL(mediaUrl);
+    if (publicUrlBase) {
+      const base = new URL(publicUrlBase);
+      isAllowedHost = parsed.hostname === base.hostname;
+    }
+    if (!isAllowedHost && (/\.r2\.dev$/.test(parsed.hostname))) {
+      isAllowedHost = true;
+    }
+  } catch {
+    return new Response('Invalid URL', { status: 400 });
+  }
+
   if (!isAllowedHost) {
     return new Response('Forbidden: Only R2 domains can be proxied', { status: 403 });
   }

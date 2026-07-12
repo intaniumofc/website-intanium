@@ -64,16 +64,26 @@ export const getBase64 = (file) => {
  * Log admin activity to supabase
  * @param {string} actionText 
  */
-export const logAdminActivity = async (actionText) => {
+export const logAdminActivity = async (actionText, details = {}) => {
   try {
     const { data: { session } } = await supabase.auth.getSession();
     if (session && session.user) {
-      await supabase.from('admin_activity_logs').insert([
+      const enriched = await supabase.from('admin_activity_logs').insert([
         {
           admin_username: session.user.email,
-          action: actionText
+          action: actionText,
+          details: Object.keys(details).length > 0 ? details : null,
         }
       ]);
+
+      if (enriched.error) {
+        await supabase.from('admin_activity_logs').insert([
+          {
+            admin_username: session.user.email,
+            action: actionText,
+          }
+        ]);
+      }
     }
   } catch (err) {
     console.error('Gagal mencatat log aktivitas:', err);

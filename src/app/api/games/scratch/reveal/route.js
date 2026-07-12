@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/utils/supabase/server';
+import { createAdminClient } from '@/lib/supabase/adminClient';
+import { rateLimit, getClientIp } from '@/lib/auth/requireAdmin';
 
 function getScratchTitle(score) {
   if (score >= 100) return 'Intanium Gem Master';
@@ -8,7 +9,13 @@ function getScratchTitle(score) {
   return 'Intanium Novice';
 }
 
+const MIN_REVEAL_INTERVAL_MS = 350;
+
 export async function POST(request) {
+  const ip = getClientIp(request);
+  const { error: rlError } = rateLimit(ip, { key: 'scratch-reveal', max: 30, windowMs: 60_000 });
+  if (rlError) return rlError;
+
   try {
     const { sessionId, cellIndex } = await request.json();
     const idx = parseInt(cellIndex);
@@ -20,7 +27,7 @@ export async function POST(request) {
       );
     }
 
-    const supabase = await createClient();
+    const supabase = createAdminClient();
 
     // 1. Fetch current scratch session
     const { data: session, error: fetchError } = await supabase
@@ -35,6 +42,25 @@ export async function POST(request) {
         { success: false, error: 'Sesi permainan tidak ditemukan.' },
         { status: 404 }
       );
+    }
+
+    // Anti-cheat: minimal time between reveals
+    const lastUpdate = session.updated_at ? new Date(session.updated_at).getTime() : 0;
+    if (lastUpdate && Date.now() - lastUpdate < MIN_REVEAL_INTERVAL_MS) {
+      return NextResponse.json(
+        { success: false, error: 'Terlalu cepat, tunggu sebentar.' },
+        { status: 429 }
+      );
+    }
+
+    if (session.created_at) {
+      const ageMs = Date.now() - new Date(session.created_at).getTime();
+      if (ageMs > 10 * 60 * 1000) {
+        return NextResponse.json(
+          { success: false, error: 'Sesi sudah kadaluarsa.' },
+          { status: 410 }
+        );
+      }
     }
 
     // 2. Validate current session status

@@ -1,7 +1,7 @@
 import React from 'react';
 import MainLayout from '../../../components/layout/MainLayout';
 import MerchDetailPage from '../../../features/merchandise/MerchDetailPage';
-import { merchandiseService } from '../../../features/merchandise/merchandiseService';
+import { merchandiseService } from '../../../services/public/merchandiseService';
 
 export async function generateMetadata({ params }) {
   const { id } = await params;

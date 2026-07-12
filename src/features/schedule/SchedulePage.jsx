@@ -1,59 +1,160 @@
 'use client';
 
-import { useState, useEffect, useMemo, useRef } from 'react';
-import { scheduleService } from './scheduleService';
+import { useState, useEffect, useMemo } from 'react';
+import { scheduleService } from '../../services/public/scheduleService';
 import ScheduleFilter from '../../components/schedule/ScheduleFilter';
-import ScheduleCard from '../../components/schedule/ScheduleCard';
 import ScheduleCalendarView from '../../components/schedule/ScheduleCalendarView';
 import Loading from '../../components/common/Loading';
 import EmptyState from '../../components/common/EmptyState';
-import { Calendar, CalendarDays, List, Sparkles } from 'lucide-react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { Calendar, Clock, ArrowRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { formatEventTime, getEventStatus } from '../../lib/formatDate';
 
 const PREMIUM_EASE = [0.16, 1, 0.3, 1];
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i = 0) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.7, ease: PREMIUM_EASE, delay: i * 0.1 }
-  })
-};
+const isSameDate = (d1, d2) =>
+  d1.getFullYear() === d2.getFullYear() &&
+  d1.getMonth() === d2.getMonth() &&
+  d1.getDate() === d2.getDate();
 
-// Floating background particles for horizontal scroll parallax
-function TimelineParallaxBackground({ scrollX }) {
-  const particles = useMemo(() =>
-    Array.from({ length: 25 }, (_, i) => ({
-      id: i,
-      size: Math.random() * 4 + 2,
-      x: Math.random() * 300, // spreads across horizontal timeline area
-      y: Math.random() * 70 + 15,
-      speed: Math.random() * 0.22 + 0.08,
-      opacity: Math.random() * 0.35 + 0.1,
-    })),
-    []
-  );
+function formatEventDayHeader(date) {
+  if (!date) return '';
+  return date.toLocaleDateString('id-ID', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  });
+}
+
+function CompactEventCard({ event }) {
+  const { title, time, platform, link, duration, thumbnail } = event;
+
+  const timeStr = formatEventTime(time);
+  const status = getEventStatus(time);
+
+  const badgeStyles = {
+    upcoming: 'bg-indigo-50/80 text-indigo-600 border border-indigo-100',
+    live: 'bg-rose-500 text-white animate-pulse',
+    completed: 'bg-slate-100 text-slate-500',
+  };
+
+  const statusLabels = {
+    upcoming: 'Upcoming',
+    live: 'Live Now',
+    completed: 'Selesai',
+  };
 
   return (
-    <div className="hidden md:block absolute inset-0 overflow-hidden pointer-events-none -z-10">
-      {particles.map((p) => {
-        const translationX = useTransform(scrollX, (val) => -val * p.speed);
-        return (
-          <motion.div
-            key={p.id}
-            className="absolute rounded-full bg-indigo-500/20"
-            style={{
-              width: p.size,
-              height: p.size,
-              left: `${p.x}%`,
-              top: `${p.y}%`,
-              opacity: p.opacity,
-              x: translationX,
-            }}
+    <div className="group relative flex gap-3.5 bg-white border border-slate-150 rounded-2xl p-3 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 text-left">
+      {/* Setlist Image */}
+      <div className="w-20 h-20 rounded-xl overflow-hidden bg-slate-100 border border-slate-150 shrink-0 relative">
+        {thumbnail ? (
+          <img
+            src={thumbnail.src || thumbnail}
+            alt={title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
-        );
-      })}
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-[#170C79] to-indigo-700 flex items-center justify-center text-cyan-300">
+            <Calendar className="w-6 h-6 opacity-60" />
+          </div>
+        )}
+      </div>
+
+      {/* Details info */}
+      <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
+        <div className="space-y-1">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-[9px] font-black text-cyan-600 uppercase tracking-wide bg-cyan-50 border border-cyan-100 px-2 py-0.5 rounded-full">
+              {platform}
+            </span>
+            <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase ${badgeStyles[status]}`}>
+              {statusLabels[status]}
+            </span>
+            {duration && <span className="text-[8px] text-slate-400 font-bold">± {duration}</span>}
+          </div>
+          <h4 className="text-xs font-black text-[#170C79] leading-snug line-clamp-2 group-hover:text-cyan-600 transition-colors" title={title}>
+            {title}
+          </h4>
+        </div>
+
+        {/* Footer date & link */}
+        <div className="flex items-center justify-between border-t border-slate-100/60 pt-2 mt-1 gap-2">
+          <div className="text-[9px] font-bold text-slate-500 flex items-center gap-1 min-w-0">
+            <Clock className="w-3 h-3 text-cyan-500 shrink-0" />
+            <span className="truncate">{timeStr}</span>
+          </div>
+          {link && (status === 'live' || status === 'upcoming') && (
+            <a
+              href={link}
+              target="_blank"
+              rel="noreferrer"
+              className="text-[9px] font-bold text-[#170C79] hover:text-cyan-600 flex items-center gap-0.5 hover:underline shrink-0"
+            >
+              Link <ArrowRight className="w-2.5 h-2.5" />
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SidebarEventsPanel({ events, selectedDate }) {
+  const activeEvents = useMemo(() => {
+    return events.filter(e => {
+      const dateObj = new Date(e.time);
+      return isSameDate(dateObj, selectedDate);
+    });
+  }, [events, selectedDate]);
+
+  const upcomingEvents = useMemo(() => {
+    const now = new Date();
+    return events
+      .filter(e => new Date(e.time) >= now)
+      .sort((a, b) => new Date(a.time) - new Date(b.time))
+      .slice(0, 4);
+  }, [events]);
+
+  return (
+    <div className="bg-white/80 border border-indigo-50/50 rounded-[2rem] p-5 shadow-[0_8px_30px_rgba(23,12,121,0.03)] backdrop-blur-xl space-y-6 text-left h-full">
+      <div>
+        <h3 className="text-sm font-black text-cyan-600 uppercase tracking-widest leading-none mb-1.5">Agenda Kegiatan</h3>
+        <h4 className="text-base font-black text-[#170C79]">{formatEventDayHeader(selectedDate)}</h4>
+      </div>
+
+      <div className="space-y-4">
+        {activeEvents.length > 0 ? (
+          <div className="space-y-3">
+            {activeEvents.map(event => (
+              <CompactEventCard key={event.id} event={event} />
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-5">
+            <div className="py-8 flex flex-col items-center justify-center text-center px-4 rounded-2xl border border-dashed border-slate-200 bg-slate-50/30">
+              <Calendar className="w-8 h-8 text-slate-300 mb-2" />
+              <p className="text-xs font-bold text-slate-500">Tidak ada agenda khusus pada tanggal ini.</p>
+            </div>
+
+            {upcomingEvents.length > 0 && (
+              <div className="space-y-3">
+                <div className="border-b border-slate-100 pb-2">
+                  <h4 className="text-xs font-black text-[#170C79] uppercase tracking-wider flex items-center gap-1.5">
+                    Agenda Terdekat
+                  </h4>
+                </div>
+                <div className="space-y-3">
+                  {upcomingEvents.map(event => (
+                    <CompactEventCard key={event.id} event={event} />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -62,16 +163,13 @@ export default function SchedulePage() {
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activePlatform, setActivePlatform] = useState('All');
-
-  const scrollContainerRef = useRef(null);
-  const { scrollX } = useScroll({ container: scrollContainerRef });
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   useEffect(() => {
     document.title = 'Jadwal & Kegiatan | Official Website Intanium';
   }, []);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoading(true);
     scheduleService.getEvents('all', activePlatform)
       .then((data) => {
@@ -85,9 +183,8 @@ export default function SchedulePage() {
   }, [activePlatform]);
 
   return (
-    <div className="relative space-y-12 max-w-5xl mx-auto pb-6 overflow-visible">
-
-      {/* ========= PAGE HEADER & CONTROLS SECTION (Unified Row on Desktop) ========= */}
+    <div className="relative space-y-8 w-full pb-6 overflow-visible">
+      {/* ========= PAGE HEADER & CONTROLS SECTION ========= */}
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
@@ -100,12 +197,12 @@ export default function SchedulePage() {
                 <p className="text-[10px] font-black uppercase tracking-[0.22em] text-cyan-600">Kalender Aktivitas</p>
               </div>
               <h1 className="text-3xl font-black tracking-tight text-[#170C79] sm:text-4xl">Jadwal & Kegiatan</h1>
-              <p className="max-w-xl text-sm leading-relaxed text-slate-600">
+              <p className="max-w-xl text-sm leading-relaxed text-slate-600 font-semibold">
                 Pantau jadwal teater, video call, birthday, dan event streaming Nur Intan agar Anda tidak ketinggalan momen seru.
               </p>
             </div>
 
-            {/* Category Filter aligned on the right in Desktop */}
+            {/* Category Filter */}
             <div className="relative z-10 w-full md:w-auto flex justify-start md:justify-end">
               <ScheduleFilter
                 activePlatform={activePlatform}
@@ -116,12 +213,11 @@ export default function SchedulePage() {
         </section>
       </motion.div>
 
-      {/* ========= AMBIENT BACKGROUND ORBS ========= */}
-      <div className="absolute top-[40%] -left-24 w-80 h-80 bg-gradient-to-tr from-indigo-500/8 to-transparent rounded-full blur-[80px] pointer-events-none -z-10 animate-pulse" />
+      {/* Ambient background glows */}
+      <div className="absolute top-[30%] -left-24 w-80 h-80 bg-gradient-to-tr from-indigo-500/8 to-transparent rounded-full blur-[80px] pointer-events-none -z-10 animate-pulse" />
       <div className="absolute bottom-[20%] -right-20 w-72 h-72 bg-gradient-to-tr from-cyan-500/6 to-transparent rounded-full blur-[80px] pointer-events-none -z-10" />
-      <div className="absolute top-[65%] left-[30%] w-64 h-64 bg-gradient-to-tr from-pink-500/5 to-transparent rounded-full blur-[80px] pointer-events-none -z-10 animate-pulse" />
 
-      {/* ========= VIEW LAYOUT WITH SMOOTH TRANSITIONS ========= */}
+      {/* ========= MAIN CONTENT VIEW LAYOUT ========= */}
       <div className="relative min-h-[350px] overflow-visible">
         <AnimatePresence mode="wait">
           {isLoading ? (
@@ -130,17 +226,15 @@ export default function SchedulePage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
             >
               <Loading message="Memuat schedule..." />
             </motion.div>
           ) : events.length === 0 ? (
             <motion.div
               key="empty"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.3 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
             >
               <EmptyState
                 title="Tidak Ada Jadwal Aktivitas"
@@ -149,81 +243,30 @@ export default function SchedulePage() {
               />
             </motion.div>
           ) : (
-            <div className="space-y-20 overflow-visible relative">
+            <motion.div
+              key="content"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: PREMIUM_EASE }}
+              className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch relative z-10"
+            >
+              {/* Kolom Kiri: Kalender */}
+              <div className="lg:col-span-7 xl:col-span-8">
+                <ScheduleCalendarView
+                  events={events}
+                  selectedDate={selectedDate}
+                  onSelectDate={setSelectedDate}
+                />
+              </div>
 
-              {/* ========= 1. LINIMASA JADWAL SECTION (Horizontal Scroll) ========= */}
-              <motion.section
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, ease: PREMIUM_EASE, delay: 0.2 }}
-                className="space-y-6 text-left"
-              >
-                <div className="border-b border-slate-100/80 pb-2">
-                  <h2 className="text-xl font-black text-[#170C79] flex items-center gap-2">
-                    <Sparkles className="w-5.5 h-5.5 text-cyan-500" /> Linimasa Kegiatan
-                  </h2>
-                </div>
-
-                <div className="relative overflow-visible">
-                  {/* Parallax Background for Horizontal Timeline */}
-                  <TimelineParallaxBackground scrollX={scrollX} />
-
-                  <motion.div
-                    key="list"
-                    ref={scrollContainerRef}
-                    initial="hidden"
-                    animate="visible"
-                    exit="hidden"
-                    variants={{
-                      visible: {
-                        transition: {
-                          staggerChildren: 0.06
-                        }
-                      }
-                    }}
-                    className="relative flex flex-col md:flex-row md:overflow-x-auto md:overflow-y-hidden md:min-h-[500px] md:items-center md:gap-8 md:px-8 md:py-16 md:space-y-0 border-l-2 border-indigo-100/40 md:border-l-0 ml-4 md:ml-0 pl-6 md:pl-0 space-y-12 py-6 text-left"
-                  >
-                    {/* Horizontal central track line on desktop */}
-                    <div className="hidden md:block absolute left-0 right-0 top-[50%] h-[3px] bg-gradient-to-r from-[var(--color-primary)] via-cyan-500 to-pink-500 pointer-events-none -translate-y-[50%] opacity-80" />
-                    {/* Vertical track line on mobile */}
-                    <div className="md:hidden absolute top-0 bottom-0 left-[-2px] w-[2px] bg-gradient-to-b from-[var(--color-primary)]/50 via-cyan-400/20 to-pink-400/10 pointer-events-none" />
-
-                    {events.map((event, index) => (
-                      <motion.div
-                        key={event.id}
-                        variants={{
-                          hidden: { opacity: 0, y: 25, filter: 'blur(4px)' },
-                          visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.55, ease: PREMIUM_EASE } }
-                        }}
-                        className={`relative shrink-0 ${index % 2 === 0
-                          ? 'md:-translate-y-16'
-                          : 'md:translate-y-16'
-                          }`}
-                      >
-                        <ScheduleCard event={event} isHorizontal={true} index={index} />
-                      </motion.div>
-                    ))}
-                  </motion.div>
-                </div>
-              </motion.section>
-
-              {/* ========= 2. KALENDER BULANAN SECTION (Full-Page Grid) ========= */}
-              <motion.section
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, ease: PREMIUM_EASE, delay: 0.35 }}
-                className="space-y-6 text-left"
-              >
-                <div className="border-b border-slate-100/80 pb-2">
-                  <h2 className="text-xl font-black text-[#170C79] flex items-center gap-2">
-                    <Calendar className="w-5.5 h-5.5 text-indigo-500" /> Kalender Bulanan
-                  </h2>
-                </div>
-
-                <ScheduleCalendarView events={events} />
-              </motion.section>
-
-            </div>
+              {/* Kolom Kanan: Sidebar Detail */}
+              <div className="lg:col-span-5 xl:col-span-4 h-full">
+                <SidebarEventsPanel
+                  events={events}
+                  selectedDate={selectedDate}
+                />
+              </div>
+            </motion.div>
           )}
         </AnimatePresence>
       </div>

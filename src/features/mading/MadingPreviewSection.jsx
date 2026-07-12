@@ -14,7 +14,7 @@ import {
   X
 } from 'lucide-react';
 import { ROUTES } from '../../lib/constants';
-import { madingService } from './madingService';
+import { madingService } from '../../services/public/madingService';
 import './MadingPreviewSection.css';
 
 // Inline Banner component mapping user-provided specs

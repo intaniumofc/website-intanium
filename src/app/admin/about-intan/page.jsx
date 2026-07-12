@@ -1,7 +1,7 @@
 'use client';
 
 import React, { Suspense } from 'react';
-import PageComponent from '../../../admin/about-intan/index.jsx';
+import PageComponent from '../../../admin/modules/about-intan/index.jsx';
 
 export default function Page() {
   return (

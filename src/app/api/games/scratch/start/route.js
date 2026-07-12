@@ -1,8 +1,13 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
-import { createClient } from '@/utils/supabase/server';
+import { createAdminClient } from '@/lib/supabase/adminClient';
+import { rateLimit, getClientIp } from '@/lib/auth/requireAdmin';
 
 export async function POST(request) {
+  const ip = getClientIp(request);
+  const { error: rlError } = rateLimit(ip, { key: 'scratch-start', max: 10, windowMs: 60_000 });
+  if (rlError) return rlError;
+
   try {
     const { username } = await request.json();
     const cleanUsername = username?.trim().slice(0, 24);
@@ -26,7 +31,7 @@ export async function POST(request) {
     today.setUTCHours(0, 0, 0, 0);
     const todayISO = today.toISOString();
 
-    const supabase = await createClient();
+    const supabase = createAdminClient();
 
     // 3. Check ticket count for IP or Username today
     const { count, error: countError } = await supabase

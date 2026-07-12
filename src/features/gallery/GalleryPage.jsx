@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, createContext, useContext, forwardRef, use
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { X } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { galleryService } from './galleryService';
+import { galleryService } from '../../services/public/galleryService';
 import Loading from '../../components/common/Loading';
 
 const SPRING_CONFIG = {

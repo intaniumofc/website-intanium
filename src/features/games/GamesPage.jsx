@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ROUTES } from '../../lib/constants';
 import { supabase } from '../../lib/supabaseClient';
-import { getGameSettings } from './menangkap-kecoa/gameService';
+import { getGameSettings } from '../../services/public/gameService';
 import { LeaderboardRankings } from './LeaderboardRankings';
 import {
   Gamepad2,

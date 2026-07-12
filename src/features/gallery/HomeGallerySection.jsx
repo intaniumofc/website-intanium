@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { PortfolioGallery } from '../../components/ui/portfolio-gallery';
 import { ROUTES } from '../../lib/constants';
-import { galleryService } from './galleryService';
+import { galleryService } from '../../services/public/galleryService';
 
 const GALLERY_PHOTOS = [
   {

@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, Search, Plus, Info, ShieldCheck, CheckCircle } from 'lucide-react';
-import { madingService } from './madingService';
+import { madingService } from '../../services/public/madingService';
 import MadingBoard from '../../components/mading/MadingBoard';
 import MessageModal from '../../components/mading/MessageModal';
 import MessageFormModal from '../../components/mading/MessageFormModal';

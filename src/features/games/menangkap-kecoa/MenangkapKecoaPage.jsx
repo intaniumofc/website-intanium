@@ -16,7 +16,7 @@ import {
   Trophy,
   X,
 } from 'lucide-react';
-import { getGameLeaderboard, submitGameScore } from './gameService';
+import { getGameLeaderboard, submitGameScore } from '../../../services/public/gameService';
 import { getBadges, getComboText, getPerformanceTitle } from './gameData';
 import { calculatePoint, shareScore } from './gameUtils';
 import { useGameLoop } from './useGameLoop';

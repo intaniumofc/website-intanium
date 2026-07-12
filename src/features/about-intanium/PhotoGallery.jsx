@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ROUTES } from "@/lib/constants";
-import { galleryService } from "@/features/gallery/galleryService";
+import { galleryService } from "@/services/public/galleryService";
 
 import intan01 from "@/assets/images/intan-01.webp";
 import intan02 from "@/assets/images/intan-02.webp";

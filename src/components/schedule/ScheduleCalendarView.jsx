@@ -7,7 +7,7 @@ import Button from '../common/Button';
 
 const PREMIUM_EASE = [0.16, 1, 0.3, 1];
 
-export default function ScheduleCalendarView({ events }) {
+export default function ScheduleCalendarView({ events, selectedDate, onSelectDate }) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedEventDetail, setSelectedEventDetail] = useState(null);
   const [slideDir, setSlideDir] = useState(1);
@@ -67,26 +67,28 @@ export default function ScheduleCalendarView({ events }) {
     return 'bg-purple-50/90 text-purple-700 border-purple-200/60 hover:bg-purple-100/80';
   };
 
-  const getCellStyle = (dayEvents, todayMark) => {
+  const getCellStyle = (dayEvents, todayMark, isSelected) => {
     const baseTodayStyle = todayMark ? 'ring-2 ring-cyan-500/85 ring-offset-1 z-10' : '';
+    const selectedStyle = isSelected ? 'ring-2 ring-[#170C79] ring-offset-1 z-20 bg-[#170C79]/5 border-[#170C79]/30 shadow-sm' : '';
 
+    let baseStyle = '';
     if (dayEvents.length === 0) {
-      return `bg-white/60 hover:bg-slate-50/50 border-indigo-100/30 ${baseTodayStyle}`;
-    }
-
-    if (dayEvents.length === 1) {
+      baseStyle = `bg-white/60 hover:bg-slate-50/50 border-indigo-100/30`;
+    } else if (dayEvents.length === 1) {
       const type = dayEvents[0].type;
-      if (type === 'Show Theater') return `bg-rose-50/60 border-rose-200/60 hover:bg-rose-100/40 ${baseTodayStyle}`;
-      if (type === 'Video Call') return `bg-cyan-50/65 border-cyan-200/60 hover:bg-cyan-100/40 ${baseTodayStyle}`;
-      if (type === 'Birthday') return `bg-amber-50/60 border-amber-200/60 hover:bg-amber-100/40 ${baseTodayStyle}`;
-      if (['YouTube', 'IDN Live', 'Showroom', 'TikTok', 'Twitch'].includes(type)) {
-        return `bg-indigo-50/60 border-indigo-200/60 hover:bg-indigo-100/40 ${baseTodayStyle}`;
+      if (type === 'Show Theater') baseStyle = `bg-rose-50/60 border-rose-200/60 hover:bg-rose-100/40`;
+      else if (type === 'Video Call') baseStyle = `bg-cyan-50/65 border-cyan-200/60 hover:bg-cyan-100/40`;
+      else if (type === 'Birthday') baseStyle = `bg-amber-50/60 border-amber-200/60 hover:bg-amber-100/40`;
+      else if (['YouTube', 'IDN Live', 'Showroom', 'TikTok', 'Twitch'].includes(type)) {
+        baseStyle = `bg-indigo-50/60 border-indigo-200/60 hover:bg-indigo-100/40`;
+      } else {
+        baseStyle = `bg-purple-50/60 border-purple-200/60 hover:bg-purple-100/40`;
       }
-      return `bg-purple-50/60 border-purple-200/60 hover:bg-purple-100/40 ${baseTodayStyle}`;
+    } else {
+      baseStyle = `bg-violet-50/60 border-violet-200/60 hover:bg-violet-100/40`;
     }
 
-    // Multiple events: use a blended primary light style (e.g. violet)
-    return `bg-violet-50/60 border-violet-200/60 hover:bg-violet-100/40 ${baseTodayStyle}`;
+    return `${baseStyle} ${baseTodayStyle} ${selectedStyle}`;
   };
 
   const platformConfig = {
@@ -130,7 +132,6 @@ export default function ScheduleCalendarView({ events }) {
       {/* ================= CALENDAR HEADER ================= */}
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg sm:text-xl font-black text-[var(--color-primary)] font-heading flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-cyan-500 animate-pulse" />
           <span>{monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}</span>
         </h3>
         <div className="flex gap-2">
@@ -183,11 +184,13 @@ export default function ScheduleCalendarView({ events }) {
               const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), i + 1);
               const todayMark = isToday(date);
               const dayEvents = getEventsForDate(date);
+              const isSelected = selectedDate && isSameDate(date, selectedDate);
 
               return (
                 <div
                   key={i}
-                  className={`border-r border-b border-indigo-100/30 p-2.5 min-h-[110px] flex flex-col justify-between transition-all duration-300 ${getCellStyle(dayEvents, todayMark)}`}
+                  onClick={() => onSelectDate && onSelectDate(date)}
+                  className={`border-r border-b border-indigo-100/30 p-2.5 min-h-[110px] flex flex-col justify-between transition-all duration-300 cursor-pointer ${getCellStyle(dayEvents, todayMark, isSelected)}`}
                 >
                   {/* Date Number */}
                   <div className="flex justify-between items-center mb-1">
@@ -208,7 +211,11 @@ export default function ScheduleCalendarView({ events }) {
                     {dayEvents.map((event) => (
                       <button
                         key={event.id}
-                        onClick={() => setSelectedEventDetail(event)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onSelectDate && onSelectDate(date);
+                          setSelectedEventDetail(event);
+                        }}
                         className={`text-[10px] font-black truncate px-2 py-1 rounded-lg border text-left flex items-center gap-1.5 transition-all duration-200 cursor-pointer ${getPillColor(event.type)}`}
                         title={event.title}
                       >
@@ -253,20 +260,42 @@ export default function ScheduleCalendarView({ events }) {
                   </div>
 
                   {/* Right Event details */}
-                  <div className="flex-grow space-y-2.5">
+                  <div className="flex-grow space-y-3.5">
                     {dayObj.events.map((event) => (
                       <button
                         key={event.id}
-                        onClick={() => setSelectedEventDetail(event)}
-                        className="w-full text-left group focus-visible:outline-none"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onSelectDate && onSelectDate(dayObj.date);
+                          setSelectedEventDetail(event);
+                        }}
+                        className="w-full text-left group flex gap-3 focus-visible:outline-none"
                       >
-                        <div className="flex flex-wrap items-center gap-1.5 text-[9px] font-black text-slate-400">
-                          <span className={`px-2 py-0.5 rounded-full border text-[8px] ${getPillColor(event.type)}`}>
-                            {event.type}
-                          </span>
-                          <span className="flex items-center gap-1"><Clock className="w-3 h-3 text-cyan-500" />{event.time}</span>
+                        {/* Event thumbnail */}
+                        <div className="w-14 h-14 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 shrink-0 relative">
+                          {event.thumbnail ? (
+                            <img
+                              src={event.thumbnail.src || event.thumbnail}
+                              alt={event.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-[#170C79] to-indigo-700 flex items-center justify-center text-cyan-300">
+                              <CalendarIcon className="w-4 h-4 opacity-50" />
+                            </div>
+                          )}
                         </div>
-                        <h4 className="text-xs font-black text-[var(--color-primary)] group-hover:text-cyan-600 transition-colors duration-200 mt-1 line-clamp-1">{event.title}</h4>
+
+                        {/* Text detail */}
+                        <div className="flex-grow min-w-0 py-0.5 flex flex-col justify-between">
+                          <div className="flex flex-wrap items-center gap-1.5 text-[9px] font-black text-slate-400">
+                            <span className={`px-2 py-0.5 rounded-full border text-[8px] ${getPillColor(event.type)}`}>
+                              {event.type}
+                            </span>
+                            <span className="flex items-center gap-1"><Clock className="w-3 h-3 text-cyan-500" />{event.time}</span>
+                          </div>
+                          <h4 className="text-xs font-black text-[var(--color-primary)] group-hover:text-cyan-600 transition-colors duration-200 line-clamp-2">{event.title}</h4>
+                        </div>
                       </button>
                     ))}
                   </div>

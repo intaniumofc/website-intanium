@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { requireAdmin } from '@/lib/auth/requireAdmin';
 
 export async function POST(request) {
+  const { profile, error: authError } = await requireAdmin();
+  if (authError) return authError;
+
   try {
     const body = await request.json();
     const { fileName, fileType, bucketName = 'assets', folderPath = 'media' } = body;

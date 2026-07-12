@@ -29,7 +29,9 @@ import {
   Hash,
   Gamepad2,
   Trophy,
-  Camera
+  Camera,
+  HardDrive,
+  Shield
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import logoNobg from '../assets/logos/logo-nobg.webp';
@@ -207,6 +209,8 @@ export default function AdminLayout({ children }) {
     { id: 'esport', name: 'Kelola Esport', href: ROUTES.ADMIN_ESPORT, icon: Trophy },
     { id: 'keanggotaan', name: 'Kelola Keanggotaan', href: ROUTES.ADMIN_MEMBERSHIP, icon: Users },
     { id: 'photobooth', name: 'Kelola Photobooth', href: ROUTES.ADMIN_PHOTOBOOTH, icon: Camera },
+    { id: 'media', name: 'Media Manager', href: ROUTES.ADMIN_MEDIA_MANAGER, icon: HardDrive },
+    { id: 'audit-logs', name: 'Log Aktivitas', href: ROUTES.ADMIN_AUDIT_LOGS, icon: Shield },
   ];
 
   // Filter links based on sidebar search input
@@ -225,15 +229,7 @@ export default function AdminLayout({ children }) {
 
   return (
     <div 
-      className="min-h-screen text-[var(--text-primary)] flex overflow-x-hidden"
-      style={{
-        backgroundColor: 'var(--bg-primary)',
-        backgroundImage: 'url("/bg-web.webp")',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        backgroundAttachment: 'fixed'
-      }}
+      className="min-h-screen bg-[#F4F5FC] text-slate-800 flex overflow-x-hidden"
     >
       
       {/* ================= MOBILE DRAWER OVERLAY ================= */}
@@ -248,7 +244,7 @@ export default function AdminLayout({ children }) {
       <aside
         data-lenis-prevent
         className={`
-          fixed top-0 left-0 h-full bg-gradient-to-b from-[#170C79] to-[#0A0440] border-r border-[#0A0440]/50 z-50 flex flex-col
+          fixed top-0 left-0 h-full bg-white border-r border-slate-200/80 z-50 flex flex-col
           transition-[width,transform] duration-300 ease-in-out
           ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}
           md:translate-x-0
@@ -258,41 +254,41 @@ export default function AdminLayout({ children }) {
         }}
       >
         {/* Header with logo and collapse button */}
-        <div className="flex items-center justify-between p-5 border-b border-white/5 bg-white/5 h-20 shrink-0">
-          <div className="flex items-center space-x-2.5 overflow-hidden w-full">
-            <Image width={40} height={40} alt="Logo Intanium" src={logoNobg} className={`w-10 h-10 object-contain shrink-0 transition-all duration-300 ${isCollapsed ? "mx-auto" : ""}`} />
-            <div className={`flex flex-col text-left transition-all duration-300 ${isCollapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"}`}>
-              <span className="font-extrabold text-sm tracking-tight text-white select-none whitespace-nowrap">
-                Intanium Admin
-              </span>
-              <span className="text-[10px] text-indigo-200/70 font-bold tracking-wider uppercase whitespace-nowrap">
-                {userRole === 'super_admin' ? 'Super Admin' : (userRole === 'coordinator' ? 'Koordinator' : 'Staff Admin')}
-              </span>
-            </div>
+      <div className="flex items-center justify-between p-5 border-b border-slate-100 bg-slate-50/30 h-20 shrink-0">
+        <div className="flex items-center space-x-2.5 overflow-hidden w-full">
+          <Image width={40} height={40} alt="Logo Intanium" src={logoNobg} className={`w-10 h-10 object-contain shrink-0 transition-all duration-300 ${isCollapsed ? "mx-auto" : ""}`} />
+          <div className={`flex flex-col text-left transition-all duration-300 ${isCollapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"}`}>
+            <span className="font-extrabold text-sm tracking-tight text-slate-800 select-none whitespace-nowrap">
+              Intanium Admin
+            </span>
+            <span className="text-[10px] text-[#170C79]/85 font-black tracking-wider uppercase whitespace-nowrap">
+              {userRole === 'super_admin' ? 'Super Admin' : (userRole === 'coordinator' ? 'Koordinator' : 'Staff Admin')}
+            </span>
           </div>
- 
-          {/* Desktop collapse button */}
-          <button
-            type="button"
-            onClick={toggleCollapse}
-            className="hidden md:flex p-1.5 rounded-lg hover:bg-white/5 transition-colors duration-200 border border-white/10 cursor-pointer text-indigo-200/80 hover:text-white shrink-0"
-            aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            {isCollapsed ? (
-              <ChevronRight className="h-4 w-4" />
-            ) : (
-              <ChevronLeft className="h-4 w-4" />
-            )}
-          </button>
         </div>
+ 
+        {/* Desktop collapse button */}
+        <button
+          type="button"
+          onClick={toggleCollapse}
+          className="hidden md:flex p-1.5 rounded-lg hover:bg-slate-100 transition-colors duration-200 border border-slate-200 cursor-pointer text-slate-500 hover:text-slate-800 shrink-0"
+          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {isCollapsed ? (
+            <ChevronRight className="h-4 w-4" />
+          ) : (
+            <ChevronLeft className="h-4 w-4" />
+          )}
+        </button>
+      </div>
  
         {/* Search Bar */}
-        <div className={`px-4 py-3 shrink-0 border-b border-white/5 transition-all duration-300 overflow-hidden ${isCollapsed ? "opacity-0 h-0 py-0 border-b-0" : "opacity-100"}`}>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-slate-300" />
-            <input type="text" name="search-menu" autoComplete="off" placeholder="Search menu…" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-9 pr-4 py-2 bg-white/5 border border-white/10 rounded-xl text-xs text-white placeholder-slate-400 focus-visible:outline-none focus-visible:border-white focus-visible:ring-2 focus-visible:ring-white/10 transition-colors duration-200" />
-          </div>
+      <div className={`px-4 py-3 shrink-0 border-b border-slate-100 transition-all duration-300 overflow-hidden ${isCollapsed ? "opacity-0 h-0 py-0 border-b-0" : "opacity-100"}`}>
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+          <input type="text" name="search-menu" autoComplete="off" placeholder="Search menu…" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus-visible:outline-none focus-visible:border-[#170C79] focus-visible:ring-2 focus-visible:ring-[#170C79]/15 transition-colors duration-200" />
         </div>
+      </div>
 
         {/* Navigation List */}
         <nav
@@ -315,55 +311,55 @@ export default function AdminLayout({ children }) {
                           type="button"
                           onClick={() => toggleDropdown(item.id)}
                           className={`
-                            w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-left transition-all duration-200 group cursor-pointer
-                            ${isSubActive
-                              ? "bg-white/10 text-white font-bold border-l-4 border-cyan-400"
-                              : "text-indigo-200/80 hover:bg-white/5 hover:text-white font-medium"
-                            }
-                          `}
-                        >
-                          <div className="flex items-center justify-center min-w-[24px]">
-                            <Icon
-                              className={`
-                                h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-105
-                                ${isSubActive ? "text-cyan-400" : "text-indigo-300 group-hover:text-white"}
-                              `}
-                            />
-                          </div>
-                          
-                          <div className="flex items-center justify-between w-full min-w-0">
-                            <span className="text-xs truncate">{item.name}</span>
-                            <ChevronDown
-                              className={`h-3.5 w-3.5 transition-transform duration-200 group-hover:text-white ${
-                                isOpen ? "rotate-180 text-cyan-400" : "text-indigo-300"
-                              }`}
-                            />
-                          </div>
+                          w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-left transition-all duration-200 group cursor-pointer
+                          ${isSubActive
+                            ? "bg-[#170C79]/8 text-[#170C79] font-bold border-l-4 border-[#170C79]"
+                            : "text-slate-500 hover:bg-slate-50 hover:text-slate-800 font-medium"
+                          }
+                        `}
+                      >
+                        <div className="flex items-center justify-center min-w-[24px]">
+                          <Icon
+                            className={`
+                              h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-105
+                              ${isSubActive ? "text-[#170C79]" : "text-slate-400 group-hover:text-slate-700"}
+                            `}
+                          />
+                        </div>
+                        
+                        <div className="flex items-center justify-between w-full min-w-0">
+                          <span className="text-xs truncate">{item.name}</span>
+                          <ChevronDown
+                            className={`h-3.5 w-3.5 transition-transform duration-200 group-hover:text-slate-700 ${
+                              isOpen ? "rotate-180 text-[#170C79]" : "text-slate-400"
+                            }`}
+                          />
+                        </div>
                         </button>
 
                         {isOpen && (
-                          <ul className="mt-1 ml-6 pl-2.5 border-l border-white/10 space-y-1 select-none">
-                            {item.subLinks.map((sub) => {
-                              const isSubItemActive = isSubLinkActive(sub.href);
-                              return (
-                                <li key={sub.name}>
-                                  <Link
-                                    href={sub.href}
-                                    onClick={(e) => handleLinkClick(e, sub.href)}
-                                    className={`
-                                      block px-3.5 py-2 text-[11px] rounded-lg transition-colors duration-150
-                                      ${isSubItemActive
-                                        ? "bg-white/5 text-white font-extrabold border-l-2 border-white"
-                                        : "text-indigo-200/70 hover:text-white hover:bg-white/5 font-bold"
-                                      }
-                                    `}
-                                  >
-                                    {sub.name}
-                                  </Link>
-                                </li>
-                              );
-                            })}
-                          </ul>
+                        <ul className="mt-1 ml-6 pl-2.5 border-l border-slate-200/80 space-y-1 select-none">
+                          {item.subLinks.map((sub) => {
+                            const isSubItemActive = isSubLinkActive(sub.href);
+                            return (
+                              <li key={sub.name}>
+                                <Link
+                                  href={sub.href}
+                                  onClick={(e) => handleLinkClick(e, sub.href)}
+                                  className={`
+                                    block px-3.5 py-2 text-[11px] rounded-lg transition-colors duration-150
+                                    ${isSubItemActive
+                                      ? "bg-slate-50 text-[#170C79] font-extrabold border-l-2 border-[#170C79]"
+                                      : "text-slate-400 hover:text-slate-700 hover:bg-slate-50 font-bold"
+                                    }
+                                  `}
+                                >
+                                  {sub.name}
+                                </Link>
+                              </li>
+                            );
+                          })}
+                        </ul>
                         )}
                       </div>
                     ) : (
@@ -373,16 +369,16 @@ export default function AdminLayout({ children }) {
                           type="button"
                           className={`
                             w-full flex items-center justify-center px-2 py-2.5 rounded-xl transition-all duration-200
-                            ${isSubActive ? "bg-white/10 text-white" : "text-indigo-200/80 hover:bg-white/5 hover:text-white"}
+                            ${isSubActive ? "bg-[#170C79]/8 text-[#170C79]" : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"}
                           `}
                         >
                           <div className="flex items-center justify-center min-w-[24px]">
-                            <Icon className={`h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-105 ${isSubActive ? "text-cyan-400" : "text-indigo-300"}`} />
+                            <Icon className={`h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-105 ${isSubActive ? "text-[#170C79]" : "text-slate-400"}`} />
                           </div>
                         </button>
 
-                        <div className="absolute left-full ml-3 bg-[#0A0440] text-white text-[10px] rounded-xl opacity-0 invisible group-hover/popover:opacity-100 group-hover/popover:visible transition-all duration-200 z-50 shadow-xl border border-[#170C79]/30 py-1.5 min-w-[140px] text-left">
-                          <p className="px-3.5 py-1.5 text-[9px] font-black uppercase text-indigo-200/70 tracking-wider border-b border-white/5 mb-1">{item.name}</p>
+                        <div className="absolute left-full ml-3 bg-white text-slate-800 text-[10px] rounded-xl opacity-0 invisible group-hover/popover:opacity-100 group-hover/popover:visible transition-all duration-200 z-50 shadow-xl border border-slate-200 py-1.5 min-w-[140px] text-left">
+                          <p className="px-3.5 py-1.5 text-[9px] font-black uppercase text-slate-400 tracking-wider border-b border-slate-100 mb-1">{item.name}</p>
                           {item.subLinks.map((sub) => {
                             const isSubItemActive = isSubLinkActive(sub.href);
                             return (
@@ -390,15 +386,15 @@ export default function AdminLayout({ children }) {
                                 key={sub.name}
                                   href={sub.href}
                                   onClick={(e) => handleLinkClick(e, sub.href)}
-                                  className={`block px-3.5 py-2 hover:bg-white/5 transition-colors font-bold ${
-                                    isSubItemActive ? "text-white bg-white/5" : "text-indigo-200/80 hover:text-white"
+                                  className={`block px-3.5 py-2 hover:bg-slate-50 transition-colors font-bold ${
+                                    isSubItemActive ? "text-[#170C79] bg-slate-50" : "text-slate-600 hover:text-slate-900"
                                   }`}
                               >
                                 {sub.name}
                               </Link>
                             );
                           })}
-                          <div className="absolute left-0 top-6 transform -translate-y-1/2 -translate-x-1 w-1.5 h-1.5 bg-[#0A0440] border-l border-b border-[#170C79]/30 rotate-45" />
+                          <div className="absolute left-0 top-6 transform -translate-y-1/2 -translate-x-1 w-1.5 h-1.5 bg-white border-l border-b border-slate-200 rotate-45" />
                         </div>
                       </div>
                     )}
@@ -417,8 +413,8 @@ export default function AdminLayout({ children }) {
                       w-full flex items-center rounded-xl transition-all duration-200 group
                       ${isCollapsed ? "justify-center px-2 py-2.5" : "space-x-3 px-3.5 py-2.5 text-left"}
                       ${isActive
-                        ? "bg-white/10 text-white font-bold border-l-4 border-cyan-400"
-                        : "text-indigo-200/80 hover:bg-white/5 hover:text-white font-medium"
+                        ? "bg-[#170C79]/8 text-[#170C79] font-bold border-l-4 border-[#170C79]"
+                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-800 font-medium"
                       }
                     `}
                   >
@@ -427,8 +423,8 @@ export default function AdminLayout({ children }) {
                         className={`
                           h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-105
                           ${isActive 
-                            ? "text-cyan-400" 
-                            : "text-indigo-300 group-hover:text-white"
+                            ? "text-[#170C79]" 
+                            : "text-slate-400 group-hover:text-slate-700"
                           }
                         `}
                       />
@@ -442,9 +438,9 @@ export default function AdminLayout({ children }) {
 
                     {/* Tooltip for collapsed state */}
                     {isCollapsed && (
-                      <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-[#0A0440] border border-[#170C79]/30 text-white text-[10px] font-bold rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-colors duration-200 whitespace-nowrap z-50 shadow-lg">
+                      <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-white border border-slate-200 text-slate-700 text-[10px] font-bold rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-colors duration-200 whitespace-nowrap z-50 shadow-lg">
                         {item.name}
-                        <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-1.5 h-1.5 bg-[#0A0440] border-l border-b border-[#170C79]/30 rotate-45" />
+                        <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-1.5 h-1.5 bg-white border-l border-b border-slate-200 rotate-45" />
                       </div>
                     )}
                   </Link>
