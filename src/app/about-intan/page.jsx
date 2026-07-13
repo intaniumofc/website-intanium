@@ -3,7 +3,7 @@ import MainLayout from '../../components/layout/MainLayout';
 import AboutIntanPage from '../../features/about-intan/AboutIntanPage';
 
 export const metadata = {
-  title: 'Tentang Nur Intan | Intanium Official Website',
+  title: 'Tentang Nur Intan | IRIS Official Website',
   description: 'Profil lengkap, biodata resmi, fakta unik, dan jejak karir Nur Intan di JKT48.',
 };
 

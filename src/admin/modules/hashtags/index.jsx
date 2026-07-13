@@ -302,7 +302,7 @@ export default function AdminHashtags() {
                   <label className="block text-sm font-semibold text-slate-700 mb-1.5">
                     Teks Tagar
                   </label>
-                  <input autoComplete="off" /* autocomplete="off" */ type="text" name="text" value={formData.text} onChange={handleChange} placeholder="Contoh: #INTANIUM" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors" required />
+                  <input autoComplete="off" /* autocomplete="off" */ type="text" name="text" value={formData.text} onChange={handleChange} placeholder="Contoh: #IRIS" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors" required />
                 </div>
 
                 <div>

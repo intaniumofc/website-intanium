@@ -74,7 +74,7 @@ export default function Navbar({ isHome = false }) {
               label: "About IRIS",
               description: "Origins, philosophy, guidelines, and how to join Discord",
               icon: Globe,
-              link: ROUTES.ABOUT_INTANIUM,
+              link: ROUTES.ABOUT_IRIS,
             },
           ],
         },

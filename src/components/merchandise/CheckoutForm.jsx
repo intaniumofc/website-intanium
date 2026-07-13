@@ -5,7 +5,7 @@ import Button from '../common/Button';
 import Card from '../common/Card';
 import { formatCurrency, isValidEmail } from '../../lib/helpers';
 import { MapPin, Truck, ExternalLink, Info, ArrowLeft, Copy, Check } from 'lucide-react';
-import qrisImage from '../../assets/images/qris-intanium.webp';
+import qrisImage from '../../assets/images/qris-iris.webp';
 import { merchandiseService } from '../../services/public/merchandiseService';
 
 export default function CheckoutForm({
@@ -19,7 +19,7 @@ export default function CheckoutForm({
     email: '',
     phone: '',
     lineId: '',
-    intaniumMemberId: '',
+    irisMemberId: '',
     deliveryMethod: 'pickup_fx', // 'pickup_fx' or 'expedition_jnt'
     address: '',
     city: '',
@@ -231,17 +231,17 @@ export default function CheckoutForm({
               </div>
 
               <div className="md:col-span-2">
-                <label htmlFor="intaniumMemberId" className="block text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-2">
-                  ID Anggota Intanium (Opsional)
+                <label htmlFor="irisMemberId" className="block text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-2">
+                  ID Anggota IRIS (Opsional)
                 </label>
                 <input
                   type="text"
-                  id="intaniumMemberId"
-                  name="intaniumMemberId"
-                  value={formData.intaniumMemberId}
+                  id="irisMemberId"
+                  name="irisMemberId"
+                  value={formData.irisMemberId}
                   onChange={handleChange}
                   className="w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg px-4 py-2.5 text-sm text-[var(--text-primary)] focus:ring-1 focus:ring-[var(--color-primary)] focus:outline-none"
-                  placeholder="Contoh: INT-9999"
+                  placeholder="Contoh: IRIS-9999"
                 />
               </div>
 
@@ -541,11 +541,11 @@ export default function CheckoutForm({
 
               {/* QRIS Code */}
               <div className="flex flex-col items-center justify-center p-4 rounded-2xl border border-[var(--border-color)] bg-slate-50 relative overflow-hidden">
-                <span className="text-[9px] font-extrabold text-[var(--text-muted)] block uppercase tracking-widest mb-2">Scan QRIS Intanium</span>
+                <span className="text-[9px] font-extrabold text-[var(--text-muted)] block uppercase tracking-widest mb-2">Scan QRIS IRIS</span>
                 <div className="w-48 h-64 border border-slate-200 rounded-xl overflow-hidden bg-white shadow-xs p-2 flex items-center justify-center">
                   <img
                     src={(paymentSettings.qris_url || qrisImage)?.src || (paymentSettings.qris_url || qrisImage)}
-                    alt="QRIS Pembayaran Intanium"
+                    alt="QRIS Pembayaran IRIS"
                     className="w-full h-full object-contain"
                   />
                 </div>

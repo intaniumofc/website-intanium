@@ -1351,7 +1351,7 @@ export default function DengerIntanPage() {
 
   // Set page title for SEO best practices
   useEffect(() => {
-    document.title = '#DengerINTAN Playlist | Intanium';
+    document.title = '#DengerINTAN Playlist | IRIS';
   }, []);
 
   // Fetch playlists and most played songs on mount

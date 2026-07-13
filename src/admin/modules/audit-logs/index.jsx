@@ -103,7 +103,7 @@ export default function AdminAuditLogs() {
     }
   };
 
-  const isITSupport = currentUserEmail.toLowerCase() === 'it_support@intanium.admin';
+  const isITSupport = currentUserEmail.toLowerCase() === 'it_support@iris.admin';
 
   // Filter logs based on search input
   const filteredLogs = logs.filter((log) => {

@@ -8,7 +8,7 @@ import { useSafeReducedMotion } from '../../hooks/useSafeReducedMotion';
 import { BookmarkIcon, X, ArrowRight, Newspaper } from 'lucide-react';
 import { ROUTES } from '../../lib/constants';
 import Card from '../../components/common/Card';
-import bannerIntanium from '../../assets/logos/banner-nium.webp';
+import bannerIris from '../../assets/logos/banner-nium.webp';
 import intanOne from '../../assets/images/intan-01.webp';
 import intanTwo from '../../assets/images/intan-02.webp';
 import intanThree from '../../assets/images/intan-03.webp';
@@ -55,19 +55,19 @@ const CATEGORY_THEMES = {
 };
 
 const CATEGORY_IMAGES = {
-  Announcement: bannerIntanium,
+  Announcement: bannerIris,
   Schedule: intanOne,
   Event: intanTwo,
-  Merch: bannerIntanium,
+  Merch: bannerIris,
   Project: intanThree,
   Media: intanFour,
   Stream: intanFour,
-  Important: bannerIntanium,
+  Important: bannerIris,
 };
 
 function getArticleImage(article) {
   const isGenericImage = !article.imageUrl || article.imageUrl.includes('images.unsplash.com');
-  return isGenericImage ? CATEGORY_IMAGES[article.category] || bannerIntanium : article.imageUrl;
+  return isGenericImage ? CATEGORY_IMAGES[article.category] || bannerIris : article.imageUrl;
 }
 
 function formatDateSafely(dateStr) {

@@ -6,10 +6,10 @@ export async function POST(request) {
   const { profile, error: authError } = await requireAdmin();
   if (authError) return authError;
 
-  const actorEmail = profile.username || 'admin@intanium.admin';
+  const actorEmail = profile.username || 'admin@iris.admin';
 
   // Strict role check: only IT Support / super_admin is allowed to restore
-  if (actorEmail.toLowerCase() !== 'it_support@intanium.admin') {
+  if (actorEmail.toLowerCase() !== 'it_support@iris.admin') {
     return NextResponse.json(
       { success: false, error: 'Forbidden: Hanya IT Support yang dapat melakukan restore data.' },
       { status: 403 }

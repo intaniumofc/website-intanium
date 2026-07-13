@@ -34,11 +34,12 @@ export async function POST(request) {
     const supabase = createAdminClient();
 
     // 3. Check ticket count for IP or Username today
+    const sanitizedUsernameFilter = cleanUsername.replace(/[,.():]/g, '');
     const { count, error: countError } = await supabase
       .from('scratch_sessions')
       .select('id', { count: 'exact', head: true })
       .gte('created_at', todayISO)
-      .or(`ip_hash.eq.${ipHash},username.ilike.${cleanUsername}`);
+      .or(`ip_hash.eq.${ipHash},username.ilike.${sanitizedUsernameFilter}`);
 
     if (countError) {
       console.error('Error counting daily scratch sessions:', countError);

@@ -9,26 +9,26 @@ import Button from '../../components/common/Button';
 import Loading from '../../components/common/Loading';
 import { formatDate } from '../../lib/formatDate';
 import { ROUTES } from '../../lib/constants';
-import bannerIntanium from '../../assets/logos/banner-nium.webp';
+import bannerIris from '../../assets/logos/banner-nium.webp';
 import intanOne from '../../assets/images/intan-01.webp';
 import intanTwo from '../../assets/images/intan-02.webp';
 import intanThree from '../../assets/images/intan-03.webp';
 import intanFour from '../../assets/images/intan-04.webp';
 
 const CATEGORY_IMAGES = {
-  Announcement: bannerIntanium,
+  Announcement: bannerIris,
   Schedule: intanOne,
   Event: intanTwo,
-  Merch: bannerIntanium,
+  Merch: bannerIris,
   Project: intanThree,
   Media: intanFour,
   Stream: intanFour,
-  Important: bannerIntanium,
+  Important: bannerIris,
 };
 
 function getNewsImage(news) {
   const isGenericImage = !news.imageUrl || news.imageUrl.includes('images.unsplash.com');
-  return isGenericImage ? CATEGORY_IMAGES[news.category] || bannerIntanium : news.imageUrl;
+  return isGenericImage ? CATEGORY_IMAGES[news.category] || bannerIris : news.imageUrl;
 }
 
 export default function NewsDetailPage() {

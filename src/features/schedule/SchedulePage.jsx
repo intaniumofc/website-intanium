@@ -166,7 +166,7 @@ export default function SchedulePage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   useEffect(() => {
-    document.title = 'Jadwal & Kegiatan | Official Website Intanium';
+    document.title = 'Jadwal & Kegiatan | Official Website IRIS';
   }, []);
 
   useEffect(() => {

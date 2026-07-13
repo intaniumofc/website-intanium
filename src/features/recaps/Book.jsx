@@ -40,7 +40,7 @@ const Book = forwardRef(function Book(
         <div className="recap-closed-book__back" aria-hidden="true" />
         <div className="recap-closed-book__inner-spread" aria-hidden="true">
           <div className="recap-closed-book__inner-page recap-closed-book__inner-page--left">
-            <span>INTANIUM</span>
+            <span>IRIS</span>
             <strong>Recap<br />Nur Intan</strong>
             <small>Editorial Archive · 2026</small>
           </div>
@@ -56,7 +56,7 @@ const Book = forwardRef(function Book(
             {children}
           </div>
           <div className="recap-closed-book__cover-face recap-closed-book__cover-face--back">
-            INTANIUM
+            IRIS
           </div>
         </div>
       </div>

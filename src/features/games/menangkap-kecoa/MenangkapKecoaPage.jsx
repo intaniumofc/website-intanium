@@ -253,11 +253,11 @@ export default function MenangkapKecoaPage() {
 
       <header className="game-console-header">
         <span className="inline-flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[0.2em] text-[#170C79]/65">
-          <Gamepad2 className="size-3.5" /> Intanium Mini Game
+          <Gamepad2 className="size-3.5" /> IRIS Mini Game
         </span>
         <h1 className="mt-2 text-3xl font-black text-[#170C79] sm:text-4xl">Menangkap Kecoa</h1>
         <p className="mt-1 max-w-xl text-sm leading-relaxed text-slate-600">
-          Uji keberanianmu. Tangkap sebanyak mungkin dalam 60 detik dan rebut posisi teratas Intanium.
+          Uji keberanianmu. Tangkap sebanyak mungkin dalam 60 detik dan rebut posisi teratas IRIS.
         </p>
       </header>
 
@@ -272,7 +272,7 @@ export default function MenangkapKecoaPage() {
                 </div>
                 <h2 className="mt-6 text-3xl font-black">Berani seperti Intan?</h2>
                 <p className="mt-3 text-sm leading-relaxed text-white/70">
-                  Buktikan keberanianmu dalam 60 detik. Tangkap kecoa, jaga combo, dan raih posisi teratas di Intanium.
+                  Buktikan keberanianmu dalam 60 detik. Tangkap kecoa, jaga combo, dan raih posisi teratas di IRIS.
                 </p>
                 <p className="mt-3 text-[10px] font-bold -[0.18em] text-white/45">
                 &bull; 60 detik &bull; Skor tertinggi menang
@@ -364,7 +364,7 @@ export default function MenangkapKecoaPage() {
       </div>
 
       <p className="game-console-footer">
-        Mini-game fanmade untuk hiburan komunitas Intanium.
+        Mini-game fanmade untuk hiburan komunitas IRIS.
       </p>
       </div>
 

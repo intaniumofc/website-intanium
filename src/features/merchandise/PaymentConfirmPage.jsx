@@ -12,7 +12,7 @@ import {
   Check, ShieldAlert, Truck, Copy, 
   ExternalLink
 } from 'lucide-react';
-import qrisImage from '../../assets/images/qris-intanium.webp';
+import qrisImage from '../../assets/images/qris-iris.webp';
 import { StatusBadge } from '../../components/ui/status-badge';
 import { OrderStatus } from '../../components/ui/order-status-tracker';
 
@@ -34,7 +34,7 @@ export default function PaymentConfirmPage() {
   });
 
   useEffect(() => {
-    document.title = 'Lacak & Cek Pesanan | Official Shop Intanium';
+    document.title = 'Lacak & Cek Pesanan | Official Shop IRIS';
     merchandiseService.getPaymentSettings()
       .then((settings) => {
         if (settings) {
@@ -124,7 +124,7 @@ export default function PaymentConfirmPage() {
     const buyerName = orderDetail.order_data?.name || '-';
     const buyerPhone = orderDetail.order_data?.phone || '-';
     const lineId = orderDetail.order_data?.lineId || '-';
-    const memberId = orderDetail.order_data?.intaniumMemberId || '-';
+    const memberId = orderDetail.order_data?.irisMemberId || orderDetail.order_data?.intaniumMemberId || '-';
     const deliveryMethod = orderDetail.order_data?.deliveryMethod === 'pickup_fx' ? 'Ambil di FX Sudirman' : 'Ekspedisi J&T';
     const buyerAddress = orderDetail.order_data?.deliveryMethod === 'pickup_fx' 
       ? 'Tidak diperlukan (Ambil di FX Sudirman)' 
@@ -136,7 +136,7 @@ export default function PaymentConfirmPage() {
 
     const notesText = orderDetail.order_data?.notes ? `\n- *Catatan:* ${orderDetail.order_data.notes}` : '';
     
-    const message = `Halo Admin Intanium! Saya ingin melakukan konfirmasi/tanya status Pre-Order Merchandise.
+    const message = `Halo Admin IRIS! Saya ingin melakukan konfirmasi/tanya status Pre-Order Merchandise.
 
 *Rincian Pesanan:*
 - *Nomor Invoice:* ${invoiceNum}
@@ -325,7 +325,7 @@ export default function PaymentConfirmPage() {
 
   const trackingItem = {
     imageUrl: orderedProduct?.image_url ?? orderedProduct?.imageUrl ?? 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=64&h=64&fit=crop&q=80',
-    name: orderedProduct?.name || 'Intanium Merchandise',
+    name: orderedProduct?.name || 'IRIS Merchandise',
     details: `Ukuran: ${orderDetail?.order_data?.selectedSize || '-'} • Jumlah: ${orderDetail?.order_data?.quantity || 1} pcs`,
     price: orderedProduct?.price || 0,
     priceFormatted: formatCurrency(orderedProduct?.price || 0)
@@ -338,7 +338,7 @@ export default function PaymentConfirmPage() {
     { label: "Nama Penerima", value: orderDetail.order_data?.name || '-' },
     { label: "Nomor WhatsApp", value: orderDetail.order_data?.phone || '-' },
     ...(orderDetail.order_data?.lineId ? [{ label: "ID Line", value: orderDetail.order_data.lineId }] : []),
-    ...(orderDetail.order_data?.intaniumMemberId ? [{ label: "ID Anggota", value: orderDetail.order_data.intaniumMemberId }] : []),
+    ...(orderDetail.order_data?.irisMemberId || orderDetail.order_data?.intaniumMemberId ? [{ label: "ID Anggota", value: orderDetail.order_data.irisMemberId || orderDetail.order_data.intaniumMemberId }] : []),
     { 
       label: "Metode Pengiriman", 
       value: isJnt ? "Ekspedisi J&T Express" : "Ambil di FX Sudirman" 
@@ -429,7 +429,7 @@ export default function PaymentConfirmPage() {
       return `Estimasi pengiriman dapat dilacak dengan resi ${orderDetail?.order_data?.trackingNumber || '-'}.`;
     }
     if (orderStatus === 'completed') {
-      return "Terima kasih telah menjadi bagian dari Intanium!";
+      return "Terima kasih telah menjadi bagian dari IRIS!";
     }
     if (orderStatus === 'cancelled') {
       return "Transaksi pre-order dibatalkan. Hubungi admin untuk informasi lebih lanjut.";
@@ -573,11 +573,11 @@ export default function PaymentConfirmPage() {
 
               {/* QRIS Code */}
               <div className="flex flex-col items-center justify-center p-4 rounded-2xl border border-[var(--border-color)] bg-slate-50 relative overflow-hidden">
-                <span className="text-[9px] font-extrabold text-[var(--text-muted)] block uppercase tracking-widest mb-2">Scan QRIS Intanium</span>
+                <span className="text-[9px] font-extrabold text-[var(--text-muted)] block uppercase tracking-widest mb-2">Scan QRIS IRIS</span>
                 <div className="w-40 h-52 border border-slate-200 rounded-xl overflow-hidden bg-white shadow-xs p-2 flex items-center justify-center">
                   <img
                     src={paymentSettings.qris_url || qrisImage}
-                    alt="QRIS Pembayaran Intanium"
+                    alt="QRIS Pembayaran IRIS"
                     className="w-full h-full object-contain"
                   />
                 </div>

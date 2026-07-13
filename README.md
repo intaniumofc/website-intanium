@@ -1,6 +1,6 @@
-# INTANIUM - Official Website 🌟
+# IRIS - Official Website 🌟
 
-Website resmi komunitas fanbase **Nur Intan JKT48 (INTANIUM)**. Dibuat menggunakan **Next.js 16 (App Router)**, **Tailwind CSS v4**, **Supabase SSR**, dan **Cloudflare R2 Storage**.
+Website resmi komunitas fanbase **Nur Intan JKT48 (IRIS)**. Dibuat menggunakan **Next.js 16 (App Router)**, **Tailwind CSS v4**, **Supabase SSR**, dan **Cloudflare R2 Storage**.
 
 ---
 
@@ -18,7 +18,7 @@ Website resmi komunitas fanbase **Nur Intan JKT48 (INTANIUM)**. Dibuat menggunak
 ## 📂 Struktur Proyek
 
 ```bash
-website-intanium/
+website-IRIS/
 ├── public/                # Aset statis (gambar, logo, JSON Lottie, robots.txt)
 ├── src/
 │   ├── app/               # Next.js App Router (Wrapper Halaman & Server Components)

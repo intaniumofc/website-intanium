@@ -18,7 +18,7 @@ export async function POST(request) {
     const accessKeyId = process.env.R2_ACCESS_KEY_ID;
     const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
     const r2EndpointRaw = process.env.NEXT_PUBLIC_R2_ENDPOINT || '';
-    const r2BucketName = process.env.NEXT_PUBLIC_R2_BUCKET_NAME || 'intanium-storage';
+    const r2BucketName = process.env.NEXT_PUBLIC_R2_BUCKET_NAME || 'iris-storage';
 
     if (!accessKeyId || !secretAccessKey || !r2EndpointRaw) {
       return NextResponse.json({ error: 'Server configuration missing' }, { status: 500 });
@@ -37,8 +37,8 @@ export async function POST(request) {
       },
     });
 
-    const cleanFolderPath = folderPath.replace(/^\//, '');
-    const cleanBucketName = bucketName.replace(/^\//, '');
+    const cleanFolderPath = folderPath.replace(/^\//, '').replace(/\.\./g, '');
+    const cleanBucketName = bucketName.replace(/^\//, '').replace(/\.\./g, '');
     const fullPath = `${cleanBucketName}/${cleanFolderPath}/${fileName}`;
 
     const command = new PutObjectCommand({

@@ -46,8 +46,8 @@ export function PortfolioGallery({
     },
     {
       src: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800&h=600&fit=crop&q=80",
-      alt: "Intanium Cozy Pajamas Outfit",
-      title: "Intanium Cozy Pajamas Outfit"
+      alt: "IRIS Cozy Pajamas Outfit",
+      title: "IRIS Cozy Pajamas Outfit"
     },
     {
       src: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=800&h=600&fit=crop&q=80",

@@ -10,7 +10,7 @@ const defaultSections = [
     title: "Jelajahi",
     links: [
       { name: "Tentang Intan", href: "/about-intan" },
-      { name: "Lore Intanium", href: "/about-intanium" },
+      { name: "Lore IRIS", href: "/about-iris" },
       { name: "#IntanShiningStar", href: "/shining-star" },
       { name: "#dengerINTAN", href: "/denger-intan" },
     ],
@@ -22,7 +22,7 @@ const defaultSections = [
       { name: "Karya Seni Fanart", href: "/fanart" },
       { name: "Papan Mading", href: "/mading" },
       { name: "Recap Aktivitas", href: "/recaps" },
-      { name: "Arena Game Intanium", href: "/games" },
+      { name: "Arena Game IRIS", href: "/games" },
     ],
   },
   {
@@ -52,12 +52,12 @@ export default function Footer({
     url: "/",
     src: logoNobg,
     alt: "logo",
-    title: "INTANIUM",
+    title: "IRIS",
   },
   sections = defaultSections,
-  description = "Selamat datang di portal resmi komunitas Intanium. Di sini, kami merayakan setiap momen perjalanan Intan melalui jadwal streaming terpadu, arsip zine recap yang mendalam, dan galeri kreatif untuk memamerkan karya fanart terbaikmu. Jadilah bagian dari diskusi interaktif di corkboard mading kami dan miliki koleksi eksklusif melalui katalog merchandise resmi. Segala hal tentang Intan, dari fans untuk fans, ada di sini.",
+  description = "Selamat datang di portal resmi komunitas IRIS. Di sini, kami merayakan setiap momen perjalanan Intan melalui jadwal streaming terpadu, arsip zine recap yang mendalam, dan galeri kreatif untuk memamerkan karya fanart terbaikmu. Jadilah bagian dari diskusi interaktif di corkboard mading kami dan miliki koleksi eksklusif melalui katalog merchandise resmi. Segala hal tentang Intan, dari fans untuk fans, ada di sini.",
   socialLinks = defaultSocialLinks,
-  copyright = `© ${new Date().getFullYear()} Intanium Official. All rights reserved.`,
+  copyright = `© ${new Date().getFullYear()} IRIS Official. All rights reserved.`,
   legalLinks = defaultLegalLinks,
 }) {
   return (
@@ -90,7 +90,7 @@ export default function Footer({
                   ease: "linear",
                 }}
               >
-                INTANIUM
+                IRIS
               </motion.h2>
             </a>
             <p className="max-w-5xl text-xs leading-relaxed text-white/65 sm:text-sm">
@@ -129,7 +129,7 @@ export default function Footer({
               <a
                 key={social.label}
                 href={social.href}
-                aria-label={`Kunjungi ${social.label} Intanium`}
+                aria-label={`Kunjungi ${social.label} IRIS`}
                 title={social.label}
                 target="_blank"
                 rel="noopener noreferrer"

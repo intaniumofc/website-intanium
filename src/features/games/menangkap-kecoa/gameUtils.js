@@ -172,6 +172,6 @@ export function shareScore({ score, caughtCount, maxCombo, resultUrl }) {
   const shareUrl = new URL('https://x.com/intent/tweet');
   shareUrl.searchParams.set('text', text);
   if (resultUrl) shareUrl.searchParams.set('url', resultUrl);
-  shareUrl.searchParams.set('hashtags', 'Intanium,MenangkapKecoa,JKT48');
+  shareUrl.searchParams.set('hashtags', 'IRIS,MenangkapKecoa,JKT48');
   window.open(shareUrl.toString(), '_blank', 'width=550,height=600,noopener,noreferrer');
 }

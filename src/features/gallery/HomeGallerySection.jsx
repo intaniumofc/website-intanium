@@ -39,7 +39,7 @@ const GALLERY_PHOTOS = [
   {
     id: 'photo-5',
     url: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800&auto=format&fit=crop&q=80',
-    title: 'Intanium Cozy Pajamas Outfit',
+    title: 'IRIS Cozy Pajamas Outfit',
     category: 'Casual Look',
     date: '12 Januari 2026'
   },
@@ -98,7 +98,7 @@ export default function HomeGallerySection() {
     <div className="relative w-full">
       {/* Portfolio Gallery 3D & Marquee Component */}
       <PortfolioGallery
-        title="Galeri Kilau Intanium"
+        title="Galeri Kilau IRIS"
         archiveButton={{
           text: "Buka Galeri Foto",
           href: ROUTES.GALLERY

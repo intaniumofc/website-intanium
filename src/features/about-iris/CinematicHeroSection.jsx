@@ -176,7 +176,7 @@ export default function CinematicHeroSection() {
       {/* Cinematic Intro Screen */}
       <div ref={introRef} className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-[#000000]">
         
-        {/* Social Icons positioned above INTANIUM text */}
+        {/* Social Icons positioned above IRIS text */}
         <div className="flex gap-4 mb-8">
           {[
             { icon: FaXTwitter, href: SOCIALS.TWITTER, label: "Twitter" },
@@ -198,7 +198,7 @@ export default function CinematicHeroSection() {
           ))}
         </div>
 
-        <h1 className="text-6xl sm:text-8xl md:text-9xl font-black text-white tracking-tighter font-playfair uppercase">INTANIUM</h1>
+        <h1 className="text-6xl sm:text-8xl md:text-9xl font-black text-white tracking-tighter font-playfair uppercase">IRIS</h1>
         <p className="mt-4 sm:mt-6 text-xs sm:text-sm md:text-base text-white/80 tracking-[0.3em] sm:tracking-[0.5em] uppercase font-semibold">
           The Legacy Continues
         </p>
@@ -233,7 +233,7 @@ export default function CinematicHeroSection() {
           {/* Text 2: Story */}
           <div ref={text2Ref} className="absolute right-0 top-[20%] md:top-1/3 text-right max-w-2xl opacity-0 bg-[#090530]/60 backdrop-blur-xl p-6 sm:p-10 rounded-3xl sm:rounded-[2rem] border border-white/15 z-20 shadow-[0_0_40px_rgba(124,58,237,0.3)]">
              <p className="text-sm sm:text-lg md:text-2xl text-white/95 font-medium leading-relaxed drop-shadow-md font-sans">
-               Lebih dari sekadar dukungan, Intanium adalah rumah. Berawal dari rasa kagum yang sama terhadap talenta <span className="text-purple-300 font-bold">Nur Intan</span>, kami tumbuh menjadi satu keluarga besar yang bertekad menjaga setiap langkahnya di panggung JKT48.
+               Lebih dari sekadar dukungan, IRIS adalah rumah. Berawal dari rasa kagum yang sama terhadap talenta <span className="text-purple-300 font-bold">Nur Intan</span>, kami tumbuh menjadi satu keluarga besar yang bertekad menjaga setiap langkahnya di panggung JKT48.
              </p>
           </div>
 
@@ -263,7 +263,7 @@ export default function CinematicHeroSection() {
 
               <div className="w-full flex flex-col items-center md:items-end text-center md:text-right space-y-4 sm:space-y-5 bg-[#090530]/80 md:bg-[#090530]/60 backdrop-blur-2xl p-6 sm:p-8 rounded-3xl md:rounded-[2rem] border border-white/20 shadow-[0_10px_40px_rgba(0,0,0,0.8)] md:shadow-[0_0_50px_rgba(0,0,0,0.6)]">
                 <div>
-                   <h3 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-widest font-playfair">INTANIUM</h3>
+                   <h3 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-widest font-playfair">IRIS</h3>
                    <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.3em] text-purple-300 mt-1 sm:mt-2">
                      Official Fanbase
                    </p>

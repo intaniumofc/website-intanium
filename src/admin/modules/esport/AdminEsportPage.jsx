@@ -164,7 +164,7 @@ export default function AdminEsportPage() {
         const payload = {
           id: slugId,
           name: divisionForm.name,
-          tagline: divisionForm.tagline || 'Divisi Resmi Intanium Esport',
+          tagline: divisionForm.tagline || 'Divisi Resmi IRIS Esport',
           logo: divisionForm.logo || '🎮',
           banner_gradient: divisionForm.banner_gradient || 'from-blue-600/20 to-purple-600/20',
           wallpaper: currentWallpaper
@@ -282,7 +282,7 @@ export default function AdminEsportPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
-            <Trophy className="w-6 h-6 text-[#170C79]" /> Kelola Intanium Esport
+            <Trophy className="w-6 h-6 text-[#170C79]" /> Kelola IRIS Esport
           </h1>
           <p className="text-sm text-slate-500 mt-1">
             Kelola divisi, daftar roster, jadwal & hasil pertandingan, serta ruang prestasi (trophy room).
@@ -1069,7 +1069,7 @@ export default function AdminEsportPage() {
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-slate-700 mb-1.5">Stage / Tahap Kompetisi</label>
-                      <input autoComplete="off" type="text" name="stage" value={matchForm.stage} onChange={(e) => handleInputChange(e, 'match')} placeholder="Contoh: Grand Finals - Intanium Cup" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors" required />
+                      <input autoComplete="off" type="text" name="stage" value={matchForm.stage} onChange={(e) => handleInputChange(e, 'match')} placeholder="Contoh: Grand Finals - IRIS Cup" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors" required />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
@@ -1117,7 +1117,7 @@ export default function AdminEsportPage() {
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-slate-700 mb-1.5">Judul Prestasi</label>
-                      <input autoComplete="off" type="text" name="title" value={achievementForm.title} onChange={(e) => handleInputChange(e, 'achievement')} placeholder="Contoh: Champion - Intanium Cup 2026" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors font-bold" required />
+                      <input autoComplete="off" type="text" name="title" value={achievementForm.title} onChange={(e) => handleInputChange(e, 'achievement')} placeholder="Contoh: Champion - IRIS Cup 2026" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors font-bold" required />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>

@@ -8,11 +8,11 @@ export async function generateMetadata({ params }) {
   const product = await merchandiseService.getProductById(id);
   if (!product) {
     return {
-      title: 'Produk Tidak Ditemukan | Intanium Official Website',
+      title: 'Produk Tidak Ditemukan | IRIS Official Website',
     };
   }
   return {
-    title: `Pre-Order ${product.name} | Merchandise Intanium`,
+    title: `Pre-Order ${product.name} | Merchandise IRIS`,
     description: product.description || 'Pre-order merchandise eksklusif Nur Intan JKT48.',
   };
 }

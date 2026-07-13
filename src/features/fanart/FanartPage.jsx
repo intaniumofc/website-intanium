@@ -29,7 +29,7 @@ export default function FanartPage() {
   const { uploadFile, isUploading, progress } = useSupabaseUpload();
 
   useEffect(() => {
-    document.title = 'Fanart Intanium | Galeri Karya Seni Komunitas';
+    document.title = 'Fanart IRIS | Galeri Karya Seni Komunitas';
     fanartService.getFanarts()
       .then((data) => {
         setFanarts(data);
@@ -115,10 +115,10 @@ export default function FanartPage() {
       {/* HERO SECTION */}
       <section className="text-center space-y-4 max-w-4xl mx-auto">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-(--color-primary) sm:text-5xl tracking-tight">
-          Fanart Intanium
+          Fanart IRIS
         </h1>
         <p className="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed max-w-2xl mx-auto">
-          Sudut pameran ilustrasi indah, komik menarik, dan karya visual kreatif hasil goresan tangan berbakat rekan-rekan komunitas Intanium.
+          Sudut pameran ilustrasi indah, komik menarik, dan karya visual kreatif hasil goresan tangan berbakat rekan-rekan komunitas IRIS.
         </p>
         <div className="flex justify-center pt-2">
           <Button variant="glow" size="sm" onClick={() => setIsSubmitOpen(true)} className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2">

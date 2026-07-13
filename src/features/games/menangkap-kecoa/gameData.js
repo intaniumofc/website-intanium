@@ -47,7 +47,7 @@ export function getComboText(combo) {
 }
 
 export function getPerformanceTitle(score) {
-  if (score >= 1500) return 'Intanium Brave!';
+  if (score >= 1500) return 'IRIS Brave!';
   if (score >= 1000) return 'Kecoa Hunter!';
   if (score >= 500) return 'Berani Juga!';
   return 'Pemanasan Dulu!';
@@ -56,7 +56,7 @@ export function getPerformanceTitle(score) {
 export function getBadges({ score, caughtCount, maxCombo, caughtGolden }) {
   const badges = [
     score >= 1500
-      ? 'Intanium Brave'
+      ? 'IRIS Brave'
       : score >= 1000
         ? 'Kecoa Hunter'
         : score >= 500

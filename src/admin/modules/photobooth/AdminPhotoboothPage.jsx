@@ -20,7 +20,7 @@ export default function AdminPhotoboothPage() {
   });
 
   useEffect(() => {
-    document.title = 'Kelola Photobooth | Admin Intanium';
+    document.title = 'Kelola Photobooth | Admin IRIS';
     loadSettings();
   }, []);
 

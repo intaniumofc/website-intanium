@@ -8,7 +8,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 const FALLBACK_HASHTAGS_ROW_1 = [
-  { text: '#INTANIUM', count: '14.2K Tweets', explanation: 'Tagar resmi untuk fanclub Intan.' },
+  { text: '#IRIS', count: '14.2K Tweets', explanation: 'Tagar resmi untuk fanclub Intan.' },
   { text: '#BerkilauIntan', count: '8.5K Tweets', explanation: 'Tagar untuk momen spesial yang berkilau.' },
   { text: '#IntanJKT48', count: '10.1K Tweets', explanation: 'Tagar umum untuk member JKT48 Nur Intan.' },
   { text: '#PermataIntan', count: '4.3K Tweets', explanation: 'Sebutan sayang untuk fans Intan.' },
@@ -17,7 +17,7 @@ const FALLBACK_HASHTAGS_ROW_1 = [
 ];
 
 const FALLBACK_HASHTAGS_ROW_2 = [
-  { text: '#CahayaIntanium', count: '5.1K Tweets', explanation: 'Cahaya penyemangat dari fans.' },
+  { text: '#CahayaIRIS', count: '5.1K Tweets', explanation: 'Cahaya penyemangat dari fans.' },
   { text: '#IntanUntukDunia', count: '3.9K Tweets', explanation: 'Harapan agar Intan bersinar di kancah global.' },
   { text: '#WajibMatcha', count: '2.4K Tweets', explanation: 'Setiap momen harus ada matcha.' },
   { text: '#ChibiIntan', count: '4.8K Tweets', explanation: 'Sisi imut dari Intan.' },
@@ -156,7 +156,7 @@ export default function HomeHashtagsSection() {
       <div className="flex justify-between items-end border-b border-[var(--border-color)]/60 pb-3 select-none px-4 sm:px-6">
         <div className="space-y-1">
           <h3 className="text-xl sm:text-2xl font-extrabold text-[#170C79] tracking-tight">
-            #Tagar Populer INTANIUM
+            #Tagar Populer IRIS
           </h3>
           <p className="text-xs text-[var(--text-secondary)]">
             Ayo ramaikan tagar resmi media sosial di bawah ini untuk mendukung setiap panggung dan karya Intan! (Klik tagar untuk info)

@@ -358,7 +358,7 @@ export default function PhotoboothStudio() {
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `intanium-photostrip-${Date.now()}.png`;
+        a.download = `iris-photostrip-${Date.now()}.png`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -375,13 +375,13 @@ export default function PhotoboothStudio() {
 
     canvasRef.current.toBlob(async (blob) => {
       if (blob) {
-        const file = new File([blob], `intanium-photostrip-${Date.now()}.png`, { type: "image/png" });
+        const file = new File([blob], `iris-photostrip-${Date.now()}.png`, { type: "image/png" });
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
           try {
             await navigator.share({
               files: [file],
-              title: "Studio Foto Online Intanium",
-              text: "Lihat photostrip kerenku bareng Intan JKT48! Coba di Intanium.com!"
+              title: "Studio Foto Online IRIS",
+              text: "Lihat photostrip kerenku bareng Intan JKT48! Coba di iris.com!"
             });
           } catch (err) {
             console.error("Gagal share:", err);
@@ -549,7 +549,7 @@ export default function PhotoboothStudio() {
       {/* Header Decoration */}
       <div className="text-center space-y-2 sm:space-y-4 max-w-4xl mx-auto mb-6 sm:mb-10 px-2">
         <h1 className="text-2xl sm:text-4xl font-extrabold text-(--color-primary) sm:text-5xl tracking-tight">
-          Studio Foto Online Intanium
+          Studio Foto Online IRIS
         </h1>
         <p className="text-xs sm:text-base text-[var(--text-secondary)] leading-relaxed max-w-2xl mx-auto font-body">
           Wujudkan momen impianmu satu frame bersama Intan! Ambil {activeFrame.slots.length} pose ter-kece kamu dan abadikan kenangan manis ini ke dalam bingkai eksklusif pilihanmu.

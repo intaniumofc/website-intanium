@@ -14,7 +14,7 @@ jobs:
       - name: Call Sync API Endpoint
         run: |
           # Silakan ganti URL di bawah dengan domain production Vercel Anda yang sebenarnya
-          # Contoh: https://website-intanium.vercel.app
-          curl -X GET "https://website-intanium.vercel.app/api/admin/schedule/sync" \
+          # Contoh: https://website-IRIS.vercel.app
+          curl -X GET "https://website-IRIS.vercel.app/api/admin/schedule/sync" \
             -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json"

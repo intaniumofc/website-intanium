@@ -18,7 +18,7 @@ function getR2Client() {
 }
 
 function getBucketName() {
-  return process.env.NEXT_PUBLIC_R2_BUCKET_NAME || 'intanium-storage';
+  return process.env.NEXT_PUBLIC_R2_BUCKET_NAME || 'iris-storage';
 }
 
 export async function GET(request) {

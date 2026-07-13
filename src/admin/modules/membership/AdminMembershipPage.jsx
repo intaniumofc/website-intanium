@@ -88,7 +88,7 @@ export default function AdminMembershipPage() {
   const [editingDivId, setEditingDivId] = useState(null);
   const [divFormData, setDivFormData] = useState({
     name: '',
-    branch_id: 'external'
+    branch_id: 'general'
   });
 
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
@@ -278,7 +278,7 @@ export default function AdminMembershipPage() {
     setEditingDivId(null);
     setDivFormData({
       name: '',
-      branch_id: 'external'
+      branch_id: 'general'
     });
     setIsDivModalOpen(true);
   };
@@ -574,7 +574,7 @@ export default function AdminMembershipPage() {
             <Users className="h-5.5 w-5.5 text-[#170C79] shrink-0" /> Kelola Keanggotaan & Role
           </h1>
           <p className="text-xs text-slate-500 mt-1">
-            Kelola struktur pengurus fanbase INTANIUM, edit detail profil media sosial anggota, serta atur izin akses (permissions) staff admin.
+            Kelola struktur pengurus fanbase IRIS, edit detail profil media sosial anggota, serta atur izin akses (permissions) staff admin.
           </p>
         </div>
         <div className="flex gap-2">
@@ -1368,7 +1368,7 @@ export default function AdminMembershipPage() {
                 type="email"
                 name="email"
                 autoComplete="off"
-                placeholder="misal: Casimira@intanium.admin"
+                placeholder="misal: Casimira@iris.admin"
                 value={memberFormData.email}
                 onChange={handleMemberInputChange}
                 className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors text-xs"

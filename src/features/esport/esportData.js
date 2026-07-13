@@ -1,4 +1,4 @@
-// Static data for Intanium Esport Divisions
+// Static data for IRIS Esport Divisions
 export const ESPORT_DATA = {
   mobile_legends: {
     id: 'mobile_legends',
@@ -64,7 +64,7 @@ export const ESPORT_DATA = {
         opponentLogo: '🦁',
         date: '10 Juni 2026',
         time: '19:00 WIB',
-        stage: 'Grand Finals - Intanium Cup',
+        stage: 'Grand Finals - IRIS Cup',
         status: 'Past',
         score: '2 - 1',
         result: 'win',
@@ -94,7 +94,7 @@ export const ESPORT_DATA = {
     achievements: [
       {
         id: 'ml-a1',
-        title: 'Champion - Intanium Cup 2026',
+        title: 'Champion - IRIS Cup 2026',
         rank: '1st Place',
         date: 'Juni 2026',
         badge: '🏆'

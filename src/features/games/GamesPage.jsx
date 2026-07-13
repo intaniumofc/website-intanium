@@ -147,7 +147,7 @@ export default function GamesPage() {
   const [leaderboardGame, setLeaderboardGame] = useState('classic'); // 'classic' | 'gosok-intan'
 
   const [leaderboard, setLeaderboard] = useState([
-    { username: 'Bima_Nium', score: 1442, title: 'Intanium Brave' },
+    { username: 'Bima_Nium', score: 1442, title: 'IRIS Brave' },
     { username: 'Luthfi_G', score: 1210, title: 'Kecoa Hunter' },
     { username: 'Zaki_88', score: 980, title: 'Berani Juga' }
   ]);
@@ -160,7 +160,7 @@ export default function GamesPage() {
       userName: item.username,
       rank: index + 1,
       value: item.score,
-      byline: item.title || 'Intanium Player',
+      byline: item.title || 'IRIS Player',
       displayed: true
     }));
   }, [leaderboard]);
@@ -246,7 +246,7 @@ export default function GamesPage() {
   };
 
   useEffect(() => {
-    document.title = 'Arena Game Intanium | Official Community Space';
+    document.title = 'Arena Game IRIS | Official Community Space';
 
     // Fetch initial leaderboard and settings
     fetchLeaderboard(leaderboardGame, leaderboardTab);
@@ -299,7 +299,7 @@ export default function GamesPage() {
 
   return (
     <div className="relative min-h-[90vh] pb-12 pt-0 px-4 sm:px-6 lg:px-8 overflow-hidden font-sans">
-      <h1 className="sr-only">Arena Game Intanium - Ruang Komunitas Resmi</h1>
+      <h1 className="sr-only">Arena Game IRIS - Ruang Komunitas Resmi</h1>
 
       {/* Ambient Morphing Background Glow Orbs */}
       <div className={`absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-[120px] pointer-events-none -z-10 transition-all duration-1000 ${activeTheme === 'amber' ? 'bg-amber-500/12' :
@@ -315,7 +315,7 @@ export default function GamesPage() {
         {/* Header Title */}
         <div className="text-left space-y-2">
           <h2 className="text-4xl font-black bg-gradient-to-r from-[#170C79] to-[#3a1da8] bg-clip-text text-transparent tracking-tight">
-            Arena Game Intanium
+            Arena Game IRIS
           </h2>
           <p className="text-sm text-slate-600 max-w-lg font-medium">
             Uji ketangkasan dan keberuntunganmu di sini. Raih rekor tertinggi dan tunjukkan dukunganmu sebagai Top Fans!
