@@ -35,10 +35,10 @@ export async function DELETE(request) {
   const { profile, error: authError } = await requireAdmin();
   if (authError) return authError;
 
-  const actorEmail = profile.username || 'admin@intanium.admin';
+  const actorEmail = profile.username || 'admin@iris.admin';
 
   // Strictly enforce super_admin IT Support username rule
-  if (actorEmail.toLowerCase() !== 'it_support@intanium.admin') {
+  if (actorEmail.toLowerCase() !== 'it_support@iris.admin') {
     return NextResponse.json({ success: false, error: 'Forbidden: Hanya IT Support yang dapat mengelola log aktivitas.' }, { status: 403 });
   }
 

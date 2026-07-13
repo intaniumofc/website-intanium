@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 
 # Host
-Host: website-intanium.vercel.app
+Host: website-IRIS.vercel.app

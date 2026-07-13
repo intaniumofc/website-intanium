@@ -527,7 +527,7 @@ export default function AdminOrdersPage() {
         </style>
       </head>
       <body>
-        <h1>Intanium Store · Laporan Merchandise Order</h1>
+        <h1>IRIS Store · Laporan Merchandise Order</h1>
         <p>Di-generate pada: ${formatDateTime(new Date().toISOString())}</p>
         <p>Filter - status: ${statusFilter}, tanggal: ${dateFrom || '-'} s.d ${dateTo || '-'}, min nominal: ${minimumTotal || '-'}</p>
         <table>
@@ -595,7 +595,7 @@ export default function AdminOrdersPage() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `intanium-orders-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.download = `iris-orders-${new Date().toISOString().slice(0, 10)}.csv`;
     link.click();
     URL.revokeObjectURL(url);
   }
@@ -1085,7 +1085,7 @@ export default function AdminOrdersPage() {
                       <DetailItem label="Nama Lengkap" value={detailData.order.shipping_name} />
                       <DetailItem label="Nomor WhatsApp" value={detailData.order.shipping_phone} />
                       <DetailItem label="ID Line" value={detailData.order.line_id || '-'} />
-                      <DetailItem label="ID Anggota Intanium" value={detailData.order.intanium_member_id || '-'} />
+                      <DetailItem label="ID Anggota IRIS" value={detailData.order.iris_member_id || '-'} />
                       <DetailItem
                         label="Metode Pengiriman"
                         value={detailData.order.delivery_method === 'pickup_fx' ? 'Bertemu di FX Sudirman (Pickup)' : 'Ekspedisi J&T Express (EZ)'}

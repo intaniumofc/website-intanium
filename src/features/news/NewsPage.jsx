@@ -15,7 +15,7 @@ import {
 import { newsService } from '../../services/public/newsService';
 import Loading from '../../components/common/Loading';
 import { formatDate } from '../../lib/formatDate';
-import bannerIntanium from '../../assets/logos/banner-nium.webp';
+import bannerIris from '../../assets/logos/banner-nium.webp';
 import intanOne from '../../assets/images/intan-01.webp';
 import intanTwo from '../../assets/images/intan-02.webp';
 import intanThree from '../../assets/images/intan-03.webp';
@@ -42,19 +42,19 @@ const CATEGORY_ALIASES = {
 };
 
 const CATEGORY_IMAGES = {
-  Pengumuman: bannerIntanium,
+  Pengumuman: bannerIris,
   Schedule: intanOne,
   Event: intanTwo,
-  Merch: bannerIntanium,
+  Merch: bannerIris,
   Project: intanThree,
   Media: intanFour,
-  Important: bannerIntanium,
+  Important: bannerIris,
 };
 
 function getNewsImage(item, category) {
   const image = item.imageUrl || item.image_url;
   const isGenericImage = !image || image.includes('images.unsplash.com');
-  return isGenericImage ? CATEGORY_IMAGES[category] || bannerIntanium : image;
+  return isGenericImage ? CATEGORY_IMAGES[category] || bannerIris : image;
 }
 
 function normalizeNews(item) {
@@ -64,7 +64,7 @@ function normalizeNews(item) {
     ...item,
     category,
     image: getNewsImage(item, category),
-    excerpt: item.summary || item.content || 'Baca kabar terbaru dari INTANIUM.',
+    excerpt: item.summary || item.content || 'Baca kabar terbaru dari IRIS.',
     isPinned: Boolean(item.isPinned ?? item.is_pinned),
     isImportant: Boolean(item.isImportant ?? item.is_important) || category === 'Important',
     isFeatured: Boolean(item.isFeatured ?? item.is_featured),
@@ -96,7 +96,7 @@ function EmptyState({ onReset }) {
       <Newspaper className="mx-auto size-8 text-violet-300" />
       <h3 className="mt-4 text-xl font-black text-[#170C79]">Belum ada update untuk kategori ini.</h3>
       <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-slate-600">
-        Pilih kategori lain atau kembali ke Semua untuk melihat kabar terbaru INTANIUM.
+        Pilih kategori lain atau kembali ke Semua untuk melihat kabar terbaru IRIS.
       </p>
       <button
         type="button"
@@ -166,7 +166,7 @@ function GlassNewsCard({ item, index = 0, featured = false }) {
                 <img src={(logoNobg)?.src || (logoNobg)} alt="" className="size-5 object-contain" />
               </div>
               <div className="min-w-0 text-[10px]">
-                <p className="truncate font-black text-[#170C79]">INTANIUM Official</p>
+                <p className="truncate font-black text-[#170C79]">IRIS Official</p>
                 <p className="truncate font-bold text-slate-400">{formatDate(item.date)}</p>
               </div>
             </div>
@@ -228,10 +228,10 @@ export default function NewsPage() {
       <section className="border-b border-violet-200/70 pb-5">
         <div className="grid gap-5 md:grid-cols-[1fr_auto] md:items-end">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-violet-500">INTANIUM Newsroom</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-violet-500">IRIS Newsroom</p>
             <h1 className="mt-2 text-3xl font-black tracking-tight text-[#170C79] sm:text-4xl">Berita & Pengumuman</h1>
             <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600 sm:text-base">
-              Pusat update resmi INTANIUM untuk kabar terbaru seputar Nur Intan, mulai dari jadwal, event, project,
+              Pusat update resmi IRIS untuk kabar terbaru seputar Nur Intan, mulai dari jadwal, event, project,
               merchandise, hingga pengumuman penting.
             </p>
           </div>
@@ -268,7 +268,7 @@ export default function NewsPage() {
       </div>
 
       {isLoading ? (
-        <Loading message="Membuka INTANIUM Newsroom..." />
+        <Loading message="Membuka IRIS Newsroom..." />
       ) : filteredNews.length === 0 ? (
         <EmptyState onReset={() => setActiveCategory('Semua')} />
       ) : (

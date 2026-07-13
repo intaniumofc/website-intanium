@@ -140,7 +140,7 @@ export default function MerchandisePage() {
 
   // Fetch products
   useEffect(() => {
-    document.title = 'Pre-Order Merchandise | Official Shop Intanium';
+    document.title = 'Pre-Order Merchandise | Official Shop IRIS';
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     merchandiseService.getProducts('All', '')
@@ -259,7 +259,7 @@ export default function MerchandisePage() {
             {heading}
           </h1>
           <p className="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed max-w-2xl mx-auto">
-            Miliki koleksi produk eksklusif persembahan Intan & Komunitas Intanium. Seluruh keuntungan penjualan didedikasikan untuk mendukung kelangsungan aktivitas streaming Intan!
+            Miliki koleksi produk eksklusif persembahan Intan & Komunitas IRIS. Seluruh keuntungan penjualan didedikasikan untuk mendukung kelangsungan aktivitas streaming Intan!
           </p>
 
           <div className="flex justify-center items-center gap-3 pt-2">

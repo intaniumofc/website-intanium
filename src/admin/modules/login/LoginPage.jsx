@@ -315,7 +315,7 @@ export default function LoginPage() {
       <div className="relative hidden lg:flex flex-col justify-between bg-gradient-to-br from-[#170C79] via-[#2112a3] to-[#0e074e] p-12 text-white overflow-hidden">
         <div className="relative z-20">
           <Link href="/" className="flex items-center gap-2 text-lg font-semibold group w-fit">
-            <Image width={32} height={32} alt="Logo Intanium" src={logoNobg} className="h-8 w-8 object-contain transition-transform duration-300 group-hover:scale-105" />
+            <Image width={32} height={32} alt="Logo IRIS" src={logoNobg} className="h-8 w-8 object-contain transition-transform duration-300 group-hover:scale-105" />
             <motion.span
               className="text-xl font-extrabold tracking-tight bg-[linear-gradient(110deg,#ffffff,35%,#a5b4fc,50%,#ffffff,75%,#ffffff)] bg-[length:200%_100%] bg-clip-text text-transparent select-none"
               initial={{ backgroundPosition: "200% 0" }}
@@ -326,7 +326,7 @@ export default function LoginPage() {
                 ease: "linear",
               }}
             >
-              INTANIUM
+              IRIS
             </motion.span>
           </Link>
         </div>
@@ -503,7 +503,7 @@ export default function LoginPage() {
         </div>
 
         <div className="relative z-20 flex items-center gap-8 text-sm text-white/60">
-          <span className="cursor-default select-none">© {new Date().getFullYear()} Intanium Team</span>
+          <span className="cursor-default select-none">© {new Date().getFullYear()} IRIS Team</span>
         </div>
 
         {/* Decorative background grid and blobs */}
@@ -517,7 +517,7 @@ export default function LoginPage() {
         <div className="w-full max-w-[420px] space-y-6">
           {/* Mobile Logo */}
           <div className="lg:hidden flex items-center justify-center gap-2 text-lg font-semibold mb-12">
-            <Image width={32} height={32} alt="Logo Intanium" src={logoNobg} className="h-8 w-8 object-contain" />
+            <Image width={32} height={32} alt="Logo IRIS" src={logoNobg} className="h-8 w-8 object-contain" />
             <motion.span
               className="text-xl font-extrabold tracking-tight bg-[linear-gradient(110deg,#1e293b,35%,#6366f1,50%,#1e293b,75%,#1e293b)] bg-[length:200%_100%] bg-clip-text text-transparent select-none"
               initial={{ backgroundPosition: "200% 0" }}
@@ -528,7 +528,7 @@ export default function LoginPage() {
                 ease: "linear",
               }}
             >
-              INTANIUM
+              IRIS
             </motion.span>
           </div>
 
@@ -546,7 +546,7 @@ export default function LoginPage() {
                 id="email"
                 name="email"
                 type="text"
-                placeholder="nama_user@intanium.admin"
+                placeholder="nama_user@iris.admin"
                 value={email}
                 autoComplete="username"
                 spellCheck={false}

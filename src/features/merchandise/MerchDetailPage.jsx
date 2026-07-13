@@ -44,7 +44,7 @@ export default function MerchDetailPage() {
 
   useEffect(() => {
     if (product) {
-      document.title = `${product.name} | Pre-Order Merchandise Intanium`;
+      document.title = `${product.name} | Pre-Order Merchandise IRIS`;
     }
   }, [product]);
 
@@ -92,7 +92,7 @@ export default function MerchDetailPage() {
       const buyerName = checkoutData.name || '-';
       const buyerPhone = checkoutData.phone || '-';
       const lineId = checkoutData.lineId || '-';
-      const memberId = checkoutData.intaniumMemberId || '-';
+      const memberId = checkoutData.irisMemberId || '-';
       const deliveryMethod = checkoutData.deliveryMethod === 'pickup_fx' ? 'Ambil di FX Sudirman' : 'Ekspedisi J&T';
       const buyerAddress = checkoutData.deliveryMethod === 'pickup_fx' 
         ? 'Tidak diperlukan (Ambil di FX Sudirman)' 
@@ -104,7 +104,7 @@ export default function MerchDetailPage() {
  
       const notesText = checkoutData.notes ? `\n- *Catatan:* ${checkoutData.notes}` : '';
       
-      const message = `Halo Admin Intanium! Saya sudah melakukan transfer untuk Pre-Order Merchandise. Berikut detail pesanan saya:
+      const message = `Halo Admin IRIS! Saya sudah melakukan transfer untuk Pre-Order Merchandise. Berikut detail pesanan saya:
  
 *Rincian Pesanan:*
 - *Nomor Invoice:* ${invoiceNum}

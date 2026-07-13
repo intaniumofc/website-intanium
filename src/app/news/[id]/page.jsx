@@ -8,12 +8,12 @@ export async function generateMetadata({ params }) {
   const article = await newsService.getNewsById(id);
   if (!article) {
     return {
-      title: 'Artikel Tidak Ditemukan | Intanium Official Website',
+      title: 'Artikel Tidak Ditemukan | IRIS Official Website',
     };
   }
   return {
-    title: `${article.title} | Berita Intanium`,
-    description: article.summary || article.content?.substring(0, 150) || 'Detail berita resmi dari fanbase Intanium.',
+    title: `${article.title} | Berita IRIS`,
+    description: article.summary || article.content?.substring(0, 150) || 'Detail berita resmi dari fanbase IRIS.',
   };
 }
 

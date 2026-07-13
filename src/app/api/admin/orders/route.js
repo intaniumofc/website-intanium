@@ -63,7 +63,7 @@ export async function GET(request) {
           tracking_url: order.order_data?.trackingUrl || null,
           shipped_at: order.order_data?.shipped_at || null,
           line_id: order.order_data?.lineId || null,
-          intanium_member_id: order.order_data?.intaniumMemberId || null,
+          iris_member_id: order.order_data?.irisMemberId || order.order_data?.intaniumMemberId || null,
           delivery_method: order.order_data?.deliveryMethod || 'expedition_jnt',
           province: order.order_data?.province || null,
         },
@@ -114,7 +114,7 @@ export async function GET(request) {
       productId: order.order_data?.productId || null,
       quantity: order.order_data?.quantity || 1,
       line_id: order.order_data?.lineId || null,
-      intanium_member_id: order.order_data?.intaniumMemberId || null,
+      iris_member_id: order.order_data?.irisMemberId || order.order_data?.intaniumMemberId || null,
       delivery_method: order.order_data?.deliveryMethod || 'expedition_jnt',
       province: order.order_data?.province || null,
       notes: order.order_data?.notes || null,
@@ -156,7 +156,7 @@ export async function PUT(request) {
 
     const currentOrderData = order.order_data || {};
     const actorName = profile.role === 'super_admin' ? 'Super Admin' : (profile.role === 'coordinator' ? 'Koordinator' : 'Staff Admin');
-    const actorEmail = profile.username || 'admin@intanium.admin';
+    const actorEmail = profile.username || 'admin@iris.admin';
 
     let updatedOrderData = { ...currentOrderData };
     let statusLogMsg = '';
@@ -320,7 +320,7 @@ export async function DELETE(request) {
     }
 
     // Log the deletion activity
-    const actorEmail = profile.username || 'admin@intanium.admin';
+    const actorEmail = profile.username || 'admin@iris.admin';
     await supabase.from('admin_activity_logs').insert([
       {
         admin_username: actorEmail,

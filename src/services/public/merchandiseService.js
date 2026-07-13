@@ -181,7 +181,7 @@ export const merchandiseService = {
       productId: order.order_data?.productId || null,
       quantity: order.order_data?.quantity || 1,
       line_id: order.order_data?.lineId || null,
-      intanium_member_id: order.order_data?.intaniumMemberId || null,
+      iris_member_id: order.order_data?.irisMemberId || order.order_data?.intaniumMemberId || null,
       delivery_method: order.order_data?.deliveryMethod || 'expedition_jnt',
       province: order.order_data?.province || null,
       notes: order.order_data?.notes || null,
@@ -238,7 +238,7 @@ export const merchandiseService = {
         tracking_url: order.order_data?.trackingUrl || null,
         shipped_at: order.order_data?.shipped_at || null,
         line_id: order.order_data?.lineId || null,
-        intanium_member_id: order.order_data?.intaniumMemberId || null,
+        iris_member_id: order.order_data?.irisMemberId || order.order_data?.intaniumMemberId || null,
         delivery_method: order.order_data?.deliveryMethod || 'expedition_jnt',
         province: order.order_data?.province || null,
       },
@@ -275,7 +275,7 @@ export const merchandiseService = {
       next_status: nextStatus,
       created_at: new Date().toISOString(),
       actor_name: 'Admin',
-      actor_email: 'admin@intanium.com',
+      actor_email: 'admin@iris.com',
       note: note || ''
     };
     
@@ -340,7 +340,7 @@ export const merchandiseService = {
       next_status: nextStatus,
       created_at: new Date().toISOString(),
       actor_name: 'Admin',
-      actor_email: 'admin@intanium.com',
+      actor_email: 'admin@iris.com',
       note: note || `Fulfillment info updated. Resi: ${trackingNumber || '-'}`
     };
     
@@ -419,7 +419,7 @@ export const merchandiseService = {
       next_status: prevStatus,
       created_at: new Date().toISOString(),
       actor_name: 'Admin',
-      actor_email: 'admin@intanium.com',
+      actor_email: 'admin@iris.com',
       note: `Ongkos kirim disesuaikan dari Rp ${order.order_data?.shipping_cost || 0} menjadi Rp ${newCost}`
     };
     

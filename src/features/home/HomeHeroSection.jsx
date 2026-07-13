@@ -159,24 +159,24 @@ export default function HomeHeroSection() {
         {/* Brand Title (Asymmetric / Oversized Brutalist look with Masking) */}
         <div ref={titleRef} className="select-none">
           <h1 className="font-black leading-none tracking-tight font-playfair flex flex-col items-center">
-            {/* Mask Wrapper for INTANIUM */}
+            {/* Mask Wrapper for IRIS */}
             <span className="inline-block overflow-hidden relative py-2">
               <span
                 ref={titleLine1Ref}
                 className="block text-[clamp(4.2rem,14vw,10rem)] text-white drop-shadow-[0_4px_32px_rgba(255,255,255,0.15)] will-change-transform"
                 style={{ transformOrigin: 'left bottom' }}
               >
-                INTANIUM
+                IRIS
               </span>
             </span>
-            {/* Mask Wrapper for #BERKILAU */}
+            {/* Mask Wrapper for #GEMINTANG*/}
             <span className="inline-block overflow-hidden relative py-2 -mt-2 sm:-mt-4">
               <span
                 ref={titleLine2Ref}
                 className="block text-[clamp(2.2rem,6vw,4.5rem)] text-transparent will-change-transform"
                 style={{ WebkitTextStroke: '1.5px #FFE285', transformOrigin: 'left bottom' }}
               >
-                #BERKILAU
+                #GEMINTANG
               </span>
             </span>
           </h1>
@@ -237,7 +237,7 @@ export default function HomeHeroSection() {
             <ArrowDown className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-y-1" />
           </button>
           <Link
-            href={ROUTES.ABOUT_INTANIUM}
+            href={ROUTES.ABOUT_IRIS}
             className="group inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full border border-white/30 bg-white/10 backdrop-blur-sm text-white font-bold text-xs uppercase tracking-[0.15em] hover:bg-white/20 hover:scale-105 active:scale-95 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2"
           >
             Tentang Kami

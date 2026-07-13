@@ -49,7 +49,7 @@ export async function GET(request) {
       { success: true, tables: Object.keys(result), totalRows, data: result },
       {
         headers: {
-          'Content-Disposition': 'attachment; filename="intanium-backup.json"',
+          'Content-Disposition': 'attachment; filename="iris-backup.json"',
           'Content-Type': 'application/json',
         },
       }

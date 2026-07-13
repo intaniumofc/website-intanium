@@ -280,7 +280,7 @@ export default function MadingPreviewSection() {
             variants={headingItemVariant}
             className="text-xl sm:text-2xl font-extrabold text-[#170C79] tracking-tight flex items-center gap-2"
           >
-            Mading Intanium <MessageSquare className="h-5 w-5 text-[var(--color-primary)] fill-[var(--color-primary)]/10" />
+            Mading IRIS <MessageSquare className="h-5 w-5 text-[var(--color-primary)] fill-[var(--color-primary)]/10" />
           </motion.h3>
 
           <motion.p
@@ -314,7 +314,7 @@ export default function MadingPreviewSection() {
             <div className="corkboard-banner">
               <span className="banner-washi left"></span>
               <div className="banner-paper">
-                <span>Mading Intanium</span>
+                <span>Mading IRIS</span>
               </div>
               <span className="banner-washi right"></span>
             </div>
@@ -380,7 +380,7 @@ export default function MadingPreviewSection() {
             <div className="corkboard-banner">
               <span className="banner-washi left"></span>
               <div className="banner-paper">
-                <span>Mading Intanium</span>
+                <span>Mading IRIS</span>
               </div>
               <span className="banner-washi right"></span>
             </div>
@@ -480,7 +480,7 @@ export default function MadingPreviewSection() {
           className="bg-white border border-[var(--border-color)]"
         >
           <p className="text-xs text-[var(--text-secondary)] text-left leading-relaxed">
-            Ini hanya preview. Untuk membaca semua pesan dan menambahkan pesanmu sendiri, kunjungi halaman <Link href={ROUTES.MADING} className="font-extrabold text-indigo-700 hover:underline">Mading Intanium ↗</Link>.
+            Ini hanya preview. Untuk membaca semua pesan dan menambahkan pesanmu sendiri, kunjungi halaman <Link href={ROUTES.MADING} className="font-extrabold text-indigo-700 hover:underline">Mading IRIS ↗</Link>.
           </p>
         </Banner>
       </div>

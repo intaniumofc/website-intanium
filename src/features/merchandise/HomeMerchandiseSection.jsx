@@ -201,7 +201,7 @@ export default function HomeMerchandiseSection({ products = [] }) {
       <div className="flex justify-between items-end border-b border-[var(--border-color)]/60 pb-3 select-none">
         <div className="space-y-1">
           <h3 className="text-xl sm:text-2xl font-extrabold text-[#170C79] tracking-tight">
-            Merchandise Official Intanium
+            Merchandise Official IRIS
           </h3>
         </div>
         <Link

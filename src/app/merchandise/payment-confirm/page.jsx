@@ -3,8 +3,8 @@ import MainLayout from '../../../components/layout/MainLayout';
 import PaymentConfirmPage from '../../../features/merchandise/PaymentConfirmPage';
 
 export const metadata = {
-  title: 'Konfirmasi Pembayaran | Intanium Official Website',
-  description: 'Halaman resmi konfirmasi pembayaran transfer bank atau QRIS untuk pesanan merchandise Intanium.',
+  title: 'Konfirmasi Pembayaran | IRIS Official Website',
+  description: 'Halaman resmi konfirmasi pembayaran transfer bank atau QRIS untuk pesanan merchandise IRIS.',
 };
 
 export default function Page() {

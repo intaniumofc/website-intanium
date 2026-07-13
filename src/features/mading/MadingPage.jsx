@@ -73,7 +73,7 @@ export default function MadingPage() {
   };
 
   useEffect(() => {
-    document.title = 'Mading Intanium | Ruang Dukungan Komunitas';
+    document.title = 'Mading IRIS | Ruang Dukungan Komunitas';
     // eslint-disable-next-line react-hooks/set-state-in-effect
     loadNotes();
   }, []);
@@ -249,11 +249,11 @@ export default function MadingPage() {
       <section className="text-center relative max-w-4xl mx-auto pb-8 pt-0 select-none">
         <div className="space-y-4">
           <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-[var(--color-primary)]">
-            Mading Intanium
+            Mading IRIS
           </h1>
 
           <p className="text-sm sm:text-base text-[var(--text-secondary)] leading-relaxed max-w-2xl mx-auto">
-            Ruang hangat untuk meninggalkan ucapan manis, kata apresiasi, dukungan, dan cerita kecil dari komunitas Intanium untuk Nur Intan. Bagikan energi positifmu di sini!
+            Ruang hangat untuk meninggalkan ucapan manis, kata apresiasi, dukungan, dan cerita kecil dari komunitas IRIS untuk Nur Intan. Bagikan energi positifmu di sini!
           </p>
 
           {/* Stats Bar */}
@@ -401,7 +401,7 @@ export default function MadingPage() {
             </div>
 
             <p className="text-[10px] text-slate-500 italic leading-relaxed text-center">
-              Pesan terpopuler hari ini pilihan komunitas Intanium.
+              Pesan terpopuler hari ini pilihan komunitas IRIS.
             </p>
           </div>
         )}

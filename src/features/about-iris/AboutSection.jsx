@@ -57,7 +57,7 @@ export default function AboutSection3() {
                 customVariants={revealVariants}
                 className="text-md sm:text-md font-bold text-(--color-primary)"
               >
-                About Intanium
+                About IRIS
               </TimelineContent>
             </div>
             <div className="flex gap-3">
@@ -69,7 +69,7 @@ export default function AboutSection3() {
                 href={SOCIALS.TWITTER}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Kunjungi Twitter Intanium"
+                aria-label="Kunjungi Twitter IRIS"
                 title="Twitter"
                 className="w-8 h-8 sm:w-10 sm:h-10 bg-transparent border border-(--border-color) rounded-full flex items-center justify-center cursor-pointer hover:bg-(--color-primary) hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 transition-all duration-300 group"
               >
@@ -83,7 +83,7 @@ export default function AboutSection3() {
                 href={SOCIALS.INSTAGRAM}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Kunjungi Instagram Intanium"
+                aria-label="Kunjungi Instagram IRIS"
                 title="Instagram"
                 className="w-8 h-8 sm:w-10 sm:h-10 bg-transparent border border-(--border-color) rounded-full flex items-center justify-center cursor-pointer hover:bg-(--color-primary) hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 transition-all duration-300 group"
               >
@@ -97,7 +97,7 @@ export default function AboutSection3() {
                 href={SOCIALS.TIKTOK}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Kunjungi TikTok Intanium"
+                aria-label="Kunjungi TikTok IRIS"
                 title="TikTok"
                 className="w-8 h-8 sm:w-10 sm:h-10 bg-transparent border border-(--border-color) rounded-full flex items-center justify-center cursor-pointer hover:bg-(--color-primary) hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 transition-all duration-300 group"
               >
@@ -111,7 +111,7 @@ export default function AboutSection3() {
                 href={SOCIALS.YOUTUBE}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Kunjungi YouTube Intanium"
+                aria-label="Kunjungi YouTube IRIS"
                 title="YouTube"
                 className="w-8 h-8 sm:w-10 sm:h-10 bg-transparent border border-(--border-color) rounded-full flex items-center justify-center cursor-pointer hover:bg-(--color-primary) hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 transition-all duration-300 group"
               >
@@ -123,7 +123,7 @@ export default function AboutSection3() {
                 timelineRef={heroRef}
                 customVariants={revealVariants}
                 href={SOCIALS.EMAIL}
-                aria-label="Kirim Email ke Intanium"
+                aria-label="Kirim Email ke IRIS"
                 title="Email"
                 className="w-8 h-8 sm:w-10 sm:h-10 bg-transparent border border-(--border-color) rounded-full flex items-center justify-center cursor-pointer hover:bg-(--color-primary) hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 transition-all duration-300 group"
               >
@@ -257,7 +257,7 @@ export default function AboutSection3() {
                 className="text-xs sm:text-sm"
               >
                 <p className="text-justify leading-relaxed">
-                  Melalui berbagai proyek kreatif, event kebersamaan, dan interaksi media sosial yang positif, Intanium berkomitmen penuh menjadi pilar pendukung yang kokoh bagi Intan dalam menggapai mimpi-mimpinya di panggung JKT48.
+                  Melalui berbagai proyek kreatif, event kebersamaan, dan interaksi media sosial yang positif, IRIS berkomitmen penuh menjadi pilar pendukung yang kokoh bagi Intan dalam menggapai mimpi-mimpinya di panggung JKT48.
                 </p>
               </TimelineContent>
             </TimelineContent>
@@ -272,7 +272,7 @@ export default function AboutSection3() {
                 customVariants={revealVariants}
                 className="text-(--color-primary) text-2xl font-black mb-1 tracking-wider"
               >
-                INTANIUM
+                IRIS
               </TimelineContent>
               <TimelineContent
                 as="div"

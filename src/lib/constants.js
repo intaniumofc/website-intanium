@@ -1,13 +1,13 @@
 // Application-wide constant configurations
 
-export const SITE_NAME = 'Intanium';
-export const SITE_TAGLINE = 'The Official Portal for Intanium Community & Intan';
+export const SITE_NAME = 'IRIS';
+export const SITE_TAGLINE = 'The Official Portal for IRIS Community & Intan';
 export const ADMIN_WHATSAPP_NUMBER = '6281386701549';
 
 export const ROUTES = {
   HOME: '/',
   ABOUT_INTAN: '/about-intan',
-  ABOUT_INTANIUM: '/about-intanium',
+  ABOUT_IRIS: '/about-iris',
   MERCHANDISE: '/merchandise',
   MERCH_DETAIL: '/merchandise/:id',
   PAYMENT_CONFIRM: '/merchandise/payment-confirm',
@@ -51,12 +51,12 @@ export const ROUTES = {
 };
 
 export const SOCIALS = {
-  TWITTER: 'https://x.com/intanium_ofc',
-  INSTAGRAM: 'https://instagram.com/intanium_ofc',
-  TIKTOK: 'https://tiktok.com/@intanium_ofc',
-  YOUTUBE: 'https://www.youtube.com/@IntaniumOfc',
-  EMAIL: 'mailto:intaniumofc@gmail.com',
-  THREADS: 'https://www.threads.net/@intanium_ofc',
+  TWITTER: 'https://x.com/iris_ofc',
+  INSTAGRAM: 'https://instagram.com/iris_ofc',
+  TIKTOK: 'https://tiktok.com/@iris_ofc',
+  YOUTUBE: 'https://www.youtube.com/@iris_ofc',
+  EMAIL: 'mailto:irisofc@gmail.com',
+  THREADS: 'https://www.threads.net/@iris_ofc',
 };
 
 export const MERCH_CATEGORIES = {

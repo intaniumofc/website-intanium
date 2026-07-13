@@ -11,7 +11,7 @@ const PESAN_LIST = [
   "Jangan lupa minum air putih ya hari ini! Kalau lelah, istirahat sejenak sambil minum es matcha latte kesukaan kita~ 🍵",
   "Hari ini mungkin terasa berat, tapi ingat kalau awan mendung pasti akan berganti menjadi langit biru cerah. Aku selalu mendukungmu! 💙",
   "Ayo semangat belajarnya/kerjanya! Nanti malam kita ketemu lagi di live stream ya, aku tunggu ceritamu! 🎶",
-  "Sudah sarapan belum? Jangan sampai telat makan ya, kesehatanmu itu nomor satu bagi komunitas INTANIUM! 🍳",
+  "Sudah sarapan belum? Jangan sampai telat makan ya, kesehatanmu itu nomor satu bagi komunitas IRIS! 🍳",
   "Kalau hari ini kamu merasa lelah, coba dengerin lagu lofi kesukaan kita sebentar. Tarik napas dalam-dalam, tenangkan pikiranmu. You're doing great! 🌸"
 ];
 

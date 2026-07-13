@@ -14,7 +14,7 @@ const MOCK_PLAYLISTS = [
     embedUrl: 'https://www.youtube.com/embed/videoseries?list=PL3-sRM8xAzY-oQj01w4_mY6-x6H2bE3X1',
     spotifyUrl: 'https://open.spotify.com/playlist/2aMGqrDZrqERqgMPIQe0ui',
     spotifyEmbedUrl: 'https://open.spotify.com/embed/playlist/2aMGqrDZrqERqgMPIQe0ui?utm_source=generator',
-    curatorNote: 'Hai Intanium! Ini playlist Ongoing terbaru khusus buat nemenin aktivitas kalian bulan ini. Selamat mendengarkan! ✨',
+    curatorNote: 'Hai IRIS! Ini playlist Ongoing terbaru khusus buat nemenin aktivitas kalian bulan ini. Selamat mendengarkan! ✨',
     createdAt: new Date().toISOString()
   },
   {

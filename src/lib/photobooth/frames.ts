@@ -16,7 +16,7 @@ export const FRAMES_CONFIG: FrameConfig[] = [
     ],
     watermark: {
       logo: "/logo-nobg.webp",
-      text: "Intanium.com",
+      text: "iris.com",
       position: "bottom-global"
     }
   },
@@ -34,7 +34,7 @@ export const FRAMES_CONFIG: FrameConfig[] = [
     ],
     watermark: {
       logo: "/logo-nobg.webp",
-      text: "Intanium.com",
+      text: "iris.com",
       position: "bottom-global"
     }
   }

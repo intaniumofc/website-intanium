@@ -9,7 +9,7 @@ export async function generateMetadata({ params }) {
     const score = await getGameScore(scoreId);
     if (!score) {
       return {
-        title: 'Hasil Permainan Tidak Ditemukan | Intanium Official Website',
+        title: 'Hasil Permainan Tidak Ditemukan | IRIS Official Website',
       };
     }
     return {
@@ -18,7 +18,7 @@ export async function generateMetadata({ params }) {
     };
   } catch (err) {
     return {
-      title: 'Hasil Permainan | Intanium Official Website',
+      title: 'Hasil Permainan | IRIS Official Website',
     };
   }
 }

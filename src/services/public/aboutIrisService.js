@@ -1,7 +1,7 @@
-// Service for fetching Intanium Community Lore and Rules
+// Service for fetching IRIS Community Lore and Rules
 
-const INTANIUM_LORE = {
-  originStory: 'Komunitas "Intanium" terbentuk secara organik oleh para penggemar setia Intan sejak awal debut streamingnya pada Mei 2024. Nama Intanium diambil dari paduan nama "Intan" dengan unsur logam mulia berkekuatan super kuat "Titanium". Filosofi ini mencerminkan semangat ikatan persahabatan fans yang sangat kokoh, berkilau indah layaknya intan permata, dan selalu mendukung perjalanan karir Intan dalam kondisi apapun.',
+const IRIS_LORE = {
+  originStory: 'Komunitas "IRIS" terbentuk secara organik oleh para penggemar setia Intan sejak awal debut streamingnya pada Mei 2024. Nama IRIS melambangkan cahaya, harapan, dan keindahan yang terus mekar bersama perjalanan karir Intan di panggung JKT48—seperti kelopak bunga iris yang membuka diri menuju sinar. Filosofi ini mencerminkan semangat ikatan persahabatan fans yang kokoh dan selalu mendukung Intan dalam kondisi apa pun.',
   rules: [
     { title: 'Saling Menghormati', desc: 'Jaga keramahtamahan, toleransi, hindari ujaran kebencian, SARA, bullying, dan diskriminasi di platform mana pun.' },
     { title: 'Hindari Perdebatan (No Drama)', desc: 'Fokus pada konten hiburan positif. Jauhkan pembahasan drama tidak sehat atau perbandingan negatif antar sesama kreator.' },
@@ -16,9 +16,9 @@ const INTANIUM_LORE = {
   ]
 };
 
-export const aboutIntaniumService = {
+export const aboutIrisService = {
   getLore: async () => {
     await new Promise(resolve => setTimeout(resolve, 200));
-    return INTANIUM_LORE;
+    return IRIS_LORE;
   }
 };

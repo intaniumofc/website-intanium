@@ -3,10 +3,10 @@ import { createAdminClient } from '@/lib/supabase/adminClient';
 import { rateLimit, getClientIp } from '@/lib/auth/requireAdmin';
 
 function getScratchTitle(score) {
-  if (score >= 100) return 'Intanium Gem Master';
+  if (score >= 100) return 'IRIS Gem Master';
   if (score >= 60) return 'Intan Admirer';
   if (score >= 20) return 'Lucky Beginner';
-  return 'Intanium Novice';
+  return 'IRIS Novice';
 }
 
 const MIN_REVEAL_INTERVAL_MS = 350;

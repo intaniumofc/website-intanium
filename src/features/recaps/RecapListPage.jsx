@@ -46,7 +46,7 @@ const ActivityPage = forwardRef(function ActivityPage({ recap, pageNumber }, ref
           <p className="recap-meta">{recap.left.live.platform}</p>
           <p className="recap-content-title">{recap.left.live.dates.join(', ')}</p>
         </RecapSection>
-        <p className="recap-page__number">INTANIUM · Page {String(pageNumber * 2 - 1).padStart(2, '0')}</p>
+        <p className="recap-page__number">IRIS · Page {String(pageNumber * 2 - 1).padStart(2, '0')}</p>
       </div>
     </article>
   );
@@ -74,7 +74,7 @@ const MomentsPage = forwardRef(function MomentsPage({ recap, pageNumber }, ref) 
           <p className="recap-content-title">{recap.right.event.title}</p>
           <p className="recap-meta">{recap.right.event.date}</p>
         </RecapSection>
-        <p className="recap-page__number">INTANIUM · Page {String(pageNumber * 2).padStart(2, '0')}</p>
+        <p className="recap-page__number">IRIS · Page {String(pageNumber * 2).padStart(2, '0')}</p>
       </div>
     </article>
   );
@@ -111,7 +111,7 @@ function ClosedBookIntro({ state, onOpen, onOpenEnd }) {
       >
         <Book isOpening={isOpening} onOpenEnd={onOpenEnd}>
           <div className="recap-cover-art">
-            <span className="recap-cover-art__brand">INTANIUM</span>
+            <span className="recap-cover-art__brand">IRIS</span>
             <span className="recap-cover-art__tag">#Berkilau</span>
             <div className="recap-cover-art__title">Recap<br />Book</div>
             <p className="recap-cover-art__footer">
@@ -130,7 +130,7 @@ function ClosedBookIntro({ state, onOpen, onOpenEnd }) {
         <h2>Satu tahun, dirangkai menjadi cerita.</h2>
         <p>
           Buka catatan aktivitas Intan dari theater, live, video call, event,
-          dan momen spesial bersama INTANIUM.
+          dan momen spesial bersama IRIS.
         </p>
         <div className="recap-open-hint" aria-hidden="true">
           <span className="recap-open-hint__dot" />
@@ -573,7 +573,7 @@ export default function RecapListPage() {
       data-force-motion={process.env.NODE_ENV !== 'production' ? 'true' : undefined}
     >
       <header className="recap-intro">
-        <span className="recap-kicker">INTANIUM Editorial Archive</span>
+        <span className="recap-kicker">IRIS Editorial Archive</span>
         <h1>Recap Nur Intan</h1>
         <p>Rekap aktivitas dan momen pilihan, disusun sebagai buku perjalanan digital yang dapat dibaca kembali kapan saja.</p>
       </header>

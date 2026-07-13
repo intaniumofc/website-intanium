@@ -145,7 +145,7 @@ export async function compositePhotostrip(
         
         ctx.save();
         ctx.font = "bold 26px var(--font-body), sans-serif";
-        ctx.fillStyle = "#3A2E39"; // intanium-text
+        ctx.fillStyle = "#3A2E39"; // IRIS-text
         ctx.textAlign = "left";
         ctx.textBaseline = "middle";
         ctx.fillText(watermark.text, logoImg.width > 0 ? logoX + logoSize + 10 : logoX, logoY + logoSize / 2);

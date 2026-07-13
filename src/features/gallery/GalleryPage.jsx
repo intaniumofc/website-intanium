@@ -215,7 +215,7 @@ export default function GalleryPage() {
   }, []);
 
   useEffect(() => {
-    document.title = 'Galeri Foto Intanium | Album Memori Komunitas';
+    document.title = 'Galeri Foto IRIS | Album Memori Komunitas';
     fetchPhotos(0);
   }, []);
 
@@ -324,7 +324,7 @@ export default function GalleryPage() {
     <div className="w-full animate-fade-in space-y-10">
       <div className="mx-auto max-w-3xl space-y-4 text-center select-none px-4">
         <h1 className="text-3xl font-extrabold text-(--color-primary) sm:text-5xl tracking-tight">
-          Galeri Foto Intanium
+          Galeri Foto IRIS
         </h1>
         <p className="text-sm leading-relaxed text-(--text-secondary) sm:text-base">
           Koleksi tangkapan layar momen-momen seru streaming, foto kenangan event bersama, poster visual utama, serta grafis promo resmi Intan.

@@ -95,7 +95,6 @@ export default function AdminLayout({ children }) {
     if (href === ROUTES.ADMIN_HASHTAGS) return 'hashtags';
     if (href === ROUTES.ADMIN_GAMES) return 'games';
     if (href === ROUTES.ADMIN_ESPORT) return 'esport';
-    // Halaman keanggotaan dan photobooth dapat dibaca oleh semua staff, proteksi edit/hapus diatur di halaman
     if (href === ROUTES.ADMIN_MEMBERSHIP) return '';
     if (href === ROUTES.ADMIN_PHOTOBOOTH) return '';
     return '';
@@ -256,10 +255,10 @@ export default function AdminLayout({ children }) {
         {/* Header with logo and collapse button */}
       <div className="flex items-center justify-between p-5 border-b border-slate-100 bg-slate-50/30 h-20 shrink-0">
         <div className="flex items-center space-x-2.5 overflow-hidden w-full">
-          <Image width={40} height={40} alt="Logo Intanium" src={logoNobg} className={`w-10 h-10 object-contain shrink-0 transition-all duration-300 ${isCollapsed ? "mx-auto" : ""}`} />
+          <Image width={40} height={40} alt="Logo IRIS" src={logoNobg} className={`w-10 h-10 object-contain shrink-0 transition-all duration-300 ${isCollapsed ? "mx-auto" : ""}`} />
           <div className={`flex flex-col text-left transition-all duration-300 ${isCollapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"}`}>
             <span className="font-extrabold text-sm tracking-tight text-slate-800 select-none whitespace-nowrap">
-              Intanium Admin
+              IRIS Admin
             </span>
             <span className="text-[10px] text-[#170C79]/85 font-black tracking-wider uppercase whitespace-nowrap">
               {userRole === 'super_admin' ? 'Super Admin' : (userRole === 'coordinator' ? 'Koordinator' : 'Staff Admin')}
@@ -498,7 +497,7 @@ export default function AdminLayout({ children }) {
                   <p className="text-xs font-bold text-slate-800 leading-tight">
                     {userRole === 'super_admin' ? 'Super Admin' : (userRole === 'coordinator' ? 'Koordinator' : 'Staff Admin')}
                   </p>
-                  <p className="text-[9px] text-slate-400">{adminProfile?.username || 'admin@intanium.admin'}</p>
+                  <p className="text-[9px] text-slate-400">{adminProfile?.username || 'admin@iris.admin'}</p>
                 </div>
               </div>
               <button

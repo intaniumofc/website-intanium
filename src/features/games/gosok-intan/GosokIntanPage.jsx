@@ -248,10 +248,10 @@ export default function GosokIntanPage() {
   };
 
   const getPerformanceBadge = (finalScore) => {
-    if (finalScore >= 100) return { title: 'Intanium Gem Master', emoji: '🏆', color: 'text-amber-400 border-amber-500/35 bg-amber-500/10' };
+    if (finalScore >= 100) return { title: 'IRIS Gem Master', emoji: '🏆', color: 'text-amber-400 border-amber-500/35 bg-amber-500/10' };
     if (finalScore >= 60) return { title: 'Intan Admirer', emoji: '💎', color: 'text-cyan-400 border-cyan-500/30 bg-cyan-500/10' };
     if (finalScore >= 20) return { title: 'Lucky Beginner', emoji: '⭐️', color: 'text-purple-400 border-purple-500/30 bg-purple-500/10' };
-    return { title: 'Intanium Novice', emoji: '🎮', color: 'text-slate-400 border-white/10 bg-white/5' };
+    return { title: 'IRIS Novice', emoji: '🎮', color: 'text-slate-400 border-white/10 bg-white/5' };
   };
 
   const loadLeaderboardData = async (selectedPeriod) => {
@@ -296,7 +296,7 @@ export default function GosokIntanPage() {
       {/* unified console header */}
       <header className="game-console-header">
         <span className="inline-flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[0.2em] text-[#170C79]/65">
-          <Gamepad2 className="size-3.5" /> Intanium Mini Game
+          <Gamepad2 className="size-3.5" /> IRIS Mini Game
         </span>
         <h1 className="mt-2 text-3xl font-black text-[#170C79] sm:text-4xl">Gosok Intan</h1>
         <p className="mt-1 max-w-xl text-sm leading-relaxed text-slate-600">
@@ -622,7 +622,7 @@ export default function GosokIntanPage() {
           </div>
 
           <p className="game-console-footer">
-            Mini-game fanmade untuk hiburan komunitas Intanium.
+            Mini-game fanmade untuk hiburan komunitas IRIS.
           </p>
         </div>
 

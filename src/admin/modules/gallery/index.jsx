@@ -421,7 +421,7 @@ export default function AdminGallery() {
               className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] transition-colors font-semibold text-xs text-[var(--text-primary)]"
             >
               <option value="gallery">Halaman Galeri Utama (Public Gallery Page)</option>
-              <option value="showcase">Highlight Showcase (Homepage & Tentang Intanium)</option>
+              <option value="showcase">Highlight Showcase (Homepage & Tentang IRIS)</option>
               <option value="both">Keduanya (Galeri Utama & Highlight Showcase)</option>
             </select>
           </div>

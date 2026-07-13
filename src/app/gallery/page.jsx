@@ -3,7 +3,7 @@ import MainLayout from '../../components/layout/MainLayout';
 import GalleryPage from '../../features/gallery/GalleryPage';
 
 export const metadata = {
-  title: 'Galeri Foto Memori | Intanium Official Website',
+  title: 'Galeri Foto Memori | IRIS Official Website',
   description: 'Kumpulan foto dokumentasi, screenshot stream, kegiatan bersama, dan kenangan indah Nur Intan JKT48.',
 };
 

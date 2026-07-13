@@ -147,7 +147,7 @@ INSERT INTO public.esport_rosters (division_id, name, ign, role, image_url, soci
 -- Insert Matches
 -- Mobile Legends
 INSERT INTO public.esport_matches (division_id, opponent, opponent_logo, date, time, stage, status, score, result, stream_url) VALUES
-('mobile_legends', 'EVOS Hope', '🦁', '10 Juni 2026', '19:00 WIB', 'Grand Finals - Intanium Cup', 'Past', '2 - 1', 'win', 'https://youtube.com'),
+('mobile_legends', 'EVOS Hope', '🦁', '10 Juni 2026', '19:00 WIB', 'Grand Finals - IRIS Cup', 'Past', '2 - 1', 'win', 'https://youtube.com'),
 ('mobile_legends', 'RRQ Sena', '👑', '20 Juni 2026', '15:30 WIB', 'Regular Season - MDL ID S13', 'Upcoming', '', '', 'https://youtube.com'),
 ('mobile_legends', 'Alter Ego X', '🎭', '24 Juni 2026', '17:00 WIB', 'Regular Season - MDL ID S13', 'Upcoming', '', '', 'https://youtube.com');
 
@@ -168,7 +168,7 @@ INSERT INTO public.esport_matches (division_id, opponent, opponent_logo, date, t
 
 -- Insert Achievements
 INSERT INTO public.esport_achievements (division_id, title, rank, date, badge, image_url) VALUES
-('mobile_legends', 'Champion - Intanium Cup 2026', '1st Place', 'Juni 2026', '🏆', NULL),
+('mobile_legends', 'Champion - IRIS Cup 2026', '1st Place', 'Juni 2026', '🏆', NULL),
 ('mobile_legends', 'Runner Up - Community League Championship', '2nd Place', 'Desember 2025', '🥈', NULL),
 ('efootball', 'Champion - eFootball Community League 2026', '1st Place', 'Mei 2026', '🏆', NULL),
 ('pubg_mobile', '3rd Place - PMPL Community Season 5', '3rd Place', 'April 2026', '🥉', NULL),

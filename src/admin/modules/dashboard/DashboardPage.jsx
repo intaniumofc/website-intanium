@@ -286,7 +286,7 @@ export default function DashboardPage() {
     const { id, isAll } = confirmDelete;
     setConfirmDelete({ isOpen: false, id: null, isAll: false });
 
-    if (currentUserEmail.toLowerCase() !== 'it_support@intanium.admin') {
+    if (currentUserEmail.toLowerCase() !== 'it_support@iris.admin') {
       notify.error('Akses Ditolak', 'Hanya IT Support yang dapat mengelola log aktivitas.');
       return;
     }
@@ -438,7 +438,7 @@ export default function DashboardPage() {
               Selamat Datang, {currentUserUsername || 'Admin'}!
             </h1>
             <p className="max-w-xl text-xs sm:text-sm text-slate-500 font-semibold leading-relaxed">
-              Email: {currentUserEmail} • Kelola data penjualan, moderasi pesan mading penggemar, dan update jadwal kegiatan Intanium dari satu panel kendali terpadu.
+              Email: {currentUserEmail} • Kelola data penjualan, moderasi pesan mading penggemar, dan update jadwal kegiatan IRIS dari satu panel kendali terpadu.
             </p>
           </div>
         </motion.div>
@@ -595,7 +595,7 @@ export default function DashboardPage() {
           <div className="flex flex-wrap gap-2 shrink-0">
             <a
               href="/api/admin/export"
-              download="intanium-backup.json"
+              download="iris-backup.json"
               className="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold rounded-xl transition-colors cursor-pointer"
               onClick={() => { logAdminActivity('Download backup data (JSON export)'); }}
             >
@@ -604,7 +604,7 @@ export default function DashboardPage() {
 
             <label
               className={`inline-flex items-center gap-2 px-4 py-2.5 text-xs font-black rounded-xl transition-colors cursor-pointer ${
-                currentUserEmail.toLowerCase() === 'it_support@intanium.admin'
+                currentUserEmail.toLowerCase() === 'it_support@iris.admin'
                   ? 'bg-[#170C79] hover:bg-[#0A0440] text-white'
                   : 'bg-slate-105 text-slate-400 cursor-not-allowed opacity-50'
               }`}
@@ -613,7 +613,7 @@ export default function DashboardPage() {
                 type="file"
                 accept=".json"
                 className="hidden"
-                disabled={currentUserEmail.toLowerCase() !== 'it_support@intanium.admin' || isRestoring}
+                disabled={currentUserEmail.toLowerCase() !== 'it_support@iris.admin' || isRestoring}
                 onChange={handleRestoreFileChange}
               />
               <Upload className="h-4 w-4" /> {isRestoring ? 'Memulihkan...' : 'Restore Data JSON'}
@@ -758,7 +758,7 @@ export default function DashboardPage() {
             <Clock className="h-4.5 w-4.5 text-[#170C79]" />
             Aktivitas Log Admin Terbaru
           </h4>
-          {currentUserEmail.toLowerCase() === 'it_support@intanium.admin' && activities.length > 0 && (
+          {currentUserEmail.toLowerCase() === 'it_support@iris.admin' && activities.length > 0 && (
             <button
               type="button"
               onClick={handleClearAllActivities}
@@ -781,7 +781,7 @@ export default function DashboardPage() {
             </div>
           ) : (
             activities.map((log) => {
-              const isITSupport = log.admin_username.toLowerCase() === 'it_support@intanium.admin';
+              const isITSupport = log.admin_username.toLowerCase() === 'it_support@iris.admin';
               return (
                 <div
                   key={log.id}
@@ -809,7 +809,7 @@ export default function DashboardPage() {
                     <span className="text-[10px] text-slate-400 font-bold whitespace-nowrap">
                       {formatRelativeTime(log.created_at)}
                     </span>
-                    {currentUserEmail.toLowerCase() === 'it_support@intanium.admin' && (
+                    {currentUserEmail.toLowerCase() === 'it_support@iris.admin' && (
                       <button
                         type="button"
                         onClick={() => handleDeleteActivity(log.id)}

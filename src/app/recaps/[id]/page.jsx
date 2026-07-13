@@ -8,11 +8,11 @@ export async function generateMetadata({ params }) {
   const recap = await recapService.getRecapById(id);
   if (!recap) {
     return {
-      title: 'Recap Tidak Ditemukan | Intanium Official Website',
+      title: 'Recap Tidak Ditemukan | IRIS Official Website',
     };
   }
   return {
-    title: `${recap.title} | Zine & Recap Intanium`,
+    title: `${recap.title} | Zine & Recap IRIS`,
     description: recap.summary || 'Detail E-Magazine digital dan recap aktivitas Nur Intan JKT48.',
   };
 }

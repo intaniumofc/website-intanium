@@ -211,10 +211,10 @@ export default function EsportPage() {
         {/* ================= HERO SECTION ================= */}
         <div className="text-center pt-0 pb-4">
           <h1 className="text-5xl sm:text-7xl md:text-8xl font-black leading-none tracking-tight bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-hover)] bg-clip-text text-transparent mb-4 drop-shadow-sm">
-            INTANIUM ESPORT
+            IRIS ESPORT
           </h1>
           <p className="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed max-w-xl mx-auto">
-            Divisi esport resmi komunitas INTANIUM. Tempat para Intan bersatu, bertanding, dan membawa nama komunitas ke panggung kompetitif dengan semangat dan sportivitas.
+            Divisi esport resmi komunitas IRIS. Tempat para Intan bersatu, bertanding, dan membawa nama komunitas ke panggung kompetitif dengan semangat dan sportivitas.
           </p>
         </div>
 
@@ -290,10 +290,10 @@ export default function EsportPage() {
                   {/* Match Details Layout (Left Team - Center Stats - Right Team) */}
                   <div className="py-3 px-4 flex-grow flex flex-col justify-center">
                     <div className="w-full flex items-center justify-between gap-1">
-                      {/* Left Team (Intanium) */}
+                      {/* Left Team (IRIS) */}
                       <div className="flex-1 flex flex-col items-center text-center max-w-[75px]">
-                        <img src={(logoNobg)?.src || (logoNobg)} alt="Intanium Logo" className="w-8 h-8 object-contain filter drop-shadow-sm select-none" />
-                        <span className="text-[10px] font-black text-slate-800 tracking-wider mt-1 truncate w-full">INTANIUM</span>
+                        <img src={(logoNobg)?.src || (logoNobg)} alt="IRIS Logo" className="w-8 h-8 object-contain filter drop-shadow-sm select-none" />
+                        <span className="text-[10px] font-black text-slate-800 tracking-wider mt-1 truncate w-full">IRIS</span>
                       </div>
 
                       {/* Left Score */}
@@ -413,7 +413,7 @@ export default function EsportPage() {
 
                       {/* Description */}
                       <p className="text-xs text-[var(--text-secondary)] leading-relaxed pt-1">
-                        Membawa nama INTANIUM di kancah kompetitif tingkat regional/nasional.
+                        Membawa nama IRIS di kancah kompetitif tingkat regional/nasional.
                       </p>
                     </div>
 

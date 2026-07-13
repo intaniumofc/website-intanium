@@ -3,9 +3,11 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import logoNobg from '../../assets/logos/logo-nobg.webp';
-import IntaniumStructureSection from './IntaniumStructureSection';
+import IrisStructureSection from './IrisStructureSection';
 import AboutSection3 from './AboutSection';
 import { PhotoGallery } from './PhotoGallery';
+import IrisPhilosophySection from './IrisPhilosophySection';
+import IrisValuesSection from './IrisValuesSection';
 import {
   Sparkles,
   Gem
@@ -62,18 +64,23 @@ const LOGO_PHILOSOPHY = [
 const MISI = [
   {
     id: 'misi-1',
-    title: 'Mendukung perjalanan Nur Intan di JKT48',
-    desc: 'Memberikan dukungan positif dan konsisten kepada Nur Intan dalam meraih mimpi serta mengembangkan potensinya di JKT48.'
+    title: 'Membangun Lingkungan Fanbase yang Harmonis',
+    desc: 'Membangun lingkungan fanbase yang harmonis, terbuka, dan saling menghargai, sehingga setiap intan oshi merasa nyaman untuk menjadi bagian dari IRIS.'
   },
   {
     id: 'misi-2',
-    title: 'Membangun wadah komunitas yang nyaman',
-    desc: 'Menciptakan ruang organisasi yang aman, ramah, dan menyenangkan bagi seluruh fans Nur Intan untuk saling berinteraksi, berkolaborasi, dan berkembang bersama.'
+    title: 'Menyalurkan Dukungan Lewat Karya Kreatif',
+    desc: 'Menyatukan setiap bentuk dukungan menjadi berbagai kegiatan project dan karya kreatif yang dapat menjadi bentuk dukungan nyata, bagi perjalanan Intan di JKT48.'
   },
   {
     id: 'misi-3',
-    title: 'Menghadirkan berbagai proyek untuk Nur Intan',
-    desc: 'Merancang dan melaksanakan proyek-proyek kreatif sebagai bentuk apresiasi, dukungan, dan cinta dari fans untuk Nur Intan selama perjalanannya di JKT48.'
+    title: 'Menjadi Jembatan Penghubung Antara Intan dan Penggemar',
+    desc: 'Menjadi jembatan yang mempererat hubungan antara Intan dan para penggemarnya melalui komunikasi, interaksi dan kegiatan yang berdampak bagi setiap perjalanan Intan.'
+  },
+  {
+    id: 'misi-4',
+    title: 'Mendorong Ruang Apresiasi Terhadap Karya Intan',
+    desc: 'Mendorong terciptanya ruang apresiasi terhadap setiap karya dan usaha yang telah ditunjukan oleh Intan.'
   }
 ];
 
@@ -241,7 +248,7 @@ function LogoPngViewer({ fallbackImage, className = 'w-72 h-72 sm:w-80 sm:h-80' 
       >
         <img
           src={(fallbackImage)?.src || (fallbackImage)}
-          alt="Intanium Official Logo"
+          alt="IRIS Official Logo"
           className="w-full h-full object-contain filter drop-shadow-[0_0_14px_rgba(221,214,254,0.55)]"
         />
       </motion.div>
@@ -435,13 +442,13 @@ function DecorativeSparkles() {
   );
 }
 
-export default function AboutIntaniumPage() {
+export default function AboutIrisPage() {
   const [activeId, setActiveId] = useState(null);
   const handleDeactivatePhil = () => setActiveId(null);
 
   // Set document title on mount for SEO best practices
   useEffect(() => {
-    document.title = 'Tentang Intanium | Official Community Space';
+    document.title = 'Tentang IRIS | Official Community Space';
   }, []);
 
   return (
@@ -452,6 +459,9 @@ export default function AboutIntaniumPage() {
 
         {/* ================= HERO SECTION ================= */}
         <AboutSection3 />
+
+        {/* ================= FILOSOFI NAMA IRIS ================= */}
+        <IrisPhilosophySection />
 
         {/* ================= FILOSOFI LOGO ================= */}
         <motion.section
@@ -465,10 +475,10 @@ export default function AboutIntaniumPage() {
           {/* Section Title */}
           <motion.div variants={sectionReveal} className="text-center max-w-2xl mx-auto space-y-3">
             <h2 className="text-3xl sm:text-4xl font-extrabold text-(--color-primary)">
-              Filosofi Logo Intanium
+              Filosofi Logo IRIS
             </h2>
             <p className="text-sm text-(--text-secondary) leading-relaxed">
-              Setiap garis, kilau, dan gerak dalam logo Intanium menyimpan makna tentang cahaya, keteguhan, dan transformasi diri.
+              Setiap garis, kilau, dan gerak dalam logo IRIS menyimpan makna tentang cahaya, keteguhan, dan transformasi diri.
             </p>
           </motion.div>
 
@@ -609,7 +619,7 @@ export default function AboutIntaniumPage() {
                   <div className="w-16 h-1 bg-cyan-400 rounded-full mt-2" />
                 </div>
                 <p className="text-base sm:text-lg font-medium leading-relaxed italic text-white/90 max-w-sm">
-                  “Menjadi komunitas fans Nur Intan yang solid, suportif, dan harmonis, dengan menjunjung tinggi kebersamaan, kerja sama, serta rasa kekeluargaan antar anggota.”
+                  “Mewujudkan wadah yang harmonis dan terbuka bagi seluruh penggemar untuk menyatukan setiap bentuk dukungan menjadi gerakan bersama yang kreatif demi mengiringi perjalanan Intan, serta menjadi jembatan yang mempererat hubungan antara Intan dan para penggemarnya."
                 </p>
               </motion.div>
 
@@ -646,7 +656,7 @@ export default function AboutIntaniumPage() {
               <div className="max-w-xl mx-auto text-center space-y-4">
                 <h3 className="text-3xl font-black tracking-widest text-white">VISI</h3>
                 <p className="text-base sm:text-lg font-medium leading-relaxed italic text-white/90">
-                  “Menjadi komunitas fans Nur Intan yang solid, suportif, dan harmonis, dengan menjunjung tinggi kebersamaan, kerja sama, serta rasa kekeluargaan antar anggota.”
+                  “Mewujudkan wadah yang harmonis dan terbuka bagi seluruh penggemar untuk menyatukan setiap bentuk dukungan menjadi gerakan bersama yang kreatif demi mengiringi perjalanan Intan, serta menjadi jembatan yang mempererat hubungan antara Intan dan para penggemarnya.”
                 </p>
               </div>
             </div>
@@ -675,7 +685,10 @@ export default function AboutIntaniumPage() {
           </div>
         </motion.section>
 
-        <IntaniumStructureSection />
+        {/* ================= VALUE IRIS ================= */}
+        <IrisValuesSection />
+
+        <IrisStructureSection />
 
         <motion.section
           initial="hidden"

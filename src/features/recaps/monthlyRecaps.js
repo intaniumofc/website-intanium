@@ -32,7 +32,7 @@ export const monthlyRecaps = [
       },
       event: {
         date: '31 Januari 2026',
-        title: 'INTANIUM First Gathering 2026',
+        title: 'IRIS First Gathering 2026',
       },
       monthlyNote:
         'Tahun dibuka dengan panggung yang padat dan energi baru. Momen sederhana selama live menjadi awal yang hangat untuk perjalanan 2026.',
