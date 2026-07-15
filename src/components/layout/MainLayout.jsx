@@ -8,7 +8,7 @@ import Footer from './Footer';
  * Standard user layout wrapping the entire guest page routing system.
  * @param {boolean} isHome - If true, layout is rendered full-bleed without max-width or top-padding constraints.
  */
-export default function MainLayout({ children, isHome = false }) {
+export default function MainLayout({ children, isHome = false, fullWidth = false }) {
   return (
     <div className="flex flex-col min-h-screen text-[var(--text-primary)] relative">
       {/* Dynamic decorative visual blobs — show only on non-home pages */}
@@ -24,6 +24,11 @@ export default function MainLayout({ children, isHome = false }) {
       {isHome ? (
         /* Full-bleed wrapper for homepage */
         <main className="flex-grow w-full">
+          {children}
+        </main>
+      ) : fullWidth ? (
+        /* Full-width layout for page templates like About Iris and Shining Star, avoiding fixed-pinning conflicts */
+        <main className="flex-grow w-full pt-24 relative">
           {children}
         </main>
       ) : (

@@ -139,6 +139,8 @@
   .shining-achievement-grid { grid-template-columns: 1fr; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .shining-page *, .shining-page *::before, .shining-page *::after { animation-duration: .01ms !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+.shining-page.reduce-motion *, .shining-page.reduce-motion *::before, .shining-page.reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+  transition-duration: 0.01ms !important;
 }

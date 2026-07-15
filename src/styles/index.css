@@ -30,6 +30,36 @@
 }
 
 @layer base {
+  /* ============================================================
+     Global Responsive Design System — shared layout & type tokens.
+     Fluid values via clamp() so laptop → desktop → ultrawide stay
+     proportional. Timeline sizing lives in JS (TIMELINE_SCALE in
+     useJourneyLayout.js), not here, because its geometry is computed.
+     ============================================================ */
+  :root {
+    /* Layout */
+    --container-max: 1520px;
+    --section-padding-x: clamp(24px, 4vw, 72px);
+    --section-padding-y: clamp(64px, 8vw, 120px);
+
+    /* Typography */
+    --hero-title: clamp(3rem, 4vw, 4.2rem);
+    --hero-subtitle: clamp(1.05rem, 1.5vw, 1.35rem);
+  }
+
+  @media (min-width: 1920px) {
+    :root { --container-max: 1600px; }
+  }
+
+  /* Centred content column — keeps 1920px+ monitors from feeling stretched.
+     Note: opt-in per section; the pinned timeline is intentionally full-bleed
+     and must NOT be wrapped in this. */
+  .page-container {
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding-inline: var(--section-padding-x);
+  }
+
   html, body {
     overflow-x: hidden;
   }
