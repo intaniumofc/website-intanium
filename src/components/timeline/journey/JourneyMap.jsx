@@ -12,6 +12,8 @@ import JourneyNode from './JourneyNode';
 import JourneyCard from './JourneyCard';
 import JourneyCharacter from './JourneyCharacter';
 import JourneyParticles from './JourneyParticles';
+import JourneyPolaroid from './JourneyPolaroid';
+import JourneyWheel from './JourneyWheel';
 import './journey.css';
 
 /**
@@ -113,15 +115,6 @@ export default function JourneyMap({ achievements = [] }) {
 
   return (
     <>
-      {/* Header overlay (scrolls naturally with the page, not pinned) */}
-      <div className="journey-header">
-        <h2 className="journey-heading">Jejak Cahaya Intan</h2>
-        <p className="journey-sub">
-          Ikuti perjalanan karir Nur Intan JKT48. Gulir perlahan dan saksikan
-          setiap destinasi terungkap.
-        </p>
-      </div>
-
       <section
         ref={sectionRef}
         className={`journey-section ${reducedMotion ? 'is-static' : ''}`}
@@ -130,6 +123,24 @@ export default function JourneyMap({ achievements = [] }) {
       >
         <div ref={stageRef} className="journey-stage">
           <JourneyBackground reducedMotion={reducedMotion} />
+
+          {/* Header overlay — inside stage so it sits on the starry background */}
+          <div className="journey-header">
+            <h2 className="journey-heading">Jejak Cahaya Intan</h2>
+            <p className="journey-sub">
+              Ikuti perjalanan karir Nur Intan JKT48. Gulir perlahan dan saksikan
+              setiap destinasi terungkap.
+            </p>
+          </div>
+
+          {/* Month wheel — left-side navigator */}
+          {!reducedMotion && (
+            <JourneyWheel
+              nodes={nodes}
+              activeIndex={activeIndex}
+              onSelect={jumpToIndex}
+            />
+          )}
 
           {/* The moving world */}
           <div ref={worldRef} className="journey-world" style={{ width, height }}>
@@ -201,6 +212,32 @@ export default function JourneyMap({ achievements = [] }) {
                 size={tier.charSize ?? 112}
               />
             )}
+
+            {/* Polaroid placeholders at outer edges of each milestone */}
+            {nodes.map((n, i) => {
+              const polaroidSide = n.side === 'left' ? 'left' : 'right';
+              const polaroidX = polaroidSide === 'left'
+                ? -140
+                : width - 60;
+              return (
+                <div
+                  key={`polaroid-${i}`}
+                  className={`jpolaroid-${i} journey-polaroid-slot`}
+                  style={{
+                    left: polaroidX,
+                    top: n.y,
+                  }}
+                >
+                  <JourneyPolaroid
+                    x={0}
+                    y={0}
+                    side={polaroidSide}
+                    rotation={polaroidSide === 'left' ? -6 : 6}
+                    imgSrc={n.achievement.polaroidImage?.src || n.achievement.polaroidImage || null}
+                  />
+                </div>
+              );
+            })}
 
             {/* Sparkle bursts */}
             <JourneyParticles ref={particlesRef} />
