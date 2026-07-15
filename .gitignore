@@ -28,6 +28,7 @@ skills-lock.json
 bun.lockb
 docs/
 database/
+.claude/
 
 # Next.js
 .next/

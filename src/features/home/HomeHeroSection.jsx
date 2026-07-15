@@ -133,7 +133,7 @@ export default function HomeHeroSection() {
         className="absolute inset-0 w-full h-full object-cover will-change-transform"
         style={{ transformOrigin: 'center center' }}
       >
-        {loadVideo && <source src="/intan-02.mp4" type="video/mp4" />}
+        {loadVideo && <source src="/intan-home.mp4" type="video/mp4" />}
       </video>
 
       {/* Visual noise/grain overlay */}

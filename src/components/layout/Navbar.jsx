@@ -208,7 +208,7 @@ export default function Navbar({ isHome = false }) {
                 width={40}
                 height={40}
                 priority
-                className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                className="h-10 w-10 object-contain transition-transform duration-300 group-hover:scale-105"
               />
               <motion.span
                 className="text-2xl font-extrabold tracking-tight bg-[linear-gradient(110deg,#ffffff,35%,#a5b4fc,50%,#ffffff,75%,#ffffff)] bg-[length:200%_100%] bg-clip-text text-transparent select-none"
