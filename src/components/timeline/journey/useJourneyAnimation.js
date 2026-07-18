@@ -297,6 +297,13 @@ export function useJourneyAnimation({
           { scale: 1, autoAlpha: 1, ease: 'back.out(2)', duration: 0.035 },
           at + 0.038
         );
+        // polaroid fades in first — before node, stem, and card
+        tl.fromTo(
+          `.jpolaroid-${i}`,
+          { autoAlpha: 0, scale: 0.7 },
+          { autoAlpha: 1, scale: 1, ease: 'power2.out', duration: 0.04 },
+          at - 0.005
+        );
       });
 
       // Initial placement so nothing pops on first paint.

@@ -71,33 +71,40 @@ const KAPPA = 0.5522847498307936;
 function serpentinePath(nodes, xL, xR, r) {
   const N = nodes.length;
   const f = (v) => v.toFixed(2);
-  // Start at the first milestone (top-left), heading right.
   const d = [`M ${f(nodes[0].x)},${f(nodes[0].y)}`];
+
+  const WAVE_AMP = 10;
+  const WAVE_SEGS = 40;
 
   for (let i = 0; i < N; i++) {
     const y = nodes[i].y;
-    const startX = nodes[i].x; // xL on even rows, xR on odd rows
+    const startX = nodes[i].x;
     const endX = startX === xL ? xR : xL;
 
-    // Straight horizontal run across the roadmap.
-    d.push(`L ${f(endX)},${f(y)}`);
+    const runLen = Math.abs(endX - startX);
+    const dir = endX > startX ? 1 : -1;
 
-    // Perfect semicircle down to the next run, bulging outward past the rail.
+    for (let s = 1; s <= WAVE_SEGS; s++) {
+      const t = s / WAVE_SEGS;
+      const px = startX + dir * runLen * t;
+      const damp = Math.sin(t * Math.PI);
+      const waveOffset = Math.sin(t * Math.PI * 2 + i * 1.7) * WAVE_AMP * damp;
+      d.push(`L ${f(px)},${f(y + waveOffset)} `);
+    }
+
     if (i < N - 1) {
-      const dir = endX === xR ? 1 : -1; // +1 bulges right, -1 bulges left
-      const apexX = endX + dir * r; // outermost point of the bulge
-      const yMid = y + r; // apex height (circle centre y)
-      const yEnd = y + 2 * r; // == nodes[i + 1].y
+      const bendDir = endX === xR ? 1 : -1;
+      const apexX = endX + bendDir * r;
+      const yMid = y + r;
+      const yEnd = y + 2 * r;
 
-      // Quarter 1: run tangent (horizontal) -> apex tangent (vertical, down).
       d.push(
-        `C ${f(endX + dir * KAPPA * r)},${f(y)} ` +
+        `C ${f(endX + bendDir * KAPPA * r)},${f(y)} ` +
           `${f(apexX)},${f(yMid - KAPPA * r)} ${f(apexX)},${f(yMid)}`
       );
-      // Quarter 2: apex tangent (vertical) -> next run tangent (horizontal).
       d.push(
         `C ${f(apexX)},${f(yMid + KAPPA * r)} ` +
-          `${f(endX + dir * KAPPA * r)},${f(yEnd)} ${f(endX)},${f(yEnd)}`
+          `${f(endX + bendDir * KAPPA * r)},${f(yEnd)} ${f(endX)},${f(yEnd)}`
       );
     }
   }
