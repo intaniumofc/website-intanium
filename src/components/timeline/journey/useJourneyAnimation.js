@@ -226,14 +226,10 @@ export function useJourneyAnimation({
         0
       );
 
-      // Slow cinematic camera sway (tiny rotation, never static).
-      const camSway = gsap.to(stageEl, {
-        rotation: tier.camRot ?? 0.8,
-        duration: 6,
-        ease: 'sine.inOut',
-        repeat: -1,
-        yoyo: true,
-      });
+      // No idle camera sway: the stage is pinned, so rotating it would drag the
+      // header title + paragraph around as the user scrolls. The map already
+      // breathes through the scroll-driven camera in place(), so the frame
+      // (background, butterflies, header) stays perfectly still.
 
       // --- Staged per-destination reveal, keyed to arrival progress -------
       // Order per brief: node glow → ring expand → sparkle (fired above) →
@@ -312,7 +308,6 @@ export function useJourneyAnimation({
       return () => {
         bob.kill();
         breathe.kill();
-        camSway.kill();
       };
     },
     { scope: sectionRef, dependencies: [N, imagesReady, reducedMotion, pathD, tierKey] }
