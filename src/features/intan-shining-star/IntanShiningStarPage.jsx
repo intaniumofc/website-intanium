@@ -28,7 +28,10 @@ export default function IntanShiningStarPage() {
 
   return (
     <div className={`shining-page ${reduceMotion ? 'reduce-motion' : ''}`}>
-      <JourneyMap achievements={achievements} />
+      {/* Journey Timeline — Jejak Cahaya Intan */}
+      <div id="journey-start">
+        <JourneyMap achievements={achievements} />
+      </div>
     </div>
   );
 }

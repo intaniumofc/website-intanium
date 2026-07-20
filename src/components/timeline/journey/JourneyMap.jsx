@@ -7,6 +7,7 @@ import { usePreloadImages } from './usePreloadImages';
 import { useJourneyEnvironment } from './useJourneyEnvironment';
 import { useJourneyAnimation } from './useJourneyAnimation';
 import JourneyBackground from './JourneyBackground';
+import JourneyButterflies from './JourneyButterflies';
 import JourneyPath from './JourneyPath';
 import JourneyNode from './JourneyNode';
 import JourneyCard from './JourneyCard';
@@ -121,17 +122,22 @@ export default function JourneyMap({ achievements = [] }) {
         style={{ height: reducedMotion ? 'auto' : `${scrollVh}vh` }}
         aria-label="Perjalanan karir Nur Intan"
       >
+        {/* Header — lives in the SECTION (not the pinned stage), so it greets
+            the reader at the top and scrolls away naturally instead of staying
+            glued to the viewport for the whole pinned journey. */}
+        <div className="journey-header">
+          <h2 className="journey-heading">Jejak Cahaya Intan</h2>
+          <p className="journey-sub">
+            Ikuti perjalanan karir Nur Intan JKT48. Gulir perlahan dan saksikan
+            setiap destinasi terungkap.
+          </p>
+        </div>
+
         <div ref={stageRef} className="journey-stage">
           <JourneyBackground reducedMotion={reducedMotion} />
 
-          {/* Header overlay — inside stage so it sits on the starry background */}
-          <div className="journey-header">
-            <h2 className="journey-heading">Jejak Cahaya Intan</h2>
-            <p className="journey-sub">
-              Ikuti perjalanan karir Nur Intan JKT48. Gulir perlahan dan saksikan
-              setiap destinasi terungkap.
-            </p>
-          </div>
+          {/* Ambient butterflies + dust drifting across the whole scene */}
+          <JourneyButterflies reducedMotion={reducedMotion} />
 
           {/* Month wheel — left-side navigator */}
           {!reducedMotion && (

@@ -20,6 +20,9 @@ import { ImageSwiper } from '../../components/ui/ImageSwiper';
 import { aboutIntanService } from '../../services/public/aboutIntanService';
 import { SocialTooltip } from '../../components/ui/social-media';
 import HomeHeroSection from './HomeHeroSection';
+import { LoadingProvider } from '../../components/loading/LoadingContext';
+import Preloader from '../../components/loading/Preloader';
+import { usePreloader } from '../../hooks/usePreloader';
 const HomeNewsSection = React.lazy(() => import('../news/HomeNewsSection'));
 const HomeMerchandiseSection = React.lazy(() => import('../merchandise/HomeMerchandiseSection'));
 const HomeGallerySection = React.lazy(() => import('../gallery/HomeGallerySection'));
@@ -43,44 +46,18 @@ export default function HomePage() {
   const [featuredNews, setFeaturedNews] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [bio, setBio] = useState(null);
-  const [isMobile, setIsMobile] = useState(() => {
+    const [isMobile, setIsMobile] = useState(() => {
     if (typeof window !== 'undefined') {
       return window.innerWidth < 640;
     }
     return false;
   });
-  const [loadVideo, setLoadVideo] = useState(false);
-  const videoRef = React.useRef(null);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 640);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
-  useEffect(() => {
-    const startLoadingVideo = () => {
-      setTimeout(() => {
-        setLoadVideo(true);
-      }, 500);
-    };
-
-    if (document.readyState === 'complete') {
-      startLoadingVideo();
-    } else {
-      window.addEventListener('load', startLoadingVideo);
-      return () => window.removeEventListener('load', startLoadingVideo);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (loadVideo && videoRef.current) {
-      videoRef.current.load();
-      videoRef.current.play().catch(err => {
-        console.log("Autoplay blocked or video load error:", err);
-      });
-    }
-  }, [loadVideo]);
 
   const socialLinks = React.useMemo(() => [
     {
@@ -175,8 +152,11 @@ export default function HomePage() {
 
     fetchData();
   }, []);
-  return (
-    <div className="relative min-h-screen">
+    return (
+    <LoadingProvider>
+      <Preloader />
+      <PreloaderBridge videoSrc="/intan-home.mp4" imageSources={[intan1, intan2, intan3, intan4]} />
+      <div className="relative min-h-screen main-content-wrapper">
       {/* ================= HERO INTRO SECTION (FULLSCREEN) ================= */}
       <HomeHeroSection />
 
@@ -326,7 +306,19 @@ export default function HomePage() {
             <MadingPreviewSection />
           </React.Suspense>
         </motion.div>
-      </div>
+            </div>
     </div>
+    </LoadingProvider>
   );
+}
+
+/**
+ * PreloaderBridge
+ * 
+ * Helper component to use the usePreloader hook inside LoadingProvider.
+ * This triggers the asset loading process.
+ */
+function PreloaderBridge({ videoSrc, imageSources }) {
+  usePreloader({ videoSrc, imageSources });
+  return null;
 }

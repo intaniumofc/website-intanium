@@ -1,0 +1,25 @@
+/* =============================================================
+   PRELOADER STYLES & ANTI-FOUC
+   ============================================================= */
+
+/* Prevent scroll while preloader is active */
+html:not(.preloader-done) {
+  overflow: hidden !important;
+}
+
+/* Ensure body background matches preloader to prevent white flash */
+body {
+  background-color: #05021A;
+}
+
+/* Hide homepage content initially to prevent flash of unstyled content */
+html:not(.preloader-done) .main-content-wrapper {
+  opacity: 0;
+  visibility: hidden;
+}
+
+html.preloader-done .main-content-wrapper {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
