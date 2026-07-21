@@ -32,6 +32,7 @@ export const ROUTES = {
   ADMIN_DASHBOARD: '/admin/dashboard',
   ADMIN_ABOUT_INTAN: '/admin/about-intan',
   ADMIN_SHINING_STAR: '/admin/intan-shining-star',
+  ADMIN_COMIC_PAGES: '/admin/comic-pages',
   ADMIN_MERCHANDISE: '/admin/merchandise',
   ADMIN_CATEGORIES: '/admin/merchandise/categories',
   ADMIN_ORDERS: '/admin/merchandise/orders',
