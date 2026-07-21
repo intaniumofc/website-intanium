@@ -30,8 +30,13 @@
 
 /* ---------- Comic Section ---------- */
 .shining-comic-section {
-  background: linear-gradient(180deg, #0b0728, #110d3a 40%, #17105f);
-  padding: 5rem 1.5rem 4rem;
+  background: linear-gradient(180deg, #0b0728 0%, #110d3a 45%, #17105f 100%);
+  min-height: calc(100vh - 4rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 6rem 1.5rem 7rem;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -40,7 +45,7 @@
   content: ''; position: absolute; inset: 0; opacity: 0.04; mix-blend-mode: soft-light;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
-.shining-comic-header { position: relative; z-index: 1; margin-bottom: 2.5rem; }
+.shining-comic-header { position: relative; z-index: 1; margin-bottom: 2.8rem; }
 .shining-comic-eyebrow {
   display: inline-block; font-size: .72rem; font-weight: 900; letter-spacing: .12em;
   text-transform: uppercase; color: #a78bfa; background: rgba(109,92,255,.12);
@@ -53,6 +58,14 @@
 .shining-comic-desc {
   font-size: .88rem; font-weight: 500; color: rgba(209,200,240,.65);
   margin-top: .6rem; line-height: 1.6;
+}
+
+#journey-start {
+  background: #17105f;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  z-index: 1;
 }
 
 /* ---------- Flipbook ---------- */
