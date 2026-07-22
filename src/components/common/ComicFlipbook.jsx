@@ -1,16 +1,13 @@
 'use client';
 
-import { useState, useEffect, useId, useCallback, useRef, useSyncExternalStore } from 'react';
-import { createPortal } from 'react-dom';
+import { useState, useEffect, useId, useCallback, useRef, forwardRef, useSyncExternalStore } from 'react';
+import HTMLFlipBook from 'react-pageflip';
 import {
   ChevronLeft,
   ChevronRight,
-  X,
   BookOpen,
   Loader2,
   RotateCcw,
-  Maximize2,
-  Minimize2,
   Sparkles,
 } from 'lucide-react';
 import { comicPageService } from '../../services/public/comicPageService';
@@ -104,21 +101,38 @@ function PageImage({ page, alt, isCover = false }) {
   if (!page && !isCover) return <div className="comic-flipbook-empty" />;
   const imgUrl = page?.imageUrl || (isCover ? '/cover.jpeg' : null);
   if (imgUrl) {
-    return <img src={imgUrl} alt={alt || page?.caption || `Halaman ${page?.pageNumber || 1}`} draggable="false" />;
+    return (
+      <img
+        src={imgUrl}
+        alt={alt || page?.caption || `Halaman ${page?.pageNumber || 1}`}
+        draggable="false"
+        className="comic-page-img"
+      />
+    );
   }
   return <PlaceholderSVG label={page?.caption || `Halaman ${page?.pageNumber || 1}`} variant={isCover ? 'cover' : 'page'} />;
 }
 
+const ComicFlipPage = forwardRef(function ComicFlipPage(
+  { page, pageNum, totalPages, isCoverPage },
+  ref
+) {
+  return (
+    <div className={`comic-page-flip-item ${isCoverPage ? 'is-cover-page' : ''}`} ref={ref}>
+      <PageImage page={page} isCover={isCoverPage} alt={isCoverPage ? 'Cover Komik' : `Halaman ${pageNum}`} />
+      <div className="comic-page-number-tag">
+        {isCoverPage ? 'Cover' : `${pageNum} / ${totalPages}`}
+      </div>
+    </div>
+  );
+});
+
 export default function ComicFlipbook() {
   const [pages, setPages] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
-  const [spreadIndex, setSpreadIndex] = useState(0);
+  const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [isFullscreen, setIsFullscreen] = useState(false);
   const isClient = useIsClient();
-
-  const touchStartX = useRef(0);
-  const touchEndX = useRef(0);
+  const flipBookRef = useRef(null);
 
   useEffect(() => {
     let active = true;
@@ -143,101 +157,24 @@ export default function ComicFlipbook() {
     };
   }, []);
 
-  const coverPage = pages[0] || DUMMY_PAGES[0];
-  const innerPages = pages.slice(1);
-
-  const spreads = [];
-  for (let i = 0; i < innerPages.length; i += 2) {
-    spreads.push({
-      left: innerPages[i] || null,
-      right: innerPages[i + 1] || null,
-    });
-  }
-
-  const totalSpreads = Math.max(1, spreads.length);
-  const currentSpread = spreads[spreadIndex] || { left: null, right: null };
-
   const handlePrev = useCallback((e) => {
     if (e) e.stopPropagation();
-    setSpreadIndex((prev) => Math.max(0, prev - 1));
+    flipBookRef.current?.pageFlip()?.flipPrev();
   }, []);
 
   const handleNext = useCallback((e) => {
     if (e) e.stopPropagation();
-    setSpreadIndex((prev) => Math.min(totalSpreads - 1, prev + 1));
-  }, [totalSpreads]);
-
-  const handleClose = useCallback((e) => {
-    if (e) e.stopPropagation();
-    setIsOpen(false);
-    setSpreadIndex(0);
-    setIsFullscreen(false);
+    flipBookRef.current?.pageFlip()?.flipNext();
   }, []);
 
   const handleReset = useCallback((e) => {
     if (e) e.stopPropagation();
-    setSpreadIndex(0);
+    flipBookRef.current?.pageFlip()?.flip(0);
   }, []);
 
-  const toggleFullscreen = useCallback((e) => {
-    if (e) e.stopPropagation();
-    setIsFullscreen((prev) => !prev);
-  }, []);
-
-  // Keyboard navigation & body scroll lock
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-
-    const handleKeyDown = (e) => {
-      if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
-        handlePrev();
-      } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
-        handleNext();
-      } else if (e.key === 'Escape') {
-        handleClose();
-      } else if (e.key === 'Home') {
-        setSpreadIndex(0);
-      } else if (e.key === 'End') {
-        setSpreadIndex(totalSpreads - 1);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.body.style.overflow = originalOverflow;
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isOpen, handlePrev, handleNext, handleClose, totalSpreads]);
-
-  // Touch Swipe Gesture
-  const handleTouchStart = (e) => {
-    touchStartX.current = e.targetTouches[0].clientX;
-  };
-
-  const handleTouchMove = (e) => {
-    touchEndX.current = e.targetTouches[0].clientX;
-  };
-
-  const handleTouchEnd = () => {
-    const distance = touchStartX.current - touchEndX.current;
-    const isSwipeLeft = distance > 50;
-    const isSwipeRight = distance < -50;
-
-    if (isSwipeLeft && spreadIndex < totalSpreads - 1) {
-      handleNext();
-    } else if (isSwipeRight && spreadIndex > 0) {
-      handlePrev();
-    }
-    touchStartX.current = 0;
-    touchEndX.current = 0;
-  };
-
-  if (loading) {
+  if (loading || !isClient) {
     return (
-      <div className="comic-flipbook-wrap">
+      <div className="comic-inline-container">
         <div className="comic-flipbook-loading" role="status">
           <Loader2 className="comic-flipbook-spinner animate-spin" aria-hidden="true" />
           <span>Memuat komik...</span>
@@ -246,172 +183,106 @@ export default function ComicFlipbook() {
     );
   }
 
-  // Determine current readable page numbers for display indicator
-  const getPageRangeLabel = () => {
-    if (!isOpen) return '';
-    const leftNum = currentSpread.left?.pageNumber;
-    const rightNum = currentSpread.right?.pageNumber;
-    if (leftNum && rightNum) return `Hal. ${leftNum} - ${rightNum} dari ${pages.length}`;
-    if (leftNum) return `Hal. ${leftNum} dari ${pages.length}`;
-    if (rightNum) return `Hal. ${rightNum} dari ${pages.length}`;
-    return `Lembar ${spreadIndex + 1} dari ${totalSpreads}`;
+  const getPageIndicatorText = () => {
+    if (currentPageIndex === 0) return 'Sampul Depan (Cover)';
+    return `Halaman ${currentPageIndex} dari ${pages.length - 1}`;
   };
 
   return (
-    <div className="comic-flipbook-wrap">
-      {/* Cover Preview (Trigger Button) */}
-      <div
-        className="comic-flipbook"
-        onClick={() => setIsOpen(true)}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            setIsOpen(true);
-          }
-        }}
-        aria-label="Klik untuk membaca Komik Intan Shining Star"
-      >
-        <div className="comic-flipbook-cover">
-          <div className="comic-flipbook-page">
-            <PageImage page={coverPage} alt="Cover Komik Intan Shining Star" isCover />
-          </div>
-          <div className="comic-flipbook-spine" />
-          <div className="comic-flipbook-hint">
-            <BookOpen className="comic-flipbook-hint-icon" />
-            <span>Klik untuk membuka komik</span>
-            <Sparkles className="comic-flipbook-sparkle" />
-          </div>
+    <div className="comic-inline-container">
+      {/* Header Info */}
+      <div className="comic-inline-header">
+        <div className="comic-inline-title">
+          <BookOpen className="h-4 w-4 text-purple-400" />
+          <span>Komik Digital Intan</span>
+        </div>
+        <div className="comic-inline-hint">
+          <Sparkles className="h-3.5 w-3.5 text-pink-400" />
+          <span>Tarik / klik sudut halaman untuk membaca</span>
         </div>
       </div>
 
-      {/* Modal View rendered via Portal to avoid 3D perspective / stacking blur bugs */}
-      {isOpen && isClient && createPortal(
-        <div className={`comic-flipbook-modal-portal ${isFullscreen ? 'is-fullscreen' : ''}`}>
-          {/* Backdrop overlay */}
-          <div
-            className="comic-flipbook-backdrop"
-            onClick={handleClose}
-            aria-hidden="true"
-          />
+      {/* Main Single Page 3D Flipbook Stage */}
+      <div className="comic-inline-stage">
+        <button
+          type="button"
+          className="comic-flipbook-nav comic-flipbook-prev"
+          onClick={handlePrev}
+          disabled={currentPageIndex === 0}
+          aria-label="Halaman sebelumnya"
+          title="Halaman sebelumnya"
+        >
+          <ChevronLeft className="h-6 w-6" />
+        </button>
 
-          {/* Spread Dialog Container */}
-          <div
-            className="comic-flipbook-spread"
-            onClick={(e) => e.stopPropagation()}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Pembaca Komik Flipbook"
+        <div className="comic-inline-pages-frame">
+          <HTMLFlipBook
+            ref={flipBookRef}
+            width={380}
+            height={520}
+            size="stretch"
+            minWidth={260}
+            maxWidth={500}
+            minHeight={360}
+            maxHeight={680}
+            showCover={true}
+            drawShadow={true}
+            maxShadowOpacity={0.45}
+            flippingTime={600}
+            usePortrait={true}
+            startPage={0}
+            clickEventForward={true}
+            useMouseEvents={true}
+            swipeDistance={30}
+            showPageCorners={true}
+            className="comic-html-flipbook"
+            onFlip={(e) => {
+              setCurrentPageIndex(e.data);
+            }}
           >
-            {/* Top Bar Controls */}
-            <div className="comic-flipbook-topbar">
-              <div className="comic-flipbook-title-tag">
-                <BookOpen className="h-4 w-4 text-purple-400" />
-                <span>Arsip Cahaya Intan</span>
-              </div>
-              <div className="comic-flipbook-top-actions">
-                <button
-                  type="button"
-                  className="comic-flipbook-action-btn"
-                  onClick={toggleFullscreen}
-                  title={isFullscreen ? 'Keluar Layar Penuh' : 'Layar Penuh'}
-                  aria-label={isFullscreen ? 'Keluar Layar Penuh' : 'Layar Penuh'}
-                >
-                  {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-                </button>
-                <button
-                  type="button"
-                  className="comic-flipbook-action-btn comic-flipbook-close-btn"
-                  onClick={handleClose}
-                  title="Tutup (Esc)"
-                  aria-label="Tutup komik"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
+            {pages.map((p, idx) => (
+              <ComicFlipPage
+                key={p.id || idx}
+                page={p}
+                pageNum={idx === 0 ? 'Cover' : idx}
+                totalPages={pages.length - 1}
+                isCoverPage={idx === 0}
+              />
+            ))}
+          </HTMLFlipBook>
+        </div>
 
-            {/* Book Pages Container */}
-            <div className="comic-flipbook-stage">
-              <button
-                type="button"
-                className="comic-flipbook-nav comic-flipbook-prev"
-                onClick={handlePrev}
-                disabled={spreadIndex === 0}
-                aria-label="Halaman sebelumnya"
-                title="Halaman sebelumnya (Panah Kiri)"
-              >
-                <ChevronLeft className="h-6 w-6" />
-              </button>
+        <button
+          type="button"
+          className="comic-flipbook-nav comic-flipbook-next"
+          onClick={handleNext}
+          disabled={currentPageIndex >= pages.length - 1}
+          aria-label="Halaman berikutnya"
+          title="Halaman berikutnya"
+        >
+          <ChevronRight className="h-6 w-6" />
+        </button>
+      </div>
 
-              <div className="comic-flipbook-pages">
-                <div className="comic-flipbook-page comic-flipbook-page-left">
-                  {currentSpread.left ? (
-                    <PageImage page={currentSpread.left} alt={`Halaman ${currentSpread.left.pageNumber}`} />
-                  ) : (
-                    <div className="comic-flipbook-empty" />
-                  )}
-                </div>
-                <div className="comic-flipbook-page-divider" />
-                <div className="comic-flipbook-page comic-flipbook-page-right">
-                  {currentSpread.right ? (
-                    <PageImage page={currentSpread.right} alt={`Halaman ${currentSpread.right.pageNumber}`} />
-                  ) : (
-                    <div className="comic-flipbook-empty" />
-                  )}
-                </div>
-              </div>
+      {/* Bottom Controls */}
+      <div className="comic-inline-controls">
+        <button
+          type="button"
+          className="comic-flipbook-control-btn"
+          onClick={handleReset}
+          disabled={currentPageIndex === 0}
+          title="Kembali ke awal"
+          aria-label="Kembali ke sampul"
+        >
+          <RotateCcw className="h-3.5 w-3.5" />
+          <span>Ke Sampul</span>
+        </button>
 
-              <button
-                type="button"
-                className="comic-flipbook-nav comic-flipbook-next"
-                onClick={handleNext}
-                disabled={spreadIndex >= totalSpreads - 1}
-                aria-label="Halaman berikutnya"
-                title="Halaman berikutnya (Panah Kanan)"
-              >
-                <ChevronRight className="h-6 w-6" />
-              </button>
-            </div>
-
-            {/* Bottom Controls Bar */}
-            <div className="comic-flipbook-controls">
-              <button
-                type="button"
-                className="comic-flipbook-control-btn"
-                onClick={handleReset}
-                disabled={spreadIndex === 0}
-                title="Kembali ke awal"
-                aria-label="Kembali ke lembar awal"
-              >
-                <RotateCcw className="h-3.5 w-3.5" />
-                <span>Awal</span>
-              </button>
-
-              <span className="comic-flipbook-page-indicator">
-                {getPageRangeLabel()}
-              </span>
-
-              <button
-                type="button"
-                className="comic-flipbook-control-btn comic-flipbook-close-text-btn"
-                onClick={handleClose}
-                aria-label="Tutup pembaca komik"
-              >
-                <X className="h-3.5 w-3.5" />
-                <span>Tutup</span>
-              </button>
-            </div>
-          </div>
-        </div>,
-        document.body
-      )}
+        <span className="comic-flipbook-page-indicator">
+          {getPageIndicatorText()}
+        </span>
+      </div>
     </div>
   );
 }
-
 

@@ -68,15 +68,84 @@
   z-index: 1;
 }
 
-/* ---------- Flipbook ---------- */
+/* ---------- Flipbook (Inline Single Page 3D Reader) ---------- */
 .comic-flipbook-wrap {
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
   z-index: 10;
-  min-height: 340px;
-  perspective: 1200px;
+  width: 100%;
+  padding: 1rem 0;
+}
+
+.comic-inline-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 5;
+  width: min(520px, 94vw);
+  margin: 0 auto;
+  background: linear-gradient(160deg, #130c3a 0%, #0a0620 100%);
+  border: 1px solid rgba(167, 139, 250, 0.25);
+  border-radius: 20px;
+  padding: 1.25rem 1.5rem 1.5rem;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85), 0 0 80px rgba(109, 92, 255, 0.25);
+}
+
+.comic-inline-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(167, 139, 250, 0.12);
+}
+
+.comic-inline-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #eee9ff;
+}
+
+.comic-inline-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(196, 181, 253, 0.8);
+}
+
+.comic-inline-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  width: 100%;
+}
+
+.comic-inline-pages-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border-radius: 10px;
+}
+
+.comic-inline-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.2rem;
+  width: 100%;
 }
 
 .comic-flipbook-loading {
@@ -229,11 +298,15 @@
   background: linear-gradient(160deg, #130c3a 0%, #0a0620 100%);
   border: 1px solid rgba(167, 139, 250, 0.25);
   border-radius: 16px;
-  padding: 1.25rem;
+  padding: 1.1rem 1.25rem;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85), 0 0 80px rgba(109, 92, 255, 0.25);
-  max-width: 92vw;
+  width: min(480px, 92vw);
   max-height: 90vh;
   animation: comic-spread-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.comic-flipbook-spread.comic-flipbook-single-dialog {
+  width: min(480px, 92vw);
 }
 
 .comic-flipbook-modal-portal.is-fullscreen .comic-flipbook-spread {
@@ -313,13 +386,49 @@
 
 .comic-flipbook-pages {
   display: flex;
-  align-items: stretch;
-  gap: 0;
-  background: #0d0825;
+  align-items: center;
+  justify-content: center;
+  position: relative;
   border-radius: 10px;
+  overflow: visible;
+}
+
+.comic-html-flipbook {
+  margin: auto;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 60px rgba(109, 92, 255, 0.2);
+  border-radius: 8px;
+}
+
+.comic-page-flip-item {
+  background: #0d0825;
+  width: 100%;
+  height: 100%;
+  position: relative;
   overflow: hidden;
-  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.6), 0 0 50px rgba(109, 92, 255, 0.15);
-  border: 1px solid rgba(167, 139, 250, 0.18);
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.4);
+}
+
+.comic-page-flip-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.comic-page-number-tag {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: rgba(226, 218, 255, 0.75);
+  background: rgba(13, 8, 37, 0.65);
+  border: 1px solid rgba(167, 139, 250, 0.2);
+  padding: 2px 8px;
+  border-radius: 999px;
+  pointer-events: none;
 }
 
 .comic-flipbook-page {
