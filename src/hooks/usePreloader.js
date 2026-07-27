@@ -7,20 +7,23 @@ import { useLoading } from '../components/loading/LoadingContext';
  * usePreloader
  * 
  * Preloads critical assets (hero video & key images) with real progress.
- * 
- * Phase 1 (0-70%): Hero Video stream fetch into HTTP cache
- * Phase 2 (70-90%): Critical Images decode
- * Phase 3 (90-100%): Fonts readiness
+ * Runs only once per browser session.
  */
 export function usePreloader({ videoSrc, imageSources = [], onComplete }) {
-  const loadingRef = useRef(useLoading());
+  const loading = useLoading();
+  const loadingRef = useRef(loading);
   const hasStartedRef = useRef(false);
   const hasCompletedRef = useRef(false);
 
-  const loading = useLoading();
   loadingRef.current = loading;
 
   useEffect(() => {
+    // If already marked complete (e.g. session persistence), bypass preloader immediately!
+    if (loading.isComplete) {
+      onComplete?.();
+      return;
+    }
+
     if (hasStartedRef.current) return;
     hasStartedRef.current = true;
 
@@ -125,5 +128,5 @@ export function usePreloader({ videoSrc, imageSources = [], onComplete }) {
       clearTimeout(safetyTimeout);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [loading.isComplete]);
 }

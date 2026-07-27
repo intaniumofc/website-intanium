@@ -1,14 +1,26 @@
 'use client';
 
-import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo, useEffect } from 'react';
 
 const LoadingContext = createContext(null);
 
 export function LoadingProvider({ children }) {
-  const [progress, setProgress] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [heroVideoReady, setHeroVideoReady] = useState(false);
   const [videoBlobUrl, setVideoBlobUrl] = useState(null);
+
+  // Check sessionStorage AFTER mount to prevent React SSR hydration mismatch
+  useEffect(() => {
+    try {
+      if (sessionStorage.getItem('hasSeenPreloader') === 'true') {
+        setIsComplete(true);
+        setProgress(100);
+      }
+    } catch (err) {
+      console.warn('Could not read sessionStorage:', err);
+    }
+  }, []);
 
   const updateProgress = useCallback((value) => {
     setProgress((prev) => Math.max(prev, Math.min(100, value)));
@@ -16,6 +28,13 @@ export function LoadingProvider({ children }) {
 
   const completeLoading = useCallback(() => {
     setIsComplete(true);
+    if (typeof window !== 'undefined') {
+      try {
+        sessionStorage.setItem('hasSeenPreloader', 'true');
+      } catch (err) {
+        console.warn('Could not save preloader state to sessionStorage:', err);
+      }
+    }
   }, []);
 
   const markVideoReady = useCallback(() => {
@@ -26,7 +45,6 @@ export function LoadingProvider({ children }) {
     setVideoBlobUrl(url);
   }, []);
 
-  // Memoize the context value to prevent unnecessary re-renders of consumers
   const value = useMemo(() => ({
     progress,
     isComplete,

@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /api/
 
-# Host
+Sitemap: https://website-IRIS.vercel.app/sitemap.xml
 Host: website-IRIS.vercel.app

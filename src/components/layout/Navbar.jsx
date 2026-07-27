@@ -245,6 +245,7 @@ export default function Navbar({ isHome = false }) {
               onClick={() => setIsOpen(!isOpen)}
               className="p-2 w-11 h-11 flex items-center justify-center rounded-lg hover:bg-white/10 text-white/80 hover:text-white focus:outline-none cursor-pointer transition-colors"
               aria-expanded={isOpen}
+              aria-label="Toggle navigation menu"
             >
               <span className="sr-only">Open main menu</span>
               {isOpen ? (

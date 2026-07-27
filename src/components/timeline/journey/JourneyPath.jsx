@@ -2,14 +2,6 @@
 
 import { forwardRef, memo } from 'react';
 
-/**
- * The journey "road". Renders three stacked strokes on one shared path:
- *  1. a faint static base track
- *  2. the main dashed path (drawn in via strokeDashoffset)  -> `ref`
- *  3. a short glowing highlight that travels along the path -> `highlightRef`
- *
- * Rendering only. All animation is driven by the parent's timeline.
- */
 const JourneyPath = forwardRef(function JourneyPath(
   { d, width, height, highlightRef, stroke = 8 },
   ref
@@ -44,7 +36,7 @@ const JourneyPath = forwardRef(function JourneyPath(
           </feMerge>
         </filter>
       </defs>
- 
+
       {/* Background roadmap — soft muted lavender-purple, the full route at rest */}
       <path
         d={d}
@@ -53,7 +45,7 @@ const JourneyPath = forwardRef(function JourneyPath(
         strokeLinecap="round"
         strokeLinejoin="round"
       />
- 
+
       {/* Progress path — deep blue to pink gradient, revealed via strokeDashoffset */}
       <path
         ref={ref}
@@ -64,7 +56,7 @@ const JourneyPath = forwardRef(function JourneyPath(
         strokeLinejoin="round"
         style={{ filter: 'drop-shadow(0 0 8px rgba(109,92,255,0.55))' }}
       />
- 
+
       {/* Travelling highlight — a short bright glint that glides along */}
       <path
         ref={highlightRef}

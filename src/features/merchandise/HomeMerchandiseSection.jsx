@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatCurrency } from '../../lib/helpers';
@@ -89,14 +90,19 @@ const ProductCard = ({ product }) => {
           {/* Image container inside the padded card */}
           <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl bg-black/5">
             {images.map((src, index) => (
-              <img
+              <Image
                 key={`${src}-${index}`}
                 src={(src)?.src || (src)}
-                alt={index === 0 ? product.name : ''}
-                className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-in-out group-hover:scale-105 ${
+                alt={index === 0 ? product.name : `${product.name} preview ${index + 1}`}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                className={`object-cover transition-all duration-700 ease-in-out group-hover:scale-105 ${
                   index === imgIndex ? 'opacity-100' : 'opacity-0'
                 }`}
-                loading="lazy"
+                unoptimized={Boolean(
+                  typeof src === 'string' &&
+                  (src.startsWith('http') || src.includes('/api/') || src.includes('?'))
+                )}
               />
             ))}
 

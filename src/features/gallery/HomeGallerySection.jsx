@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { PortfolioGallery } from '../../components/ui/portfolio-gallery';
@@ -149,11 +150,19 @@ export default function HomeGallerySection() {
                 transition={{ duration: 0.25 }}
                 className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl max-w-full"
               >
-                <img
-                  src={(photos[activePhotoIdx].url)?.src || (photos[activePhotoIdx].url)}
-                  alt={photos[activePhotoIdx].title}
-                  className="max-w-full max-h-[70vh] object-contain rounded-2xl block"
-                />
+                <div className="relative w-full h-[70vh]">
+                  <Image
+                    src={(photos[activePhotoIdx].url)?.src || (photos[activePhotoIdx].url)}
+                    alt={photos[activePhotoIdx].title}
+                    fill
+                    sizes="(max-width: 1200px) 100vw, 1200px"
+                    className="object-contain rounded-2xl block"
+                    unoptimized={Boolean(
+                      typeof photos[activePhotoIdx]?.url === 'string' &&
+                      (photos[activePhotoIdx].url.startsWith('http') || photos[activePhotoIdx].url.includes('/api/') || photos[activePhotoIdx].url.includes('?'))
+                    )}
+                  />
+                </div>
 
                 {/* Meta details strip at bottom */}
                 <div className="absolute inset-x-0 bottom-0 bg-black/60 backdrop-blur-sm p-4 text-white flex justify-between items-center select-none">

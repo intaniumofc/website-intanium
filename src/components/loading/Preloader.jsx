@@ -157,8 +157,8 @@ export default function Preloader() {
     return () => ctx.revert();
   }, [isComplete, reduceMotion]);
 
-  // Once exit animation is done, unmount entirely
-  if (isHidden) return null;
+  // Once exit animation is done or if already completed, unmount entirely
+  if (isHidden || isComplete) return null;
 
   return (
     <div 

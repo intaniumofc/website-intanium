@@ -7,7 +7,6 @@ import IrisStructureSection from './IrisStructureSection';
 import AboutSection3 from './AboutSection';
 import { PhotoGallery } from './PhotoGallery';
 import IrisPhilosophySection from './IrisPhilosophySection';
-import IrisValuesSection from './IrisValuesSection';
 import {
   Sparkles,
   Gem
@@ -684,9 +683,6 @@ export default function AboutIrisPage() {
             </div>
           </div>
         </motion.section>
-
-        {/* ================= VALUE IRIS ================= */}
-        <IrisValuesSection />
 
         <IrisStructureSection />
 
