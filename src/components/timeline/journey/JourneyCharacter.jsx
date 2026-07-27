@@ -27,9 +27,6 @@ function JourneyCharacter({ rootRef, faceRef, bobRef, size = 116 }) {
             alt="Nur Intan JKT48"
             className="journey-character-img"
             draggable="false"
-            onError={(e) => {
-              e.currentTarget.src = '/intan-cutout.png';
-            }}
           />
         </div>
       </div>

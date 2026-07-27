@@ -1,4 +1,5 @@
 import '../index.css';
+import Script from 'next/script';
 import SmoothScroll from '../components/common/SmoothScroll';
 import TabTitleTyper from '../components/common/TabTitleTyper';
 import { Plus_Jakarta_Sans, Inter, Playfair_Display, Cormorant_Garamond, JetBrains_Mono } from 'next/font/google';
@@ -124,17 +125,28 @@ export default function RootLayout({ children }) {
     <html lang="id" className={`${plusJakartaSans.variable} ${inter.variable} ${playfairDisplay.variable} ${cormorantGaramond.variable} ${jetbrainsMono.variable}`}>
       <head>
         <link rel="icon" type="image/webp" href="/logo-nobg.webp" />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdData) }}
-        />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
       </head>
       <body>
-        <div id="root">
+        {/* Skip-to-content link for screen readers & keyboard navigation (WCAG 2.4.1) */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-[#170C79] focus:text-white focus:rounded-lg focus:text-sm focus:font-semibold focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-white"
+        >
+          Lewati ke konten utama
+        </a>
+        <div id="main-content">
           <SmoothScroll />
           <TabTitleTyper />
           {children}
         </div>
+        <Script
+          id="json-ld-organization"
+          type="application/ld+json"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdData) }}
+        />
       </body>
     </html>
   );

@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import logoNobg from '../../assets/logos/logo-nobg.webp';
 import IrisStructureSection from './IrisStructureSection';
@@ -245,9 +246,11 @@ function LogoPngViewer({ fallbackImage, className = 'w-72 h-72 sm:w-80 sm:h-80' 
         transition={FLOAT_TRANSITION}
         className="w-1/2 h-1/2 flex items-center justify-center z-20 pointer-events-none"
       >
-        <img
-          src={(fallbackImage)?.src || (fallbackImage)}
+        <Image
+          src={fallbackImage}
           alt="IRIS Official Logo"
+          width={200}
+          height={200}
           className="w-full h-full object-contain filter drop-shadow-[0_0_14px_rgba(221,214,254,0.55)]"
         />
       </motion.div>
@@ -445,10 +448,7 @@ export default function AboutIrisPage() {
   const [activeId, setActiveId] = useState(null);
   const handleDeactivatePhil = () => setActiveId(null);
 
-  // Set document title on mount for SEO best practices
-  useEffect(() => {
-    document.title = 'Tentang IRIS | Official Community Space';
-  }, []);
+
 
   return (
     <div className="relative min-h-screen">

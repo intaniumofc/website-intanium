@@ -89,7 +89,7 @@ export default function HomeHeroSection() {
           ease: 'power3.out',
           onStart: () => {
             if (videoRef.current) {
-              videoRef.current.play().catch(() => {});
+              videoRef.current.play().catch(() => { });
             }
           },
         }, 0);
@@ -161,14 +161,14 @@ export default function HomeHeroSection() {
       aria-label="Hero Section"
     >
       {/* Background Video Container */}
-      <div 
+      <div
         ref={videoContainerRef}
         className="absolute inset-0 will-change-transform"
         style={{ transformOrigin: 'center center' }}
       >
         <video
           ref={videoRef}
-          src="/intan-home.mp4"
+          src="/hero-intan-vidio.webm"
           autoPlay
           loop
           muted
@@ -179,11 +179,6 @@ export default function HomeHeroSection() {
         />
       </div>
 
-      {/* Visual noise/grain overlay */}
-      {/* NOTE: mix-blend-mode was removed intentionally. When the hero video scales
-         during the pinned scroll, a blended overlay forces a full re-composite every
-         frame (measured ~188ms frame spikes). A plain low-opacity grain keeps the
-         texture while staying on its own cheap GPU layer. */}
       <div
         ref={noiseRef}
         className="absolute inset-0 pointer-events-none z-[1] opacity-[0.05]"

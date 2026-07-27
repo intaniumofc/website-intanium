@@ -2,6 +2,7 @@ import { FaInstagram, FaTiktok, FaYoutube } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import Link from 'next/link';
 import logoNobg from "../../assets/logos/logo-nobg.webp";
 import { SOCIALS } from "../../lib/constants";
 
@@ -61,11 +62,11 @@ export default function Footer({
   legalLinks = defaultLegalLinks,
 }) {
   return (
-    <section className="mt-auto border-t border-white/10 bg-[#170C79] py-6 text-white select-none sm:py-7">
+    <footer className="mt-auto border-t border-white/10 bg-[#170C79] py-6 text-white select-none sm:py-7" role="contentinfo">
       <div className="mx-auto w-full max-w-7xl px-6">
         <div className="border-b border-dotted border-white/20 pb-5">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-6">
-            <a href={logo.url} className="group flex shrink-0 items-center gap-3">
+            <Link href={logo.url} className="group flex shrink-0 items-center gap-3">
               {logo.src ? (
                 <Image
                   src={logo.src}
@@ -92,7 +93,7 @@ export default function Footer({
               >
                 IRIS
               </motion.h2>
-            </a>
+            </Link>
             <p className="max-w-5xl text-xs leading-relaxed text-white/65 sm:text-sm">
               {description}
             </p>
@@ -109,12 +110,22 @@ export default function Footer({
                 <ul className="space-y-1.5 text-xs text-white/60 sm:text-sm">
                   {section.links.map((link) => (
                     <li key={link.name}>
-                      <a
-                        href={link.href}
-                        className="py-1.5 inline-block transition-colors duration-200 hover:text-white"
-                      >
-                        {link.name}
-                      </a>
+                      {link.href.startsWith('#') || link.href.startsWith('http') ? (
+                        <a
+                          href={link.href}
+                          {...(link.href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                          className="py-1.5 inline-block transition-colors duration-200 hover:text-white"
+                        >
+                          {link.name}
+                        </a>
+                      ) : (
+                        <Link
+                          href={link.href}
+                          className="py-1.5 inline-block transition-colors duration-200 hover:text-white"
+                        >
+                          {link.name}
+                        </Link>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -157,6 +168,6 @@ export default function Footer({
           </div>
         </div>
       </div>
-    </section>
+    </footer>
   );
 }
