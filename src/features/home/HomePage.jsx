@@ -46,15 +46,11 @@ export default function HomePage() {
   const [featuredNews, setFeaturedNews] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [bio, setBio] = useState(null);
-    const [isMobile, setIsMobile] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return window.innerWidth < 640;
-    }
-    return false;
-  });
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 640);
+    handleResize(); // Set correct initial value after mount
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -155,7 +151,7 @@ export default function HomePage() {
     return (
     <LoadingProvider>
       <Preloader />
-      <PreloaderBridge videoSrc="/intan-home.mp4" imageSources={[intan1, intan2, intan3, intan4]} />
+      <PreloaderBridge videoSrc="/hero-intan-vidio.webm" imageSources={[intan1, intan2, intan3, intan4]} />
       <div className="relative min-h-screen main-content-wrapper">
       {/* ================= HERO INTRO SECTION (FULLSCREEN) ================= */}
       <HomeHeroSection />

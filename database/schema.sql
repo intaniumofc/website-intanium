@@ -134,14 +134,18 @@ USING (is_approved = true OR auth.role() = 'authenticated');
 
 -- 7. Orders & Payments (Public Insert, Admin Read/Update/Delete)
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow public select on orders" ON orders;
+DROP POLICY IF EXISTS "Allow public insert on orders" ON orders;
+DROP POLICY IF EXISTS "Allow admin all on orders" ON orders;
 CREATE POLICY "Allow public insert on orders" ON orders FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow public select on orders" ON orders FOR SELECT USING (true);
-CREATE POLICY "Allow admin all on orders" ON orders FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow admin all on orders" ON orders FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
 
 ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow public select on payments" ON payments;
+DROP POLICY IF EXISTS "Allow public insert on payments" ON payments;
+DROP POLICY IF EXISTS "Allow admin all on payments" ON payments;
 CREATE POLICY "Allow public insert on payments" ON payments FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow public select on payments" ON payments FOR SELECT USING (true);
-CREATE POLICY "Allow admin all on payments" ON payments FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow admin all on payments" ON payments FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
 
 -- 8. Playlists (Public Read, Admin All)
 CREATE TABLE IF NOT EXISTS playlists (

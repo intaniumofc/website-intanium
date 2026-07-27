@@ -1,6 +1,16 @@
 import { supabase } from '../../lib/supabaseClient';
 import { generateId } from '../../lib/helpers';
 
+const sanitizeInput = (str = '') => {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .trim();
+};
+
 export const madingService = {
   getNotes: async (onlyApproved = true, limit = 50) => {
     let query = supabase
@@ -27,10 +37,20 @@ export const madingService = {
   },
 
   postNote: async (noteData) => {
+    const rawName = (noteData.name || 'Anonim').slice(0, 50);
+    const rawMessage = (noteData.message || '').slice(0, 500);
+
+    const cleanName = sanitizeInput(rawName) || 'Anonim';
+    const cleanMessage = sanitizeInput(rawMessage);
+
+    if (!cleanMessage) {
+      throw new Error('Pesan tidak boleh kosong.');
+    }
+
     const newNote = {
       id: generateId(),
-      name: noteData.name || 'Anonim',
-      message: noteData.message,
+      name: cleanName,
+      message: cleanMessage,
       theme_color: noteData.themeColor || 'yellow',
       is_admin: false,
       is_approved: false // requires admin moderation approval
