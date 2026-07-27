@@ -5,6 +5,7 @@ import Card from '../common/Card';
 import Button from '../common/Button';
 import { formatEventTime, getEventStatus } from '../../lib/formatDate';
 import { Clock, PlayCircle, Bell, Smartphone, Video, MessageSquare, Gamepad2, Radio, Calendar, Sparkles } from 'lucide-react';
+import Image from 'next/image';
 
 export default function ScheduleCard({ event, className = '', isHorizontal = false, index = 0 }) {
   const { title, description, time, platform, link, duration, thumbnail } = event;
@@ -23,10 +24,10 @@ export default function ScheduleCard({ event, className = '', isHorizontal = fal
     const rect = e.currentTarget.getBoundingClientRect();
     const width = rect.width;
     const height = rect.height;
-    const x = e.clientX - rect.left - width / 2;
-    const y = e.clientY - rect.top - height / 2;
-    mouseX.set(x);
-    mouseY.set(y);
+    const mouseXPos = e.clientX - rect.left - width / 2;
+    const mouseYPos = e.clientY - rect.top - height / 2;
+    mouseX.set(mouseXPos);
+    mouseY.set(mouseYPos);
   };
 
   const handleMouseLeave = () => {
@@ -150,10 +151,16 @@ export default function ScheduleCard({ event, className = '', isHorizontal = fal
           isHorizontal ? 'md:w-full md:h-40 md:aspect-video' : 'md:w-48 md:aspect-[4/3]'
         }`}>
           {thumbnail ? (
-            <img
+            <Image
               src={(thumbnail)?.src || (thumbnail)}
               alt={`Poster ${title}`}
-              className="w-full h-full object-cover transition-transform duration-600 group-hover:scale-110"
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover transition-transform duration-600 group-hover:scale-110"
+              unoptimized={Boolean(
+                typeof thumbnail === 'string' &&
+                (thumbnail.startsWith('http') || thumbnail.includes('/api/') || thumbnail.includes('?'))
+              )}
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-[#170C79] via-[#1e1494] to-[#2d1f8f] flex flex-col items-center justify-center p-4 text-center select-none relative group-hover:scale-105 transition-transform duration-600">

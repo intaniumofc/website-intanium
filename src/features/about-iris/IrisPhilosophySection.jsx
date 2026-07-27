@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { Activity, Heart, Link, Music, Rainbow } from 'lucide-react';
+import { Users, Activity, MessageSquare, Layers, Rainbow } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -12,27 +12,27 @@ if (typeof window !== 'undefined') {
 const acronym = [
   {
     letter: 'I',
-    word: "Intan's",
-    icon: Heart,
-    text: "Diambil dari nama Intan yang merupakan sumber suara, inspirasi utama, dan poros pemersatu. Dialah magnet yang menyatukan ribuan hati penggemar dalam harmoni perjuangan yang sama di panggung JKT48.",
+    word: 'Inclusive',
+    icon: Users,
+    text: 'Diharapkan IRIS dapat menjadi wadah yang terbuka untuk berkumpul dan merasa diterima bagi seluruh penggemar Intan, sehingga muncul rasa memiliki (sense of belonging) ke IRIS dari seluruh anggotanya.',
   },
   {
     letter: 'R',
     word: 'Resonance',
     icon: Activity,
-    text: "Getaran semangat, kerja keras, dan ketulusan Intan terus memancar dan beresonansi dari satu penggemar ke penggemar lainnya, meninggalkan gema mendalam yang tidak akan pudar.",
+    text: 'IRIS diharap dapat mengakomodir setiap gerakan kecil atau inisiatif yang diberikan untuk Intan. Karena satu langkah kecil yang dilakukan secara konsisten akan beresonansi menghasilkan dampak besar.',
   },
   {
     letter: 'I',
-    word: 'in',
-    icon: Link,
-    text: "Sebagai perekat yang menyatukan setiap individu dan inisiatif kecil. Menghubungkan setiap bentuk dukungan menjadi satu gerakan berskala besar yang terorganisir.",
+    word: 'Interaction',
+    icon: MessageSquare,
+    text: 'IRIS diharap dapat menjembatani Intan kepada penggemar, memperkenalkan pesona unik Intan, serta membantu memperkuat branding-nya agar semakin dikenal dekat oleh fans maupun khalayak umum.',
   },
   {
     letter: 'S',
-    word: 'Symphony',
-    icon: Music,
-    text: "Fanbase ini menaungi penggemar dengan latar belakang, karakter, dan cara mendukung yang beragam. Perbedaan tersebut bersinergi membentuk komposisi harmoni yang indah bagi Intan.",
+    word: 'Synergy',
+    icon: Layers,
+    text: 'IRIS diharapkan dapat menjadi wadah kolektif untuk menyatukan suara dukungan kepada Intan. Meskipun fans berasal dari latar belakang yang berbeda, IRIS menyatukannya dalam harmoni sinergi.',
   },
 ];
 
@@ -90,7 +90,7 @@ export default function IrisPhilosophySection() {
         <div className="md:col-span-5 space-y-3">
           <div className="inline-flex items-center gap-2 bg-[var(--color-primary)] text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">
             <Rainbow className="w-3.5 h-3.5" />
-            <span>Mitologi & Koneksi</span>
+            <span>Mitologi & Nilai</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-black text-[var(--color-primary)] tracking-tight">
             Filosofi Nama IRIS
@@ -98,12 +98,12 @@ export default function IrisPhilosophySection() {
         </div>
         <div className="md:col-span-7 pt-1 sm:pt-4">
           <p className="text-sm sm:text-base text-[var(--text-secondary)] leading-[1.85] font-medium">
-            Nama <strong className="text-[var(--color-primary)] font-black">IRIS</strong> berasal dari bahasa Yunani Kuno yang merujuk pada <strong className="text-[var(--color-primary)] font-black">Dewi Pelangi</strong>, sang penghubung utama antara langit dan bumi. Pelangi melambangkan koneksi, komunikasi, dan ikatan erat — nilai mulia yang sangat selaras dengan prinsip dasar komunitas fanbase yang menyatukan hati penggemar dengan sang idola.
+            Nama <strong className="text-[var(--color-primary)] font-black">IRIS</strong> berasal dari bahasa Yunani Kuno yang merujuk pada <strong className="text-[var(--color-primary)] font-black">Dewi Pelangi</strong>, sang penghubung utama antara langit dan bumi. Pelangi melambangkan koneksi, komunikasi, dan ikatan erat — empat pilar nilai utama (Inclusive, Resonance, Interaction, Synergy) yang melandasi setiap gerak dan dukungan komunitas fanbase untuk Nur Intan JKT48.
           </p>
         </div>
       </div>
 
-      {/* ================= SECTION 2: ACRONYM SPLIT (Intan's Resonance in Symphony) ================= */}
+      {/* ================= SECTION 2: ACRONYM SPLIT (Inclusive, Resonance, Interaction, Synergy) ================= */}
       <div>
         {/* 4 Typographic Columns */}
         <div className="acronym-container grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -128,9 +128,9 @@ export default function IrisPhilosophySection() {
                 </div>
 
                 {/* Subtitle Word */}
-                <h4 className="text-lg font-black text-[var(--color-primary)] tracking-tight">
+                <h3 className="text-lg font-black text-[var(--color-primary)] tracking-tight">
                   {item.word}
-                </h4>
+                </h3>
 
                 {/* Description */}
                 <p className="text-xs sm:text-sm text-[var(--text-secondary)] font-medium leading-relaxed text-justify">

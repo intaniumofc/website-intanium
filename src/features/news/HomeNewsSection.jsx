@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { useSafeReducedMotion } from '../../hooks/useSafeReducedMotion';
@@ -207,11 +208,16 @@ export default function HomeNewsSection({ articles = [] }) {
                     layoutId={`article-image-${article.id}`}
                     className="aspect-[4/3] w-full relative overflow-hidden bg-black/5"
                   >
-                    <img
+                    <Image
                       src={(article.image)?.src || (article.image)}
                       alt={article.title}
-                      className="h-full w-full object-cover object-center transition-transform duration-500 hover:scale-105"
-                      loading="lazy"
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      className="object-cover object-center transition-transform duration-500 hover:scale-105"
+                      unoptimized={Boolean(
+                        typeof article.image === 'string' &&
+                        (article.image.startsWith('http') || article.image.includes('/api/') || article.image.includes('?'))
+                      )}
                     />
                     
                     {/* Dark gradient overlap */}
@@ -323,10 +329,16 @@ export default function HomeNewsSection({ articles = [] }) {
                     layoutId={`article-image-${selectedArticle.id}`}
                     className="relative h-56 md:h-72 lg:h-80 w-full flex-shrink-0 bg-black/10"
                   >
-                    <img
+                    <Image
                       src={(selectedArticle.image)?.src || (selectedArticle.image)}
                       alt={selectedArticle.title}
-                      className="w-full h-full object-cover"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 800px"
+                      className="object-cover"
+                      unoptimized={Boolean(
+                        typeof selectedArticle.image === 'string' &&
+                        (selectedArticle.image.startsWith('http') || selectedArticle.image.includes('/api/') || selectedArticle.image.includes('?'))
+                      )}
                     />
                     
                     {/* Shadow gradient Overlay */}

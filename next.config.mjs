@@ -36,6 +36,11 @@ const nextConfig = {
     ];
   },
   images: {
+    localPatterns: [
+      {
+        pathname: '/api/**',
+      },
+    ],
     remotePatterns: [
       {
         protocol: 'https',
