@@ -31,7 +31,8 @@ import {
   Trophy,
   Camera,
   HardDrive,
-  Shield
+  Shield,
+  UserPlus
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import logoNobg from '../assets/logos/logo-nobg.webp';
@@ -209,6 +210,7 @@ export default function AdminLayout({ children }) {
     { id: 'games', name: 'Kelola Game', href: ROUTES.ADMIN_GAMES, icon: Gamepad2 },
     { id: 'esport', name: 'Kelola Esport', href: ROUTES.ADMIN_ESPORT, icon: Trophy },
     { id: 'keanggotaan', name: 'Kelola Keanggotaan', href: ROUTES.ADMIN_MEMBERSHIP, icon: Users },
+    { id: 'join-us', name: 'Kelola Join Us', href: ROUTES.ADMIN_JOIN_US, icon: UserPlus },
     { id: 'photobooth', name: 'Kelola Photobooth', href: ROUTES.ADMIN_PHOTOBOOTH, icon: Camera },
     { id: 'media', name: 'Media Manager', href: ROUTES.ADMIN_MEDIA_MANAGER, icon: HardDrive },
     { id: 'audit-logs', name: 'Log Aktivitas', href: ROUTES.ADMIN_AUDIT_LOGS, icon: Shield },

@@ -230,11 +230,15 @@ export default function Navbar({ isHome = false }) {
             <DropdownNavigation navItems={NAV_ITEMS} />
           </div>
 
-          {/* Action buttons (Admin Portal) */}
+          {/* Action button (Join Us CTA) */}
           <div className="hidden lg:flex items-center space-x-3">
-            <Link href={ROUTES.ADMIN_LOGIN}>
-              <Button size="sm" variant="outline" className="border-white/25 text-white hover:bg-white/10 hover:border-white/50">
-                Admin Panel
+            <Link href={ROUTES.JOIN_US}>
+              <Button
+                size="sm"
+                className="bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 hover:from-pink-600 hover:to-indigo-700 text-white font-extrabold shadow-md hover:shadow-purple-500/25 border-none transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer px-5 py-2.5 rounded-full flex items-center gap-2"
+              >
+                <Sparkle className="h-4 w-4 fill-amber-300 text-amber-300 animate-pulse" />
+                <span>Join Us</span>
               </Button>
             </Link>
           </div>
@@ -363,11 +367,12 @@ export default function Navbar({ isHome = false }) {
 
               <div className="pt-4 pb-2 border-t border-white/15">
                 <Link
-                  href={ROUTES.ADMIN_LOGIN}
+                  href={ROUTES.JOIN_US}
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center justify-center w-full px-4 min-h-[44px] border border-white/20 rounded-lg text-base font-semibold text-white hover:bg-white/10 transition-all"
+                  className="flex items-center justify-center gap-2 w-full px-4 min-h-[44px] bg-gradient-to-r from-pink-500 to-indigo-600 rounded-lg text-base font-extrabold text-white shadow-md transition-all active:scale-95"
                 >
-                  Admin Panel
+                  <Sparkle className="h-4 w-4 fill-amber-300 text-amber-300" />
+                  <span>Join Us</span>
                 </Link>
               </div>
             </div>
