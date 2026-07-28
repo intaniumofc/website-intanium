@@ -11,10 +11,10 @@ export default function Modal({
   onClose,
   title,
   children,
-  size = 'md', // sm | md | lg | xl
+  size = 'md', // sm | md | lg | xl | 2xl | 3xl
   className = '',
 }) {
-  // Prevent scrolling under the active modal
+  // Lock body scroll when modal is active
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -38,34 +38,45 @@ export default function Modal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-24">
+    <div className="relative z-50">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-slate-900/60 backdrop-blur-md cursor-pointer transition-opacity duration-300"
-        onClick={onClose}
+        className="fixed inset-0 bg-slate-900/60 backdrop-blur-md transition-opacity duration-300"
+        aria-hidden="true"
       />
 
-      {/* Modal Container */}
-      <div
-        className={`relative z-10 w-full rounded-2xl shadow-2xl border border-[var(--border-color)] bg-white overflow-hidden animate-modal-scale-in ${sizeClasses[size]} ${className}`}
+      {/* Centering Wrapper */}
+      <div 
+        className="fixed inset-0 flex items-center justify-center p-4 sm:p-6 md:p-8 text-left cursor-pointer"
+        onClick={(e) => {
+          // Close modal if user clicks on the wrapper (outside the modal content)
+          if (e.target === e.currentTarget) {
+            onClose();
+          }
+        }}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border-color)] bg-[var(--bg-primary)]/50">
-          <h3 className="text-lg font-extrabold text-[var(--color-primary)]">
-            {title}
-          </h3>
-          <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 transition-colors p-1.5 rounded-xl hover:bg-slate-100/80 cursor-pointer"
-            aria-label="Close Modal"
-          >
-            <X size={18} />
-          </button>
-        </div>
+        {/* Modal Container */}
+        <div
+          className={`relative w-full max-h-[90vh] flex flex-col cursor-default rounded-3xl shadow-2xl border border-[var(--border-color)] bg-white animate-modal-scale-in ${sizeClasses[size]} ${className}`}
+        >
+          {/* Header */}
+          <div className="flex-none flex items-center justify-between px-6 py-4 border-b border-[var(--border-color)] bg-white rounded-t-3xl z-10">
+            <h3 className="text-lg font-extrabold text-[var(--color-primary)]">
+              {title}
+            </h3>
+            <button
+              onClick={onClose}
+              className="text-slate-400 hover:text-slate-600 transition-colors p-1.5 rounded-xl hover:bg-slate-100/80 cursor-pointer"
+              aria-label="Close Modal"
+            >
+              <X size={18} />
+            </button>
+          </div>
 
-        {/* Content */}
-        <div className="modal-body px-6 py-5 max-h-[70vh] overflow-y-auto custom-scrollbar">
-          {children}
+          {/* Modal Content */}
+          <div className="flex-1 overflow-y-auto custom-scrollbar overscroll-contain px-6 py-6 rounded-b-3xl">
+            {children}
+          </div>
         </div>
       </div>
     </div>

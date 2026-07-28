@@ -1,24 +1,33 @@
 import { supabase } from '../../lib/supabaseClient';
+import { proxyR2Url } from '../../lib/helpers';
 
 export const comicPageService = {
   getPages: async () => {
-    const { data, error } = await supabase
-      .from('intan_shining_star_comic_pages')
-      .select('*')
-      .order('page_number', { ascending: true });
+    try {
+      const { data, error } = await supabase
+        .from('intan_shining_star_comic_pages')
+        .select('*')
+        .order('page_number', { ascending: true });
 
-    if (error) {
-      console.error('Error fetching comic pages:', error);
+      if (error) {
+        console.warn('Comic pages query returned warning/error:', error.message || error.details || error);
+        return [];
+      }
+
+      if (!data) return [];
+
+      return data.map((p) => ({
+        id: p.id,
+        pageNumber: p.page_number,
+        imageUrl: proxyR2Url(p.image_url),
+        caption: p.caption || '',
+        createdAt: p.created_at,
+        updatedAt: p.updated_at,
+      }));
+    } catch (err) {
+      console.warn('Exception while fetching comic pages:', err.message || err);
       return [];
     }
-    return data.map((p) => ({
-      id: p.id,
-      pageNumber: p.page_number,
-      imageUrl: p.image_url,
-      caption: p.caption || '',
-      createdAt: p.created_at,
-      updatedAt: p.updated_at,
-    }));
   },
 
   createPage: async (page) => {
@@ -35,7 +44,7 @@ export const comicPageService = {
       .single();
 
     if (error) return { success: false, error: error.message };
-    return { success: true, data: { id: data.id, pageNumber: data.page_number, imageUrl: data.image_url, caption: data.caption } };
+    return { success: true, data: { id: data.id, pageNumber: data.page_number, imageUrl: proxyR2Url(data.image_url), caption: data.caption } };
   },
 
   updatePage: async (id, page) => {
@@ -51,7 +60,7 @@ export const comicPageService = {
       .single();
 
     if (error) return { success: false, error: error.message };
-    return { success: true, data: { id: data.id, pageNumber: data.page_number, imageUrl: data.image_url, caption: data.caption } };
+    return { success: true, data: { id: data.id, pageNumber: data.page_number, imageUrl: proxyR2Url(data.image_url), caption: data.caption } };
   },
 
   deletePage: async (id) => {

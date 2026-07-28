@@ -17,7 +17,7 @@ import ConfirmDialog from '../../../components/common/ConfirmDialog';
 import Loading from '../../../components/common/Loading';
 import Modal from '../../../components/common/Modal';
 import { useAdminToast } from '../../../components/common/useAdminToast';
-import { useSupabaseUpload } from '../../../hooks/useSupabaseUpload';
+import { useMediaUpload } from '../../../hooks/useMediaUpload';
 import {
   ACHIEVEMENT_CATEGORIES,
   achievementService,
@@ -52,7 +52,7 @@ function ToggleField({ checked, label, description, onChange }) {
 
 export default function AdminIntanShiningStar() {
   const notify = useAdminToast();
-  const { uploadFile, isUploading, progress } = useSupabaseUpload();
+  const { uploadFile, isUploading, progress } = useMediaUpload();
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');

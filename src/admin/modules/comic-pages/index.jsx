@@ -15,7 +15,7 @@ import ConfirmDialog from '../../../components/common/ConfirmDialog';
 import Loading from '../../../components/common/Loading';
 import Modal from '../../../components/common/Modal';
 import { useAdminToast } from '../../../components/common/useAdminToast';
-import { useSupabaseUpload } from '../../../hooks/useSupabaseUpload';
+import { useMediaUpload } from '../../../hooks/useMediaUpload';
 import { comicPageService } from '../../../services/public/comicPageService';
 
 const EMPTY_FORM = {
@@ -30,7 +30,7 @@ const inputClass =
 
 export default function AdminComicPages() {
   const notify = useAdminToast();
-  const { uploadFile, isUploading } = useSupabaseUpload();
+  const { uploadFile, isUploading } = useMediaUpload();
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');

@@ -7,10 +7,8 @@ import { merchandiseService } from '../../services/public/merchandiseService';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
 import Loading from '../../components/common/Loading';
-import CheckoutForm from '../../components/merchandise/CheckoutForm';
-import Modal from '../../components/common/Modal';
 import { formatCurrency, getOptimizedImageUrl } from '../../lib/helpers';
-import { ROUTES, ADMIN_WHATSAPP_NUMBER } from '../../lib/constants';
+import { ROUTES } from '../../lib/constants';
 import { ShieldCheck, Truck, Clock } from 'lucide-react';
 
 export default function MerchDetailPage() {
@@ -22,7 +20,6 @@ export default function MerchDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState('');
-  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [activeImgIndex, setActiveImgIndex] = useState(0);
 
   useEffect(() => {
@@ -73,65 +70,6 @@ export default function MerchDetailPage() {
   }
 
   const isAvailable = product.is_available ?? product.isAvailable ?? true;
-
-  const handleCheckoutSubmit = async (checkoutData) => {
-    try {
-      const order = await merchandiseService.createOrder({
-        ...checkoutData,
-        selectedSize,
-      });
-      setIsCheckoutOpen(false);
- 
-      // WhatsApp Redirect logic
-      const waNumber = ADMIN_WHATSAPP_NUMBER || '6281386701549';
-      const invoiceNum = order.invoiceNumber;
-      const prodName = product.name;
-      const size = selectedSize || '-';
-      const qty = checkoutData.quantity || 1;
-      const total = order.totalAmount;
-      const buyerName = checkoutData.name || '-';
-      const buyerPhone = checkoutData.phone || '-';
-      const lineId = checkoutData.lineId || '-';
-      const memberId = checkoutData.irisMemberId || '-';
-      const deliveryMethod = checkoutData.deliveryMethod === 'pickup_fx' ? 'Ambil di FX Sudirman' : 'Ekspedisi J&T';
-      const buyerAddress = checkoutData.deliveryMethod === 'pickup_fx' 
-        ? 'Tidak diperlukan (Ambil di FX Sudirman)' 
-        : `${checkoutData.address || '-'}, ${checkoutData.city || ''}, ${checkoutData.province || ''} ${checkoutData.postalCode || ''}`;
-      
-      const shippingCostText = checkoutData.deliveryMethod === 'pickup_fx'
-        ? 'FREE ONGKIR'
-        : formatCurrency(checkoutData.shipping_cost || 0);
- 
-      const notesText = checkoutData.notes ? `\n- *Catatan:* ${checkoutData.notes}` : '';
-      
-      const message = `Halo Admin IRIS! Saya sudah melakukan transfer untuk Pre-Order Merchandise. Berikut detail pesanan saya:
- 
-*Rincian Pesanan:*
-- *Nomor Invoice:* ${invoiceNum}
-- *Produk:* ${prodName}
-- *Varian/Size:* ${size}
-- *Jumlah:* ${qty} pcs
-- *Metode Pengiriman:* ${deliveryMethod}
-- *Ongkos Kirim:* ${shippingCostText}
-- *Total Pembayaran:* ${formatCurrency(Number(total))}
-- *Nama Penerima:* ${buyerName}
-- *No. WhatsApp:* ${buyerPhone}
-- *ID Line:* ${lineId}
-- *ID Anggota:* ${memberId}
-- *Alamat:* ${buyerAddress}${notesText}
- 
-Saya melampirkan bukti transfer pembayaran di bawah ini. Mohon segera diproses ya Min. Terima kasih!`;
- 
-      const encodedMessage = encodeURIComponent(message);
-      const waUrl = `https://wa.me/${waNumber}?text=${encodedMessage}`;
-      window.open(waUrl, '_blank');
- 
-      // Navigate to confirm page with initial invoice parameters in query or state
-      navigate(`${ROUTES.PAYMENT_CONFIRM}?inv=${order.invoiceNumber}&total=${order.totalAmount}`);
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto py-4">
@@ -279,7 +217,7 @@ Saya melampirkan bukti transfer pembayaran di bawah ini. Mohon segera diproses y
                 <Button
                   variant="glow"
                   className="w-full py-3.5 rounded-xl font-bold tracking-wider text-xs"
-                  onClick={() => setIsCheckoutOpen(true)}
+                  onClick={() => router.push(`/merchandise/${id}/checkout?quantity=${quantity}&size=${encodeURIComponent(selectedSize)}`)}
                 >
                   Pre-Order Sekarang
                 </Button>
@@ -312,20 +250,7 @@ Saya melampirkan bukti transfer pembayaran di bawah ini. Mohon segera diproses y
         </div>
       </div>
 
-      {/* Checkout Wizard Overlay Modal */}
-      <Modal
-        isOpen={isCheckoutOpen}
-        onClose={() => setIsCheckoutOpen(false)}
-        title="Formulir Checkout Pesanan"
-        size="3xl"
-      >
-        <CheckoutForm
-          product={product}
-          quantity={quantity}
-          onQuantityChange={setQuantity}
-          onSubmit={handleCheckoutSubmit}
-        />
-      </Modal>
+
     </div>
   );
 }

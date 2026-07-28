@@ -102,6 +102,7 @@ export const proxyR2Url = (url) => {
   }
   if (typeof url === 'string') {
     if (!url) return '';
+    if (url.startsWith('/api/media')) return url;
     if (url.includes('.r2.dev')) {
       return `/api/media?url=${encodeURIComponent(url)}`;
     }
@@ -110,13 +111,14 @@ export const proxyR2Url = (url) => {
 };
 
 /**
- * Optimize an image URL (supports Supabase storage image transformation and Unsplash resizing).
+ * Optimize an image URL (supports Unsplash resizing and R2 proxying).
  * @param {string} url - The image URL
  * @param {object} options - Optimization options (width, quality)
  * @returns {string} Optimized image URL
  */
 export const getOptimizedImageUrl = (url, { width = 400, quality = 80 } = {}) => {
   if (!url) return '';
+  if (typeof url === 'string' && url.startsWith('/api/media')) return url;
 
   // 1. Unsplash Optimization
   if (url.includes('images.unsplash.com')) {
@@ -135,14 +137,7 @@ export const getOptimizedImageUrl = (url, { width = 400, quality = 80 } = {}) =>
     }
   }
 
-  // 2. Supabase Optimization
-  if (url.includes('supabase.co/storage/v1/object/public/')) {
-    const rendered = url.replace('/object/public/', '/render/image/public/');
-    const separator = rendered.includes('?') ? '&' : '?';
-    return `${rendered}${separator}width=${width}&quality=${quality}&resize=contain`;
-  }
-
-  // 3. R2 Optimization & Proxying
+  // 2. R2 Optimization & Proxying
   if (url.includes('.r2.dev')) {
     return proxyR2Url(url);
   }

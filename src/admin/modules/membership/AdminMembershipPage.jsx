@@ -8,7 +8,7 @@ import Loading from '../../../components/common/Loading';
 import ConfirmDialog from '../../../components/common/ConfirmDialog';
 import { useAdminToast } from '../../../components/common/useAdminToast';
 import { supabase } from '../../../lib/supabaseClient';
-import { useSupabaseUpload, useImageUpload } from '../../../hooks/useSupabaseUpload';
+import { useMediaUpload, useImageUpload } from '../../../hooks/useMediaUpload';
 import { logAdminActivity } from '../../../lib/helpers';
 import {
   Users,
@@ -54,7 +54,7 @@ const AVAILABLE_PERMISSIONS = [
 export default function AdminMembershipPage() {
   const notify = useAdminToast();
 
-  const { uploadFile, isUploading: isFileUploading } = useSupabaseUpload();
+  const { uploadFile, isUploading: isFileUploading } = useMediaUpload();
   const avatarUpload = useImageUpload();
 
   const [activeTab, setActiveTab] = useState('members'); // 'members' | 'structure' | 'admins'
