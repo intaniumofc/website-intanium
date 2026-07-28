@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Button from '../common/Button';
 import Card from '../common/Card';
-import { formatCurrency, isValidEmail } from '../../lib/helpers';
+import { formatCurrency, isValidEmail, getOptimizedImageUrl } from '../../lib/helpers';
 import { MapPin, Truck, ExternalLink, Info, ArrowLeft, Copy, Check } from 'lucide-react';
 import qrisImage from '../../assets/images/qris-iris.webp';
 import { merchandiseService } from '../../services/public/merchandiseService';
@@ -203,11 +203,18 @@ export default function CheckoutForm({
                   Nomor WhatsApp
                 </label>
                 <input
-                  type="text"
+                  type="tel"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   id="phone"
                   name="phone"
                   value={formData.phone}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === '' || /^\d+$/.test(val)) {
+                      handleChange(e);
+                    }
+                  }}
                   className="w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg px-4 py-2.5 text-sm text-[var(--text-primary)] focus:ring-1 focus:ring-[var(--color-primary)] focus:outline-none"
                   placeholder="Contoh: 081234567890"
                 />
@@ -385,10 +392,17 @@ export default function CheckoutForm({
                     </label>
                     <input
                       type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       id="postalCode"
                       name="postalCode"
                       value={formData.postalCode}
-                      onChange={handleChange}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val === '' || /^\d+$/.test(val)) {
+                          handleChange(e);
+                        }
+                      }}
                       className="w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg px-4 py-2.5 text-sm text-[var(--text-primary)] focus:ring-1 focus:ring-[var(--color-primary)] focus:outline-none"
                       placeholder="Masukkan kode pos"
                     />
@@ -569,11 +583,17 @@ export default function CheckoutForm({
           </h3>
 
           <div className="flex items-center gap-4 mb-6">
-            <img
-              src={(product.image_url ?? product.imageUrl)?.src || (product.image_url ?? product.imageUrl)}
-              alt={product.name}
-              className="w-16 h-16 object-cover rounded-lg border border-[var(--border-color)]"
-            />
+            {(() => {
+              const rawImg = product.image_url ?? product.imageUrl ?? (Array.isArray(product.image_urls) ? product.image_urls[0] : (Array.isArray(product.imageUrls) ? product.imageUrls[0] : null));
+              const imgSrc = rawImg ? getOptimizedImageUrl(rawImg, { width: 120, quality: 80 }) : '/placeholder-merch.png';
+              return (
+                <img
+                  src={imgSrc}
+                  alt={product.name}
+                  className="w-16 h-16 object-cover rounded-xl border border-[var(--border-color)] bg-slate-50"
+                />
+              );
+            })()}
             <div className="flex-1 min-w-0">
               <h4 className="font-bold text-sm text-[var(--text-primary)] truncate">{product.name}</h4>
               <p className="text-xs text-[var(--text-secondary)]">{formatCurrency(product.price)}</p>

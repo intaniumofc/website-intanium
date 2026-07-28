@@ -5,7 +5,8 @@ import Modal from '../../../components/common/Modal';
 import { merchandiseService } from '../../../services/public/merchandiseService';
 import Loading from '../../../components/common/Loading';
 import { useAdminToast } from '../../../components/common/useAdminToast';
-import { useSupabaseUpload } from '../../../hooks/useSupabaseUpload';
+import { useMediaUpload } from '../../../hooks/useMediaUpload';
+import { FileUploadCard } from '../../../components/ui/FileUploadCard';
 import { 
   Plus, Edit, Trash2, Check, X, Search, Image as ImageIcon, 
   Tag, ChevronLeft, ChevronRight, Sparkles, SlidersHorizontal, LayoutGrid,
@@ -56,8 +57,9 @@ export default function AdminMerchandise() {
   const [itemToDelete, setItemToDelete] = useState(null);
 
   // Uploader hook
-  const { uploadFile, isUploading, progress } = useSupabaseUpload();
+  const { uploadFile, isUploading, progress } = useMediaUpload();
   const [uploadingKey, setUploadingKey] = useState(null);
+  const [selectedFiles, setSelectedFiles] = useState({});
 
   // Payment settings state
   const [paymentSettings, setPaymentSettings] = useState({

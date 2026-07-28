@@ -18,7 +18,7 @@ import {
   Eye
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useSupabaseUpload, useImageUpload } from '../../../hooks/useSupabaseUpload';
+import { useMediaUpload, useImageUpload } from '../../../hooks/useMediaUpload';
 import ConfirmDialog from '../../../components/common/ConfirmDialog';
 import { useAdminToast } from '../../../components/common/useAdminToast';
 
@@ -54,8 +54,8 @@ export default function AdminEsportPage() {
   const [achievements, setAchievements] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // useSupabaseUpload integration
-  const { uploadFile, isUploading, progress } = useSupabaseUpload();
+  // useMediaUpload integration (Cloudflare R2)
+  const { uploadFile, isUploading, progress } = useMediaUpload();
 
   // useImageUpload instances for previews and file selection
   const wallpaperUpload = useImageUpload();

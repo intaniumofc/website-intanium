@@ -9,11 +9,11 @@ import Loading from '../../../components/common/Loading';
 import ConfirmDialog from '../../../components/common/ConfirmDialog';
 import { useAdminToast } from '../../../components/common/useAdminToast';
 import { Plus, Edit, Trash2, Calendar, FileText, Search, PlusCircle, Trash, BookOpen, Upload, Loader } from 'lucide-react';
-import { useSupabaseUpload } from '../../../hooks/useSupabaseUpload';
+import { useMediaUpload } from '../../../hooks/useMediaUpload';
 
 export default function AdminRecaps() {
   const notify = useAdminToast();
-  const { uploadFile, isUploading, progress: uploadProgress } = useSupabaseUpload();
+  const { uploadFile, isUploading, progress: uploadProgress } = useMediaUpload();
   const [items, setItems] = useState([]);
 
   const handleUploadThumbnail = async (e) => {
@@ -767,7 +767,7 @@ export default function AdminRecaps() {
             <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl flex flex-col gap-2 animate-fade-in">
               <div className="flex items-center gap-2 text-xs font-bold text-blue-700">
                 <Loader className="h-4 w-4 animate-spin text-blue-600" />
-                <span>Sedang mengunggah gambar ke Supabase Storage ({uploadProgress}%)…</span>
+                <span>Sedang mengunggah gambar ke Cloudflare R2 ({uploadProgress}%)…</span>
               </div>
               <div className="w-full bg-blue-200/50 h-1.5 rounded-full overflow-hidden">
                 <div className="bg-blue-600 h-full transition-[width] duration-300" style={{ width: `${uploadProgress}%` }} />

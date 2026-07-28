@@ -100,11 +100,11 @@ function serpentinePath(nodes, xL, xR, r) {
 
       d.push(
         `C ${f(endX + bendDir * KAPPA * r)},${f(y)} ` +
-          `${f(apexX)},${f(yMid - KAPPA * r)} ${f(apexX)},${f(yMid)}`
+        `${f(apexX)},${f(yMid - KAPPA * r)} ${f(apexX)},${f(yMid)}`
       );
       d.push(
         `C ${f(apexX)},${f(yMid + KAPPA * r)} ` +
-          `${f(endX + bendDir * KAPPA * r)},${f(yEnd)} ${f(endX)},${f(yEnd)}`
+        `${f(endX + bendDir * KAPPA * r)},${f(yEnd)} ${f(endX)},${f(yEnd)}`
       );
     }
   }

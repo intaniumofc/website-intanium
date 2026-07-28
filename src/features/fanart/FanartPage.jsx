@@ -7,7 +7,7 @@ import Loading from '../../components/common/Loading';
 import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
 import Card from '../../components/common/Card';
-import { useSupabaseUpload } from '../../hooks/useSupabaseUpload';
+import { useMediaUpload } from '../../hooks/useMediaUpload';
 import { FileUploadCard } from '../../components/ui/FileUploadCard';
 import { Palette } from 'lucide-react';
 
@@ -26,7 +26,7 @@ export default function FanartPage() {
   });
   const [file, setFile] = useState(null);
   const [errors, setErrors] = useState({});
-  const { uploadFile, isUploading, progress } = useSupabaseUpload();
+  const { uploadFile, isUploading, progress } = useMediaUpload();
 
   useEffect(() => {
     document.title = 'Fanart IRIS | Galeri Karya Seni Komunitas';

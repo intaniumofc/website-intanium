@@ -9,7 +9,7 @@ import Loading from '../../../components/common/Loading';
 import ConfirmDialog from '../../../components/common/ConfirmDialog';
 import { useAdminToast } from '../../../components/common/useAdminToast';
 import { Plus, Edit, Trash2, Search, ImageIcon, Upload, Loader } from 'lucide-react';
-import { useSupabaseUpload } from '../../../hooks/useSupabaseUpload';
+import { useMediaUpload } from '../../../hooks/useMediaUpload';
 import { FileUploadCard } from '../../../components/ui/FileUploadCard';
 
 export default function AdminGallery() {
@@ -20,7 +20,7 @@ export default function AdminGallery() {
   const [filterType, setFilterType] = useState('all'); // 'all' | 'gallery' | 'showcase'
 
   // Upload and hook states
-  const { uploadFile, isUploading: isFileUploading, progress: uploadProgress } = useSupabaseUpload();
+  const { uploadFile, isUploading: isFileUploading, progress: uploadProgress } = useMediaUpload();
   const [selectedFile, setSelectedFile] = useState(null);
   const [filePreview, setFilePreview] = useState('');
   const [isConverting, setIsConverting] = useState(false);
@@ -177,7 +177,7 @@ export default function AdminGallery() {
         const webpFile = await convertToWebP(selectedFile);
         setIsConverting(false);
 
-        // Upload using useSupabaseUpload
+        // Upload using useMediaUpload (R2)
         finalUrl = await uploadFile(webpFile, 'assets', 'gallery');
       }
 

@@ -8,7 +8,7 @@ import ConfirmDialog from '../../../components/common/ConfirmDialog';
 import { useAdminToast } from '../../../components/common/useAdminToast';
 import { playlistService } from '../../../services/public/playlistService';
 import Loading from '../../../components/common/Loading';
-import { useSupabaseUpload } from '../../../hooks/useSupabaseUpload';
+import { useMediaUpload } from '../../../hooks/useMediaUpload';
 import {
   Plus,
   Edit,
@@ -73,7 +73,7 @@ export default function AdminPlaylists() {
   });
 
   // Upload hook and file states
-  const { uploadFile, isUploading: isFileUploading, progress: uploadProgress } = useSupabaseUpload();
+  const { uploadFile, isUploading: isFileUploading, progress: uploadProgress } = useMediaUpload();
   const [selectedAudioFile, setSelectedAudioFile] = useState(null);
   const [selectedCoverFile, setSelectedCoverFile] = useState(null);
   const [isAudioConverting, setIsAudioConverting] = useState(false);
@@ -226,14 +226,14 @@ export default function AdminPlaylists() {
     let finalCoverUrl = songFormData.coverUrl.trim();
 
     try {
-      // 1. Upload Cover Image (will convert to WebP inside useSupabaseUpload hook)
+      // 1. Upload Cover Image (will convert to WebP inside useMediaUpload hook)
       if (selectedCoverFile) {
         setIsImageConverting(true);
         finalCoverUrl = await uploadFile(selectedCoverFile, 'assets', 'covers');
         setIsImageConverting(false);
       }
 
-      // 2. Upload Audio File (will convert/compress to 96kbps mono MP3 inside useSupabaseUpload hook)
+      // 2. Upload Audio File (will convert/compress to 96kbps mono MP3 inside useMediaUpload hook)
       if (selectedAudioFile) {
         setIsAudioConverting(true);
         finalAudioUrl = await uploadFile(selectedAudioFile, 'assets', 'songs');
@@ -929,7 +929,7 @@ export default function AdminPlaylists() {
                     ? 'Mengodekan & mengompres berkas audio (LameJS)…'
                     : isImageConverting
                     ? 'Mengonversi gambar sampul ke WebP…'
-                    : `Mengunggah berkas ke Supabase Storage (${uploadProgress}%)...`}
+                    : `Mengunggah berkas ke Cloudflare R2 (${uploadProgress}%)...`}
                 </span>
               </div>
               {isFileUploading && (

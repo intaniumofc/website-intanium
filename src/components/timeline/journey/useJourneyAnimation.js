@@ -184,7 +184,7 @@ export function useJourneyAnimation({
           pin: stageRef.current,
           start: 'top top',
           end: 'bottom bottom',
-          scrub: 0.7,
+          scrub: 1,
           invalidateOnRefresh: true,
         },
       });
