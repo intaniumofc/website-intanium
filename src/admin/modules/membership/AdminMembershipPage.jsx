@@ -48,7 +48,8 @@ const AVAILABLE_PERMISSIONS = [
   { id: 'hashtags', name: 'Kelola Tagar' },
   { id: 'games', label: 'Kelola Game' },
   { id: 'esport', label: 'Kelola Esport' },
-  { id: 'keanggotaan', label: 'Kelola Keanggotaan' }
+  { id: 'keanggotaan', label: 'Kelola Keanggotaan' },
+  { id: 'join-us', label: 'Kelola Join Us' }
 ];
 
 export default function AdminMembershipPage() {

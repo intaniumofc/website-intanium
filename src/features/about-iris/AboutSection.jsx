@@ -1,10 +1,11 @@
 "use client";
 import { useRef } from "react";
+import Link from "next/link";
 import { TimelineContent } from "@/components/ui/timeline-animation";
 import { VerticalCutReveal } from "@/components/ui/vertical-cut-reveal";
 import { ArrowRight } from "lucide-react";
 import bannerNium from "@/assets/logos/banner-nium.webp";
-import { SOCIALS } from "@/lib/constants";
+import { SOCIALS, ROUTES } from "@/lib/constants";
 import { FaYoutube } from "react-icons/fa";
 import { FaXTwitter, FaInstagram, FaTiktok, FaEnvelope } from "react-icons/fa6";
 
@@ -297,16 +298,17 @@ export default function AboutSection3() {
               </TimelineContent>
 
               <TimelineContent
-                as="a"
+                as="div"
                 animationNum={15}
                 timelineRef={heroRef}
                 customVariants={revealVariants}
-                href={SOCIALS.DISCORD}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex bg-(--color-primary) hover:bg-(--color-primary-hover) shadow-md hover:shadow-[var(--neon-glow-primary)] flex-row w-fit items-center gap-2 hover:gap-4 transition-all duration-300 ease-in-out text-white px-5 py-3 rounded-2xl cursor-pointer text-xs font-semibold tracking-wider focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2"
               >
-                Join Komunitas <ArrowRight className="w-4 h-4" />
+                <Link
+                  href={ROUTES.JOIN_US}
+                  className="inline-flex bg-(--color-primary) hover:bg-(--color-primary-hover) shadow-md hover:shadow-[var(--neon-glow-primary)] flex-row w-fit items-center gap-2 hover:gap-4 transition-all duration-300 ease-in-out text-white px-5 py-3 rounded-2xl cursor-pointer text-xs font-semibold tracking-wider focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2"
+                >
+                  Join Komunitas <ArrowRight className="w-4 h-4" />
+                </Link>
               </TimelineContent>
             </div>
           </div>
