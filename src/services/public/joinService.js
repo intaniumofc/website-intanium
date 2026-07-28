@@ -4,15 +4,15 @@ const DEFAULT_SETTINGS = {
   member: {
     id: 'member',
     type: 'member',
-    title: 'Open Member IntaniumOFC',
-    description: 'Mari bergabung menjadi bagian dari keanggotaan resmi IntaniumOFC untuk bersama-sama mendukung Nur Intan JKT48.',
+    title: 'Open Member IRIS',
+    description: 'Mari bergabung menjadi bagian dari keanggotaan resmi IRIS untuk bersama-sama mendukung Nur Intan JKT48.',
     status: 'open',
     updated_at: new Date().toISOString(),
   },
   admin: {
     id: 'admin',
     type: 'admin',
-    title: 'Recruitment Admin Intanium',
+    title: 'Recruitment Admin IRIS',
     description: 'Tertarik berkontribusi mengelola fanbase? Kami membuka rekrutmen pengurus untuk berbagai divisi internal.',
     status: 'open',
     updated_at: new Date().toISOString(),

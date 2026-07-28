@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { motion } from 'framer-motion';
@@ -25,6 +25,16 @@ export default function JoinUsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const formRef = useRef(null);
+
+  const handleSelectTab = (tabKey) => {
+    setActiveTab(tabKey);
+    setIsSubmitted(false);
+    if (formRef.current) {
+      formRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   // Form states
   const [memberForm, setMemberForm] = useState({
@@ -237,7 +247,7 @@ export default function JoinUsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            onClick={() => { setActiveTab('member'); setIsSubmitted(false); }}
+            onClick={() => handleSelectTab('member')}
             className={`relative rounded-3xl p-6 cursor-pointer transition-all duration-300 border backdrop-blur-md flex flex-col justify-between overflow-hidden group ${
               activeTab === 'member'
                 ? 'bg-gradient-to-b from-[#1f135b] to-[#120a3a] border-amber-400/80 shadow-[0_0_40px_rgba(245,158,11,0.25)] scale-[1.02]'
@@ -258,7 +268,7 @@ export default function JoinUsPage() {
                 Join Member
               </h3>
               <p className="text-xs text-purple-200/70 font-medium leading-relaxed mb-4">
-                Keanggotaan resmi IntaniumOFC untuk berpartisipasi aktif dalam kegiatan harian, gathering, dan dukungan bersama.
+                Keanggotaan resmi IRIS untuk berpartisipasi aktif dalam kegiatan harian, gathering, dan dukungan bersama.
               </p>
             </div>
 
@@ -283,7 +293,7 @@ export default function JoinUsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            onClick={() => { setActiveTab('admin'); setIsSubmitted(false); }}
+            onClick={() => handleSelectTab('admin')}
             className={`relative rounded-3xl p-6 cursor-pointer transition-all duration-300 border backdrop-blur-md flex flex-col justify-between overflow-hidden group ${
               activeTab === 'admin'
                 ? 'bg-gradient-to-b from-[#1c1256] to-[#110938] border-purple-400/80 shadow-[0_0_40px_rgba(168,85,247,0.25)] scale-[1.02]'
@@ -323,7 +333,7 @@ export default function JoinUsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            onClick={() => { setActiveTab('volunteer'); setIsSubmitted(false); }}
+            onClick={() => handleSelectTab('volunteer')}
             className={`relative rounded-3xl p-6 cursor-pointer transition-all duration-300 border backdrop-blur-md flex flex-col justify-between overflow-hidden group ${
               activeTab === 'volunteer'
                 ? 'bg-gradient-to-b from-[#1b1554] to-[#0f0a34] border-pink-400/80 shadow-[0_0_40px_rgba(236,72,153,0.25)] scale-[1.02]'
@@ -360,7 +370,7 @@ export default function JoinUsPage() {
         </div>
 
         {/* Dynamic Form Area */}
-        <div className="bg-[#120a33]/80 border border-purple-500/25 rounded-3xl p-6 sm:p-10 shadow-2xl backdrop-blur-xl relative overflow-hidden">
+        <div ref={formRef} className="bg-[#120a33]/80 border border-purple-500/25 rounded-3xl p-6 sm:p-10 shadow-2xl backdrop-blur-xl relative overflow-hidden scroll-mt-28">
           {isLoading ? (
             <div className="py-20 text-center flex flex-col items-center justify-center gap-3">
               <Loader2 className="h-8 w-8 text-purple-400 animate-spin" />
@@ -556,7 +566,7 @@ export default function JoinUsPage() {
 
                   <div>
                     <label className="block text-xs font-bold text-purple-200 mb-2">
-                      Alasan ingin bergabung di Intanium <span className="text-pink-400">*</span>
+                      Alasan ingin bergabung di IRIS <span className="text-pink-400">*</span>
                     </label>
                     <textarea
                       required
@@ -810,7 +820,7 @@ export default function JoinUsPage() {
 
                   <div>
                     <label className="block text-xs font-bold text-purple-200 mb-2">
-                      Apakah kalian benar-benar serius ingin menjadi Admin Intanium? <span className="text-pink-400">*</span>
+                      Apakah kalian benar-benar serius ingin menjadi Admin IRIS? <span className="text-pink-400">*</span>
                     </label>
                     <textarea
                       required
