@@ -245,7 +245,7 @@ export default function JoinUsPage() {
 
         {/* 3 Interactive Option Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          {/* Card 1: Join Member (MAIN FOCUS) */}
+          {/* Card 1: Join Member */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -257,12 +257,6 @@ export default function JoinUsPage() {
                 : 'bg-white/80 border-slate-200/80 hover:border-purple-300 hover:bg-white shadow-2xs'
             }`}
           >
-            {/* Main Focus Badge */}
-            <div className="absolute top-0 right-0 bg-gradient-to-l from-amber-500 to-pink-500 text-white font-extrabold text-[10px] uppercase tracking-wider px-3.5 py-1 rounded-bl-xl shadow-xs flex items-center gap-1">
-              <Star className="h-3 w-3 fill-white" />
-              <span>Main Focus</span>
-            </div>
-
             <div>
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-pink-500 flex items-center justify-center text-white mb-4 shadow-sm group-hover:scale-110 transition-transform">
                 <Users className="h-6 w-6" />
@@ -639,19 +633,6 @@ export default function JoinUsPage() {
                     </div>
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
-                      Kritik dan saran untuk Nur Intan
-                    </label>
-                    <textarea
-                      rows={2}
-                      placeholder="Kesan, pesan hangat, atau saran dukungan..."
-                      value={memberForm.feedback}
-                      onChange={(e) => setMemberForm(prev => ({ ...prev, feedback: e.target.value }))}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:bg-white focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] focus:outline-none transition-all placeholder:text-slate-400"
-                    />
-                  </div>
-
                   <div className="pt-4 flex justify-end">
                     <button
                       type="submit"
@@ -823,12 +804,12 @@ export default function JoinUsPage() {
 
                   <div>
                     <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
-                      Apakah kalian benar-benar serius ingin menjadi Admin IRIS? <span className="text-red-500 ml-0.5">*</span>
+                      Alasan ingin mendaftar menjadi Admin IRIS, dan alasan mengapa memilih divisi tersebut? <span className="text-red-500 ml-0.5">*</span>
                     </label>
                     <textarea
                       required
                       rows={2}
-                      placeholder="Komitmen dan waktu yang siap dialokasikan..."
+                      placeholder="Tuliskan alasan bergabung & pilihan divisi..."
                       value={adminForm.seriousness}
                       onChange={(e) => setAdminForm(prev => ({ ...prev, seriousness: e.target.value }))}
                       className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:bg-white focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] focus:outline-none transition-all placeholder:text-slate-400"
