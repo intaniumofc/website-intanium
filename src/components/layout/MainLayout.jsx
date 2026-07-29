@@ -22,12 +22,12 @@ export default function MainLayout({ children, isHome = false, fullWidth = false
         </main>
       ) : fullWidth ? (
         /* Full-width layout for page templates like About Iris and Shining Star, avoiding fixed-pinning conflicts */
-        <main className="flex-grow w-full pt-16 relative">
+        <main className="flex-grow w-full pt-20 sm:pt-24 md:pt-28 relative">
           {children}
         </main>
       ) : (
         /* Constrained layout for standard pages */
-        <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8 animate-fade-in relative">
+        <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 md:pt-28 pb-8 animate-fade-in relative">
           {children}
         </main>
       )}
