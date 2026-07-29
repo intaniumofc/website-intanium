@@ -30,7 +30,7 @@ const PODIUM_STYLES = {
 
 function InitialAvatar({ name, className }) {
   return (
-    <div className={cn('grid place-items-center rounded-full bg-[#170C79] font-black text-white', className)}>
+    <div className={cn('grid place-items-center rounded-full bg-gradient-to-r from-[var(--color-pink)] to-[var(--color-purple)] font-black text-white', className)}>
       {(name || '?').slice(0, 1).toUpperCase()}
     </div>
   );
@@ -51,12 +51,12 @@ function LeaderboardPodium({ rankings }) {
             <div className="relative">
               {rank === 1 && <Crown className="absolute -top-7 left-1/2 size-6 -translate-x-1/2 text-amber-500" fill="currentColor" />}
               <InitialAvatar name={item.username} className={cn('size-12 ring-4 sm:size-14', style.ring)} />
-              <span className="absolute -bottom-2 left-1/2 grid size-6 -translate-x-1/2 place-items-center rounded-full bg-white text-[11px] font-black text-[#170C79] shadow">
+              <span className="absolute -bottom-2 left-1/2 grid size-6 -translate-x-1/2 place-items-center rounded-full bg-white text-[11px] font-black text-[var(--color-pink)] shadow">
                 {rank}
               </span>
             </div>
             <p className="mt-4 max-w-full truncate text-xs font-extrabold text-slate-800 sm:text-sm">{item.username}</p>
-            <p className="text-[11px] font-bold text-[#170C79]">{item.score.toLocaleString('id-ID')}</p>
+            <p className="text-[11px] font-bold text-[var(--color-pink)]">{item.score.toLocaleString('id-ID')}</p>
             <div className={cn('mt-2 flex w-full items-start justify-center rounded-t-2xl bg-gradient-to-b pt-3 text-white shadow-inner', style.height, style.color)}>
               <Icon className="size-5" />
             </div>
@@ -74,8 +74,8 @@ function LeaderboardRankings({ rankings, currentUserId, pageSize = 10, gameMode 
 
   return (
     <>
-      <div className="overflow-hidden rounded-2xl border border-[#170C79]/10">
-        <div className="grid grid-cols-[44px_minmax(0,1fr)_auto] gap-2 bg-[#170C79]/[0.045] px-4 py-2 text-[10px] font-extrabold uppercase tracking-[0.16em] text-slate-400">
+      <div className="overflow-hidden rounded-2xl border border-[var(--color-border)]">
+        <div className="grid grid-cols-[44px_minmax(0,1fr)_auto] gap-2 bg-[var(--color-bg-secondary)] px-4 py-2 text-[10px] font-extrabold uppercase tracking-[0.16em] text-slate-400">
           <span>Rank</span>
           <span>Pemain</span>
           <span>Score</span>
@@ -86,8 +86,8 @@ function LeaderboardRankings({ rankings, currentUserId, pageSize = 10, gameMode 
             <div
               key={item.id}
               className={cn(
-                'grid grid-cols-[44px_minmax(0,1fr)_auto] items-center gap-2 border-t border-[#170C79]/10 px-4 py-3',
-                item.id === currentUserId && 'bg-amber-50',
+                'grid grid-cols-[44px_minmax(0,1fr)_auto] items-center gap-2 border-t border-[var(--color-border)] px-4 py-3',
+                item.id === currentUserId && 'bg-[var(--color-pink)]/10',
               )}
             >
               <span className="text-center text-sm font-black text-slate-400">#{rank}</span>
@@ -102,7 +102,7 @@ function LeaderboardRankings({ rankings, currentUserId, pageSize = 10, gameMode 
                   </p>
                 </div>
               </div>
-              <p className="font-black text-[#170C79]">{item.score.toLocaleString('id-ID')}</p>
+              <p className="font-black text-[var(--color-pink)]">{item.score.toLocaleString('id-ID')}</p>
             </div>
           );
         })}
@@ -112,7 +112,7 @@ function LeaderboardRankings({ rankings, currentUserId, pageSize = 10, gameMode 
         <div className="mt-4 flex items-center justify-between text-xs text-slate-500">
           <span>Halaman {page + 1} dari {pageCount}</span>
           <div className="flex gap-2">
-            <button type="button" disabled={page === 0} onClick={() => setPage((current) => current - 1)} className="rounded-lg border border-[#170C79]/10 p-2 disabled:opacity-30">
+            <button type="button" disabled={page === 0} onClick={() => setPage((current) => current - 1)} className="rounded-lg border border-[var(--color-border)] p-2 disabled:opacity-30">
               <ChevronLeft className="size-4" />
             </button>
             <button type="button" disabled={page + 1 === pageCount} onClick={() => setPage((current) => current + 1)} className="rounded-lg border border-[#170C79]/10 p-2 disabled:opacity-30">

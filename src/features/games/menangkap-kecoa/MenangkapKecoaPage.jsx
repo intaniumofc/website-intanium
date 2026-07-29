@@ -93,10 +93,10 @@ function HitEffect({ effect }) {
 
 function StatCard({ icon: Icon, label, value }) {
   return (
-    <div className="rounded-2xl border border-[#170C79]/10 bg-white/85 p-3 text-center shadow-sm">
-      <Icon className="mx-auto mb-1 size-4 text-[#170C79]" />
+    <div className="rounded-2xl border border-[rgba(0,0,0,0.05)] bg-white p-3 text-center shadow-[0_2px_8px_rgba(15,23,42,0.03)]">
+      <Icon className="mx-auto mb-1 size-4 text-[var(--color-pink)]" />
       <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{label}</p>
-      <p className="mt-0.5 text-lg font-black text-[#170C79]">{value}</p>
+      <p className="mt-0.5 text-lg font-black text-[var(--color-heading)]">{value}</p>
     </div>
   );
 }
@@ -246,16 +246,16 @@ export default function MenangkapKecoaPage() {
     <div className="game-page-shell mx-auto pb-10">
       {/* Navigation back */}
       <div className="mb-6 text-left">
-        <Link href="/games" className="inline-flex items-center gap-2 text-sm text-[#170C79] hover:text-[#2518a4] font-extrabold transition-colors">
+        <Link href="/games" className="inline-flex items-center gap-2 text-sm text-[var(--color-pink)] hover:text-[var(--color-primary-hover)] font-extrabold transition-colors">
           <ArrowLeft className="size-4" /> Kembali ke Arena Game
         </Link>
       </div>
 
       <header className="game-console-header">
-        <span className="inline-flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[0.2em] text-[#170C79]/65">
+        <span className="inline-flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[0.2em] text-[var(--color-pink)]">
           <Gamepad2 className="size-3.5" /> IRIS Mini Game
         </span>
-        <h1 className="mt-2 text-3xl font-black text-[#170C79] sm:text-4xl">Menangkap Kecoa</h1>
+        <h1 className="mt-2 text-3xl font-black text-[var(--color-heading)] sm:text-4xl">Menangkap Kecoa</h1>
         <p className="mt-1 max-w-xl text-sm leading-relaxed text-slate-600">
           Uji keberanianmu. Tangkap sebanyak mungkin dalam 60 detik dan rebut posisi teratas IRIS.
         </p>
@@ -302,7 +302,7 @@ export default function MenangkapKecoaPage() {
                   type="button"
                   onClick={handleStart}
                   disabled={username.trim().length < 2}
-                  className="game-start-button mt-4 w-full rounded-xl bg-white px-5 py-3 font-extrabold text-[#170C79] disabled:cursor-not-allowed disabled:opacity-40"
+                  className="game-start-button mt-4 w-full rounded-full bg-gradient-to-r from-[var(--color-pink)] via-[var(--color-purple)] to-[var(--color-blue)] px-5 py-3 font-extrabold text-white shadow-[var(--shadow-pink-glow)] disabled:cursor-not-allowed disabled:opacity-40 hover:scale-[1.02] transition-all"
                 >
                   Mulai Menangkap
                 </button>
@@ -340,24 +340,24 @@ export default function MenangkapKecoaPage() {
               </div>
               <div>
                 <p className="text-xs font-bold uppercase tracking-wider text-slate-400">High score kamu</p>
-                <p className="text-3xl font-black text-[#170C79]">{displayedHighScore.toLocaleString('id-ID')}</p>
+                <p className="text-3xl font-black text-[var(--color-heading)]">{displayedHighScore.toLocaleString('id-ID')}</p>
               </div>
             </div>
-            <button type="button" onClick={openLeaderboard} className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#170C79] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#291da9]">
+            <button type="button" onClick={openLeaderboard} className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[var(--color-pink)] via-[var(--color-purple)] to-[var(--color-blue)] px-5 py-3 text-sm font-bold text-white shadow-[var(--shadow-pink-glow)] hover:scale-[1.02] transition">
               <Medal className="size-4" /> Lihat Leaderboard
             </button>
           </div>
 
           <div className="game-console-side-section">
             <div className="flex items-center gap-3">
-              <Crown className="size-6 shrink-0 text-[#170C79]" />
-              <h2 className="font-black text-[#170C79]">Cara Bermain</h2>
+              <Crown className="size-6 shrink-0 text-[var(--color-pink)]" />
+              <h2 className="font-black text-[var(--color-heading)]">Cara Bermain</h2>
             </div>
             <ol className="mt-4 space-y-3 text-sm leading-relaxed text-slate-600">
-              <li className="rounded-xl bg-[#170C79]/[0.045] px-3 py-2"><strong>1.</strong> Klik kecoa sebelum kabur.</li>
-              <li className="rounded-xl bg-[#170C79]/[0.045] px-3 py-2"><strong>2.</strong> Jaga combo untuk pengali skor.</li>
-              <li className="rounded-xl bg-[#170C79]/[0.045] px-3 py-2"><strong>3.</strong> Kejar kecoa emas untuk bonus 100 poin.</li>
-              <li className="rounded-xl bg-[#170C79]/[0.045] px-3 py-2"><strong>4.</strong> Tangkap kecoa yang panik sebelum terbang kabur.</li>
+              <li className="rounded-xl bg-[var(--color-pink)]/[0.06] px-3 py-2"><strong>1.</strong> Klik kecoa sebelum kabur.</li>
+              <li className="rounded-xl bg-[var(--color-pink)]/[0.06] px-3 py-2"><strong>2.</strong> Jaga combo untuk pengali skor.</li>
+              <li className="rounded-xl bg-[var(--color-pink)]/[0.06] px-3 py-2"><strong>3.</strong> Kejar kecoa emas untuk bonus 100 poin.</li>
+              <li className="rounded-xl bg-[var(--color-pink)]/[0.06] px-3 py-2"><strong>4.</strong> Tangkap kecoa yang panik sebelum terbang kabur.</li>
             </ol>
           </div>
         </aside>
@@ -385,7 +385,7 @@ export default function MenangkapKecoaPage() {
           <div className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-3xl bg-white p-6 text-center shadow-2xl">
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Game Over</p>
             <p className="mt-2 text-sm font-extrabold text-amber-600">{getPerformanceTitle(state.score)}</p>
-            <h2 className="mt-1 text-4xl font-black text-[#170C79]">{state.score.toLocaleString('id-ID')}</h2>
+            <h2 className="mt-1 text-4xl font-black text-[var(--color-heading)]">{state.score.toLocaleString('id-ID')}</h2>
             <p className={`mt-2 text-xs font-bold ${isNewHighScore ? 'text-emerald-600' : 'text-slate-500'}`}>
               {isNewHighScore
                 ? 'High Score Baru!'
@@ -401,10 +401,10 @@ export default function MenangkapKecoaPage() {
               </div>
             )}
             <div className="mt-5 grid gap-2 sm:grid-cols-2">
-              <button type="button" onClick={handleStart} className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#170C79] px-4 py-3 text-sm font-bold text-white cursor-pointer hover:bg-[#2518a4] transition">
+              <button type="button" onClick={handleStart} className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[var(--color-pink)] via-[var(--color-purple)] to-[var(--color-blue)] px-4 py-3 text-sm font-bold text-white cursor-pointer hover:scale-[1.02] transition">
                 <RotateCcw className="size-4" /> Main Lagi
               </button>
-              <button type="button" onClick={() => shareScore({ ...state, resultUrl })} className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#170C79]/15 px-4 py-3 text-sm font-bold text-[#170C79] cursor-pointer hover:bg-slate-50 transition">
+              <button type="button" onClick={() => shareScore({ ...state, resultUrl })} className="inline-flex items-center justify-center gap-2 rounded-full border border-[var(--color-border)] bg-white px-4 py-3 text-sm font-bold text-[var(--color-pink)] cursor-pointer hover:bg-[var(--color-pink-tint-8)] transition">
                 <Send className="size-4" /> Share Skor ke X
               </button>
             </div>

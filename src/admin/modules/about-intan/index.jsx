@@ -521,7 +521,7 @@ function VideosTab() {
         <form onSubmit={handleSubmit} className="space-y-4 text-sm">
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-(--text-secondary)">Link YouTube</label>
-            <input autoComplete="off" /* autocomplete="off" */ name="youtube_url" type="url" value={formData.youtube_url} onChange={handleYouTubeUrlChange} placeholder="https://www.youtube.com/watch?v=SojGpGHMYEA" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl focus:focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:ring-2 focus:ring-[#170C79]/15 focus:border-(--color-primary)" required />
+            <input autoComplete="off" /* autocomplete="off" */ name="youtube_url" type="url" value={formData.youtube_url} onChange={handleYouTubeUrlChange} placeholder="https://www.youtube.com/watch?v=SojGpGHMYEA" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl focus:focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-(--color-primary)" required />
             <p className={`text-[10px] ${formData.youtube_url && !parsedYouTubeId ? 'text-red-500' : 'text-(--text-muted)'}`}>
               {isReadingMetadata ? 'Membaca judul dan durasi dari YouTube…' : parsedYouTubeId ? `Video ID terdeteksi: ${parsedYouTubeId}` : 'Mendukung link video, Shorts, live, embed, dan youtu.be.'}
             </p>

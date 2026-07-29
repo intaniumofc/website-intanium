@@ -25,12 +25,12 @@ import logoNobg from '../../assets/logos/logo-nobg.webp';
 const CATEGORIES = ['Semua', 'Pengumuman', 'Schedule', 'Event', 'Merch', 'Project', 'Media', 'Important'];
 
 const CATEGORY_STYLES = {
-  Pengumuman: 'border-indigo-200 bg-indigo-50 text-indigo-700',
-  Schedule: 'border-sky-200 bg-sky-50 text-sky-700',
-  Event: 'border-violet-200 bg-violet-50 text-violet-700',
-  Merch: 'border-pink-200 bg-pink-50 text-pink-700',
-  Project: 'border-amber-200 bg-amber-50 text-amber-700',
-  Media: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+  Pengumuman: 'border-[var(--color-purple-tint-25)] bg-[var(--color-purple-tint-12)] text-[var(--color-purple)]',
+  Schedule: 'border-[var(--color-blue-tint-25)] bg-[var(--color-blue-tint-12)] text-[var(--color-blue-dark)]',
+  Event: 'border-[var(--color-pink-tint-25)] bg-[var(--color-pink-tint-12)] text-[var(--color-pink)]',
+  Merch: 'border-[var(--color-peach-tint-25)] bg-[var(--color-peach-tint-12)] text-[var(--color-peach)]',
+  Project: 'border-[var(--color-yellow-tint-25)] bg-[var(--color-yellow-tint-12)] text-[var(--color-iris-yellow-dark)]',
+  Media: 'border-[var(--color-mint-tint-25)] bg-[var(--color-mint-tint-12)] text-[var(--color-iris-mint-dark)]',
   Important: 'border-red-200 bg-red-50 text-red-700',
 };
 
@@ -83,25 +83,25 @@ function CategoryBadge({ category }) {
 function SectionHeading({ eyebrow, title, description }) {
   return (
     <div>
-      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-violet-500">{eyebrow}</p>
-      <h2 className="mt-1.5 text-2xl font-black tracking-tight text-[#170C79] sm:text-3xl">{title}</h2>
-      {description && <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">{description}</p>}
+      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--color-purple)]">{eyebrow}</p>
+            <h2 className="mt-1.5 text-2xl font-black tracking-tight text-[var(--color-heading)] sm:text-3xl">{title}</h2>
+            {description && <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--color-body)]">{description}</p>}
     </div>
   );
 }
 
 function EmptyState({ onReset }) {
   return (
-    <div className="rounded-[28px] border border-dashed border-violet-200 bg-white/70 p-8 text-center shadow-sm">
-      <Newspaper className="mx-auto size-8 text-violet-300" />
-      <h3 className="mt-4 text-xl font-black text-[#170C79]">Belum ada update untuk kategori ini.</h3>
-      <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-slate-600">
+    <div className="rounded-[28px] border border-dashed border-[var(--color-border)] bg-[var(--color-surface)]/70 p-8 text-center shadow-sm">
+          <Newspaper className="mx-auto size-8 text-[var(--color-purple)]" />
+          <h3 className="mt-4 text-xl font-black text-[var(--color-heading)]">Belum ada update untuk kategori ini.</h3>
+          <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-[var(--color-body)]">
         Pilih kategori lain atau kembali ke Semua untuk melihat kabar terbaru IRIS.
       </p>
       <button
         type="button"
         onClick={onReset}
-        className="mt-5 cursor-pointer rounded-full bg-[#170C79] px-5 py-2.5 text-xs font-black text-white transition hover:bg-[#291da9]"
+        className="mt-5 cursor-pointer rounded-full bg-[var(--gradient-pink-purple)] px-5 py-2.5 text-xs font-black text-white transition hover:scale-[1.02]"
       >
         Lihat Semua Berita
       </button>
@@ -120,32 +120,32 @@ function GlassNewsCard({ item, index = 0, featured = false }) {
     >
       <Link
         href={`/news/${item.id}`}
-        className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-violet-100/80 bg-white/55 shadow-sm backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-violet-300 hover:shadow-xl hover:shadow-violet-900/10"
+        className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]/55 shadow-sm backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-[var(--color-purple-tint-25)] hover:shadow-xl hover:shadow-[var(--shadow-md)]"
       >
-        <div className="relative aspect-video overflow-hidden bg-violet-50">
+        <div className="relative aspect-video overflow-hidden bg-[var(--color-bg-secondary)]">
           <motion.img
             src={(item.image)?.src || (item.image)}
             alt={item.title}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
             loading="lazy"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#170C79]/75 via-[#170C79]/5 to-transparent opacity-70 transition-opacity duration-300 group-hover:opacity-45" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-heading)]/80 via-[var(--color-heading)]/10 to-transparent opacity-70 transition-opacity duration-300 group-hover:opacity-45" />
 
           <div className="absolute bottom-3 left-3">
             <div className="flex flex-wrap items-stretch overflow-hidden rounded-md border border-white/20 bg-white/90 shadow-lg backdrop-blur-md">
               {featured && (
-                <span className="inline-flex items-center bg-[#170C79] px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.18em] text-white">
+                <span className="inline-flex items-center bg-[var(--color-pink)] px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.18em] text-white">
                   Pilihan Redaksi
                 </span>
               )}
-              <span className={`inline-flex items-center border-l border-[#170C79]/15 px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.18em] ${CATEGORY_STYLES[item.category] || CATEGORY_STYLES.Pengumuman}`}>
+              <span className={`inline-flex items-center border-l border-[var(--color-pink)]/15 px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.18em] ${CATEGORY_STYLES[item.category] || CATEGORY_STYLES.Pengumuman}`}>
                 {item.category}
               </span>
             </div>
           </div>
 
           <div className="absolute inset-0 flex items-center justify-center bg-white/10 opacity-0 backdrop-blur-[2px] transition-opacity duration-300 group-hover:opacity-100">
-            <span className="flex items-center gap-2 rounded-full bg-[#170C79] px-5 py-2.5 text-xs font-black text-white shadow-lg shadow-violet-950/25">
+            <span className="flex items-center gap-2 rounded-full bg-[var(--color-pink)] px-5 py-2.5 text-xs font-black text-white shadow-lg">
               <BookOpen className="size-4" />
               Baca Artikel
             </span>
@@ -154,24 +154,24 @@ function GlassNewsCard({ item, index = 0, featured = false }) {
 
         <div className="flex flex-1 flex-col gap-4 p-5">
           <div className="space-y-2">
-            <h3 className="line-clamp-2 text-lg font-black leading-tight tracking-tight text-[#170C79] transition-colors group-hover:text-violet-700">
+            <h3 className="line-clamp-2 text-lg font-black leading-tight tracking-tight text-[var(--color-heading)] transition-colors group-hover:text-[var(--color-pink)]">
               {item.title}
             </h3>
-            <p className="line-clamp-2 text-xs leading-6 text-slate-600">{item.excerpt}</p>
-          </div>
+            <p className="line-clamp-2 text-xs leading-6 text-[var(--color-body)]">{item.excerpt}</p>
+                      </div>
 
-          <div className="mt-auto flex items-center justify-between border-t border-violet-100 pt-4">
+                      <div className="mt-auto flex items-center justify-between border-t border-[var(--color-border)] pt-4">
             <div className="flex min-w-0 items-center gap-2.5">
-              <div className="flex size-8 shrink-0 items-center justify-center rounded-full border border-violet-100 bg-[#170C79]">
-                <img src={(logoNobg)?.src || (logoNobg)} alt="" className="size-5 object-contain" />
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-pink)]">
+                <img src={(logoNobg)?.src || (logoNobg)} alt="" className="size-5 object-contain brightness-0 invert" />
               </div>
               <div className="min-w-0 text-[10px]">
-                <p className="truncate font-black text-[#170C79]">IRIS Official</p>
-                <p className="truncate font-bold text-slate-400">{formatDate(item.date)}</p>
+                <p className="truncate font-black text-[var(--color-heading)]">IRIS Official</p>
+                                <p className="truncate font-bold text-[var(--color-text-secondary)]">{formatDate(item.date)}</p>
               </div>
             </div>
 
-            <div className="flex shrink-0 items-center gap-1 text-[10px] font-bold text-slate-400">
+            <div className="flex shrink-0 items-center gap-1 text-[10px] font-bold text-[var(--color-text-secondary)]">
               <Clock className="size-3" />
               <span>Official Update</span>
             </div>
@@ -225,12 +225,12 @@ export default function NewsPage() {
 
   return (
     <div className="mx-auto max-w-6xl space-y-6 animate-fade-in">
-      <section className="border-b border-violet-200/70 pb-5">
+      <section className="border-b border-[var(--color-border)] pb-5">
         <div className="grid gap-5 md:grid-cols-[1fr_auto] md:items-end">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-violet-500">IRIS Newsroom</p>
-            <h1 className="mt-2 text-3xl font-black tracking-tight text-[#170C79] sm:text-4xl">Berita & Pengumuman</h1>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600 sm:text-base">
+            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[var(--color-pink)]">IRIS Newsroom</p>
+                        <h1 className="mt-2 text-3xl font-black tracking-tight text-[var(--color-heading)] sm:text-4xl">Berita & Pengumuman</h1>
+                        <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--color-body)] sm:text-base">
               Pusat update resmi IRIS untuk kabar terbaru seputar Nur Intan, mulai dari jadwal, event, project,
               merchandise, hingga pengumuman penting.
             </p>
@@ -256,8 +256,8 @@ export default function NewsPage() {
               aria-selected={activeCategory === category}
               onClick={() => setActiveCategory(category)}
               className={`shrink-0 cursor-pointer rounded-full border px-4 py-2 text-xs font-black transition ${activeCategory === category
-                ? 'border-[#170C79] bg-[#170C79] text-white shadow-md'
-                : 'border-violet-100 bg-white/80 text-[#170C79] hover:bg-violet-50'
+                ? 'border-[var(--color-pink)] bg-[var(--color-pink)] text-white shadow-md'
+                                : 'border-[var(--color-border)] bg-[var(--color-surface)]/80 text-[var(--color-heading)] hover:bg-[var(--color-bg-secondary)]'
                 }`}
             >
               {category}
@@ -286,26 +286,26 @@ export default function NewsPage() {
                 title="Update Terbaru"
                 description="Kabar terbaru yang dapat dipindai dengan cepat sebelum membaca detail lengkapnya."
               />
-              <div className="divide-y divide-violet-100 border-y border-violet-200/70 bg-white/35">
+              <div className="divide-y divide-[var(--color-border)] border-y border-[var(--color-border)] bg-[var(--color-surface)]/35">
                 {latestUpdates.map((item) => (
                   <Link
                     key={item.id}
                     href={`/news/${item.id}`}
-                    className="group grid gap-3 px-1 py-4 transition hover:bg-violet-50/60 md:grid-cols-[145px_1fr_auto] md:items-center md:px-3"
+                    className="group grid gap-3 px-1 py-4 transition hover:bg-[var(--color-bg-secondary)]/60 md:grid-cols-[145px_1fr_auto] md:items-center md:px-3"
                   >
                     <div>
                       <CategoryBadge category={item.category} />
-                      <p className="mt-2 flex items-center gap-1.5 text-xs font-bold text-slate-400">
+                      <p className="mt-2 flex items-center gap-1.5 text-xs font-bold text-[var(--color-text-secondary)]">
                         <CalendarDays className="size-3.5" /> {formatDate(item.date)}
                       </p>
                     </div>
                     <div>
-                      <h3 className="font-black leading-snug text-[#170C79] transition group-hover:text-violet-700 sm:text-lg">
+                      <h3 className="font-black leading-snug text-[var(--color-heading)] transition group-hover:text-[var(--color-pink)] sm:text-lg">
                         {item.title}
                       </h3>
-                      <p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-600 sm:text-sm">{item.excerpt}</p>
-                    </div>
-                    <span className="flex items-center gap-1 text-xs font-black text-[#170C79]">
+                      <p className="mt-1 line-clamp-2 text-xs leading-5 text-[var(--color-body)] sm:text-sm">{item.excerpt}</p>
+                                          </div>
+                                          <span className="flex items-center gap-1 text-xs font-black text-[var(--color-pink)]">
                       {item.ctaLabel} <ArrowRight className="size-3.5 transition group-hover:translate-x-1" />
                     </span>
                   </Link>
@@ -315,16 +315,16 @@ export default function NewsPage() {
           )}
 
           {importantNews && activeCategory === 'Semua' && (
-            <section className="flex flex-col gap-4 border-y border-rose-200 bg-gradient-to-r from-rose-50/80 to-violet-50/80 px-2 py-4 sm:flex-row sm:items-center">
-              <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-white text-rose-500 shadow-sm">
-                <AlertCircle className="size-5" />
-              </div>
-              <div className="flex-1">
-                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-rose-500">Important Update</p>
-                <h3 className="mt-1 font-black text-[#170C79]">{importantNews.title}</h3>
-                <p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-600">{importantNews.excerpt}</p>
-              </div>
-              <Link href={`/news/${importantNews.id}`} className="flex items-center gap-1 text-xs font-black text-[#170C79]">
+            <section className="flex flex-col gap-4 border-y border-[var(--color-pink-tint-25)] bg-gradient-to-r from-[var(--color-pink-tint-12)] to-[var(--color-purple-tint-12)] px-2 py-4 sm:flex-row sm:items-center">
+                          <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--color-surface)] text-[var(--color-error)] shadow-sm">
+                            <AlertCircle className="size-5" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[var(--color-error)]">Important Update</p>
+                            <h3 className="mt-1 font-black text-[var(--color-heading)]">{importantNews.title}</h3>
+                            <p className="mt-1 line-clamp-2 text-xs leading-5 text-[var(--color-body)]">{importantNews.excerpt}</p>
+                          </div>
+                          <Link href={`/news/${importantNews.id}`} className="flex items-center gap-1 text-xs font-black text-[var(--color-pink)]">
                 Baca Detail <ArrowRight className="size-3.5" />
               </Link>
             </section>

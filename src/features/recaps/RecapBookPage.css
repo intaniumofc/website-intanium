@@ -1158,6 +1158,7 @@
     transform: translateZ(-42px) scale(1.05);
     filter: blur(18px);
   }
+
   100% {
     opacity: 1;
     transform: translateZ(-42px) scale(1.6);
@@ -1175,6 +1176,7 @@
     opacity: 0;
     transform: translateZ(-50px) scale(1.45) rotate(22deg);
   }
+
   100% {
     opacity: 0;
     transform: translateZ(-50px) scale(2.1) rotate(45deg);
@@ -1228,6 +1230,7 @@
     transform: scale(1);
     filter: blur(0px);
   }
+
   100% {
     opacity: 0;
     transform: scale(1.06);
@@ -1250,6 +1253,7 @@
     transform: scale(0.96) translateY(12px);
     filter: blur(6px);
   }
+
   100% {
     opacity: 1;
     transform: scale(1) translateY(0);
@@ -1398,6 +1402,7 @@
       opacity: 0;
       transform: translateY(8px);
     }
+
     to {
       opacity: 1;
       transform: translateY(0);

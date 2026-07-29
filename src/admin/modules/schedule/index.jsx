@@ -620,18 +620,18 @@ export default function AdminSchedule() {
           {/* Title */}
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Judul Acara / Topik</label>
-            <input autoComplete="off" /* autocomplete="off" */ type="text" name="title" placeholder="Misal: JKT48 13th Anniversary Theater Show" value={formData.title} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" required />
+            <input autoComplete="off" /* autocomplete="off" */ type="text" name="title" placeholder="Misal: JKT48 13th Anniversary Theater Show" value={formData.title} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-primary)] transition-colors" required />
           </div>
 
           {/* Time & Duration */}
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Waktu Acara</label>
-              <input autoComplete="off" /* autocomplete="off" */ type="datetime-local" name="time" value={formData.time} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" required />
+              <input autoComplete="off" /* autocomplete="off" */ type="datetime-local" name="time" value={formData.time} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-primary)] transition-colors" required />
             </div>
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Estimasi Durasi</label>
-              <input autoComplete="off" /* autocomplete="off" */ type="text" name="duration" placeholder="Misal: 2 Jam, 1.5 Jam" value={formData.duration} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" />
+              <input autoComplete="off" /* autocomplete="off" */ type="text" name="duration" placeholder="Misal: 2 Jam, 1.5 Jam" value={formData.duration} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-primary)] transition-colors" />
             </div>
           </div>
 
@@ -652,7 +652,7 @@ export default function AdminSchedule() {
             </div>
             <div className="flex flex-col gap-1.5 sm:col-span-2">
               <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Link Acara / Website (URL)</label>
-              <input autoComplete="off" /* autocomplete="off" */ type="text" name="link" placeholder="Misal: https://jkt48.com/... atau link lainnya" value={formData.link} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" />
+              <input autoComplete="off" /* autocomplete="off" */ type="text" name="link" placeholder="Misal: https://jkt48.com/... atau link lainnya" value={formData.link} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-primary)] transition-colors" />
               <p className="text-[10px] text-[var(--text-muted)]">Bisa berupa link pembelian tiket, link web JKT48, detail show, dll.</p>
             </div>
           </div>
@@ -660,14 +660,14 @@ export default function AdminSchedule() {
           {/* Thumbnail URL */}
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">URL Gambar Mini (Thumbnail)</label>
-            <input autoComplete="off" /* autocomplete="off" */ type="text" name="thumbnail" placeholder="Masukkan URL banner/thumbnail…" value={formData.thumbnail} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" />
+            <input autoComplete="off" /* autocomplete="off" */ type="text" name="thumbnail" placeholder="Masukkan URL banner/thumbnail…" value={formData.thumbnail} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-primary)] transition-colors" />
             <p className="text-[10px] text-[var(--text-muted)]">Kosongkan jika ingin menggunakan gambar default.</p>
           </div>
 
           {/* Description / Location */}
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Lokasi / Detail Tambahan</label>
-            <textarea name="description" rows="3" placeholder="Contoh lokasi: JKT48 Theater, fX Sudirman. Atau detail tambahan acara." value={formData.description} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors resize-none" />
+            <textarea name="description" rows="3" placeholder="Contoh lokasi: JKT48 Theater, fX Sudirman. Atau detail tambahan acara." value={formData.description} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-primary)] transition-colors resize-none" />
           </div>
 
           {/* Submit Action */}

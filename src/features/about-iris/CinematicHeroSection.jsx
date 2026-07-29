@@ -172,9 +172,9 @@ export default function CinematicHeroSection() {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative w-full h-screen bg-[#090530] overflow-hidden">
+    <div ref={containerRef} className="relative w-full h-screen bg-white overflow-hidden">
       {/* Cinematic Intro Screen */}
-      <div ref={introRef} className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-[#000000]">
+      <div ref={introRef} className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white">
         
         {/* Social Icons positioned above IRIS text */}
         <div className="flex gap-4 mb-8">
@@ -214,7 +214,7 @@ export default function CinematicHeroSection() {
       />
 
       {/* Decorative gradient overlay for extra cinematic luxurious feel */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-[#090530] pointer-events-none z-0" />
+      <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-transparent to-white pointer-events-none z-0" />
 
       {/* Content Layers */}
       <div className="absolute inset-0 z-10 flex items-center justify-center px-6 sm:px-12 pointer-events-none">
@@ -231,9 +231,9 @@ export default function CinematicHeroSection() {
           </div>
 
           {/* Text 2: Story */}
-          <div ref={text2Ref} className="absolute right-0 top-[20%] md:top-1/3 text-right max-w-2xl opacity-0 bg-[#090530]/60 backdrop-blur-xl p-6 sm:p-10 rounded-3xl sm:rounded-[2rem] border border-white/15 z-20 shadow-[0_0_40px_rgba(124,58,237,0.3)]">
-             <p className="text-sm sm:text-lg md:text-2xl text-white/95 font-medium leading-relaxed drop-shadow-md font-sans">
-               Lebih dari sekadar dukungan, IRIS adalah rumah. Berawal dari rasa kagum yang sama terhadap talenta <span className="text-purple-300 font-bold">Nur Intan</span>, kami tumbuh menjadi satu keluarga besar yang bertekad menjaga setiap langkahnya di panggung JKT48.
+          <div ref={text2Ref} className="absolute right-0 top-[20%] md:top-1/3 text-right max-w-2xl opacity-0 bg-white/90 backdrop-blur-xl p-6 sm:p-10 rounded-3xl sm:rounded-[2rem] border border-[var(--color-border)] z-20 shadow-lg">
+             <p className="text-sm sm:text-lg md:text-2xl text-[var(--color-heading)] font-medium leading-relaxed font-sans">
+               Lebih dari sekadar dukungan, IRIS adalah rumah. Berawal dari rasa kagum yang sama terhadap talenta <span className="text-[var(--color-purple)] font-bold">Nur Intan</span>, kami tumbuh menjadi satu keluarga besar yang bertekad menjaga setiap langkahnya di panggung JKT48.
              </p>
           </div>
 
@@ -261,7 +261,7 @@ export default function CinematicHeroSection() {
                 </div>
               </div>
 
-              <div className="w-full flex flex-col items-center md:items-end text-center md:text-right space-y-4 sm:space-y-5 bg-[#090530]/80 md:bg-[#090530]/60 backdrop-blur-2xl p-6 sm:p-8 rounded-3xl md:rounded-[2rem] border border-white/20 shadow-[0_10px_40px_rgba(0,0,0,0.8)] md:shadow-[0_0_50px_rgba(0,0,0,0.6)]">
+              <div className="w-full flex flex-col items-center md:items-end text-center md:text-right space-y-4 sm:space-y-5 bg-white/90 backdrop-blur-2xl p-6 sm:p-8 rounded-3xl md:rounded-[2rem] border border-[var(--color-border)] shadow-lg">
                 <div>
                    <h3 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-widest font-playfair">IRIS</h3>
                    <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.3em] text-purple-300 mt-1 sm:mt-2">

@@ -330,14 +330,14 @@ export default function AdminNews() {
           {/* Title */}
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Judul Artikel / Pengumuman</label>
-            <input autoComplete="off" type="text" name="title" placeholder="Masukkan judul artikel yang menarik…" value={formData.title} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" required />
+            <input autoComplete="off" type="text" name="title" placeholder="Masukkan judul artikel yang menarik…" value={formData.title} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-primary)] transition-colors" required />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Date */}
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Tanggal Rilis</label>
-              <input autoComplete="off" type="date" name="date" value={formData.date} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" required />
+              <input autoComplete="off" type="date" name="date" value={formData.date} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-primary)] transition-colors" required />
             </div>
 
             {/* Category */}
@@ -428,13 +428,13 @@ export default function AdminNews() {
           {/* Summary */}
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Ringkasan Singkat (Summary)</label>
-            <textarea name="summary" rows="2" placeholder="Detail ringkasan 1-2 kalimat untuk preview feed depan…" value={formData.summary} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors resize-none" />
+            <textarea name="summary" rows="2" placeholder="Detail ringkasan 1-2 kalimat untuk preview feed depan…" value={formData.summary} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-primary)] transition-colors resize-none" />
           </div>
 
           {/* Content */}
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Konten Lengkap Berita</label>
-            <textarea name="content" rows="6" placeholder="Tulis artikel lengkap di sini… (Mendukung paragraf baru)" value={formData.content} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors font-sans" required />
+            <textarea name="content" rows="6" placeholder="Tulis artikel lengkap di sini… (Mendukung paragraf baru)" value={formData.content} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-primary)] transition-colors font-sans" required />
           </div>
 
           {/* Submit Action */}

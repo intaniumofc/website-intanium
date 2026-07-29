@@ -1,0 +1,13 @@
+.scroll-float {
+  display: block;
+}
+
+.scroll-float-text {
+  display: block;
+  text-align: inherit;
+  line-height: inherit;
+}
+
+.char {
+  display: inline-block;
+}

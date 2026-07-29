@@ -237,7 +237,7 @@ export default function MadingPage() {
             initial={{ opacity: 0, y: -40, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-[#170C79] text-white px-5 py-3 rounded-full shadow-2xl flex items-center gap-2.5 font-semibold text-xs border border-indigo-400/20"
+            className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-[var(--color-heading)] text-white px-5 py-3 rounded-full shadow-2xl flex items-center gap-2.5 font-semibold text-xs border border-white/10"
           >
             <CheckCircle className="h-4.5 w-4.5 text-emerald-400 shrink-0" />
             <span>{toastMessage}</span>
@@ -272,14 +272,14 @@ export default function MadingPage() {
           <div className="flex justify-center gap-4 pt-4">
             <button
               onClick={() => setIsFormOpen(true)}
-              className="px-6 py-2.5 bg-[#170C79] hover:bg-indigo-800 text-white font-extrabold text-xs uppercase tracking-widest rounded-lg shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#170C79] focus-visible:ring-offset-2"
+              className="px-6 py-2.5 bg-iris-gradient text-white font-extrabold text-xs uppercase tracking-widest rounded-full shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer flex items-center gap-2 focus-visible:outline-none"
             >
               <Plus className="h-4 w-4" />
               <span>Tulis Pesan Baru</span>
             </button>
             <button
               onClick={scrollToMading}
-              className="px-6 py-2.5 bg-white border border-[var(--border-color)] text-[#170C79] font-extrabold text-xs uppercase tracking-widest rounded-lg hover:bg-slate-50 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#170C79] focus-visible:ring-offset-2"
+              className="px-6 py-2.5 bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-pink)] font-extrabold text-xs uppercase tracking-widest rounded-full hover:bg-[var(--color-pink-tint-8)] transition-all cursor-pointer focus-visible:outline-none"
             >
               Lihat Papan Mading
             </button>
@@ -329,7 +329,7 @@ export default function MadingPage() {
         <div className="corkboard-outer shadow-2xl relative overflow-hidden">
           <div className="corkboard-bevel-frame">
             {isLoading ? (
-              <div className="bg-[#cb9b6c] min-h-[500px] flex items-center justify-center rounded-lg">
+              <div className="bg-[var(--color-peach)] min-h-[500px] flex items-center justify-center rounded-lg">
                 <Loading message="Menyiapkan mading komunitas..." />
               </div>
             ) : (
@@ -359,7 +359,7 @@ export default function MadingPage() {
           </p>
           <button
             onClick={() => setIsFormOpen(true)}
-            className="w-full py-2.5 bg-[#170C79] hover:bg-indigo-800 text-white font-extrabold text-xs uppercase tracking-widest rounded-lg shadow transition-all flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#170C79] focus-visible:ring-offset-2"
+            className="w-full py-2.5 bg-iris-gradient text-white font-extrabold text-xs uppercase tracking-widest rounded-full shadow transition-all flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.02]"
           >
             <Plus className="h-4 w-4" />
             <span>Tulis Pesan Sekarang</span>

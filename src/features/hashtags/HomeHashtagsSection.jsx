@@ -155,7 +155,7 @@ export default function HomeHashtagsSection() {
       {/* Section Header */}
       <div className="flex justify-between items-end border-b border-[var(--border-color)]/60 pb-3 select-none px-4 sm:px-6">
         <div className="space-y-1">
-          <h3 className="text-xl sm:text-2xl font-extrabold text-[#170C79] tracking-tight">
+          <h3 className="text-xl sm:text-2xl font-extrabold text-[#222222] tracking-tight">
             #Tagar Populer IRIS
           </h3>
           <p className="text-xs text-[var(--text-secondary)]">

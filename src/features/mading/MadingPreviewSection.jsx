@@ -278,7 +278,7 @@ export default function MadingPreviewSection() {
         <motion.div variants={staggerContainer} className="space-y-1 text-left">
           <motion.h3
             variants={headingItemVariant}
-            className="text-xl sm:text-2xl font-extrabold text-[#170C79] tracking-tight flex items-center gap-2"
+            className="text-xl sm:text-2xl font-extrabold text-[var(--color-heading)] tracking-tight flex items-center gap-2"
           >
             Mading IRIS <MessageSquare className="h-5 w-5 text-[var(--color-primary)] fill-[var(--color-primary)]/10" />
           </motion.h3>

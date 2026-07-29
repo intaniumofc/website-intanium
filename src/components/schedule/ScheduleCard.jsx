@@ -163,15 +163,15 @@ export default function ScheduleCard({ event, className = '', isHorizontal = fal
               )}
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-[#170C79] via-[#1e1494] to-[#2d1f8f] flex flex-col items-center justify-center p-4 text-center select-none relative group-hover:scale-105 transition-transform duration-600">
+            <div className="w-full h-full bg-gradient-to-br from-[var(--color-pink)] via-[var(--color-purple)] to-[var(--color-blue)] flex flex-col items-center justify-center p-4 text-center select-none relative group-hover:scale-105 transition-transform duration-600">
               {/* Grid overlay */}
-              <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:1rem_1rem] pointer-events-none" />
+              <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[size:1rem_1rem] pointer-events-none" />
               {/* Glow overlay */}
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(8,145,178,0.15),transparent_70%)] pointer-events-none" />
-              <div className="h-11 w-11 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center text-cyan-300 mb-2 backdrop-blur-sm">
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.2),transparent_70%)] pointer-events-none" />
+              <div className="h-11 w-11 rounded-2xl bg-white/20 border border-white/30 flex items-center justify-center text-white mb-2 backdrop-blur-sm">
                 <PlatIcon className="h-5.5 w-5.5" />
               </div>
-              <span className="text-[9px] font-black tracking-[0.18em] text-indigo-200 uppercase">{plat.label}</span>
+              <span className="text-[9px] font-black tracking-[0.18em] text-white uppercase">{plat.label}</span>
             </div>
           )}
           {/* Absolute status indicator overlay */}

@@ -160,8 +160,8 @@ export default function HomeNewsSection({ articles = [] }) {
     <section className="space-y-6">
       {/* Header section identical to layout */}
       <div className="flex justify-between items-center border-b border-[var(--border-color)] pb-3">
-        <h2 className="text-xl font-extrabold text-[#170C79] flex items-center gap-2">
-          <Newspaper className="h-5 w-5 text-[var(--color-primary)]" /> Berita & Update Terbaru
+        <h2 className="text-xl font-extrabold text-[var(--color-heading)] flex items-center gap-2">
+          <Newspaper className="h-5 w-5 text-[var(--color-pink)]" /> Berita & Update Terbaru
         </h2>
         <Link 
           href={ROUTES.NEWS} 
@@ -201,7 +201,7 @@ export default function HomeNewsSection({ articles = [] }) {
                 <Card 
                   hoverEffect={true} 
                   padding="none" 
-                  className="grid grid-rows-[auto_1fr] border border-[var(--border-color)] overflow-hidden h-full shadow-sm bg-white hover:shadow-md transition-all duration-300 rounded-xl"
+                  className="grid grid-rows-[auto_1fr] border border-[var(--border-color)] overflow-hidden h-full shadow-sm bg-[var(--color-surface)] hover:shadow-md transition-all duration-300 rounded-xl"
                 >
                   {/* Card Image Banner */}
                   <motion.div
@@ -269,7 +269,7 @@ export default function HomeNewsSection({ articles = [] }) {
                     <div className="space-y-1.5">
                       <motion.h3
                         layoutId={`article-title-${article.id}`}
-                        className="text-sm font-extrabold text-[#170C79] leading-tight hover:text-[var(--color-primary)] transition-colors line-clamp-2 h-9"
+                        className="text-sm font-extrabold text-[var(--color-heading)] leading-tight hover:text-[var(--color-pink)] transition-colors line-clamp-2 h-9"
                       >
                         {article.title}
                       </motion.h3>
@@ -305,7 +305,7 @@ export default function HomeNewsSection({ articles = [] }) {
               {/* Centered paper layout */}
               <motion.div
                 layoutId={`article-${selectedArticle.id}`}
-                className="fixed top-24 bottom-4 inset-x-4 z-[1000] flex flex-col overflow-hidden rounded-2xl border border-[#170C79]/15 bg-[#fffdfd] shadow-2xl md:inset-auto md:top-[53%] md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-full md:max-w-3xl md:h-[75vh]"
+                className="fixed top-24 bottom-4 inset-x-4 z-[1000] flex flex-col overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xl md:inset-auto md:top-[53%] md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-full md:max-w-3xl md:h-[75vh]"
               >
                 {/* Float close button */}
                 <motion.button
@@ -361,17 +361,17 @@ export default function HomeNewsSection({ articles = [] }) {
                   </motion.div>
 
                   {/* Body Paragraph Content */}
-                  <div className="flex-grow bg-gradient-to-b from-[#fffdfd] to-[#fff7fb] px-6 py-7 md:px-10 md:py-9">
+                  <div className="flex-grow bg-gradient-to-b from-[var(--color-surface)] to-[var(--color-pink-tint-8)] px-6 py-7 md:px-10 md:py-9">
                     <div className="mx-auto max-w-4xl space-y-6">
                       <motion.h1
                         layoutId={`article-title-${selectedArticle.id}`}
-                        className="text-xl font-black leading-tight text-[#170C79] md:text-3xl"
+                        className="text-xl font-black leading-tight text-[var(--color-heading)] md:text-3xl"
                       >
                         {selectedArticle.title}
                       </motion.h1>
 
                       <motion.div
-                        className="max-w-none space-y-4 border-t border-indigo-100 pt-5 text-sm leading-7 text-slate-700 md:text-base md:leading-8"
+                        className="max-w-none space-y-4 border-t border-[var(--color-border)] pt-5 text-sm leading-7 text-[var(--color-body)] md:text-base md:leading-8"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2, duration: 0.3 }}

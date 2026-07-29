@@ -144,7 +144,7 @@ export default function AdminHashtags() {
         </div>
         <button
           onClick={() => handleOpenModal()}
-          className="flex items-center gap-2 bg-[#170C79] text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#1a0e8a] transition-colors"
+          className="flex items-center gap-2 bg-[var(--color-pink)] text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#1a0e8a] transition-colors"
         >
           <Plus className="w-4 h-4" />
           Tambah Tagar
@@ -302,14 +302,14 @@ export default function AdminHashtags() {
                   <label className="block text-sm font-semibold text-slate-700 mb-1.5">
                     Teks Tagar
                   </label>
-                  <input autoComplete="off" /* autocomplete="off" */ type="text" name="text" value={formData.text} onChange={handleChange} placeholder="Contoh: #IRIS" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors" required />
+                  <input autoComplete="off" /* autocomplete="off" */ type="text" name="text" value={formData.text} onChange={handleChange} placeholder="Contoh: #IRIS" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors" required />
                 </div>
 
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-1.5">
                     Jumlah Tweet / Info
                   </label>
-                  <input autoComplete="off" /* autocomplete="off" */ type="text" name="count" value={formData.count} onChange={handleChange} placeholder="Contoh: 14.2K Tweets" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors" />
+                  <input autoComplete="off" /* autocomplete="off" */ type="text" name="count" value={formData.count} onChange={handleChange} placeholder="Contoh: 14.2K Tweets" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors" />
                 </div>
 
                 <div>
@@ -319,7 +319,7 @@ export default function AdminHashtags() {
                   <select name="row_number"
                     value={formData.row_number}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors"
                   >
                     <option value={1}>Baris 1 (Atas)</option>
                     <option value={2}>Baris 2 (Bawah)</option>
@@ -330,13 +330,13 @@ export default function AdminHashtags() {
                   <label className="block text-sm font-semibold text-slate-700 mb-1.5">
                     Penjelasan (Saat Modal Dibuka)
                   </label>
-                  <textarea name="explanation" value={formData.explanation} onChange={handleChange} placeholder="Tuliskan penjelasan singkat mengenai tagar ini…" rows={4} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors resize-none" ></textarea>
+                  <textarea name="explanation" value={formData.explanation} onChange={handleChange} placeholder="Tuliskan penjelasan singkat mengenai tagar ini…" rows={4} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors resize-none" ></textarea>
                 </div>
 
                 <div className="pt-2">
                   <button
                     type="submit"
-                    className="w-full py-3 bg-[#170C79] hover:bg-[#1a0e8a] text-white rounded-xl font-bold transition-colors shadow-md shadow-[#170C79]/20"
+                    className="w-full py-3 bg-[var(--color-pink)] hover:bg-[#1a0e8a] text-white rounded-xl font-bold transition-colors shadow-md shadow-[var(--color-pink)]/20"
                   >
                     {isEditMode ? 'Simpan Perubahan' : 'Tambahkan'}
                   </button>

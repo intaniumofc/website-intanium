@@ -79,7 +79,7 @@ export default function NewsDetailPage() {
         </Link>
       </div>
 
-      <Card hoverEffect={false} className="overflow-hidden border border-indigo-100 bg-[#fffdfd] shadow-lg" padding="none">
+      <Card hoverEffect={false} className="overflow-hidden border border-[var(--color-border)] bg-[var(--color-surface)] shadow-lg" padding="none">
         {/* Banner image */}
         <div className="aspect-[21/9] w-full bg-black/20 overflow-hidden border-b border-[var(--border-color)]">
           <img
@@ -90,21 +90,21 @@ export default function NewsDetailPage() {
         </div>
 
         {/* Content Details */}
-        <div className="space-y-6 bg-gradient-to-b from-[#fffdfd] to-[#fff7fb] p-6 sm:p-10">
+        <div className="space-y-6 bg-gradient-to-b from-[var(--color-surface)] to-[var(--color-pink-tint-8)] p-6 sm:p-10">
           <div className="flex items-center gap-3 text-xs">
             <span className="rounded border border-purple-300 bg-purple-100 px-2.5 py-1 font-bold uppercase tracking-wider text-purple-800">
               {news.category}
             </span>
-            <span className="font-semibold text-slate-500">
+            <span className="font-semibold text-[var(--color-text-secondary)]">
               Dipublikasi: {formatDate(news.date)}
             </span>
           </div>
 
-          <h1 className="text-2xl font-extrabold leading-tight text-[#170C79] sm:text-3xl">
+          <h1 className="text-2xl font-extrabold leading-tight text-[var(--color-heading)] sm:text-3xl">
             {news.title}
           </h1>
 
-          <div className="whitespace-pre-wrap border-t border-indigo-100 pt-5 text-sm font-medium leading-7 text-slate-700 sm:text-base sm:leading-8">
+          <div className="whitespace-pre-wrap border-t border-[var(--color-border)] pt-5 text-sm font-medium leading-7 text-[var(--color-body)] sm:text-base sm:leading-8">
             {news.content}
           </div>
         </div>

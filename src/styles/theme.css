@@ -1,53 +1,209 @@
-/* Modern, premium color system and glassmorphism variables for IRIS - Clean Light Theme */
+/* ==========================================================================
+   IRIS Design System - Color Tokens
+   ========================================================================== */
+
 :root {
-  /* Color Palette - Clean Light Theme with User Requested Primary Colors */
-  --bg-primary: #FFF6F6;
-  --bg-secondary: #ffffff;
-  --bg-card: rgba(255, 246, 246, 0.75);
-  --border-color: rgba(23, 12, 121, 0.12);
+  /* 1. NEUTRAL PALETTE (80% Usage) */
+  --color-bg: #FAFAFC;
+  --color-bg-secondary: #F6F7FB;
+  --color-surface: #FFFFFF;
+  --color-border: #E8EAF2;
+  --color-heading: #222222;
+  --color-body: #60697A;
+  --color-text-secondary: #9097A5;
+  --color-bg-footer: rgba(255, 255, 255, 0.8);
 
-  --text-primary: #121225;
-  --text-secondary: #4a4a62;
-  --text-muted: #5e5e70;
+  /* 2. ACCENT PALETTE (15% Usage) */
+  --color-pink: #FF5FB2;
+  --color-purple: #A855F7;
+  --color-blue: #72C4FF;
+  --color-peach: #FFA66E;
+  --color-yellow: #FFD66D;
+  --color-mint: #75E9C6;
 
-  /* Primary Accent - requested #170C79 Biru */
-  --color-primary: #170C79;
-  --color-primary-hover: #291da9;
-  --color-primary-light: rgba(23, 12, 121, 0.07);
+  /* 2.1 DARK ACCENT VARIANTS (15% Darken Formula for Text Contrast) */
+  --color-pink-dark: #D83584;
+  --color-purple-dark: #7C3ACD;
+  --color-blue-dark: #2E7BC4;
+  --color-peach-dark: #C97A3A;
+  --color-yellow-dark: #B8922E;
+  --color-mint-dark: #2A8F6F;
 
-  /* Secondary Accent - Cyan/Teal */
-  --color-secondary: #0891b2;
-  --color-secondary-hover: #0e7490;
+  /* 3. GRADIENT SYSTEM (5% Usage Max) */
+  --gradient-primary: linear-gradient(90deg, #FF5FB2 0%, #C96EFF 35%, #72C4FF 70%, #FFD66D 100%);
+  --gradient-cta: linear-gradient(120deg, #FF5FB2 0%, #FFA66E 100%);
+  --gradient-pink-purple: linear-gradient(90deg, #FF5FB2, #A855F7);
+  --gradient-purple-blue: linear-gradient(90deg, #A855F7, #72C4FF);
+  --gradient-blue-mint: linear-gradient(90deg, #72C4FF, #75E9C6);
+  --gradient-peach-yellow: linear-gradient(90deg, #FFA66E, #FFD66D);
 
-  /* Muted Accent - Magenta/Pink */
-  --color-accent: #ec4899;
-  --color-accent-hover: #f472b6;
+  /* 4. SEMANTIC STATUS COLORS */
+  --color-success: #75E9C6;
+  --color-warning: #FFD66D;
+  --color-error: #EF4444;
+  --color-info: #72C4FF;
 
-  /* Utility Colors */
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
-  --color-danger: #ef4444;
+  /* 5. TINT UTILITIES */
+  --color-pink-tint-8: rgba(255, 95, 178, 0.08);
+  --color-pink-tint-12: rgba(255, 95, 178, 0.12);
+  --color-pink-tint-15: rgba(255, 95, 178, 0.15);
+  --color-pink-tint-25: rgba(255, 95, 178, 0.25);
+  --color-purple-tint-12: rgba(168, 85, 247, 0.12);
+  --color-purple-tint-15: rgba(168, 85, 247, 0.15);
+  --color-purple-tint-25: rgba(168, 85, 247, 0.25);
+  --color-blue-tint-12: rgba(114, 196, 255, 0.12);
+  --color-blue-tint-15: rgba(114, 196, 255, 0.15);
+  --color-blue-tint-25: rgba(114, 196, 255, 0.25);
+  --color-peach-tint-12: rgba(255, 166, 110, 0.12);
+  --color-peach-tint-15: rgba(255, 166, 110, 0.15);
+  --color-peach-tint-25: rgba(255, 166, 110, 0.25);
+  --color-yellow-tint-12: rgba(255, 214, 109, 0.12);
+  --color-yellow-tint-15: rgba(255, 214, 109, 0.15);
+  --color-yellow-tint-25: rgba(255, 214, 109, 0.25);
+  --color-mint-tint-12: rgba(117, 233, 198, 0.12);
+  --color-mint-tint-15: rgba(117, 233, 198, 0.15);
+  --color-mint-tint-25: rgba(117, 233, 198, 0.25);
 
-  /* Effects & Glassmorphism */
-  --backdrop-blur: blur(12px);
-  --box-shadow-sm: 0 2px 8px rgba(23, 12, 121, 0.04);
-  --box-shadow-md: 0 4px 20px rgba(23, 12, 121, 0.08);
-  --box-shadow-lg: 0 10px 30px rgba(23, 12, 121, 0.12);
-  --neon-glow-primary: 0 0 15px rgba(23, 12, 121, 0.25);
-  --neon-glow-secondary: 0 0 15px rgba(8, 145, 178, 0.2);
+  /* 6. SHADOW SYSTEM */
+  --shadow-xs: 0 2px 8px rgba(34, 34, 34, 0.03);
+  --shadow-sm: 0 4px 24px rgba(34, 34, 34, 0.04);
+  --shadow-md: 0 8px 32px rgba(34, 34, 34, 0.06);
+  --shadow-lg: 0 20px 60px rgba(34, 34, 34, 0.08);
+  --shadow-card: 0 4px 24px rgba(34, 34, 34, 0.04);
+  --shadow-card-hover: 0 8px 32px rgba(34, 34, 34, 0.08);
+  --shadow-pink-glow: 0 8px 20px rgba(255, 95, 178, 0.25);
+  --shadow-pink-glow-hover: 0 12px 28px rgba(255, 95, 178, 0.35);
+  --shadow-focus-pink: 0 0 0 3px rgba(255, 95, 178, 0.15);
+  --shadow-focus-purple: 0 0 0 3px rgba(168, 85, 247, 0.15);
 
-  /* Font Family & Typography */
-  --font-sans: var(--font-plus-jakarta), 'Plus Jakarta Sans', var(--font-inter), 'Inter', system-ui, sans-serif;
-  --font-heading: var(--font-plus-jakarta), 'Plus Jakarta Sans', var(--font-inter), 'Inter', system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains), 'JetBrains Mono', 'Fira Code', monospace;
+  /* 7. BORDER RADIUS SYSTEM */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
 
-  /* Transitions */
-  --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  /* 8. TRANSITION & ANIMATION */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: all 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-normal: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
 
-  --border-radius-sm: 0.375rem;
-  --border-radius-md: 0.75rem;
-  --border-radius-lg: 1.5rem;
-  --border-radius-full: 9999px;
+  /* 9. GLASSMORPHISM */
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(232, 234, 242, 0.5);
+  --backdrop-blur: blur(16px);
+
+  /* 10. TYPOGRAPHY */
+  --font-sans: var(--font-plus-jakarta), sans-serif;
+  --font-heading: var(--font-plus-jakarta), sans-serif;
+  --font-body: var(--font-plus-jakarta), sans-serif;
+  --font-mono: var(--font-jetbrains), monospace;
+
+  /* 11. LEGACY ALIASES */
+  --bg-primary: var(--color-bg);
+  --bg-section-alt: var(--color-bg-secondary);
+  --bg-secondary: var(--color-bg-secondary);
+  --bg-surface: var(--color-surface);
+  --bg-card: var(--color-surface);
+  --bg-footer: var(--color-bg-secondary);
+  --border-color: var(--color-border);
+  --divider-color: var(--color-border);
+  --border-subtle: rgba(34, 34, 34, 0.05);
+  --text-heading: var(--color-heading);
+  --text-body: var(--color-body);
+  --text-secondary: var(--color-text-secondary);
+  --text-muted: var(--color-text-secondary);
+  --text-primary: var(--color-heading);
+  --color-primary: var(--color-pink);
+  --color-primary-hover: #e04a9e;
+  --color-primary-light: var(--color-pink-tint-8);
+  --color-secondary: var(--color-blue);
+  --color-accent: var(--color-purple);
+  --iris-pink: var(--color-pink);
+  --iris-purple: var(--color-purple);
+  --iris-blue: var(--color-blue);
+  --iris-peach: var(--color-peach);
+  --iris-yellow: var(--color-yellow);
+  --iris-mint: var(--color-mint);
+  --iris-primary-gradient: var(--gradient-primary);
+  --color-danger: var(--color-error);
+  --shadow-card-floating: var(--shadow-card);
+  --box-shadow-sm: var(--shadow-xs);
+  --box-shadow-md: var(--shadow-sm);
+  --box-shadow-lg: var(--shadow-md);
+  --glow-pink: var(--shadow-pink-glow);
+  --border-radius-sm: var(--radius-sm);
+  --border-radius-md: var(--radius-md);
+  --border-radius-lg: var(--radius-lg);
+  --border-radius-full: var(--radius-full);
+}
+
+/* UTILITY CLASSES */
+.bg-pink-tint {
+  background-color: var(--color-pink-tint-12);
+}
+
+.bg-purple-tint {
+  background-color: var(--color-purple-tint-12);
+}
+
+.bg-blue-tint {
+  background-color: var(--color-blue-tint-12);
+}
+
+.bg-peach-tint {
+  background-color: var(--color-peach-tint-12);
+}
+
+.bg-yellow-tint {
+  background-color: var(--color-yellow-tint-12);
+}
+
+.bg-mint-tint {
+  background-color: var(--color-mint-tint-12);
+}
+
+.bg-gradient-primary {
+  background: var(--gradient-primary);
+}
+
+.bg-gradient-cta {
+  background: var(--gradient-cta);
+}
+
+.bg-gradient-pink-purple {
+  background: var(--gradient-pink-purple);
+}
+
+.bg-gradient-purple-blue {
+  background: var(--gradient-purple-blue);
+}
+
+.bg-gradient-blue-mint {
+  background: var(--gradient-blue-mint);
+}
+
+.bg-gradient-peach-yellow {
+  background: var(--gradient-peach-yellow);
+}
+
+.aurora-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 20% 20%, var(--color-pink), transparent 40%),
+    radial-gradient(circle at 80% 30%, var(--color-purple), transparent 45%),
+    radial-gradient(circle at 50% 80%, var(--color-blue), transparent 45%),
+    radial-gradient(circle at 90% 90%, var(--color-yellow), transparent 40%);
+  filter: blur(100px);
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--color-pink);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
 }

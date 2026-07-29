@@ -312,7 +312,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
       {/* Left Content Section */}
-      <div className="relative hidden lg:flex flex-col justify-between bg-gradient-to-br from-[#170C79] via-[#2112a3] to-[#0e074e] p-12 text-white overflow-hidden">
+      <div className="relative hidden lg:flex flex-col justify-between bg-gradient-to-br from-[var(--color-pink)] via-[#2112a3] to-[#0e074e] p-12 text-white overflow-hidden">
         <div className="relative z-20">
           <Link href="/" className="flex items-center gap-2 text-lg font-semibold group w-fit">
             <Image width={32} height={32} alt="Logo IRIS" src={logoNobg} className="h-8 w-8 object-contain transition-transform duration-300 group-hover:scale-105" />
@@ -554,7 +554,7 @@ export default function LoginPage() {
                 onFocus={() => setIsTyping(true)}
                 onBlur={() => setIsTyping(false)}
                 required
-                className="h-12 bg-white border-slate-200 text-slate-800 focus-visible:border-[#170C79] focus-visible:ring-2 focus-visible:ring-[#170C79]/15 focus-visible:outline-none placeholder-slate-400"
+                className="h-12 bg-white border-slate-200 text-slate-800 focus-visible:border-[var(--color-pink)] focus-visible:ring-2 focus-visible:ring-[var(--color-pink)]/15 focus-visible:outline-none placeholder-slate-400"
               />
             </div>
 
@@ -570,7 +570,7 @@ export default function LoginPage() {
                   autoComplete="current-password"
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="h-12 pr-10 bg-white border-slate-200 text-slate-800 focus-visible:border-[#170C79] focus-visible:ring-2 focus-visible:ring-[#170C79]/15 focus-visible:outline-none placeholder-slate-400"
+                  className="h-12 pr-10 bg-white border-slate-200 text-slate-800 focus-visible:border-[var(--color-pink)] focus-visible:ring-2 focus-visible:ring-[var(--color-pink)]/15 focus-visible:outline-none placeholder-slate-400"
                 />
                 <button
                   type="button"
@@ -606,7 +606,7 @@ export default function LoginPage() {
 
             <Button
               type="submit"
-              className="w-full h-12 text-sm font-extrabold uppercase tracking-wider bg-[#170C79] hover:bg-[#1f129e] text-white shadow-md cursor-pointer rounded-lg transition-colors duration-200"
+              className="w-full h-12 text-sm font-extrabold uppercase tracking-wider bg-[var(--color-pink)] hover:bg-[#1f129e] text-white shadow-md cursor-pointer rounded-lg transition-colors duration-200"
               disabled={isLoading}
             >
               {isLoading ? "Signing in…" : "Login"}
@@ -615,7 +615,7 @@ export default function LoginPage() {
 
           {/* Back Link */}
           <div className="text-center pt-2">
-            <Link href="/" className="text-xs text-slate-500 hover:text-[#170C79] transition-colors font-semibold">
+            <Link href="/" className="text-xs text-slate-500 hover:text-[var(--color-pink)] transition-colors font-semibold">
               ← Kembali ke Halaman Utama
             </Link>
           </div>

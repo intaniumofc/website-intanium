@@ -282,7 +282,7 @@ export default function AdminEsportPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
-            <Trophy className="w-6 h-6 text-[#170C79]" /> Kelola IRIS Esport
+            <Trophy className="w-6 h-6 text-[var(--color-pink)]" /> Kelola IRIS Esport
           </h1>
           <p className="text-sm text-slate-500 mt-1">
             Kelola divisi, daftar roster, jadwal & hasil pertandingan, serta ruang prestasi (trophy room).
@@ -290,7 +290,7 @@ export default function AdminEsportPage() {
         </div>
         <button
           onClick={() => handleOpenModal(activeTab === 'divisions' ? 'division' : activeTab.slice(0, -1))}
-          className="flex items-center gap-2 bg-[#170C79] text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#1a0e8a] transition-colors cursor-pointer"
+          className="flex items-center gap-2 bg-[var(--color-pink)] text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#1a0e8a] transition-colors cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           Tambah {activeTab === 'divisions' ? 'Divisi Game' : activeTab === 'rosters' ? 'Roster' : activeTab === 'matches' ? 'Pertandingan' : 'Prestasi'}
@@ -303,7 +303,7 @@ export default function AdminEsportPage() {
           onClick={() => setActiveTab('divisions')}
           className={`py-3 px-6 font-semibold text-sm border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
             activeTab === 'divisions'
-              ? 'border-[#170C79] text-[#170C79]'
+              ? 'border-[var(--color-pink)] text-[var(--color-pink)]'
               : 'border-transparent text-slate-500 hover:text-slate-700'
           }`}
         >
@@ -313,7 +313,7 @@ export default function AdminEsportPage() {
           onClick={() => setActiveTab('rosters')}
           className={`py-3 px-6 font-semibold text-sm border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
             activeTab === 'rosters'
-              ? 'border-[#170C79] text-[#170C79]'
+              ? 'border-[var(--color-pink)] text-[var(--color-pink)]'
               : 'border-transparent text-slate-500 hover:text-slate-700'
           }`}
         >
@@ -323,7 +323,7 @@ export default function AdminEsportPage() {
           onClick={() => setActiveTab('matches')}
           className={`py-3 px-6 font-semibold text-sm border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
             activeTab === 'matches'
-              ? 'border-[#170C79] text-[#170C79]'
+              ? 'border-[var(--color-pink)] text-[var(--color-pink)]'
               : 'border-transparent text-slate-500 hover:text-slate-700'
           }`}
         >
@@ -333,7 +333,7 @@ export default function AdminEsportPage() {
           onClick={() => setActiveTab('achievements')}
           className={`py-3 px-6 font-semibold text-sm border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
             activeTab === 'achievements'
-              ? 'border-[#170C79] text-[#170C79]'
+              ? 'border-[var(--color-pink)] text-[var(--color-pink)]'
               : 'border-transparent text-slate-500 hover:text-slate-700'
           }`}
         >
@@ -367,7 +367,7 @@ export default function AdminEsportPage() {
                         {div.wallpaper ? (
                           <img src={(div.wallpaper)?.src || (div.wallpaper)} alt={div.name} className="w-full h-full object-cover" />
                         ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-[#170C79]/40 to-[#1a0e8a]/20 flex items-center justify-center">
+                          <div className="w-full h-full bg-gradient-to-br from-[var(--color-pink)]/40 to-[#1a0e8a]/20 flex items-center justify-center">
                             <span className="text-white/40 text-xs font-semibold">Belum Ada Wallpaper</span>
                           </div>
                         )}
@@ -866,14 +866,14 @@ export default function AdminEsportPage() {
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-semibold text-slate-700 mb-1.5">Nama Divisi Game</label>
-                      <input autoComplete="off" type="text" name="name" value={divisionForm.name} onChange={(e) => handleInputChange(e, 'division')} placeholder="Contoh: Mobile Legends" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors font-semibold" required />
+                      <input autoComplete="off" type="text" name="name" value={divisionForm.name} onChange={(e) => handleInputChange(e, 'division')} placeholder="Contoh: Mobile Legends" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors font-semibold" required />
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-slate-700 mb-1.5">Unggah Wallpaper Card</label>
                       <div className="flex items-center gap-4">
                         <div
                           onClick={wallpaperUpload.handleThumbnailClick}
-                          className="w-20 h-20 rounded-xl border-2 border-dashed border-slate-300 hover:border-[#170C79] bg-slate-50 hover:bg-slate-100/50 flex flex-col items-center justify-center overflow-hidden shrink-0 cursor-pointer transition-all"
+                          className="w-20 h-20 rounded-xl border-2 border-dashed border-slate-300 hover:border-[var(--color-pink)] bg-slate-50 hover:bg-slate-100/50 flex flex-col items-center justify-center overflow-hidden shrink-0 cursor-pointer transition-all"
                           title="Klik untuk memilih gambar"
                         >
                           {wallpaperUpload.previewUrl ? (
@@ -892,7 +892,7 @@ export default function AdminEsportPage() {
                           />
                           <div className="text-xs text-slate-600 font-medium">
                             {wallpaperUpload.fileName ? (
-                              <span className="font-semibold text-[#170C79]">{wallpaperUpload.fileName}</span>
+                              <span className="font-semibold text-[var(--color-pink)]">{wallpaperUpload.fileName}</span>
                             ) : (
                               <span className="text-slate-400">Belum ada file terpilih</span>
                             )}
@@ -917,7 +917,7 @@ export default function AdminEsportPage() {
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-semibold text-slate-700 mb-1.5">Divisi Game</label>
-                      <select name="division_id" value={rosterForm.division_id} onChange={(e) => handleInputChange(e, 'roster')} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors">
+                      <select name="division_id" value={rosterForm.division_id} onChange={(e) => handleInputChange(e, 'roster')} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors">
                         {divisions.map(d => (
                           <option key={d.id} value={d.id}>{d.name}</option>
                         ))}
@@ -926,23 +926,23 @@ export default function AdminEsportPage() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1.5">Nama Lengkap</label>
-                        <input autoComplete="off" type="text" name="name" value={rosterForm.name} onChange={(e) => handleInputChange(e, 'roster')} placeholder="Budi Santoso" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors" required />
+                        <input autoComplete="off" type="text" name="name" value={rosterForm.name} onChange={(e) => handleInputChange(e, 'roster')} placeholder="Budi Santoso" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors" required />
                       </div>
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1.5">In-Game Name (IGN)</label>
-                        <input autoComplete="off" type="text" name="ign" value={rosterForm.ign} onChange={(e) => handleInputChange(e, 'roster')} placeholder="Zenith" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors font-bold" required />
+                        <input autoComplete="off" type="text" name="ign" value={rosterForm.ign} onChange={(e) => handleInputChange(e, 'roster')} placeholder="Zenith" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors font-bold" required />
                       </div>
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-slate-700 mb-1.5">Role / Jabatan</label>
-                      <input autoComplete="off" type="text" name="role" value={rosterForm.role} onChange={(e) => handleInputChange(e, 'roster')} placeholder="Contoh: Team Manager, Captain / Mid Laner" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors" required />
+                      <input autoComplete="off" type="text" name="role" value={rosterForm.role} onChange={(e) => handleInputChange(e, 'roster')} placeholder="Contoh: Team Manager, Captain / Mid Laner" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors" required />
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-slate-700 mb-1.5">Unggah Foto Roster</label>
                       <div className="flex items-center gap-4">
                         <div
                           onClick={avatarUpload.handleThumbnailClick}
-                          className="w-16 h-16 rounded-full border-2 border-dashed border-slate-300 hover:border-[#170C79] bg-slate-50 hover:bg-slate-100/50 flex flex-col items-center justify-center overflow-hidden shrink-0 cursor-pointer transition-all animate-fade-in"
+                          className="w-16 h-16 rounded-full border-2 border-dashed border-slate-300 hover:border-[var(--color-pink)] bg-slate-50 hover:bg-slate-100/50 flex flex-col items-center justify-center overflow-hidden shrink-0 cursor-pointer transition-all animate-fade-in"
                           title="Klik untuk memilih gambar"
                         >
                           {avatarUpload.previewUrl ? (
@@ -961,7 +961,7 @@ export default function AdminEsportPage() {
                           />
                           <div className="text-xs text-slate-600 font-medium">
                             {avatarUpload.fileName ? (
-                              <span className="font-semibold text-[#170C79]">{avatarUpload.fileName}</span>
+                              <span className="font-semibold text-[var(--color-pink)]">{avatarUpload.fileName}</span>
                             ) : (
                               <span className="text-slate-400">Belum ada file terpilih</span>
                             )}
@@ -981,16 +981,16 @@ export default function AdminEsportPage() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1.5">Instagram URL</label>
-                        <input autoComplete="off" type="url" name="social_instagram" value={rosterForm.social_instagram} onChange={(e) => handleInputChange(e, 'roster')} placeholder="https://instagram.com/..." className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors text-xs" />
+                        <input autoComplete="off" type="url" name="social_instagram" value={rosterForm.social_instagram} onChange={(e) => handleInputChange(e, 'roster')} placeholder="https://instagram.com/..." className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors text-xs" />
                       </div>
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1.5">Twitter URL</label>
-                        <input autoComplete="off" type="url" name="social_twitter" value={rosterForm.social_twitter} onChange={(e) => handleInputChange(e, 'roster')} placeholder="https://x.com/..." className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors text-xs" />
+                        <input autoComplete="off" type="url" name="social_twitter" value={rosterForm.social_twitter} onChange={(e) => handleInputChange(e, 'roster')} placeholder="https://x.com/..." className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors text-xs" />
                       </div>
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-slate-700 mb-1.5">Urutan Tampil (Sort Order)</label>
-                      <input type="number" name="sort_order" value={rosterForm.sort_order} onChange={(e) => handleInputChange(e, 'roster')} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors" required />
+                      <input type="number" name="sort_order" value={rosterForm.sort_order} onChange={(e) => handleInputChange(e, 'roster')} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors" required />
                     </div>
                   </div>
                 )}
@@ -1000,7 +1000,7 @@ export default function AdminEsportPage() {
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-semibold text-slate-700 mb-1.5">Divisi Game</label>
-                      <select name="division_id" value={matchForm.division_id} onChange={(e) => handleInputChange(e, 'match')} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors">
+                      <select name="division_id" value={matchForm.division_id} onChange={(e) => handleInputChange(e, 'match')} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors">
                         {divisions.map(d => (
                           <option key={d.id} value={d.id}>{d.name}</option>
                         ))}
@@ -1009,14 +1009,14 @@ export default function AdminEsportPage() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1.5">Nama Lawan</label>
-                        <input autoComplete="off" type="text" name="opponent" value={matchForm.opponent} onChange={(e) => handleInputChange(e, 'match')} placeholder="EVOS Hope" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors" required />
+                        <input autoComplete="off" type="text" name="opponent" value={matchForm.opponent} onChange={(e) => handleInputChange(e, 'match')} placeholder="EVOS Hope" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors" required />
                       </div>
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1.5">Unggah Logo Lawan</label>
                         <div className="flex items-center gap-4">
                           <div
                             onClick={opponentLogoUpload.handleThumbnailClick}
-                            className="w-16 h-16 rounded-xl border-2 border-dashed border-slate-300 hover:border-[#170C79] bg-slate-50 hover:bg-slate-100/50 flex flex-col items-center justify-center overflow-hidden shrink-0 cursor-pointer transition-all"
+                            className="w-16 h-16 rounded-xl border-2 border-dashed border-slate-300 hover:border-[var(--color-pink)] bg-slate-50 hover:bg-slate-100/50 flex flex-col items-center justify-center overflow-hidden shrink-0 cursor-pointer transition-all"
                             title="Klik untuk memilih gambar"
                           >
                             {opponentLogoUpload.previewUrl ? (
@@ -1039,7 +1039,7 @@ export default function AdminEsportPage() {
                             />
                             <div className="text-xs text-slate-600 font-medium">
                               {opponentLogoUpload.fileName ? (
-                                <span className="font-semibold text-[#170C79]">{opponentLogoUpload.fileName}</span>
+                                <span className="font-semibold text-[var(--color-pink)]">{opponentLogoUpload.fileName}</span>
                               ) : (
                                 <span className="text-slate-400">Belum ada file terpilih</span>
                               )}
@@ -1060,21 +1060,21 @@ export default function AdminEsportPage() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1.5">Tanggal Main (Bahasa Indonesia)</label>
-                        <input autoComplete="off" type="text" name="date" value={matchForm.date} onChange={(e) => handleInputChange(e, 'match')} placeholder="Contoh: 20 Juni 2026" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors" required />
+                        <input autoComplete="off" type="text" name="date" value={matchForm.date} onChange={(e) => handleInputChange(e, 'match')} placeholder="Contoh: 20 Juni 2026" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors" required />
                       </div>
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1.5">Waktu Main</label>
-                        <input autoComplete="off" type="text" name="time" value={matchForm.time} onChange={(e) => handleInputChange(e, 'match')} placeholder="Contoh: 15:30 WIB" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors" required />
+                        <input autoComplete="off" type="text" name="time" value={matchForm.time} onChange={(e) => handleInputChange(e, 'match')} placeholder="Contoh: 15:30 WIB" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors" required />
                       </div>
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-slate-700 mb-1.5">Stage / Tahap Kompetisi</label>
-                      <input autoComplete="off" type="text" name="stage" value={matchForm.stage} onChange={(e) => handleInputChange(e, 'match')} placeholder="Contoh: Grand Finals - IRIS Cup" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors" required />
+                      <input autoComplete="off" type="text" name="stage" value={matchForm.stage} onChange={(e) => handleInputChange(e, 'match')} placeholder="Contoh: Grand Finals - IRIS Cup" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors" required />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1.5">Status Tanding</label>
-                        <select name="status" value={matchForm.status} onChange={(e) => handleInputChange(e, 'match')} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors">
+                        <select name="status" value={matchForm.status} onChange={(e) => handleInputChange(e, 'match')} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors">
                           <option value="Upcoming">Upcoming (Mendatang)</option>
                           <option value="Past">Past (Selesai)</option>
                         </select>
@@ -1082,7 +1082,7 @@ export default function AdminEsportPage() {
                       {matchForm.status === 'Past' && (
                         <div>
                           <label className="block text-sm font-semibold text-slate-700 mb-1.5">Hasil Akhir (Result)</label>
-                          <select name="result" value={matchForm.result} onChange={(e) => handleInputChange(e, 'match')} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors">
+                          <select name="result" value={matchForm.result} onChange={(e) => handleInputChange(e, 'match')} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors">
                             <option value="">Pilih Hasil...</option>
                             <option value="win">Win (Menang)</option>
                             <option value="lose">Lose (Kalah)</option>
@@ -1094,12 +1094,12 @@ export default function AdminEsportPage() {
                     {matchForm.status === 'Past' && (
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1.5">Skor / Peringkat Akhir</label>
-                        <input autoComplete="off" type="text" name="score" value={matchForm.score} onChange={(e) => handleInputChange(e, 'match')} placeholder="Contoh: 2 - 1 ATAU Rank 5 ATAU Booyah!" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors" />
+                        <input autoComplete="off" type="text" name="score" value={matchForm.score} onChange={(e) => handleInputChange(e, 'match')} placeholder="Contoh: 2 - 1 ATAU Rank 5 ATAU Booyah!" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors" />
                       </div>
                     )}
                     <div>
                       <label className="block text-sm font-semibold text-slate-700 mb-1.5">Link Live Stream</label>
-                      <input autoComplete="off" type="url" name="stream_url" value={matchForm.stream_url} onChange={(e) => handleInputChange(e, 'match')} placeholder="https://youtube.com/..." className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors text-xs font-mono" />
+                      <input autoComplete="off" type="url" name="stream_url" value={matchForm.stream_url} onChange={(e) => handleInputChange(e, 'match')} placeholder="https://youtube.com/..." className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors text-xs font-mono" />
                     </div>
                   </div>
                 )}
@@ -1109,7 +1109,7 @@ export default function AdminEsportPage() {
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-semibold text-slate-700 mb-1.5">Divisi Game</label>
-                      <select name="division_id" value={achievementForm.division_id} onChange={(e) => handleInputChange(e, 'achievement')} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors">
+                      <select name="division_id" value={achievementForm.division_id} onChange={(e) => handleInputChange(e, 'achievement')} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors">
                         {divisions.map(d => (
                           <option key={d.id} value={d.id}>{d.name}</option>
                         ))}
@@ -1117,19 +1117,19 @@ export default function AdminEsportPage() {
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-slate-700 mb-1.5">Judul Prestasi</label>
-                      <input autoComplete="off" type="text" name="title" value={achievementForm.title} onChange={(e) => handleInputChange(e, 'achievement')} placeholder="Contoh: Champion - IRIS Cup 2026" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors font-bold" required />
+                      <input autoComplete="off" type="text" name="title" value={achievementForm.title} onChange={(e) => handleInputChange(e, 'achievement')} placeholder="Contoh: Champion - IRIS Cup 2026" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors font-bold" required />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1.5">Peringkat / Medali</label>
-                        <input autoComplete="off" type="text" name="rank" value={achievementForm.rank} onChange={(e) => handleInputChange(e, 'achievement')} placeholder="Contoh: 1st Place" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors" required />
+                        <input autoComplete="off" type="text" name="rank" value={achievementForm.rank} onChange={(e) => handleInputChange(e, 'achievement')} placeholder="Contoh: 1st Place" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors" required />
                       </div>
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1.5">Unggah Badge/Emoji Peringkat</label>
                         <div className="flex items-center gap-4">
                           <div
                             onClick={badgeUpload.handleThumbnailClick}
-                            className="w-16 h-16 rounded-xl border-2 border-dashed border-slate-300 hover:border-[#170C79] bg-slate-50 hover:bg-slate-100/50 flex flex-col items-center justify-center overflow-hidden shrink-0 cursor-pointer transition-all"
+                            className="w-16 h-16 rounded-xl border-2 border-dashed border-slate-300 hover:border-[var(--color-pink)] bg-slate-50 hover:bg-slate-100/50 flex flex-col items-center justify-center overflow-hidden shrink-0 cursor-pointer transition-all"
                             title="Klik untuk memilih gambar"
                           >
                             {badgeUpload.previewUrl ? (
@@ -1152,7 +1152,7 @@ export default function AdminEsportPage() {
                             />
                             <div className="text-xs text-slate-600 font-medium">
                               {badgeUpload.fileName ? (
-                                <span className="font-semibold text-[#170C79]">{badgeUpload.fileName}</span>
+                                <span className="font-semibold text-[var(--color-pink)]">{badgeUpload.fileName}</span>
                               ) : (
                                 <span className="text-slate-400">Belum ada file terpilih</span>
                               )}
@@ -1172,14 +1172,14 @@ export default function AdminEsportPage() {
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-slate-700 mb-1.5">Waktu Perolehan (Bulan Tahun)</label>
-                      <input autoComplete="off" type="text" name="date" value={achievementForm.date} onChange={(e) => handleInputChange(e, 'achievement')} placeholder="Contoh: Juni 2026" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors" required />
+                      <input autoComplete="off" type="text" name="date" value={achievementForm.date} onChange={(e) => handleInputChange(e, 'achievement')} placeholder="Contoh: Juni 2026" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors" required />
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-slate-700 mb-1.5">Unggah Foto Prestasi</label>
                       <div className="flex items-center gap-4">
                         <div
                           onClick={photoUpload.handleThumbnailClick}
-                          className="w-16 h-16 rounded-xl border-2 border-dashed border-slate-300 hover:border-[#170C79] bg-slate-50 hover:bg-slate-100/50 flex flex-col items-center justify-center overflow-hidden shrink-0 cursor-pointer transition-all"
+                          className="w-16 h-16 rounded-xl border-2 border-dashed border-slate-300 hover:border-[var(--color-pink)] bg-slate-50 hover:bg-slate-100/50 flex flex-col items-center justify-center overflow-hidden shrink-0 cursor-pointer transition-all"
                           title="Klik untuk memilih gambar"
                         >
                           {photoUpload.previewUrl ? (
@@ -1198,7 +1198,7 @@ export default function AdminEsportPage() {
                           />
                           <div className="text-xs text-slate-600 font-medium">
                             {photoUpload.fileName ? (
-                              <span className="font-semibold text-[#170C79]">{photoUpload.fileName}</span>
+                              <span className="font-semibold text-[var(--color-pink)]">{photoUpload.fileName}</span>
                             ) : (
                               <span className="text-slate-400">Belum ada file terpilih</span>
                             )}
@@ -1222,14 +1222,14 @@ export default function AdminEsportPage() {
                 <div className="pt-4 shrink-0 space-y-4">
                   {isUploading && (
                     <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-                      <div className="bg-[#170C79] h-2.5 rounded-full transition-all duration-300 animate-pulse" style={{ width: `${progress}%` }}></div>
+                      <div className="bg-[var(--color-pink)] h-2.5 rounded-full transition-all duration-300 animate-pulse" style={{ width: `${progress}%` }}></div>
                       <p className="text-[10px] text-slate-500 mt-1 text-center font-bold">Mengunggah & mengoptimalkan gambar ({progress}%)...</p>
                     </div>
                   )}
                   <button
                     type="submit"
                     disabled={isUploading}
-                    className="w-full py-3.5 bg-[#170C79] hover:bg-[#1a0e8a] disabled:bg-slate-300 disabled:cursor-not-allowed text-white rounded-xl font-bold transition-colors shadow-md shadow-[#170C79]/20 cursor-pointer flex items-center justify-center gap-2"
+                    className="w-full py-3.5 bg-[var(--color-pink)] hover:bg-[#1a0e8a] disabled:bg-slate-300 disabled:cursor-not-allowed text-white rounded-xl font-bold transition-colors shadow-md shadow-[var(--color-pink)]/20 cursor-pointer flex items-center justify-center gap-2"
                   >
                     {isUploading ? 'Sedang Mengunggah...' : (isEditMode ? 'Simpan Perubahan' : 'Tambahkan Data')}
                   </button>

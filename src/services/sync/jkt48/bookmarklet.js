@@ -19,7 +19,7 @@ async function importRoutine(CFG) {
       if (!el) {
         el = document.createElement('div');
         el.id = 'intan-import-hud';
-        el.style.cssText = 'position:fixed;z-index:2147483647;right:16px;bottom:16px;max-width:340px;padding:12px 16px;background:#170C79;color:#fff;font:13px/1.4 -apple-system,Segoe UI,sans-serif;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.35)';
+        el.style.cssText = 'position:fixed;z-index:2147483647;right:16px;bottom:16px;max-width:340px;padding:12px 16px;background:#FF5FB2;color:#fff;font:13px/1.4 -apple-system,Segoe UI,sans-serif;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.35)';
         document.body.appendChild(el);
       }
       el.textContent = m;

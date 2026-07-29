@@ -706,13 +706,13 @@ function ProductCard({ product }) {
         ) : (
           /* Green NEW badge like the screenshot */
           product.id === 'merch-1' && (
-            <span className="absolute top-2.5 left-2.5 z-30 px-2 py-0.5 rounded bg-[#00B050] text-[9px] uppercase tracking-wide font-black text-white select-none pointer-events-none">
+            <span className="absolute top-2.5 left-2.5 z-30 px-2 py-0.5 rounded bg-[var(--color-mint)]/15 text-[9px] uppercase tracking-wide font-black text-[var(--color-mint-dark)] border border-[var(--color-mint)]/25 select-none pointer-events-none">
               NEW
             </span>
           )
         )}
 
-        <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-[#f4f4f5] transition duration-300 w-full">
+        <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-[var(--color-bg-secondary)] transition duration-300 w-full">
           {images.length > 0 ? (
             images.map((src, index) => (
               <img

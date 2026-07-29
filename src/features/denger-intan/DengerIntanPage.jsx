@@ -1453,12 +1453,9 @@ export default function DengerIntanPage() {
             ref={playerCardRef}
             className="w-full rounded-[32px] overflow-hidden relative cursor-default group z-10"
             style={{
-              background: 'radial-gradient(25% 40% at 50% 30%, rgba(23, 12, 121, 0.22), rgba(7, 10, 36, 0.98))',
-              boxShadow: `0px 1px 0px 0px rgba(255, 255, 255, 0.08) inset, 
-                          0px 0px 25px 5px rgba(23, 12, 121, 0.06), 
-                          0px 0px 40px 20px rgba(23, 12, 121, 0.03), 
-                          0 0 0 1px rgba(255, 255, 255, 0.05) inset,
-                          0 10px 30px -5px rgba(0, 0, 0, 0.3)`
+              background: 'linear-gradient(135deg, #FFFFFF 0%, #F5F6FA 100%)',
+              border: '1px solid var(--color-border)',
+              boxShadow: 'var(--shadow-card)'
             }}
             onMouseEnter={() => setIsPlayerHovered(true)}
             onMouseLeave={() => setIsPlayerHovered(false)}

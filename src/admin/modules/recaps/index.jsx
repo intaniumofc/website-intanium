@@ -730,13 +730,13 @@ export default function AdminRecaps() {
             {/* Title */}
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Judul Edisi</label>
-              <input type="text" name="title" autoComplete="off" /* autocomplete="off" */ placeholder="Misal: Recap Commish Volume 5" value={formData.title} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors" required />
+              <input type="text" name="title" autoComplete="off" /* autocomplete="off" */ placeholder="Misal: Recap Commish Volume 5" value={formData.title} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors" required />
             </div>
 
             {/* Publish Date */}
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Tanggal Terbit</label>
-              <input type="date" name="publish_date" autoComplete="off" /* autocomplete="off" */ value={formData.publish_date} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors" required />
+              <input type="date" name="publish_date" autoComplete="off" /* autocomplete="off" */ value={formData.publish_date} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors" required />
             </div>
           </div>
 
@@ -745,7 +745,7 @@ export default function AdminRecaps() {
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">URL Gambar Sampul (Thumbnail)</label>
               <div className="flex gap-2">
-                <input type="text" name="thumbnail_url" autoComplete="off" /* autocomplete="off" */ placeholder="URL foto sampul zine…" value={formData.thumbnail_url} onChange={handleInputChange} className="flex-1 px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors text-xs" />
+                <input type="text" name="thumbnail_url" autoComplete="off" /* autocomplete="off" */ placeholder="URL foto sampul zine…" value={formData.thumbnail_url} onChange={handleInputChange} className="flex-1 px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors text-xs" />
                 <label className="px-3 py-2 bg-[var(--color-primary-light)] text-[var(--color-primary)] border border-[var(--color-primary)]/10 hover:bg-[var(--color-primary)]/10 rounded-xl cursor-pointer text-xs font-semibold flex items-center gap-1.5 transition-colors">
                   <Upload className="h-3.5 w-3.5" />
                   <span>Unggah</span>
@@ -758,7 +758,7 @@ export default function AdminRecaps() {
             {/* Summary */}
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Deskripsi / Ringkasan</label>
-              <textarea name="summary" placeholder="Tulis ringkasan konten Zine edisi ini…" value={formData.summary} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors resize-none text-xs" />
+              <textarea name="summary" placeholder="Tulis ringkasan konten Zine edisi ini…" value={formData.summary} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors resize-none text-xs" />
             </div>
           </div>
 
@@ -799,14 +799,14 @@ export default function AdminRecaps() {
 
                   <div className="flex-1 flex flex-col gap-2">
                     <div className="flex gap-2">
-                      <input type="text" name={`pageUrl_${index}`} autoComplete="off" /* autocomplete="off" */ placeholder="URL Gambar Halaman…" value={page.image_url} onChange={(e) => handlePageRowChange(index, "image_url", e.target.value)} className="flex-1 px-3 py-1.5 bg-white border border-[var(--border-color)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs transition-colors" required={index === 0} /* Page 1 is mandatory */ />
+                      <input type="text" name={`pageUrl_${index}`} autoComplete="off" /* autocomplete="off" */ placeholder="URL Gambar Halaman…" value={page.image_url} onChange={(e) => handlePageRowChange(index, "image_url", e.target.value)} className="flex-1 px-3 py-1.5 bg-white border border-[var(--border-color)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] text-xs transition-colors" required={index === 0} /* Page 1 is mandatory */ />
                       <label className="px-2.5 py-1.5 bg-[var(--color-primary-light)] text-[var(--color-primary)] border border-[var(--color-primary)]/10 hover:bg-[var(--color-primary)]/10 rounded-lg cursor-pointer text-xs font-semibold flex items-center gap-1 transition-colors">
                         <Upload className="h-3.5 w-3.5" />
                         <span>Unggah</span>
                         <input name="file_input" type="file" accept="image/*" onChange={(e) => handleUploadPageImage(index, e)} className="hidden" disabled={isUploading} />
                       </label>
                     </div>
-                    <input type="text" name={`pageCaption_${index}`} autoComplete="off" /* autocomplete="off" */ placeholder="Keterangan Halaman (opsional)…" value={page.caption} onChange={(e) => handlePageRowChange(index, "caption", e.target.value)} className="w-full px-3 py-1.5 bg-white border border-[var(--border-color)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs transition-colors" />
+                    <input type="text" name={`pageCaption_${index}`} autoComplete="off" /* autocomplete="off" */ placeholder="Keterangan Halaman (opsional)…" value={page.caption} onChange={(e) => handlePageRowChange(index, "caption", e.target.value)} className="w-full px-3 py-1.5 bg-white border border-[var(--border-color)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] text-xs transition-colors" />
                   </div>
 
                   {/* Remove row */}
@@ -895,7 +895,7 @@ export default function AdminRecaps() {
                     name="month"
                     value={monthlyFormData.month}
                     onChange={handleMonthlyInputChange}
-                    className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] font-semibold text-xs text-[var(--text-primary)] transition-colors"
+                    className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] font-semibold text-xs text-[var(--text-primary)] transition-colors"
                     disabled={modalMode === 'edit'}
                   >
                     {['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'].map(m => (
@@ -905,16 +905,16 @@ export default function AdminRecaps() {
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label className="font-bold text-xs uppercase text-[var(--text-secondary)]">Tahun</label>
-                  <input type="number" name="year" autoComplete="off" /* autocomplete="off" */ value={monthlyFormData.year} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors text-xs" required disabled={modalMode === 'edit'} />
+                  <input type="number" name="year" autoComplete="off" /* autocomplete="off" */ value={monthlyFormData.year} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors text-xs" required disabled={modalMode === 'edit'} />
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label className="font-bold text-xs uppercase text-[var(--text-secondary)]">Tema / Slogan</label>
-                  <input type="text" name="theme" autoComplete="off" /* autocomplete="off" */ placeholder="Misal: A Bright New Chapter" value={monthlyFormData.theme} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors text-xs" required />
+                  <input type="text" name="theme" autoComplete="off" /* autocomplete="off" */ placeholder="Misal: A Bright New Chapter" value={monthlyFormData.theme} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors text-xs" required />
                 </div>
               </div>
               <div className="flex flex-col gap-1.5">
                 <label className="font-bold text-xs uppercase text-[var(--text-secondary)]">Catatan Bulanan (Journal/Note)</label>
-                <textarea name="monthlyNote" placeholder="Tulis jurnal ringkasan catatan bulanan untuk Intan…" value={monthlyFormData.monthlyNote} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors resize-none text-xs" />
+                <textarea name="monthlyNote" placeholder="Tulis jurnal ringkasan catatan bulanan untuk Intan…" value={monthlyFormData.monthlyNote} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors resize-none text-xs" />
               </div>
             </div>
           )}
@@ -928,11 +928,11 @@ export default function AdminRecaps() {
                   <h4 className="font-bold text-xs uppercase text-[var(--color-primary)]">YouTube Highlight</h4>
                   <div className="flex flex-col gap-1.5">
                     <label className="text-xs text-[var(--text-secondary)]">Judul Video</label>
-                    <input type="text" name="youtubeTitle" autoComplete="off" /* autocomplete="off" */ placeholder="Judul video YouTube…" value={monthlyFormData.youtubeTitle} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
+                    <input type="text" name="youtubeTitle" autoComplete="off" /* autocomplete="off" */ placeholder="Judul video YouTube…" value={monthlyFormData.youtubeTitle} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] text-xs" />
                   </div>
                   <div className="flex flex-col gap-1.5">
                     <label className="text-xs text-[var(--text-secondary)]">Tanggal Upload Video</label>
-                    <input type="text" name="youtubeDate" autoComplete="off" /* autocomplete="off" */ placeholder="Misal: 17 Jan 2026" value={monthlyFormData.youtubeDate} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
+                    <input type="text" name="youtubeDate" autoComplete="off" /* autocomplete="off" */ placeholder="Misal: 17 Jan 2026" value={monthlyFormData.youtubeDate} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] text-xs" />
                   </div>
                 </div>
 
@@ -941,16 +941,16 @@ export default function AdminRecaps() {
                   <h4 className="font-bold text-xs uppercase text-[var(--color-primary)]">Live Activity</h4>
                   <div className="flex flex-col gap-1.5">
                     <label className="text-xs text-[var(--text-secondary)]">Platform</label>
-                    <input type="text" name="livePlatform" autoComplete="off" /* autocomplete="off" */ placeholder="Misal: IDN Live" value={monthlyFormData.livePlatform} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
+                    <input type="text" name="livePlatform" autoComplete="off" /* autocomplete="off" */ placeholder="Misal: IDN Live" value={monthlyFormData.livePlatform} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] text-xs" />
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <div className="flex flex-col gap-1.5">
                       <label className="text-xs text-[var(--text-secondary)]">Total Live (x)</label>
-                      <input type="number" name="liveTotal" autoComplete="off" /* autocomplete="off" */ value={monthlyFormData.liveTotal} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
+                      <input type="number" name="liveTotal" autoComplete="off" /* autocomplete="off" */ value={monthlyFormData.liveTotal} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] text-xs" />
                     </div>
                     <div className="flex flex-col gap-1.5">
                       <label className="text-xs text-[var(--text-secondary)]">Tanggal (Koma)</label>
-                      <input type="text" name="liveDates" autoComplete="off" /* autocomplete="off" */ placeholder="Misal: 2, 4, 7, 9" value={monthlyFormData.liveDates} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
+                      <input type="text" name="liveDates" autoComplete="off" /* autocomplete="off" */ placeholder="Misal: 2, 4, 7, 9" value={monthlyFormData.liveDates} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] text-xs" />
                     </div>
                   </div>
                 </div>
@@ -962,7 +962,7 @@ export default function AdminRecaps() {
                   <h4 className="font-bold text-xs uppercase text-[var(--color-primary)]">Theater Activity</h4>
                   <div className="flex items-center gap-2">
                     <label className="text-xs text-[var(--text-secondary)]">Total Shows:</label>
-                    <input type="number" name="theaterTotal" autoComplete="off" /* autocomplete="off" */ value={monthlyFormData.theaterTotal} onChange={handleMonthlyInputChange} className="w-16 px-2 py-1 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
+                    <input type="number" name="theaterTotal" autoComplete="off" /* autocomplete="off" */ value={monthlyFormData.theaterTotal} onChange={handleMonthlyInputChange} className="w-16 px-2 py-1 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] text-xs" />
                     <button
                       type="button"
                       onClick={handleAddTheaterItem}
@@ -976,8 +976,8 @@ export default function AdminRecaps() {
                 <div className="space-y-2 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
                   {monthlyFormData.theaterItems.map((show, index) => (
                     <div key={index} className="flex gap-2 items-center bg-gray-50/50 p-2 border border-[var(--border-color)] rounded-lg">
-                      <input type="text" placeholder="Tanggal (misal: 4 Jan)…" name={`theaterShowDate_${index}`} autoComplete="off" /* autocomplete="off" */ value={show.date} onChange={(e) => handleTheaterItemChange(index, "date", e.target.value)} className="w-1/3 px-2 py-1 bg-white border border-[var(--border-color)] rounded focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
-                      <input type="text" placeholder="Setlist (misal: Aturan Anti Cinta)…" name={`theaterShowTitle_${index}`} autoComplete="off" /* autocomplete="off" */ value={show.title} onChange={(e) => handleTheaterItemChange(index, "title", e.target.value)} className="flex-1 px-2 py-1 bg-white border border-[var(--border-color)] rounded focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
+                      <input type="text" placeholder="Tanggal (misal: 4 Jan)…" name={`theaterShowDate_${index}`} autoComplete="off" /* autocomplete="off" */ value={show.date} onChange={(e) => handleTheaterItemChange(index, "date", e.target.value)} className="w-1/3 px-2 py-1 bg-white border border-[var(--border-color)] rounded focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] text-xs" />
+                      <input type="text" placeholder="Setlist (misal: Aturan Anti Cinta)…" name={`theaterShowTitle_${index}`} autoComplete="off" /* autocomplete="off" */ value={show.title} onChange={(e) => handleTheaterItemChange(index, "title", e.target.value)} className="flex-1 px-2 py-1 bg-white border border-[var(--border-color)] rounded focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] text-xs" />
                       <button
                         type="button"
                         onClick={() => handleRemoveTheaterItem(index)}
@@ -1004,15 +1004,15 @@ export default function AdminRecaps() {
                 <div className="grid grid-cols-3 gap-3">
                   <div className="flex flex-col gap-1.5">
                     <label className="text-xs text-[var(--text-secondary)]">Bubble Chats</label>
-                    <input type="number" name="bubbleChat" autoComplete="off" /* autocomplete="off" */ value={monthlyFormData.bubbleChat} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
+                    <input type="number" name="bubbleChat" autoComplete="off" /* autocomplete="off" */ value={monthlyFormData.bubbleChat} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] text-xs" />
                   </div>
                   <div className="flex flex-col gap-1.5">
                     <label className="text-xs text-[var(--text-secondary)]">Voice Notes</label>
-                    <input type="number" name="voiceNote" autoComplete="off" /* autocomplete="off" */ value={monthlyFormData.voiceNote} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
+                    <input type="number" name="voiceNote" autoComplete="off" /* autocomplete="off" */ value={monthlyFormData.voiceNote} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] text-xs" />
                   </div>
                   <div className="flex flex-col gap-1.5">
                     <label className="text-xs text-[var(--text-secondary)]">Foto Dibagikan</label>
-                    <input type="number" name="photo" autoComplete="off" /* autocomplete="off" */ value={monthlyFormData.photo} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
+                    <input type="number" name="photo" autoComplete="off" /* autocomplete="off" */ value={monthlyFormData.photo} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] text-xs" />
                   </div>
                 </div>
               </div>
@@ -1023,11 +1023,11 @@ export default function AdminRecaps() {
                   <h4 className="font-bold text-xs uppercase text-[var(--color-primary)]">Video Call</h4>
                   <div className="flex flex-col gap-1.5">
                     <label className="text-xs text-[var(--text-secondary)]">Nama Event Video Call</label>
-                    <input type="text" name="videoCallTitle" autoComplete="off" /* autocomplete="off" */ placeholder="Misal: Valentine Special Video Call" value={monthlyFormData.videoCallTitle} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
+                    <input type="text" name="videoCallTitle" autoComplete="off" /* autocomplete="off" */ placeholder="Misal: Valentine Special Video Call" value={monthlyFormData.videoCallTitle} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] text-xs" />
                   </div>
                   <div className="flex flex-col gap-1.5">
                     <label className="text-xs text-[var(--text-secondary)]">Tanggal (Pemisah Koma)</label>
-                    <input type="text" name="videoCallDates" autoComplete="off" /* autocomplete="off" */ placeholder="Misal: 14 Februari, 21 Februari" value={monthlyFormData.videoCallDates} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
+                    <input type="text" name="videoCallDates" autoComplete="off" /* autocomplete="off" */ placeholder="Misal: 14 Februari, 21 Februari" value={monthlyFormData.videoCallDates} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] text-xs" />
                   </div>
                 </div>
 
@@ -1035,11 +1035,11 @@ export default function AdminRecaps() {
                   <h4 className="font-bold text-xs uppercase text-[var(--color-primary)]">Special Event</h4>
                   <div className="flex flex-col gap-1.5">
                     <label className="text-xs text-[var(--text-secondary)]">Nama Special Event</label>
-                    <input type="text" name="eventTitle" autoComplete="off" /* autocomplete="off" */ placeholder="Misal: JKT48 Spring Festival" value={monthlyFormData.eventTitle} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
+                    <input type="text" name="eventTitle" autoComplete="off" /* autocomplete="off" */ placeholder="Misal: JKT48 Spring Festival" value={monthlyFormData.eventTitle} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] text-xs" />
                   </div>
                   <div className="flex flex-col gap-1.5">
                     <label className="text-xs text-[var(--text-secondary)]">Tanggal Event</label>
-                    <input type="text" name="eventDate" autoComplete="off" /* autocomplete="off" */ placeholder="Misal: 25 April 2026" value={monthlyFormData.eventDate} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] text-xs" />
+                    <input type="text" name="eventDate" autoComplete="off" /* autocomplete="off" */ placeholder="Misal: 25 April 2026" value={monthlyFormData.eventDate} onChange={handleMonthlyInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] text-xs" />
                   </div>
                 </div>
               </div>

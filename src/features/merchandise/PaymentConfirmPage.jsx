@@ -451,7 +451,7 @@ export default function PaymentConfirmPage() {
         transition={{ duration: 0.4, ease: 'easeOut' }}
       >
         <Clock className="animate-spin h-10 w-10 text-[var(--color-primary)] mx-auto" />
-        <p className="text-sm font-bold text-slate-505">Memuat rincian pesanan Anda...</p>
+        <p className="text-sm font-bold text-[var(--color-text-secondary)]">Memuat rincian pesanan Anda...</p>
       </motion.div>
     );
   }
@@ -484,7 +484,7 @@ export default function PaymentConfirmPage() {
         <motion.div
           variants={{ hidden: { opacity: 0, y: 30, scale: 0.97 }, visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.5, ease: 'easeOut' } } }}
         >
-          <Card hoverEffect={false} className="border border-[var(--border-color)] bg-white/70 backdrop-blur-md rounded-[2rem] p-6 sm:p-8 shadow-sm">
+          <Card hoverEffect={false} className="border border-[var(--border-color)] bg-[var(--color-surface)]/70 backdrop-blur-md rounded-[2rem] p-6 sm:p-8 shadow-sm">
             <form onSubmit={handleLookupSubmit} className="space-y-4">
               {isNotFound && (
                 <motion.div
@@ -498,18 +498,18 @@ export default function PaymentConfirmPage() {
                 </motion.div>
               )}
               <div className="space-y-2">
-                <label htmlFor="invoice-lookup-input" className="block text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                <label htmlFor="invoice-lookup-input" className="block text-[10px] font-extrabold uppercase tracking-wider text-[var(--color-text-secondary)]">
                   Nomor Invoice Pesanan
                 </label>
                 <div className="relative flex items-center">
-                  <Search className="absolute left-4 h-4.5 w-4.5 text-slate-400" />
+                  <Search className="absolute left-4 h-4.5 w-4.5 text-[var(--color-text-secondary)]" />
                   <input
                     type="text"
                     id="invoice-lookup-input"
                     placeholder="Masukkan nomor invoice (contoh: INV-123456)"
                     value={lookupInvoiceInput}
                     onChange={(e) => setLookupInvoiceInput(e.target.value)}
-                    className="w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-2xl pl-11 pr-32 py-3.5 text-sm font-bold placeholder-slate-400 text-slate-850 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] transition"
+                    className="w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-2xl pl-11 pr-32 py-3.5 text-sm font-bold placeholder-[var(--color-text-secondary)] text-[var(--color-heading)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] transition"
                   />
                   <button
                     type="submit"
@@ -527,8 +527,8 @@ export default function PaymentConfirmPage() {
         <motion.div
           variants={{ hidden: { opacity: 0, y: 30, scale: 0.97 }, visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.5, ease: 'easeOut' } } }}
         >
-          <Card hoverEffect={false} className="border border-[var(--border-color)] bg-white rounded-3xl p-6 shadow-xs">
-            <h3 className="text-xs font-black text-slate-800 uppercase tracking-wider border-b border-slate-100 pb-3 mb-4 flex items-center gap-2">
+          <Card hoverEffect={false} className="border border-[var(--border-color)] bg-[var(--color-surface)] rounded-3xl p-6 shadow-xs">
+            <h3 className="text-xs font-black text-[var(--color-heading)] uppercase tracking-wider border-b border-[var(--color-border)] pb-3 mb-4 flex items-center gap-2">
               <span className="w-1.5 h-3.5 bg-[var(--color-primary)] rounded-full"></span>
               Informasi Pembayaran Fanbase
             </h3>
@@ -540,11 +540,11 @@ export default function PaymentConfirmPage() {
               <div className="p-4 bg-[var(--bg-primary)] rounded-2xl border border-[var(--border-color)] space-y-3">
                 <div>
                   <span className="text-[8px] font-extrabold text-[var(--text-muted)] block uppercase tracking-widest">Metode Transfer</span>
-                  <span className="text-base font-black text-slate-850 tracking-wider block mt-0.5">{paymentSettings.bank_name}</span>
+                  <span className="text-base font-black text-[var(--color-heading)] tracking-wider block mt-0.5">{paymentSettings.bank_name}</span>
                 </div>
                 
-                <div className="flex items-center justify-between bg-white px-3 py-2 rounded-xl border border-[var(--border-color)]">
-                  <span className="font-mono text-sm font-bold text-slate-700">{paymentSettings.account_number}</span>
+                <div className="flex items-center justify-between bg-[var(--color-surface)] px-3 py-2 rounded-xl border border-[var(--border-color)]">
+                  <span className="font-mono text-sm font-bold text-[var(--color-body)]">{paymentSettings.account_number}</span>
                   <button
                     type="button"
                     onClick={handleCopyBank}
@@ -567,14 +567,14 @@ export default function PaymentConfirmPage() {
                 
                 <div>
                   <span className="text-[8px] font-bold text-[var(--text-muted)] block uppercase">Nama Penerima</span>
-                  <span className="text-xs font-bold text-slate-800">{paymentSettings.account_holder}</span>
+                  <span className="text-xs font-bold text-[var(--color-heading)]">{paymentSettings.account_holder}</span>
                 </div>
               </div>
 
               {/* QRIS Code */}
-              <div className="flex flex-col items-center justify-center p-4 rounded-2xl border border-[var(--border-color)] bg-slate-50 relative overflow-hidden">
+              <div className="flex flex-col items-center justify-center p-4 rounded-2xl border border-[var(--border-color)] bg-[var(--color-bg-secondary)] relative overflow-hidden">
                 <span className="text-[9px] font-extrabold text-[var(--text-muted)] block uppercase tracking-widest mb-2">Scan QRIS IRIS</span>
-                <div className="w-40 h-52 border border-slate-200 rounded-xl overflow-hidden bg-white shadow-xs p-2 flex items-center justify-center">
+                <div className="w-40 h-52 border border-slate-200 rounded-xl overflow-hidden bg-[var(--color-surface)] shadow-xs p-2 flex items-center justify-center">
                   <img
                     src={paymentSettings.qris_url || qrisImage}
                     alt="QRIS Pembayaran IRIS"
@@ -608,7 +608,7 @@ export default function PaymentConfirmPage() {
       <h1 className="sr-only">Rincian Pesanan {orderDetail.invoice_number}</h1>
       {/* Top detailed navbar */}
       <motion.div
-        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-slate-100"
+        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-[var(--color-border)]"
         variants={{ hidden: { opacity: 0, y: -16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } } }}
       >
         <button
@@ -624,12 +624,12 @@ export default function PaymentConfirmPage() {
         
         {/* Invoice Meta Status Info */}
         <div className="flex flex-wrap items-center gap-3">
-          <span className="text-xs font-bold text-slate-400">Nomor Invoice:</span>
-          <span className="font-mono text-xs font-black text-slate-850 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200/60 flex items-center gap-2">
+          <span className="text-xs font-bold text-[var(--color-text-secondary)]">Nomor Invoice:</span>
+          <span className="font-mono text-xs font-black text-[var(--color-heading)] bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200/60 flex items-center gap-2">
             {orderDetail.invoice_number}
             <button 
               onClick={handleCopyInvoice} 
-              className="text-slate-400 hover:text-slate-700 transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 rounded-md"
+              className="text-[var(--color-text-secondary)] hover:text-[var(--color-body)] transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 rounded-md"
               title="Salin Nomor Invoice"
               aria-label="Salin Nomor Invoice"
             >

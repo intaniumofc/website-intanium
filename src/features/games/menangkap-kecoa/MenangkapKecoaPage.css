@@ -449,7 +449,7 @@
 }
 
 .roach-hit-bonk {
-  color: #170c79;
+  color: #222222;
   font-size: 0.72rem;
   letter-spacing: 0.05em;
   animation: hit-bonk 520ms cubic-bezier(0.16, 1, 0.3, 1) forwards;

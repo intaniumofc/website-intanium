@@ -81,7 +81,7 @@ const ProductCard = ({ product }) => {
           ) : (
             /* Green NEW badge like the screenshot */
             product.id === 'merch-1' && (
-              <span className="absolute top-6 left-6 z-30 px-2 py-0.5 rounded bg-[#00B050] text-[9px] uppercase tracking-wide font-black text-white select-none pointer-events-none">
+              <span className="absolute top-6 left-6 z-30 px-2 py-0.5 rounded bg-[var(--color-mint)]/15 text-[9px] uppercase tracking-wide font-black text-[var(--color-mint-dark)] border border-[var(--color-mint)]/25 select-none pointer-events-none">
                 NEW
               </span>
             )
@@ -206,7 +206,7 @@ export default function HomeMerchandiseSection({ products = [] }) {
       {/* Products — Produk Terbaru Section Header */}
       <div className="flex justify-between items-end border-b border-[var(--border-color)]/60 pb-3 select-none">
         <div className="space-y-1">
-          <h3 className="text-xl sm:text-2xl font-extrabold text-[#170C79] tracking-tight">
+          <h3 className="text-xl sm:text-2xl font-extrabold text-[var(--color-heading)] tracking-tight">
             Merchandise Official IRIS
           </h3>
         </div>
