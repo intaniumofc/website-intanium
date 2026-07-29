@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import logoNobg from '../../assets/logos/logo-nobg.webp';
 import IrisStructureSection from './IrisStructureSection';
 import AboutSection3 from './AboutSection';
@@ -10,7 +10,8 @@ import { PhotoGallery } from './PhotoGallery';
 import IrisPhilosophySection from './IrisPhilosophySection';
 import {
   Sparkles,
-  Gem
+  Gem,
+  ChevronDown
 } from 'lucide-react';
 
 const ButterflySVG = ({ className }) => (
@@ -446,7 +447,11 @@ function DecorativeSparkles() {
 
 export default function AboutIrisPage() {
   const [activeId, setActiveId] = useState(null);
+  const [openMisiIndex, setOpenMisiIndex] = useState(0);
   const handleDeactivatePhil = () => setActiveId(null);
+  const handleToggleMisi = (index) => {
+    setOpenMisiIndex(prev => prev === index ? null : index);
+  };
 
 
 
@@ -591,7 +596,7 @@ export default function AboutIrisPage() {
             initial="hidden"
             whileInView="visible"
             viewport={VISIMISI_VIEWPORT}
-            className="hidden lg:block w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] h-[550px] overflow-hidden bg-[var(--color-bg-secondary)]"
+            className="hidden lg:block w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] min-h-[580px] py-12 overflow-hidden bg-[var(--color-bg-secondary)]"
           >
             {/* Background Panels with Shutter slide-in */}
             {/* VISI Panel (Left Side) */}
@@ -607,11 +612,11 @@ export default function AboutIrisPage() {
               className="absolute inset-0 bg-white z-10"
             />
             {/* Content Layer */}
-            <div className="relative z-20 max-w-6xl mx-auto h-full grid grid-cols-12 items-stretch px-6">
+            <div className="relative z-20 max-w-6xl mx-auto h-full grid grid-cols-12 items-center px-6">
               {/* VISI Content */}
               <motion.div
                 variants={textRevealVariants}
-                className="col-span-4 col-start-1 flex flex-col justify-start items-center text-center text-white space-y-6 pt-16"
+                className="col-span-4 col-start-1 flex flex-col justify-start items-center text-center text-white space-y-6 pt-4"
               >
                 <div className="flex flex-col items-center">
                   <h3 className="text-4xl font-black tracking-widest text-white">VISI</h3>
@@ -625,30 +630,76 @@ export default function AboutIrisPage() {
               {/* MISI Content */}
               <motion.div
                 variants={textRevealVariants}
-                className="col-span-5 col-start-8 flex flex-col justify-start items-start text-(--color-primary) space-y-6 pt-16"
+                className="col-span-5 col-start-8 flex flex-col justify-start items-start text-[var(--color-primary)] space-y-6 pt-4"
               >
                 <div className="flex flex-col items-center w-full">
-                  <h3 className="text-4xl font-black tracking-widest text-(--color-primary)">MISI</h3>
-                  <div className="w-16 h-1 bg-(--color-primary) rounded-full mt-2" />
+                  <h3 className="text-4xl font-black tracking-widest text-[var(--color-primary)]">MISI</h3>
+                  <div className="w-16 h-1 bg-[var(--color-primary)] rounded-full mt-2" />
                 </div>
-                <ul className="space-y-6 text-sm text-(--text-secondary) w-full max-w-md">
-                  {MISI.map((item, index) => (
-                    <li key={item.id} className="flex items-start gap-4">
-                      <span className="w-7 h-7 rounded-lg bg-(--color-primary) text-white flex items-center justify-center shrink-0 text-xs font-black shadow-md mt-1">
-                        {index + 1}
-                      </span>
-                      <div className="space-y-1">
-                        <h4 className="font-extrabold text-base text-(--color-primary) leading-snug">{item.title}</h4>
-                        <p className="text-sm text-(--text-secondary) font-medium leading-relaxed">{item.desc}</p>
+                
+                {/* Accordion Misi Desktop */}
+                <div className="space-y-3 w-full max-w-md">
+                  {MISI.map((item, index) => {
+                    const isOpen = openMisiIndex === index;
+                    return (
+                      <div
+                        key={item.id}
+                        className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
+                          isOpen
+                            ? 'bg-gradient-to-r from-pink-50/90 to-purple-50/90 border-[var(--color-primary)]/50 shadow-md ring-1 ring-[var(--color-primary)]/20'
+                            : 'bg-white/90 border-slate-200/90 hover:border-pink-300/70 hover:bg-slate-50/90'
+                        }`}
+                      >
+                        <button
+                          onClick={() => handleToggleMisi(index)}
+                          className="w-full flex items-center justify-between p-3.5 text-left focus:outline-none cursor-pointer group"
+                          aria-expanded={isOpen}
+                        >
+                          <div className="flex items-center gap-3 pr-2">
+                            <span
+                              className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 text-xs font-black transition-all ${
+                                isOpen
+                                  ? 'bg-[var(--color-primary)] text-white shadow-md scale-105'
+                                  : 'bg-slate-100 text-slate-600 group-hover:bg-[var(--color-primary)] group-hover:text-white'
+                              }`}
+                            >
+                              0{index + 1}
+                            </span>
+                            <h4 className="font-extrabold text-sm text-[var(--color-primary)] leading-snug">
+                              {item.title}
+                            </h4>
+                          </div>
+                          <ChevronDown
+                            className={`w-4 h-4 shrink-0 text-[var(--color-primary)] transition-transform duration-300 ${
+                              isOpen ? 'rotate-180 text-[var(--color-primary)]' : 'text-slate-400 group-hover:text-[var(--color-primary)]'
+                            }`}
+                          />
+                        </button>
+
+                        <AnimatePresence initial={false}>
+                          {isOpen && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.3, ease: PREMIUM_EASE }}
+                              className="overflow-hidden"
+                            >
+                              <div className="px-4 pb-4 pt-1 pl-13 text-xs text-[var(--text-secondary)] font-medium leading-relaxed border-t border-pink-100/60">
+                                {item.desc}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </div>
-                    </li>
-                  ))}
-                </ul>
+                    );
+                  })}
+                </div>
               </motion.div>
             </div>
           </motion.div>
 
-          {/* Mobile/Tablet Version: Full-Bleed Stacked Layout (No Cards) */}
+          {/* Mobile/Tablet Version: Full-Bleed Stacked Layout */}
           <div className="block lg:hidden w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] space-y-0">
             {/* VISI Section */}
             <div className="bg-[#222222] text-white py-16 px-6">
@@ -660,25 +711,71 @@ export default function AboutIrisPage() {
               </div>
             </div>
 
-            {/* MISI Section */}
-            <div className="bg-white text-(--color-primary) py-16 px-6 border-b border-(--border-color)">
+            {/* MISI Section Accordion Mobile */}
+            <div className="bg-white text-[var(--color-primary)] py-16 px-6 border-b border-[var(--border-color)]">
               <div className="max-w-xl mx-auto space-y-6">
                 <div className="flex flex-col items-center text-center">
-                  <h3 className="text-3xl font-black tracking-widest text-(--color-primary)">MISI</h3>
+                  <h3 className="text-3xl font-black tracking-widest text-[var(--color-primary)]">MISI</h3>
+                  <div className="w-16 h-1 bg-[var(--color-primary)] rounded-full mt-2" />
                 </div>
-                <ul className="space-y-5 max-w-xl mx-auto text-sm sm:text-base text-(--text-secondary)">
-                  {MISI.map((item, index) => (
-                    <li key={item.id} className="flex items-start gap-4">
-                      <span className="w-7 h-7 rounded-lg bg-(--color-primary) text-white flex items-center justify-center shrink-0 text-xs font-black shadow-md mt-1">
-                        0{index + 1}
-                      </span>
-                      <div className="space-y-1 text-left">
-                        <h4 className="font-extrabold text-base text-(--color-primary) leading-snug">{item.title}</h4>
-                        <p className="text-sm text-(--text-secondary) font-medium leading-relaxed">{item.desc}</p>
+                
+                <div className="space-y-3.5 max-w-xl mx-auto">
+                  {MISI.map((item, index) => {
+                    const isOpen = openMisiIndex === index;
+                    return (
+                      <div
+                        key={item.id}
+                        className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
+                          isOpen
+                            ? 'bg-gradient-to-r from-pink-50/90 to-purple-50/90 border-[var(--color-primary)]/50 shadow-md ring-1 ring-[var(--color-primary)]/20'
+                            : 'bg-white border-slate-200 hover:border-pink-300/70 hover:bg-slate-50/80'
+                        }`}
+                      >
+                        <button
+                          onClick={() => handleToggleMisi(index)}
+                          className="w-full flex items-center justify-between p-4 text-left focus:outline-none cursor-pointer group"
+                          aria-expanded={isOpen}
+                        >
+                          <div className="flex items-center gap-3.5 pr-2">
+                            <span
+                              className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 text-xs font-black transition-all ${
+                                isOpen
+                                  ? 'bg-[var(--color-primary)] text-white shadow-md scale-105'
+                                  : 'bg-slate-100 text-slate-600 group-hover:bg-[var(--color-primary)] group-hover:text-white'
+                              }`}
+                            >
+                              0{index + 1}
+                            </span>
+                            <h4 className="font-extrabold text-sm sm:text-base text-[var(--color-primary)] leading-snug">
+                              {item.title}
+                            </h4>
+                          </div>
+                          <ChevronDown
+                            className={`w-5 h-5 shrink-0 text-[var(--color-primary)] transition-transform duration-300 ${
+                              isOpen ? 'rotate-180 text-[var(--color-primary)]' : 'text-slate-400 group-hover:text-[var(--color-primary)]'
+                            }`}
+                          />
+                        </button>
+
+                        <AnimatePresence initial={false}>
+                          {isOpen && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.3, ease: PREMIUM_EASE }}
+                              className="overflow-hidden"
+                            >
+                              <div className="px-4 pb-4 pt-1 pl-14 text-xs sm:text-sm text-[var(--text-secondary)] font-medium leading-relaxed border-t border-pink-100/60">
+                                {item.desc}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </div>
-                    </li>
-                  ))}
-                </ul>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </div>
