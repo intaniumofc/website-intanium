@@ -6,11 +6,10 @@ import { useGSAP } from '@gsap/react';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-// Travel window: the character eases onto the path at 3% and off it at 97%
-// so the two ends of the journey breathe instead of popping.
-const TRAVEL_START = 0.03;
-const TRAVEL_SPAN = 0.94;
-const MAX_TILT = 6; // brief: character may lean at most ±6°, never rotate/flip.
+// Travel window: character starts at 0 (top-center) and ends at 100% (bottom-center)
+const TRAVEL_START = 0.0;
+const TRAVEL_SPAN = 1.0;
+const MAX_TILT = 6;
 
 /**
  * useJourneyAnimation — owns the entire scroll-driven cinematic timeline for
@@ -108,8 +107,7 @@ export function useJourneyAnimation({
         transformOrigin: '50% 100%',
       });
 
-      const charSize = tier.charSize ?? 112;
-      const charH = charSize * 1.5; // matches JourneyCharacter height ratio
+      const charSize = 96;
 
       const cam = { scale: tier.camScale ?? 1.05 };
       let lastActive = -1;
@@ -119,9 +117,7 @@ export function useJourneyAnimation({
       const focusX = () => stageEl.clientWidth / 2;
       const focusY = () => stageEl.clientHeight * 0.42;
 
-      // Camera + face-tilt for a given path progress (0..1). MotionPath owns
-      // the character's POSITION; this only reads the path to steer the world
-      // and apply the tiny facing lean.
+      // Camera + direction rotation for a given path progress (0..1).
       const place = (progress, immediate) => {
         const len = progress * pathLength;
         const pt = pathEl.getPointAtLength(len);
@@ -131,23 +127,18 @@ export function useJourneyAnimation({
         const camX = pt.x;
         const camY = pt.y;
 
-        // Facing lean: sample tangent slightly ahead/behind, map slope to a
-        // clamped ±8° tilt. No horizontal flip — she stays front-facing.
-        const ahead = pathEl.getPointAtLength(Math.min(pathLength, len + 2));
-        const behind = pathEl.getPointAtLength(Math.max(0, len - 2));
+        // Auto-Rotate: sample tangent points slightly ahead/behind to align butterfly along path direction (+90deg offset so up-facing source image faces right)
+        const ahead = pathEl.getPointAtLength(Math.min(pathLength, len + 4));
+        const behind = pathEl.getPointAtLength(Math.max(0, len - 4));
         const dx = ahead.x - behind.x;
         const dy = ahead.y - behind.y;
-        const dir = dx < 0 ? -1 : 1;
-        const tilt = gsap.utils.clamp(
-          -MAX_TILT,
-          MAX_TILT,
-          (dy / (Math.abs(dx) + 0.001)) * 4 * dir
-        );
+        const angle = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
+
         const faceSetter = immediate ? gsap.set : gsap.to;
         faceSetter(charFace, {
-          rotationZ: tilt,
-          duration: immediate ? 0 : 0.4,
-          ease: 'power2.out',
+          rotationZ: angle,
+          duration: immediate ? 0 : 0.25,
+          ease: 'power1.out',
           overwrite: 'auto',
         });
 
@@ -160,11 +151,10 @@ export function useJourneyAnimation({
         const baseScale = tier.camScale ?? 1.05;
         cam.scale = baseScale + proximity * (tier.camZoom ?? 0.16);
 
-        // Place the character at the same point (bottom-centre on the path,
-        // matching the old alignOrigin [0.5, 1]).
+        // Center the butterfly right on the path point
         gsap.set(charRoot, {
           x: pt.x - charSize / 2,
-          y: pt.y - charH,
+          y: pt.y - charSize / 2,
         });
 
         // Translate the world so the character sits at the focus point (with a

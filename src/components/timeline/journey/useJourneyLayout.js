@@ -2,43 +2,14 @@
 
 import { useMemo } from 'react';
 
-/**
- * Responsive geometry presets for the journey world — a VERTICAL SERPENTINE
- * roadmap. The route snakes down the canvas: a long horizontal run, then a
- * large-radius PERFECT half-circle U-turn, then the opposite run — always
- * progressing downward. Milestones land at the start of each run (immediately
- * after a bend). Everything is generated procedurally from the achievements
- * array, so adding milestones just extends the roadmap downward — unlimited.
- *
- *   r        : U-turn radius (180–280px per brief). The bend is a TRUE
- *              semicircle, so the vertical drop between runs is exactly 2r.
- *   runW     : length of each horizontal segment (the "wide" roadmap feel)
- *   cardW    : destination card width
- *   cardH    : destination card height (used for bottom padding)
- *   gap      : node -> card horizontal offset (card sits toward viewport centre)
- *   padTop   : breathing room above the first milestone
- */
-// ───────────────────────────────────────────────────────────────────────────
-// GLOBAL TIMELINE SCALE — the single knob that resizes the whole map.
-// Every linear dimension below (card, character, node, path stroke, bend
-// radius, spacing) is multiplied by this before geometry is built, so the map
-// scales as one piece and nothing ever desyncs from the road. Camera fields
-// (camScale/camZoom/camRot) are unitless ratios and are intentionally NOT
-// scaled — they control framing, not size.
-//   1.00 = raw baseline · 0.88 ≈ the "zoomed to ~88%" feel · lower = smaller.
-// Tune this one number to make the entire timeline bigger or smaller.
 export const TIMELINE_SCALE = 0.88;
 
-// Raw, unscaled per-tier presets. Values are authored at 1.0 and scaled by
-// TIMELINE_SCALE (and any responsive overrides) in buildTier below.
 const JOURNEY_TIERS_BASE = {
   desktop: { r: 260, runW: 720, cardW: 300, cardH: 300, gap: 30, padTop: 210, camScale: 0.62, camZoom: 0.05, camRot: 0.4, charSize: 126, nodeSize: 22, nodeMajor: 30, stroke: 8 },
   tablet: { r: 215, runW: 520, cardW: 270, cardH: 280, gap: 26, padTop: 180, camScale: 0.62, camZoom: 0.04, camRot: 0.35, charSize: 108, nodeSize: 20, nodeMajor: 27, stroke: 7 },
   mobile: { r: 180, runW: 280, cardW: 230, cardH: 250, gap: 20, padTop: 150, camScale: 0.68, camZoom: 0.03, camRot: 0.3, charSize: 92, nodeSize: 18, nodeMajor: 24, stroke: 6 },
 };
 
-// Fields that represent a physical size in world px and must be scaled. Camera
-// ratios are deliberately excluded so framing stays constant as size changes.
 const SCALED_FIELDS = ['r', 'runW', 'cardW', 'cardH', 'gap', 'padTop', 'charSize', 'nodeSize', 'nodeMajor', 'stroke'];
 
 function buildTier(key, scale = TIMELINE_SCALE) {
@@ -54,24 +25,17 @@ export const JOURNEY_TIERS = {
   mobile: buildTier('mobile'),
 };
 
-// Cubic-Bézier "magic" constant for a circular arc: 4/3 * tan(π/8). Two
-// quarter-arc cubics with this handle length reproduce a semicircle so closely
-// the error is invisible at any zoom — this is what makes the bends read as
-// perfect Formula-1 corners rather than pipe elbows.
 const KAPPA = 0.5522847498307936;
 
-/**
- * Builds a boustrophedon ("ox-turning", snake-like) path from the node rows.
- * Each row is a straight horizontal run; consecutive runs are joined by a TRUE
- * 180° semicircle built from two quarter-arc cubic Béziers. Tangents are
- * horizontal where a run meets the arc and vertical at the arc's apex, so the
- * whole route is C1-continuous: there is NO visible angle anywhere, only large
- * flowing half-circle bends.
- */
-function serpentinePath(nodes, xL, xR, r) {
+function serpentinePath(nodes, xL, xR, r, padTop) {
   const N = nodes.length;
   const f = (v) => v.toFixed(2);
-  const d = [`M ${f(nodes[0].x)},${f(nodes[0].y)}`];
+  const centerX = (xL + xR) / 2;
+  const startY = Math.max(40, padTop - 130);
+
+  // Lead-in from horizontal center to first milestone node
+  const d = [`M ${f(centerX)},${f(startY)}`];
+  d.push(`C ${f(centerX)},${f(nodes[0].y - r * 0.7)} ${f(xL)},${f(nodes[0].y - r * 0.7)} ${f(nodes[0].x)},${f(nodes[0].y)}`);
 
   const WAVE_AMP = 10;
   const WAVE_SEGS = 40;
@@ -106,21 +70,19 @@ function serpentinePath(nodes, xL, xR, r) {
         `C ${f(apexX)},${f(yMid + KAPPA * r)} ` +
         `${f(endX + bendDir * KAPPA * r)},${f(yEnd)} ${f(endX)},${f(yEnd)}`
       );
+    } else {
+      // Lead-out from last milestone node to horizontal center
+      const lastX = endX;
+      const endY = y + 160;
+      d.push(
+        `C ${f(lastX)},${f(y + 70)} ` +
+        `${f(centerX)},${f(y + 70)} ${f(centerX)},${f(endY)}`
+      );
     }
   }
   return d.join(' ');
 }
 
-/**
- * Builds the full journey geometry from the achievement list and a responsive
- * tier. Pure + memoized — no DOM access, no per-frame work.
- *
- * Returns:
- *  - width / height : world canvas size in px
- *  - pathD          : the serpentine SVG path string
- *  - nodes[]        : { x, y, side, cardX, achievement } — side alternates
- *                     left / right; the card sits on the OUTER side of the bend.
- */
 export function useJourneyLayout(achievements, tierKey = 'desktop') {
   const tier = JOURNEY_TIERS[tierKey] || JOURNEY_TIERS.desktop;
 
@@ -134,37 +96,25 @@ export function useJourneyLayout(achievements, tierKey = 'desktop') {
 
     const { r, runW, cardW, cardH, gap, padTop } = tier;
 
-    // Vertical rhythm between milestones equals the semicircle drop (2r), which
-    // keeps every bend a true half-circle and the whole map evenly paced.
     const rowH = 2 * r;
-
-    // The bulges reach r beyond each rail, so the world needs that much margin
-    // on both sides. Cards sit INSIDE (toward centre), so they need no extra.
     const margin = r + 44;
     const xL = margin;
     const xR = margin + runW;
     const width = xR + margin;
 
-    // Card centre sits toward the viewport centre (inside the bend) and a touch
-    // below the node, giving the Character -> Node -> Card vertical read while
-    // never drifting to a screen edge or covering the road.
-    const cardCentreOffset = gap + cardW / 2; // node -> card centre, horizontal
-    const cardDrop = cardH / 2 + 28; // node -> card centre, vertical
+    const cardCentreOffset = gap + cardW / 2;
+    const cardDrop = cardH / 2 + 28;
 
-    // Milestones alternate left / right, marching steadily downward. Node i sits
-    // at the START of run i (immediately after the preceding bend).
     const nodes = items.map((achievement, i) => {
       const onLeft = i % 2 === 0;
       const x = onLeft ? xL : xR;
       const y = padTop + i * rowH;
-      // Bend after a left-rail node bulges RIGHT -> card inside-right, and vice
-      // versa. Card is always pulled toward the centre of the roadmap.
       const cardX = onLeft ? x + cardCentreOffset : x - cardCentreOffset;
       return {
         x,
         y,
-        side: onLeft ? 'left' : 'right', // rail the node sits on
-        cardSide: onLeft ? 'right' : 'left', // side the card sits on (inside)
+        side: onLeft ? 'left' : 'right',
+        cardSide: onLeft ? 'right' : 'left',
         cardX,
         cardY: y + cardDrop,
         achievement,
@@ -172,10 +122,17 @@ export function useJourneyLayout(achievements, tierKey = 'desktop') {
       };
     });
 
-    // Room below the last node for its card + the trailing bulge.
-    const height = padTop + (N - 1) * rowH + cardDrop + cardH / 2 + 60;
-    const pathD = serpentinePath(nodes, xL, xR, r);
+    const height = padTop + (N - 1) * rowH + cardDrop + cardH / 2 + 180;
+    const pathD = serpentinePath(nodes, xL, xR, r, padTop);
 
-    return { width, height, pathD, nodes, N, tier };
+    const centerX = (xL + xR) / 2;
+    const startY = Math.max(40, padTop - 130);
+    const lastNodeY = nodes[N - 1]?.y || padTop;
+    const endY = lastNodeY + 160;
+
+    const startPt = { x: centerX, y: startY };
+    const endPt = { x: centerX, y: endY };
+
+    return { width, height, pathD, nodes, N, tier, startPt, endPt };
   }, [achievements, tier]);
 }

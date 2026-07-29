@@ -157,6 +157,8 @@ export default function JourneyMap({ achievements = [] }) {
               width={width}
               height={height}
               stroke={tier.stroke}
+              startPt={layout.startPt}
+              endPt={layout.endPt}
             />
 
             {/* Connector stems: node -> card (diagonal, drawn via SVG line) */}

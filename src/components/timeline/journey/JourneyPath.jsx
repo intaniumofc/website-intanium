@@ -3,11 +3,9 @@
 import { forwardRef, memo } from 'react';
 
 const JourneyPath = forwardRef(function JourneyPath(
-  { d, width, height, highlightRef, stroke = 8 },
+  { d, width, height, highlightRef, stroke = 8, startPt, endPt },
   ref
 ) {
-  // Three layered strokes keep their relative weights (base > progress >
-  // highlight) as the global scale changes the overall thickness.
   const baseW = stroke + 1;
   const progW = stroke - 1;
   const hlW = stroke - 2;
@@ -21,8 +19,6 @@ const JourneyPath = forwardRef(function JourneyPath(
       aria-hidden="true"
     >
       <defs>
-        {/* Bright golden gradient for the traveled progress path */}
-        {/* Deep blue to pink gradient for the traveled progress path */}
         <linearGradient id="journey-path-gradient" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" stopColor="var(--color-pink)" />
           <stop offset="50%" stopColor="var(--color-purple)" />
@@ -37,7 +33,7 @@ const JourneyPath = forwardRef(function JourneyPath(
         </filter>
       </defs>
 
-      {/* Background roadmap — soft muted lavender-purple, the full route at rest */}
+      {/* Background roadmap */}
       <path
         d={d}
         stroke="rgba(109, 92, 255, 0.18)"
@@ -46,7 +42,7 @@ const JourneyPath = forwardRef(function JourneyPath(
         strokeLinejoin="round"
       />
 
-      {/* Progress path — deep blue to pink gradient, revealed via strokeDashoffset */}
+      {/* Progress path */}
       <path
         ref={ref}
         d={d}
@@ -57,7 +53,7 @@ const JourneyPath = forwardRef(function JourneyPath(
         style={{ filter: 'drop-shadow(0 0 8px rgba(109,92,255,0.55))' }}
       />
 
-      {/* Travelling highlight — a short bright glint that glides along */}
+      {/* Travelling highlight */}
       <path
         ref={highlightRef}
         d={d}
@@ -67,6 +63,64 @@ const JourneyPath = forwardRef(function JourneyPath(
         filter="url(#journey-path-glow)"
         style={{ opacity: 0.9 }}
       />
+
+      {/* Start Circle Cap */}
+      {startPt && (
+        <g className="journey-path-cap journey-path-cap-start">
+          <circle
+            cx={startPt.x}
+            cy={startPt.y}
+            r={stroke * 1.8}
+            fill="rgba(236, 72, 153, 0.25)"
+            stroke="rgba(236, 72, 153, 0.6)"
+            strokeWidth="2"
+          />
+          <circle
+            cx={startPt.x}
+            cy={startPt.y}
+            r={stroke * 1.1}
+            fill="url(#journey-path-gradient)"
+            stroke="#ffffff"
+            strokeWidth="2.5"
+            style={{ filter: 'drop-shadow(0 0 10px rgba(236, 72, 153, 0.8))' }}
+          />
+          <circle
+            cx={startPt.x}
+            cy={startPt.y}
+            r={stroke * 0.4}
+            fill="#ffffff"
+          />
+        </g>
+      )}
+
+      {/* End Circle Cap */}
+      {endPt && (
+        <g className="journey-path-cap journey-path-cap-end">
+          <circle
+            cx={endPt.x}
+            cy={endPt.y}
+            r={stroke * 1.8}
+            fill="rgba(168, 85, 247, 0.25)"
+            stroke="rgba(168, 85, 247, 0.6)"
+            strokeWidth="2"
+          />
+          <circle
+            cx={endPt.x}
+            cy={endPt.y}
+            r={stroke * 1.1}
+            fill="url(#journey-path-gradient)"
+            stroke="#ffffff"
+            strokeWidth="2.5"
+            style={{ filter: 'drop-shadow(0 0 10px rgba(168, 85, 247, 0.8))' }}
+          />
+          <circle
+            cx={endPt.x}
+            cy={endPt.y}
+            r={stroke * 0.4}
+            fill="#ffffff"
+          />
+        </g>
+      )}
     </svg>
   );
 });
