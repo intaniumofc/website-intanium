@@ -102,20 +102,28 @@ function FloatingParticles({ count = 12, color = 'bg-[var(--color-yellow)]', con
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-      {Array.from({ length: count }).map((_, i) => (
-        <div
-          key={i}
-          className={`absolute rounded-full opacity-60 animate-pulse ${color}`}
-          style={{
-          }}
-          transition={{
-            duration: p.duration,
-            repeat: Infinity,
-            delay: p.delay,
-            ease: 'linear',
-          }}
-        />
-      ))}
+      {Array.from({ length: count }).map((_, i) => {
+        const size = (i % 4) + 3;
+        const left = (i * 17) % 100;
+        const top = (i * 23) % 100;
+        const delay = (i * 0.3) % 3;
+        const duration = 2 + (i % 3);
+
+        return (
+          <div
+            key={i}
+            className={`absolute rounded-full opacity-60 animate-pulse ${color}`}
+            style={{
+              width: `${size}px`,
+              height: `${size}px`,
+              left: `${left}%`,
+              top: `${top}%`,
+              animationDelay: `${delay}s`,
+              animationDuration: `${duration}s`,
+            }}
+          />
+        );
+      })}
     </div>
   );
 }
