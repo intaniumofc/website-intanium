@@ -65,6 +65,12 @@ export default function Navbar({ isHome = false }) {
               icon: Sparkle,
               link: ROUTES.SHINING_STAR,
             },
+            {
+              label: "Recap",
+              description: "Digital e-magazine archive of monthly recaps",
+              icon: BookOpen,
+              link: ROUTES.RECAPS,
+            },
           ],
         },
         {
@@ -98,12 +104,6 @@ export default function Navbar({ isHome = false }) {
               description: "Official announcements and latest event updates",
               icon: Newspaper,
               link: ROUTES.NEWS,
-            },
-            {
-              label: "Zine & Recap",
-              description: "Digital e-magazine archive of monthly recaps",
-              icon: BookOpen,
-              link: ROUTES.RECAPS,
             },
           ],
         },
