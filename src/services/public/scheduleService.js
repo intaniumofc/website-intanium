@@ -24,7 +24,7 @@ const DEFAULT_THUMBNAIL = 'https://images.unsplash.com/photo-1614613535308-eb5fb
 export const scheduleService = {
   getEvents: async (status = 'all', platform = 'All', { includeDrafts = false } = {}) => {
     const cols = await detectEventsColumns();
-    let query = supabase.from('events').select('*');
+    let query = supabase.from('events').select('*').order('time', { ascending: false });
 
     if (cols.has('status') && !includeDrafts) {
       query = query.neq('status', 'draft');
@@ -114,6 +114,32 @@ export const scheduleService = {
     return { success: true, data };
   },
 
+  publishAllDrafts: async () => {
+    const { data, error } = await supabase
+      .from('events')
+      .update({ status: 'published' })
+      .eq('status', 'draft')
+      .select();
+    if (error) {
+      console.error('Error publishing all drafts:', error);
+      return { success: false, error: error.message };
+    }
+    return { success: true, count: data ? data.length : 0 };
+  },
+
+  deleteAllDrafts: async () => {
+    const { data, error } = await supabase
+      .from('events')
+      .delete()
+      .eq('status', 'draft')
+      .select();
+    if (error) {
+      console.error('Error deleting all drafts:', error);
+      return { success: false, error: error.message };
+    }
+    return { success: true, count: data ? data.length : 0 };
+  },
+
   deleteEvent: async (id) => {
     const { error } = await supabase.from('events').delete().eq('id', id);
     if (error) {
@@ -123,16 +149,16 @@ export const scheduleService = {
     return { success: true };
   },
 
-  syncFromJKT48: async () => {
+  getBookmarkletToken: async () => {
     try {
-      const res = await fetch('/api/admin/schedule/sync', { method: 'POST' });
+      const res = await fetch('/api/admin/schedule/bookmarklet');
       const body = await res.json().catch(() => ({}));
       if (!res.ok) {
         return { success: false, error: body.error || `HTTP ${res.status}` };
       }
       return { success: true, data: body };
     } catch (err) {
-      console.error('Error calling /api/admin/schedule/sync:', err);
+      console.error('Error calling /api/admin/schedule/bookmarklet:', err);
       return { success: false, error: err instanceof Error ? err.message : 'Unknown error' };
     }
   },
