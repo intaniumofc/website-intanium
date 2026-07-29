@@ -1,14 +1,15 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Card from '../../../components/common/Card';
 import Button from '../../../components/common/Button';
 import Modal from '../../../components/common/Modal';
 import { scheduleService } from '../../../services/public/scheduleService';
+import { buildBookmarklet } from '../../../services/sync/jkt48/bookmarklet';
 import Loading from '../../../components/common/Loading';
 import ConfirmDialog from '../../../components/common/ConfirmDialog';
 import { useAdminToast } from '../../../components/common/useAdminToast';
-import { Plus, Edit, Trash2, Calendar, Link as LinkIcon, Search, ExternalLink, Clock, RefreshCw, Eye, EyeOff } from 'lucide-react';
+import { Plus, Edit, Trash2, Calendar, Link as LinkIcon, Search, ExternalLink, Clock, RefreshCw, Eye, EyeOff, Bookmark, Copy, Check, CheckCheck } from 'lucide-react';
 
 export default function AdminSchedule() {
   const notify = useAdminToast();
@@ -17,7 +18,15 @@ export default function AdminSchedule() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPlatform, setSelectedPlatform] = useState('All');
 
-  const [isSyncing, setIsSyncing] = useState(false);
+  const [isPublishingAll, setIsPublishingAll] = useState(false);
+
+  // Bookmarklet 1-klik (fetch data via browser admin, lolos Cloudflare)
+  const [isBookmarkletOpen, setIsBookmarkletOpen] = useState(false);
+  const [isBookmarkletLoading, setIsBookmarkletLoading] = useState(false);
+  const [bookmarkletUrl, setBookmarkletUrl] = useState('');
+  const [bookmarkletCopied, setBookmarkletCopied] = useState(false);
+  const bookmarkletLinkRef = useRef(null);
+
   // Modal form states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState('add'); // 'add' | 'edit'
@@ -46,20 +55,92 @@ export default function AdminSchedule() {
     setIsLoading(false);
   };
 
-  const handleSync = async () => {
-    setIsSyncing(true);
-    const result = await scheduleService.syncFromJKT48();
-    if (result.success) {
-      const detail = result.data || {};
+  const draftCount = items.filter(i => i.status === 'draft').length;
+  const publishedCount = items.filter(i => i.status === 'published').length;
+
+  const [isDeletingAllDrafts, setIsDeletingAllDrafts] = useState(false);
+  const [confirmDeleteDrafts, setConfirmDeleteDrafts] = useState(false);
+
+  const handlePublishAllDrafts = async () => {
+    if (draftCount === 0) {
+      notify.info('Tidak Ada Draft', 'Semua jadwal sudah dipublikasikan ke website utama.');
+      return;
+    }
+
+    setIsPublishingAll(true);
+    const res = await scheduleService.publishAllDrafts();
+    setIsPublishingAll(false);
+
+    if (res.success) {
       notify.success(
-        'Sinkronisasi berhasil',
-        `${detail.matched || 0} jadwal Intan ditemukan, ${detail.upserted || 0} disimpan sebagai draft.`
+        'Berhasil Mempublikasikan Semua',
+        `${res.count} jadwal draft berhasil dipublikasikan ke website utama!`
       );
       fetchData();
     } else {
-      notify.error('Sinkronisasi gagal', result.error);
+      notify.error('Gagal mempublikasikan draft', res.error);
     }
-    setIsSyncing(false);
+  };
+
+  const handleDeleteAllDrafts = () => {
+    if (draftCount === 0) {
+      notify.info('Tidak Ada Draft', 'Tidak ada jadwal berstatus draft untuk dibersihkan.');
+      return;
+    }
+    setConfirmDeleteDrafts(true);
+  };
+
+  const executeDeleteAllDrafts = async () => {
+    setConfirmDeleteDrafts(false);
+    setIsDeletingAllDrafts(true);
+    const res = await scheduleService.deleteAllDrafts();
+    setIsDeletingAllDrafts(false);
+
+    if (res.success) {
+      notify.success(
+        'Draft Berhasil Dibersihkan',
+        `${res.count} jadwal draft berhasil dihapus dari database.`
+      );
+      fetchData();
+    } else {
+      notify.error('Gagal membersihkan draft', res.error);
+    }
+  };
+
+  // Buka modal bookmarklet: ambil token dari server lalu bangun URL javascript:.
+  const handleOpenBookmarklet = async () => {
+    setIsBookmarkletOpen(true);
+    setBookmarkletCopied(false);
+    if (bookmarkletUrl) return; // sudah pernah dibangun di sesi ini
+    setIsBookmarkletLoading(true);
+    const res = await scheduleService.getBookmarkletToken();
+    setIsBookmarkletLoading(false);
+    if (!res.success) {
+      notify.error('Gagal menyiapkan bookmarklet', res.error);
+      setIsBookmarkletOpen(false);
+      return;
+    }
+    const { token, apiBase } = res.data;
+    setBookmarkletUrl(buildBookmarklet({ apiBase, token }));
+  };
+
+  // React membersihkan href="javascript:…" saat render, jadi kita set manual
+  // lewat ref setelah elemen ada agar bookmarklet bisa di-drag ke bookmark bar.
+  useEffect(() => {
+    if (isBookmarkletOpen && bookmarkletUrl && bookmarkletLinkRef.current) {
+      bookmarkletLinkRef.current.setAttribute('href', bookmarkletUrl);
+    }
+  }, [isBookmarkletOpen, bookmarkletUrl]);
+
+  const handleCopyBookmarklet = async () => {
+    if (!bookmarkletUrl) return;
+    try {
+      await navigator.clipboard.writeText(bookmarkletUrl);
+      setBookmarkletCopied(true);
+      setTimeout(() => setBookmarkletCopied(false), 2000);
+    } catch {
+      notify.error('Gagal menyalin', 'Salin manual dari kolom di bawah.');
+    }
   };
 
   const handlePublish = async (id) => {
@@ -186,22 +267,24 @@ export default function AdminSchedule() {
     }
   };
 
-  // Filter items
-  const filteredItems = items.filter(item => {
-    const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()));
-    
-    let matchesPlatform = false;
-    if (selectedPlatform === 'All') {
-      matchesPlatform = true;
-    } else if (selectedPlatform === 'Other Events') {
-      matchesPlatform = !['Show Theater', 'Video Call', 'Birthday'].includes(item.platform);
-    } else {
-      matchesPlatform = item.platform === selectedPlatform;
-    }
-    
-    return matchesSearch && matchesPlatform;
-  });
+  // Filter items & sort descending (show terbaru di paling atas, debut awal di paling bawah)
+  const filteredItems = items
+    .filter(item => {
+      const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                            (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()));
+      
+      let matchesPlatform = false;
+      if (selectedPlatform === 'All') {
+        matchesPlatform = true;
+      } else if (selectedPlatform === 'Other Events') {
+        matchesPlatform = !['Show Theater', 'Video Call', 'Birthday'].includes(item.platform);
+      } else {
+        matchesPlatform = item.platform === selectedPlatform;
+      }
+      
+      return matchesSearch && matchesPlatform;
+    })
+    .sort((a, b) => new Date(b.time || 0) - new Date(a.time || 0));
 
   return (
     <div className="space-y-6">
@@ -215,21 +298,78 @@ export default function AdminSchedule() {
             Kelola agenda kegiatan Intan, mulai dari Show Theater, Video Call, Birthday, hingga event lainnya.
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="secondary" size="sm" className="flex items-center gap-1.5 shadow-sm border border-[var(--border-color)] cursor-pointer" onClick={handleSync} isLoading={isSyncing}>
-            <RefreshCw className="h-4 w-4" /> Sinkron JKT48
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Impor via Bookmarklet */}
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-1.5 shadow-sm text-xs cursor-pointer border-[var(--border-color)] bg-white hover:bg-gray-50 text-[var(--text-primary)]"
+            onClick={handleOpenBookmarklet}
+            title="Impor jadwal langsung dari browser Anda (lolos proteksi Cloudflare)"
+          >
+            <Bookmark className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400" /> Impor via Bookmarklet
           </Button>
+
+          {/* Publish Semua Draft */}
+          <Button
+            variant="secondary"
+            size="sm"
+            className="flex items-center gap-1.5 shadow-sm text-xs cursor-pointer bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 font-bold"
+            onClick={handlePublishAllDrafts}
+            isLoading={isPublishingAll}
+            title="Publikasikan seluruh jadwal berstatus draft sekaligus ke website utama"
+          >
+            <CheckCheck className="h-4 w-4 text-emerald-600" />
+            <span>Publish Semua Draft</span>
+            {draftCount > 0 && (
+              <span className="ml-1 px-1.5 py-0.5 bg-emerald-600 text-white rounded-full text-[10px] font-extrabold">
+                {draftCount}
+              </span>
+            )}
+          </Button>
+
+          {/* Bersihkan Draft */}
+          {draftCount > 0 && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-1.5 shadow-sm text-xs cursor-pointer bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100 font-bold"
+              onClick={handleDeleteAllDrafts}
+              isLoading={isDeletingAllDrafts}
+              title="Hapus seluruh jadwal berstatus draft dari database agar dapat di-impor ulang secara bersih"
+            >
+              <Trash2 className="h-3.5 w-3.5 text-rose-600" />
+              <span>Bersihkan Draft</span>
+            </Button>
+          )}
+
+          {/* Buat Jadwal Baru */}
           <Button variant="primary" size="sm" className="flex items-center gap-1.5 shadow-md cursor-pointer" onClick={handleOpenAddModal}>
             <Plus className="h-4 w-4" /> Buat Jadwal Baru
           </Button>
         </div>
       </div>
 
-      {/* Filters & Search */}
+      {/* Filters & Search & Counter Badges */}
       <div className="flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center">
-        <div className="flex items-center gap-2 px-3 py-2 bg-white border border-[var(--border-color)] rounded-xl text-sm w-full md:w-80 shadow-sm">
-          <Search className="h-4 w-4 text-[var(--text-muted)]" />
-          <input autoComplete="off" /* autocomplete="off" */ name="searchQuery" type="text" placeholder="Cari jadwal…" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-transparent border-none focus:outline-none focus:ring-0 flex-1 text-[var(--text-primary)] placeholder-[var(--text-muted)]" />
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <div className="flex items-center gap-2 px-3 py-2 bg-white border border-[var(--border-color)] rounded-xl text-sm w-full sm:w-80 shadow-sm">
+            <Search className="h-4 w-4 text-[var(--text-muted)] shrink-0" />
+            <input autoComplete="off" name="searchQuery" type="text" placeholder="Cari jadwal…" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-transparent border-none focus:outline-none focus:ring-0 flex-1 text-[var(--text-primary)] placeholder-[var(--text-muted)] text-sm" />
+          </div>
+
+          {/* Counter Badge */}
+          <div className="flex items-center gap-2 text-xs font-bold text-[var(--text-secondary)] bg-gray-50 px-3 py-2 rounded-xl border border-[var(--border-color)] shrink-0">
+            <span>{filteredItems.length} jadwal</span>
+            {draftCount > 0 && (
+              <span className="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full text-[10px] font-extrabold border border-amber-200">
+                {draftCount} Draft
+              </span>
+            )}
+            <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-[10px] font-extrabold border border-emerald-200">
+              {publishedCount} Published
+            </span>
+          </div>
         </div>
 
         {/* Platform selection filters */}
@@ -560,6 +700,93 @@ export default function AdminSchedule() {
         message="Apakah Anda yakin ingin menghapus jadwal ini secara permanen?"
         onConfirm={confirmDeleteAction}
         onCancel={() => setConfirmDelete({ isOpen: false, id: null })}
+      />
+
+      {/* ================= BOOKMARKLET IMPOR VIA BROWSER ================= */}
+      <Modal
+        isOpen={isBookmarkletOpen}
+        onClose={() => setIsBookmarkletOpen(false)}
+        title="Impor Jadwal via Browser (1-klik)"
+        size="md"
+      >
+        <div className="space-y-4 text-sm text-[var(--text-primary)]">
+          <div className="rounded-xl bg-[var(--bg-primary)] border border-[var(--border-color)] p-3 text-xs leading-relaxed text-[var(--text-secondary)]">
+            Server kami diblokir Cloudflare saat mengambil data dari jkt48.com. Cara ini memakai
+            <span className="font-bold text-[var(--text-primary)]"> browser Anda sendiri</span> (yang sudah lolos verifikasi) untuk menarik jadwal langsung dari jkt48.com,
+            memfilter jadwal Intan, lalu mengirimnya balik ke panel admin. <span className="font-bold text-[var(--text-primary)]">Tanpa API pihak ketiga.</span>
+          </div>
+
+          {isBookmarkletLoading ? (
+            <div className="py-6"><Loading message="Menyiapkan tautan…" /></div>
+          ) : bookmarkletUrl ? (
+            <>
+              <div>
+                <p className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)] mb-2">Langkah-langkah</p>
+                <ol className="list-decimal list-inside space-y-1.5 text-xs text-[var(--text-secondary)]">
+                  <li>Tampilkan bilah bookmark browser (Ctrl+Shift+B).</li>
+                  <li><span className="font-bold text-[var(--text-primary)]">Seret tombol biru di bawah</span> ke bilah bookmark (atau salin dan buat bookmark manual dengan URL tersebut).</li>
+                  <li>Buka <span className="font-mono">jkt48.com</span> di tab baru dan selesaikan verifikasi Cloudflare bila diminta.</li>
+                  <li>Klik bookmark tadi. Tunggu notifikasi &quot;Selesai ✓&quot; muncul di pojok kanan bawah.</li>
+                  <li>Kembali ke sini &amp; muat ulang. Jadwal baru masuk sebagai <span className="font-bold text-[var(--text-primary)]">draft</span> — tinggal publish.</li>
+                </ol>
+              </div>
+
+              <div className="flex items-center justify-center py-2">
+                {/* href di-set via ref (lihat useEffect) agar tidak dibersihkan React */}
+                <a
+                  ref={bookmarkletLinkRef}
+                  onClick={(e) => e.preventDefault()}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--color-primary)] text-white font-bold text-sm shadow-md cursor-grab active:cursor-grabbing select-none"
+                  title="Seret saya ke bilah bookmark"
+                >
+                  <Bookmark className="h-4 w-4" /> Impor Jadwal Intan
+                </a>
+              </div>
+              <p className="text-[10px] text-center text-[var(--text-muted)] -mt-1">↑ Seret tombol ini ke bilah bookmark browser Anda</p>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Atau salin URL bookmarklet</label>
+                <div className="flex gap-2">
+                  <input
+                    readOnly
+                    value={bookmarkletUrl}
+                    onFocus={(e) => e.target.select()}
+                    className="flex-1 px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl text-xs font-mono truncate focus:outline-none"
+                  />
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    onClick={handleCopyBookmarklet}
+                    className="flex items-center gap-1.5 shrink-0 cursor-pointer"
+                  >
+                    {bookmarkletCopied ? <><Check className="h-3.5 w-3.5" /> Tersalin</> : <><Copy className="h-3.5 w-3.5" /> Salin</>}
+                  </Button>
+                </div>
+                <p className="text-[10px] text-[var(--text-muted)]">Tautan ini berisi token yang berlaku 7 hari. Jangan bagikan ke publik.</p>
+              </div>
+            </>
+          ) : (
+            <div className="py-6 text-center text-xs text-[var(--text-muted)]">Tautan belum siap.</div>
+          )}
+
+          <div className="flex justify-end pt-3 border-t border-[var(--border-color)]">
+            <Button type="button" variant="outline" size="sm" onClick={() => setIsBookmarkletOpen(false)}>
+              Tutup
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Confirm Delete All Drafts Dialog */}
+      <ConfirmDialog
+        isOpen={confirmDeleteDrafts}
+        onClose={() => setConfirmDeleteDrafts(false)}
+        onConfirm={executeDeleteAllDrafts}
+        title="Bersihkan Semua Draft?"
+        message={`Apakah Anda yakin ingin menghapus seluruh (${draftCount}) jadwal berstatus Draft? Tindakan ini akan membersihkan data lama di database agar Anda dapat mengimpor ulang data yang 100% bersih.`}
+        confirmText="Hapus Semua Draft"
+        type="danger"
       />
     </div>
   );
