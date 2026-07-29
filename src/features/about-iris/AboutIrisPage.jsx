@@ -298,7 +298,7 @@ function PhilosophyCard({ item, index, variants, className = '', activeId, onAct
         <div className="flex flex-col items-center gap-1.5 shrink-0">
           <span className="text-[10px] font-bold text-(--color-primary)/35 font-mono tracking-widest">{num}</span>
           <span className={`relative w-10 h-10 rounded-2xl border border-white/80 flex items-center justify-center shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),0_6px_16px_-8px_rgba(124,58,237,0.5)] transition-all duration-500 overflow-hidden ${isActive
-            ? 'scale-110 text-white bg-[linear-gradient(140deg,var(--color-primary),#7C3AED)]'
+            ? 'scale-110 text-white bg-[linear-gradient(140deg,var(--color-primary),var(--color-purple))]'
             : 'text-(--color-primary) bg-[linear-gradient(140deg,rgba(255,255,255,0.85),rgba(221,214,254,0.55))] group-hover:scale-110'}`}>
             <span className="absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_35%_25%,rgba(255,255,255,0.8),transparent_60%)] opacity-70" />
             <Icon className="relative size-4.5" />
@@ -341,23 +341,23 @@ function OrbitConnectors({ activeId }) {
     >
       <defs>
         <linearGradient id="connectorGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#C4B5FD" stopOpacity="0" />
-          <stop offset="50%" stopColor="#A78BFA" stopOpacity="0.5" />
-          <stop offset="100%" stopColor="#818CF8" stopOpacity="0.12" />
+          <stop offset="0%" stopColor="var(--color-purple)" stopOpacity="0" />
+          <stop offset="50%" stopColor="var(--color-purple)" stopOpacity="0.5" />
+          <stop offset="100%" stopColor="var(--color-blue)" stopOpacity="0.12" />
         </linearGradient>
         <linearGradient id="connectorGradActive" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#C4B5FD" stopOpacity="0.4" />
-          <stop offset="50%" stopColor="#7C3AED" stopOpacity="1" />
-          <stop offset="100%" stopColor="#A78BFA" stopOpacity="0.7" />
+          <stop offset="0%" stopColor="var(--color-purple)" stopOpacity="0.4" />
+          <stop offset="50%" stopColor="var(--color-purple)" stopOpacity="1" />
+          <stop offset="100%" stopColor="var(--color-blue)" stopOpacity="0.7" />
         </linearGradient>
         <linearGradient id="connectorGradVertical" gradientUnits="userSpaceOnUse" x1="500" y1="520" x2="500" y2="335">
-          <stop offset="0%" stopColor="#C4B5FD" stopOpacity="0.2" />
-          <stop offset="50%" stopColor="#A78BFA" stopOpacity="0.55" />
+          <stop offset="0%" stopColor="var(--color-purple)" stopOpacity="0.2" />
+          <stop offset="50%" stopColor="var(--color-blue)" stopOpacity="0.55" />
           <stop offset="100%" stopColor="#818CF8" stopOpacity="0.2" />
         </linearGradient>
         <linearGradient id="connectorGradVerticalActive" gradientUnits="userSpaceOnUse" x1="500" y1="520" x2="500" y2="335">
           <stop offset="0%" stopColor="#C4B5FD" stopOpacity="0.55" />
-          <stop offset="50%" stopColor="#7C3AED" stopOpacity="1" />
+          <stop offset="50%" stopColor="var(--color-purple)" stopOpacity="1" />
           <stop offset="100%" stopColor="#A78BFA" stopOpacity="0.75" />
         </linearGradient>
       </defs>
@@ -392,7 +392,7 @@ function OrbitConnectors({ activeId }) {
             cx={path.cx}
             cy={path.cy}
             r={isActive ? 4 : 2.5}
-            fill={isActive ? '#7C3AED' : '#C4B5FD'}
+            fill={isActive ? 'var(--color-purple)' : '#C4B5FD'}
             fillOpacity={isActive ? 1 : 0.6}
             style={CIRCLE_TRANSITION_STYLE}
           />
@@ -591,14 +591,14 @@ export default function AboutIrisPage() {
             initial="hidden"
             whileInView="visible"
             viewport={VISIMISI_VIEWPORT}
-            className="hidden lg:block w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] h-[550px] overflow-hidden bg-[#090530]"
+            className="hidden lg:block w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] h-[550px] overflow-hidden bg-[var(--color-bg-secondary)]"
           >
             {/* Background Panels with Shutter slide-in */}
             {/* VISI Panel (Left Side) */}
             <motion.div
               variants={visiCardVariants}
               style={VISI_CLIP}
-              className="absolute inset-0 bg-[#170C79] z-10"
+              className="absolute inset-0 bg-[#222222] z-10"
             />
             {/* MISI Panel (Right Side) */}
             <motion.div
@@ -651,7 +651,7 @@ export default function AboutIrisPage() {
           {/* Mobile/Tablet Version: Full-Bleed Stacked Layout (No Cards) */}
           <div className="block lg:hidden w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] space-y-0">
             {/* VISI Section */}
-            <div className="bg-[#170C79] text-white py-16 px-6">
+            <div className="bg-[#222222] text-white py-16 px-6">
               <div className="max-w-xl mx-auto text-center space-y-4">
                 <h3 className="text-3xl font-black tracking-widest text-white">VISI</h3>
                 <p className="text-base sm:text-lg font-medium leading-relaxed italic text-white/90">

@@ -264,7 +264,7 @@ export default function AdminLayout({ children }) {
             <span className="font-extrabold text-sm tracking-tight text-slate-800 select-none whitespace-nowrap">
               IRIS Admin
             </span>
-            <span className="text-[10px] text-[#170C79]/85 font-black tracking-wider uppercase whitespace-nowrap">
+            <span className="text-[10px] text-[#FF5FB2] font-black tracking-wider uppercase whitespace-nowrap">
               {userRole === 'super_admin' ? 'Super Admin' : (userRole === 'coordinator' ? 'Koordinator' : 'Staff Admin')}
             </span>
           </div>
@@ -289,7 +289,7 @@ export default function AdminLayout({ children }) {
       <div className={`px-4 py-3 shrink-0 border-b border-slate-100 transition-all duration-300 overflow-hidden ${isCollapsed ? "opacity-0 h-0 py-0 border-b-0" : "opacity-100"}`}>
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-          <input type="text" name="search-menu" autoComplete="off" placeholder="Search menu…" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus-visible:outline-none focus-visible:border-[#170C79] focus-visible:ring-2 focus-visible:ring-[#170C79]/15 transition-colors duration-200" />
+          <input type="text" name="search-menu" autoComplete="off" placeholder="Search menu…" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus-visible:outline-none focus-visible:border-[#FF5FB2] focus-visible:ring-2 focus-visible:ring-[#FF5FB2]/15 transition-colors duration-200" />
         </div>
       </div>
 
@@ -316,7 +316,7 @@ export default function AdminLayout({ children }) {
                           className={`
                           w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-left transition-all duration-200 group cursor-pointer
                           ${isSubActive
-                            ? "bg-[#170C79]/8 text-[#170C79] font-bold border-l-4 border-[#170C79]"
+                            ? "bg-[#FF5FB2]/10 text-[#FF5FB2] font-bold border-l-4 border-[#FF5FB2]"
                             : "text-slate-500 hover:bg-slate-50 hover:text-slate-800 font-medium"
                           }
                         `}
@@ -325,7 +325,7 @@ export default function AdminLayout({ children }) {
                           <Icon
                             className={`
                               h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-105
-                              ${isSubActive ? "text-[#170C79]" : "text-slate-400 group-hover:text-slate-700"}
+                              ${isSubActive ? "text-[#FF5FB2]" : "text-slate-400 group-hover:text-slate-700"}
                             `}
                           />
                         </div>
@@ -334,7 +334,7 @@ export default function AdminLayout({ children }) {
                           <span className="text-xs truncate">{item.name}</span>
                           <ChevronDown
                             className={`h-3.5 w-3.5 transition-transform duration-200 group-hover:text-slate-700 ${
-                              isOpen ? "rotate-180 text-[#170C79]" : "text-slate-400"
+                              isOpen ? "rotate-180 text-[#FF5FB2]" : "text-slate-400"
                             }`}
                           />
                         </div>
@@ -352,7 +352,7 @@ export default function AdminLayout({ children }) {
                                   className={`
                                     block px-3.5 py-2 text-[11px] rounded-lg transition-colors duration-150
                                     ${isSubItemActive
-                                      ? "bg-slate-50 text-[#170C79] font-extrabold border-l-2 border-[#170C79]"
+                                      ? "bg-slate-50 text-[#FF5FB2] font-extrabold border-l-2 border-[#FF5FB2]"
                                       : "text-slate-400 hover:text-slate-700 hover:bg-slate-50 font-bold"
                                     }
                                   `}
@@ -372,11 +372,11 @@ export default function AdminLayout({ children }) {
                           type="button"
                           className={`
                             w-full flex items-center justify-center px-2 py-2.5 rounded-xl transition-all duration-200
-                            ${isSubActive ? "bg-[#170C79]/8 text-[#170C79]" : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"}
+                            ${isSubActive ? "bg-[#FF5FB2]/10 text-[#FF5FB2]" : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"}
                           `}
                         >
                           <div className="flex items-center justify-center min-w-[24px]">
-                            <Icon className={`h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-105 ${isSubActive ? "text-[#170C79]" : "text-slate-400"}`} />
+                            <Icon className={`h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-105 ${isSubActive ? "text-[#FF5FB2]" : "text-slate-400"}`} />
                           </div>
                         </button>
 
@@ -390,7 +390,7 @@ export default function AdminLayout({ children }) {
                                   href={sub.href}
                                   onClick={(e) => handleLinkClick(e, sub.href)}
                                   className={`block px-3.5 py-2 hover:bg-slate-50 transition-colors font-bold ${
-                                    isSubItemActive ? "text-[#170C79] bg-slate-50" : "text-slate-600 hover:text-slate-900"
+                                    isSubItemActive ? "text-[#FF5FB2] bg-slate-50" : "text-slate-600 hover:text-slate-900"
                                   }`}
                               >
                                 {sub.name}
@@ -416,7 +416,7 @@ export default function AdminLayout({ children }) {
                       w-full flex items-center rounded-xl transition-all duration-200 group
                       ${isCollapsed ? "justify-center px-2 py-2.5" : "space-x-3 px-3.5 py-2.5 text-left"}
                       ${isActive
-                        ? "bg-[#170C79]/8 text-[#170C79] font-bold border-l-4 border-[#170C79]"
+                        ? "bg-[#FF5FB2]/10 text-[#FF5FB2] font-bold border-l-4 border-[#FF5FB2]"
                         : "text-slate-500 hover:bg-slate-50 hover:text-slate-800 font-medium"
                       }
                     `}
@@ -426,7 +426,7 @@ export default function AdminLayout({ children }) {
                         className={`
                           h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-105
                           ${isActive 
-                            ? "text-[#170C79]" 
+                            ? "text-[#FF5FB2]" 
                             : "text-slate-400 group-hover:text-slate-700"
                           }
                         `}
@@ -467,7 +467,7 @@ export default function AdminLayout({ children }) {
             <button 
               type="button"
               onClick={toggleSidebar} 
-              className="md:hidden flex shrink-0 items-center justify-center w-10 h-10 border border-slate-200 rounded-xl text-[#170C79] hover:bg-slate-50 transition-colors"
+              className="md:hidden flex shrink-0 items-center justify-center w-10 h-10 border border-slate-200 rounded-xl text-[#FF5FB2] hover:bg-slate-50 transition-colors"
               aria-label="Open sidebar menu"
             >
               <Menu className="h-5 w-5" />
@@ -484,7 +484,7 @@ export default function AdminLayout({ children }) {
             {/* View Site Quick Access */}
             <Link 
               href="/" 
-              className="flex items-center gap-1.5 text-xs font-extrabold text-[#170C79] hover:bg-[#170C79]/8 border border-slate-200 p-2.5 sm:px-4 sm:py-2.5 rounded-xl bg-white transition-colors shadow-xs"
+              className="flex items-center gap-1.5 text-xs font-extrabold text-[#FF5FB2] hover:bg-[#FF5FB2]/10 border border-slate-200 p-2.5 sm:px-4 sm:py-2.5 rounded-xl bg-white transition-colors shadow-xs"
               title="Web Publik"
             >
               <span className="hidden sm:inline">Web Publik</span>
@@ -494,7 +494,7 @@ export default function AdminLayout({ children }) {
             {/* Profile Section */}
             <div className="flex items-center gap-3 border-l border-slate-200 pl-2 sm:pl-4 h-8">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-[#170C79] text-white rounded-full flex items-center justify-center font-extrabold text-xs shadow-xs shrink-0 select-none">
+                <div className="w-8 h-8 bg-gradient-to-r from-[#FF5FB2] to-[#A855F7] text-white rounded-full flex items-center justify-center font-extrabold text-xs shadow-xs shrink-0 select-none">
                   {adminProfile?.username ? adminProfile.username.substring(0, 2).toUpperCase() : 'AD'}
                 </div>
                 <div className="hidden sm:block text-left">

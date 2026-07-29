@@ -414,15 +414,15 @@ export default function DashboardPage() {
         {/* Welcome Card (colspan-2) */}
         <motion.div
           variants={itemVariants}
-          className="lg:col-span-2 relative overflow-hidden rounded-2xl bg-white border border-slate-200/80 p-8 text-slate-800 shadow-xs flex flex-col justify-between min-h-[160px] text-left border-l-4 border-l-[#170C79] group"
+          className="lg:col-span-2 relative overflow-hidden rounded-2xl bg-white border border-slate-200/80 p-8 text-slate-800 shadow-xs flex flex-col justify-between min-h-[160px] text-left border-l-4 border-l-[var(--color-pink)] group"
         >
           {/* Subtle grid pattern overlay */}
           <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(23,12,121,0.01)_1px,transparent_1px),linear-gradient(to_bottom,rgba(23,12,121,0.01)_1px,transparent_1px)] bg-[size:1.25rem_1.25rem] pointer-events-none" />
-          <div className="absolute -right-12 -top-12 size-40 rounded-full bg-[#170C79]/5 blur-3xl pointer-events-none group-hover:scale-110 transition-transform duration-700" />
+          <div className="absolute -right-12 -top-12 size-40 rounded-full bg-[var(--color-pink)]/5 blur-3xl pointer-events-none group-hover:scale-110 transition-transform duration-700" />
 
           <div className="space-y-3 z-10 text-left">
             <div className="flex flex-wrap gap-2 items-center">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#170C79]/5 border border-[#170C79]/10 rounded-lg text-[10px] font-black uppercase tracking-[0.12em] text-[#170C79]">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[var(--color-pink)]/5 border border-[var(--color-pink)]/10 rounded-lg text-[10px] font-black uppercase tracking-[0.12em] text-[var(--color-pink)]">
                 <span className="size-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
                 Sistem Aktif
               </span>
@@ -507,10 +507,10 @@ export default function DashboardPage() {
 
         {/* Metric 1: Revenue */}
         <motion.div variants={itemVariants} className="group">
-          <Card hoverEffect={false} className="border border-slate-200/80 bg-white rounded-2xl p-5 text-left transition-colors duration-200 hover:scale-[1.01] hover:border-[#170C79]/30 hover:shadow-xs relative overflow-hidden">
+          <Card hoverEffect={false} className="border border-slate-200/80 bg-white rounded-2xl p-5 text-left transition-colors duration-200 hover:scale-[1.01] hover:border-[var(--color-pink)]/30 hover:shadow-xs relative overflow-hidden">
             <div className="flex justify-between items-center w-full">
               <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.08em]">Pendapatan Toko</span>
-              <div className="p-2 rounded-xl bg-indigo-50 border border-indigo-100/40 text-[#170C79] transition-transform group-hover:scale-105">
+              <div className="p-2 rounded-xl bg-indigo-50 border border-indigo-100/40 text-[var(--color-pink)] transition-transform group-hover:scale-105">
                 <DollarSign className="h-4.5 w-4.5" />
               </div>
             </div>
@@ -525,7 +525,7 @@ export default function DashboardPage() {
 
         {/* Metric 2: Merchandise */}
         <motion.div variants={itemVariants} className="group">
-          <Card hoverEffect={false} className="border border-slate-200/80 bg-white rounded-2xl p-5 text-left transition-colors duration-200 hover:scale-[1.01] hover:border-[#170C79]/30 hover:shadow-xs relative overflow-hidden">
+          <Card hoverEffect={false} className="border border-slate-200/80 bg-white rounded-2xl p-5 text-left transition-colors duration-200 hover:scale-[1.01] hover:border-[var(--color-pink)]/30 hover:shadow-xs relative overflow-hidden">
             <div className="flex justify-between items-center w-full">
               <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.08em]">Katalog Merch</span>
               <div className="p-2 rounded-xl bg-blue-50 border border-blue-100/40 text-blue-600 transition-transform group-hover:scale-105">
@@ -543,7 +543,7 @@ export default function DashboardPage() {
 
         {/* Metric 3: Schedules */}
         <motion.div variants={itemVariants} className="group">
-          <Card hoverEffect={false} className="border border-slate-200/80 bg-white rounded-2xl p-5 text-left transition-colors duration-200 hover:scale-[1.01] hover:border-[#170C79]/30 hover:shadow-xs relative overflow-hidden">
+          <Card hoverEffect={false} className="border border-slate-200/80 bg-white rounded-2xl p-5 text-left transition-colors duration-200 hover:scale-[1.01] hover:border-[var(--color-pink)]/30 hover:shadow-xs relative overflow-hidden">
             <div className="flex justify-between items-center w-full">
               <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.08em]">Jadwal Kegiatan</span>
               <div className="p-2 rounded-xl bg-emerald-50 border border-emerald-100/40 text-emerald-600 transition-transform group-hover:scale-105">
@@ -561,7 +561,7 @@ export default function DashboardPage() {
 
         {/* Metric 4: Pending Orders */}
         <motion.div variants={itemVariants} className="group">
-          <Card hoverEffect={false} className="border border-slate-200/80 bg-white rounded-2xl p-5 text-left transition-colors duration-200 hover:scale-[1.01] hover:border-[#170C79]/30 hover:shadow-xs relative overflow-hidden">
+          <Card hoverEffect={false} className="border border-slate-200/80 bg-white rounded-2xl p-5 text-left transition-colors duration-200 hover:scale-[1.01] hover:border-[var(--color-pink)]/30 hover:shadow-xs relative overflow-hidden">
             <div className="flex justify-between items-center w-full">
               <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.08em]">Order Pending</span>
               <div className="p-2 rounded-xl bg-amber-50 border border-amber-100/40 text-amber-500 transition-transform group-hover:scale-105">
@@ -585,8 +585,8 @@ export default function DashboardPage() {
         {/* Export / Backup card */}
         <motion.div variants={itemVariants} className="lg:col-span-3 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-left">
           <div className="space-y-1">
-            <h4 className="text-sm font-black text-[#170C79] flex items-center gap-2">
-              <BookOpen className="h-4.5 w-4.5 text-[#170C79]" /> Backup & Restore Data
+            <h4 className="text-sm font-black text-[var(--color-pink)] flex items-center gap-2">
+              <BookOpen className="h-4.5 w-4.5 text-[var(--color-pink)]" /> Backup & Restore Data
             </h4>
             <p className="text-xs text-slate-500 font-semibold">
               Unduh seluruh data events, news, recaps, gallery, dan mading sebagai berkas JSON untuk backup, atau pulihkan data dari file JSON cadangan.
@@ -605,7 +605,7 @@ export default function DashboardPage() {
             <label
               className={`inline-flex items-center gap-2 px-4 py-2.5 text-xs font-black rounded-xl transition-colors cursor-pointer ${
                 currentUserEmail.toLowerCase() === 'it_support@iris.admin'
-                  ? 'bg-[#170C79] hover:bg-[#0A0440] text-white'
+                  ? 'bg-[var(--color-pink)] hover:bg-[#0A0440] text-white'
                   : 'bg-slate-105 text-slate-400 cursor-not-allowed opacity-50'
               }`}
             >
@@ -628,8 +628,8 @@ export default function DashboardPage() {
         >
           <div className="space-y-4">
             <div className="flex justify-between items-center border-b border-slate-100 pb-3">
-              <h4 className="text-sm font-black text-[#170C79] flex items-center gap-2">
-                <MessageSquare className="h-4.5 w-4.5 text-[#170C79]" />
+              <h4 className="text-sm font-black text-[var(--color-pink)] flex items-center gap-2">
+                <MessageSquare className="h-4.5 w-4.5 text-[var(--color-pink)]" />
                 Antrean Moderasi Mading Cepat
               </h4>
               <span className="text-[9px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100/30">
@@ -690,7 +690,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="border-t border-slate-100 pt-3 text-right">
-            <Link href={ROUTES.ADMIN_MADING} className="inline-flex items-center gap-1 text-xs font-black text-[#170C79] hover:underline">
+            <Link href={ROUTES.ADMIN_MADING} className="inline-flex items-center gap-1 text-xs font-black text-[var(--color-pink)] hover:underline">
               Kelola Mading Lengkap <ArrowUpRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -703,7 +703,7 @@ export default function DashboardPage() {
         >
           <div className="space-y-4">
             <div className="border-b border-slate-100 pb-3">
-              <h4 className="text-sm font-black text-[#170C79] flex items-center gap-2">
+              <h4 className="text-sm font-black text-[var(--color-pink)] flex items-center gap-2">
                 <ShoppingBag className="h-4.5 w-4.5 text-blue-600" />
                 Order Baru Terbaru
               </h4>
@@ -726,7 +726,7 @@ export default function DashboardPage() {
                       <span className="text-[10px] text-slate-400 font-semibold block truncate mt-0.5">{order.shipping_name}</span>
                     </div>
                     <div className="text-right shrink-0">
-                      <span className="text-xs font-black text-[#170C79] block tabular-nums">
+                      <span className="text-xs font-black text-[var(--color-pink)] block tabular-nums">
                         {formatCurrency(order.total_amount)}
                       </span>
                       <span className={`inline-block text-[8px] font-black border uppercase px-1.5 py-0.5 rounded mt-1 ${getStatusBadge(order.status)}`}>
@@ -740,7 +740,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="border-t border-slate-100 pt-3 text-right">
-            <Link href={ROUTES.ADMIN_ORDERS} className="inline-flex items-center gap-1 text-xs font-black text-[#170C79] hover:underline">
+            <Link href={ROUTES.ADMIN_ORDERS} className="inline-flex items-center gap-1 text-xs font-black text-[var(--color-pink)] hover:underline">
               Semua Pesanan <ArrowUpRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -754,8 +754,8 @@ export default function DashboardPage() {
         className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs flex flex-col gap-5 text-left"
       >
         <div className="flex justify-between items-center border-b border-slate-100 pb-3">
-          <h4 className="text-sm font-black text-[#170C79] flex items-center gap-2">
-            <Clock className="h-4.5 w-4.5 text-[#170C79]" />
+          <h4 className="text-sm font-black text-[var(--color-pink)] flex items-center gap-2">
+            <Clock className="h-4.5 w-4.5 text-[var(--color-pink)]" />
             Aktivitas Log Admin Terbaru
           </h4>
           {currentUserEmail.toLowerCase() === 'it_support@iris.admin' && activities.length > 0 && (
@@ -838,28 +838,28 @@ export default function DashboardPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 
           <Link href={ROUTES.ADMIN_MERCHANDISE} className="group">
-            <Card hoverEffect={false} className="p-4 bg-white border border-slate-200/80 rounded-2xl text-center font-bold text-slate-700 hover:text-[#170C79] hover:border-[#170C79]/40 hover:shadow-xs transition-colors duration-200 flex items-center justify-center gap-2 text-xs cursor-pointer">
+            <Card hoverEffect={false} className="p-4 bg-white border border-slate-200/80 rounded-2xl text-center font-bold text-slate-700 hover:text-[var(--color-pink)] hover:border-[var(--color-pink)]/40 hover:shadow-xs transition-colors duration-200 flex items-center justify-center gap-2 text-xs cursor-pointer">
               <ShoppingBag className="w-4 h-4 text-blue-600" />
               <span>Tambah Produk</span>
             </Card>
           </Link>
 
           <Link href={ROUTES.ADMIN_RECAPS} className="group">
-            <Card hoverEffect={false} className="p-4 bg-white border border-slate-200/80 rounded-2xl text-center font-bold text-slate-700 hover:text-[#170C79] hover:border-[#170C79]/40 hover:shadow-xs transition-colors duration-200 flex items-center justify-center gap-2 text-xs cursor-pointer">
+            <Card hoverEffect={false} className="p-4 bg-white border border-slate-200/80 rounded-2xl text-center font-bold text-slate-700 hover:text-[var(--color-pink)] hover:border-[var(--color-pink)]/40 hover:shadow-xs transition-colors duration-200 flex items-center justify-center gap-2 text-xs cursor-pointer">
               <BookOpen className="w-4 h-4 text-purple-600" />
               <span>Unggah Zine</span>
             </Card>
           </Link>
 
           <Link href={ROUTES.ADMIN_SCHEDULE} className="group">
-            <Card hoverEffect={false} className="p-4 bg-white border border-slate-200/80 rounded-2xl text-center font-bold text-slate-700 hover:text-[#170C79] hover:border-[#170C79]/40 hover:shadow-xs transition-colors duration-200 flex items-center justify-center gap-2 text-xs cursor-pointer">
+            <Card hoverEffect={false} className="p-4 bg-white border border-slate-200/80 rounded-2xl text-center font-bold text-slate-700 hover:text-[var(--color-pink)] hover:border-[var(--color-pink)]/40 hover:shadow-xs transition-colors duration-200 flex items-center justify-center gap-2 text-xs cursor-pointer">
               <Calendar className="w-4 h-4 text-emerald-600" />
               <span>Buat Jadwal</span>
             </Card>
           </Link>
 
           <Link href={ROUTES.ADMIN_NEWS} className="group">
-            <Card hoverEffect={false} className="p-4 bg-white border border-slate-200/80 rounded-2xl text-center font-bold text-slate-700 hover:text-[#170C79] hover:border-[#170C79]/40 hover:shadow-xs transition-colors duration-200 flex items-center justify-center gap-2 text-xs cursor-pointer">
+            <Card hoverEffect={false} className="p-4 bg-white border border-slate-200/80 rounded-2xl text-center font-bold text-slate-700 hover:text-[var(--color-pink)] hover:border-[var(--color-pink)]/40 hover:shadow-xs transition-colors duration-200 flex items-center justify-center gap-2 text-xs cursor-pointer">
               <Newspaper className="w-4 h-4 text-rose-500" />
               <span>Tulis Berita</span>
             </Card>

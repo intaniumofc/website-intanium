@@ -11,7 +11,7 @@ export const InfoCard = React.forwardRef(({ className, ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
-      "rounded-2xl border border-slate-200 bg-white text-slate-800 p-5 shadow-sm",
+      "rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-heading)] p-5 shadow-sm",
       className
     )}
     {...props}
@@ -67,8 +67,8 @@ export const OrderStatus = ({
             className="w-32 h-32 mx-auto object-contain drop-shadow-sm"
           />
         )}
-        <h1 className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight">{statusTitle}</h1>
-        <p className="text-xs sm:text-sm text-slate-400 font-bold leading-relaxed">{statusDescription}</p>
+        <h1 className="text-xl sm:text-2xl font-black text-[var(--color-heading)] tracking-tight">{statusTitle}</h1>
+        <p className="text-xs sm:text-sm text-[var(--color-text-secondary)] font-bold leading-relaxed">{statusDescription}</p>
       </motion.div>
 
       {/* Ordered item details card */}
@@ -78,13 +78,13 @@ export const OrderStatus = ({
             <img
               src={(item.imageUrl)?.src || (item.imageUrl)}
               alt={item.name}
-              className="w-16 h-16 rounded-xl bg-slate-50 object-cover border border-slate-100 shrink-0"
+              className="w-16 h-16 rounded-xl bg-[var(--color-bg-secondary)] object-cover border border-[var(--color-border)] shrink-0"
             />
             <div className="flex-1 min-w-0">
-              <p className="font-extrabold text-slate-800 text-xs sm:text-sm truncate">{item.name}</p>
-              <p className="text-[10px] text-slate-400 font-bold mt-1 truncate">{item.details}</p>
+              <p className="font-extrabold text-[var(--color-heading)] text-xs sm:text-sm truncate">{item.name}</p>
+              <p className="text-[10px] text-[var(--color-text-secondary)] font-bold mt-1 truncate">{item.details}</p>
             </div>
-            <p className="font-black text-slate-850 shrink-0 text-xs sm:text-sm">
+            <p className="font-black text-[var(--color-heading)] shrink-0 text-xs sm:text-sm">
               {item.priceFormatted || `$${item.price.toFixed(2)}`}
             </p>
           </div>
@@ -162,7 +162,7 @@ export const OrderStatus = ({
           </Button>
         )}
         {trackingStatus && (
-          <p className="text-xs text-green-600 dark:text-green-500 font-bold tracking-wide leading-relaxed">
+          <p className="text-xs text-[var(--color-iris-mint-dark)] font-bold tracking-wide leading-relaxed">
             {trackingStatus}
           </p>
         )}

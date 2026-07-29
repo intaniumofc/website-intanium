@@ -8,9 +8,9 @@ export function AvatarSmartGroup({
   size = 40,
   sizeStep = 6,
   overlap = -10,
-  ringColor = 'ring-white',
+  ringColor = 'ring-[var(--color-surface)]',
   hoverScale = 1.1,
-  tooltipBg = 'bg-slate-900',
+  tooltipBg = 'bg-[var(--color-heading)]',
 }) {
   const [activeIndex, setActiveIndex] = useState(null);
   const centerIndex = Math.floor(users.length / 2);

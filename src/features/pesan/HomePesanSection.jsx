@@ -55,8 +55,8 @@ export default function HomePesanSection() {
       {/* Section Header */}
       <div className="flex justify-between items-end border-b border-[var(--border-color)]/60 pb-3 select-none">
         <div className="space-y-1">
-          <h3 className="text-xl sm:text-2xl font-extrabold text-[#170C79] tracking-tight flex items-center gap-2">
-            Pesan dari Intan <Heart className="h-5 w-5 text-[var(--color-primary)] fill-[var(--color-primary)] animate-pulse" />
+          <h3 className="text-xl sm:text-2xl font-extrabold text-[var(--color-heading)] tracking-tight flex items-center gap-2">
+                      Pesan dari Intan <Heart className="h-5 w-5 text-[var(--color-pink)] fill-[var(--color-pink)] animate-pulse" />
           </h3>
           <p className="text-xs text-[var(--text-secondary)]">
             Dapatkan surat semangat harian langsung yang ditulis spesial oleh Intan.
@@ -81,7 +81,7 @@ export default function HomePesanSection() {
               >
                 <Card 
                   hoverEffect={true}
-                  className="bg-gradient-to-br from-[#345B8B] to-[#4A7ABF] border-2 border-white/20 p-8 sm:p-12 text-center text-white rounded-[2rem] shadow-xl flex flex-col items-center justify-center gap-6 min-h-[300px] relative overflow-hidden group"
+                  className="bg-gradient-to-br from-[var(--color-purple)] to-[var(--color-blue)] border-2 border-white/20 p-8 sm:p-12 text-center text-white rounded-[2rem] shadow-xl flex flex-col items-center justify-center gap-6 min-h-[300px] relative overflow-hidden group"
                 >
                   <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                   <div className="absolute -top-12 -right-12 w-48 h-48 bg-white/10 rounded-full blur-3xl pointer-events-none" />
@@ -97,7 +97,7 @@ export default function HomePesanSection() {
 
                   <div className="space-y-2">
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 text-[9px] uppercase font-black tracking-widest rounded-full bg-white/20 text-white border border-white/10 select-none">
-                      <Sparkles className="h-3 w-3 text-[#FFE285] fill-[#FFE285]" /> Surat Baru Menunggumu
+                      <Sparkles className="h-3 w-3 text-[var(--color-yellow)] fill-[var(--color-yellow)]" /> Surat Baru Menunggumu
                     </span>
                     <h4 className="font-extrabold text-lg sm:text-xl">
                       Ada surat penyemangat dari Intan!
@@ -124,7 +124,7 @@ export default function HomePesanSection() {
               >
                 <Card 
                   padding="none"
-                  className="bg-[#FFFDF6] border-2 border-[#EADFC9] rounded-[2rem] shadow-xl overflow-hidden min-h-[320px] flex flex-col justify-between relative"
+                  className="bg-[var(--color-bg-secondary)] border-2 border-[var(--color-border)] rounded-[2rem] shadow-xl overflow-hidden min-h-[320px] flex flex-col justify-between relative"
                 >
                   {/* Grid Lines Pattern for letter notebook aesthetic */}
                   <div className="absolute inset-0 pointer-events-none opacity-20" 
@@ -139,18 +139,18 @@ export default function HomePesanSection() {
                   <div className="absolute left-6 top-0 bottom-0 w-[1px] bg-red-200 pointer-events-none" />
 
                   {/* Header info */}
-                  <div className="relative z-10 p-6 pb-2 border-b border-[#EADFC9]/60 flex justify-between items-center bg-[#FFFDF6]/80 backdrop-blur-sm">
+                  <div className="relative z-10 p-6 pb-2 border-b border-[var(--color-border)]/60 flex justify-between items-center bg-[var(--color-bg-secondary)]/80 backdrop-blur-sm">
                     <div className="flex items-center gap-2">
                       <div className="w-8 h-8 rounded-full bg-[var(--color-primary-light)] flex items-center justify-center text-[var(--color-primary)] font-extrabold text-xs">
                         💌
                       </div>
                       <div>
                         <span className="text-[9px] uppercase font-extrabold tracking-widest text-[var(--color-primary)] block">Pesan Semangat</span>
-                        <span className="font-serif italic text-xs text-slate-500">Dari: Nur Intan</span>
+                        <span className="font-serif italic text-xs text-[var(--color-text-secondary)]">Dari: Nur Intan</span>
                       </div>
                     </div>
                     
-                    <span className="text-[10px] font-bold text-slate-400 bg-slate-100/80 px-2.5 py-1 rounded-full">
+                    <span className="text-[10px] font-bold text-[var(--color-text-secondary)] bg-[var(--color-bg-secondary)]/80 px-2.5 py-1 rounded-full">
                       Hari Ini ✨
                     </span>
                   </div>
@@ -167,7 +167,7 @@ export default function HomePesanSection() {
                   </div>
 
                   {/* Footer actions */}
-                  <div className="relative z-10 p-5 bg-[#FBF8F0] border-t border-[#EADFC9]/60 flex flex-wrap gap-3 items-center justify-between">
+                  <div className="relative z-10 p-5 bg-[var(--color-bg-secondary)] border-t border-[var(--color-border)]/60 flex flex-wrap gap-3 items-center justify-between">
                     <button
                       onClick={handleCopyMessage}
                       className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-200/50 active:scale-95 transition-all text-xs font-bold cursor-pointer"

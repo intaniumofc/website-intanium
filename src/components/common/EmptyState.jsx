@@ -25,7 +25,7 @@ export default function EmptyState({
           <span className="text-4xl">{Icon}</span>
         )}
       </div>
-      <h3 className="text-base font-bold mb-2 text-[#170C79]">
+      <h3 className="text-base font-bold mb-2 text-[var(--color-heading)]">
         {title}
       </h3>
       <p className="text-xs text-[var(--text-secondary)] mb-6 max-w-xs leading-relaxed">

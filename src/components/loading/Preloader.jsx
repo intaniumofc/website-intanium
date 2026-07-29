@@ -163,20 +163,20 @@ export default function Preloader() {
   return (
     <div 
       ref={containerRef} 
-      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#05021A] overflow-hidden"
+      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white overflow-hidden"
       aria-hidden={isComplete}
     >
       {/* Ambient glow */}
       <div 
         ref={glowRef}
         className="absolute w-[400px] h-[400px] rounded-full blur-[100px] opacity-40"
-        style={{ background: 'radial-gradient(circle, rgba(174,226,255,0.4), transparent 70%)' }}
+        style={{ background: 'radial-gradient(circle, rgba(255,95,178,0.2), transparent 70%)' }}
       />
 
       {/* Aperture circle for iris-open reveal */}
       <div 
         ref={apertureRef}
-        className="absolute w-0 h-0 rounded-full bg-[#05021A]"
+        className="absolute w-0 h-0 rounded-full bg-white"
         style={{ zIndex: 1 }}
       />
 
@@ -184,8 +184,8 @@ export default function Preloader() {
       <div className="relative z-10 flex flex-col items-center gap-8">
         <h1 
           ref={logoRef}
-          className="font-playfair text-6xl md:text-8xl font-bold text-white tracking-tight"
-          style={{ textShadow: '0 0 40px rgba(255,255,255,0.2)' }}
+          className="font-playfair text-6xl md:text-8xl font-black text-[#E83C91] tracking-tight"
+          style={{ textShadow: '0 4px 20px rgba(232,60,145,0.15)' }}
         >
           IRIS
         </h1>
@@ -194,7 +194,7 @@ export default function Preloader() {
         <div className="h-5 overflow-hidden flex items-center">
           <p 
             ref={stageTextRef}
-            className="text-white/60 text-xs md:text-sm uppercase tracking-[0.3em] font-light"
+            className="text-[var(--color-body)] text-xs md:text-sm uppercase tracking-[0.3em] font-semibold"
           >
             {getStageText(0)}
           </p>
@@ -202,16 +202,16 @@ export default function Preloader() {
 
         {/* Progress Section */}
         <div className="w-48 md:w-64 flex flex-col items-center gap-3">
-          <div className="w-full h-px bg-white/10 overflow-hidden">
+          <div className="w-full h-1 bg-[var(--color-border)] rounded-full overflow-hidden">
             <div 
               ref={progressBarRef}
-              className="h-full bg-white"
+              className="h-full bg-[var(--color-pink)] rounded-full"
               style={{ width: '0%' }}
             />
           </div>
           <span 
             ref={progressTextRef}
-            className="text-white/40 text-[10px] tabular-nums tracking-widest"
+            className="text-[var(--color-text-secondary)] text-[10px] tabular-nums tracking-widest font-bold"
           >
             0%
           </span>

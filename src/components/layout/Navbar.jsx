@@ -192,8 +192,8 @@ export default function Navbar({ isHome = false }) {
   ];
 
   const navBackground = isHome && !scrolled
-    ? 'bg-transparent border-transparent shadow-none'
-    : 'bg-[#170C79]/90 border-[#170C79]/20 shadow-lg backdrop-blur-md';
+    ? 'bg-transparent border-transparent shadow-none text-white'
+    : 'bg-[var(--color-pink-dark)] border-[#d83584] shadow-md text-white';
 
   return (
     <nav className={`fixed top-0 left-0 z-50 w-full border-b transition-all duration-500 ${navBackground}`}>
@@ -211,14 +211,7 @@ export default function Navbar({ isHome = false }) {
                 className="h-10 w-10 object-contain transition-transform duration-300 group-hover:scale-105"
               />
               <motion.span
-                className="text-2xl font-extrabold tracking-tight bg-[linear-gradient(110deg,#ffffff,35%,#a5b4fc,50%,#ffffff,75%,#ffffff)] bg-[length:200%_100%] bg-clip-text text-transparent select-none"
-                initial={{ backgroundPosition: "200% 0" }}
-                animate={{ backgroundPosition: "-200% 0" }}
-                transition={{
-                  repeat: Infinity,
-                  duration: 2.5,
-                  ease: "linear",
-                }}
+                className="text-2xl font-black tracking-tight text-white select-none drop-shadow-sm"
               >
                 IRIS
               </motion.span>
@@ -235,7 +228,7 @@ export default function Navbar({ isHome = false }) {
             <Link href={ROUTES.JOIN_US}>
               <Button
                 size="sm"
-                className="bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 hover:from-pink-600 hover:to-indigo-700 text-white font-extrabold shadow-md hover:shadow-purple-500/25 border-none transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer px-5 py-2.5 rounded-full flex items-center gap-2"
+                className="bg-[var(--gradient-cta)] hover:opacity-90 text-white font-extrabold shadow-[var(--shadow-pink-glow)] hover:shadow-[var(--shadow-pink-glow-hover)] border-none transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer px-5 py-2.5 rounded-full flex items-center gap-2"
               >
                 <Sparkle className="h-4 w-4 fill-amber-300 text-amber-300 animate-pulse" />
                 <span>Join Us</span>
@@ -274,7 +267,7 @@ export default function Navbar({ isHome = false }) {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="lg:hidden border-t border-white/15 bg-[#170C79] overflow-hidden shadow-2xl"
+            className="lg:hidden border-t border-white/20 bg-[var(--color-pink-dark)] overflow-hidden shadow-[var(--shadow-lg)]"
           >
             <div className="py-3 px-4 space-y-1 max-h-[calc(100vh-4rem)] overflow-y-auto">
               {NAV_ITEMS.map((item, index) => {
@@ -369,7 +362,7 @@ export default function Navbar({ isHome = false }) {
                 <Link
                   href={ROUTES.JOIN_US}
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center justify-center gap-2 w-full px-4 min-h-[44px] bg-gradient-to-r from-pink-500 to-indigo-600 rounded-lg text-base font-extrabold text-white shadow-md transition-all active:scale-95"
+                  className="flex items-center justify-center gap-2 w-full px-4 min-h-[44px] bg-[var(--gradient-cta)] rounded-lg text-base font-extrabold text-white shadow-[var(--shadow-pink-glow)] transition-all active:scale-95"
                 >
                   <Sparkle className="h-4 w-4 fill-amber-300 text-amber-300" />
                   <span>Join Us</span>
@@ -408,19 +401,19 @@ function DropdownNavigation({ navItems }) {
         >
           {navItem.subMenus ? (
             <button
-              className="text-sm py-2 px-4 flex cursor-pointer group transition-colors duration-300 items-center justify-center gap-1 text-white/85 hover:text-white font-semibold relative rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#170C79]"
+              className="text-sm py-2 px-4 flex cursor-pointer group transition-colors duration-300 items-center justify-center gap-1 text-white/90 hover:text-white font-semibold relative rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
               onMouseEnter={() => setIsHover(navItem.id)}
               onMouseLeave={() => setIsHover(null)}
             >
               <span className="relative z-10">{navItem.label}</span>
               <CaretDown
-                className={`h-4 w-4 relative z-10 group-hover:rotate-180 duration-300 transition-transform text-white/60 group-hover:text-white
+                className={`h-4 w-4 relative z-10 group-hover:rotate-180 duration-300 transition-transform text-white/80 group-hover:text-white
                   ${openMenu === navItem.label ? "rotate-180 text-white" : ""}`}
               />
               {(isHover === navItem.id || openMenu === navItem.label) && (
                 <motion.div
                   layoutId="hover-bg"
-                  className="absolute inset-0 size-full bg-white/10 border border-white/15"
+                  className="absolute inset-0 size-full bg-white/15 border border-white/20"
                   style={{ borderRadius: 99 }}
                 />
               )}
@@ -428,7 +421,7 @@ function DropdownNavigation({ navItems }) {
           ) : (
             <Link
               href={navItem.link || "#"}
-              className="text-sm py-2 px-4 flex cursor-pointer group transition-colors duration-300 items-center justify-center gap-1 text-white/85 hover:text-white font-semibold relative rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#170C79]"
+              className="text-sm py-2 px-4 flex cursor-pointer group transition-colors duration-300 items-center justify-center gap-1 text-white/90 hover:text-white font-semibold relative rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
               onMouseEnter={() => setIsHover(navItem.id)}
               onMouseLeave={() => setIsHover(null)}
             >
@@ -436,7 +429,7 @@ function DropdownNavigation({ navItems }) {
               {isHover === navItem.id && (
                 <motion.div
                   layoutId="hover-bg"
-                  className="absolute inset-0 size-full bg-white/10 border border-white/15"
+                  className="absolute inset-0 size-full bg-white/15 border border-white/20"
                   style={{ borderRadius: 99 }}
                 />
               )}
@@ -447,7 +440,7 @@ function DropdownNavigation({ navItems }) {
             {openMenu === navItem.label && navItem.subMenus && (
               <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 z-50">
                 <motion.div
-                  className="bg-white border border-gray-100 p-5 rounded-2xl shadow-2xl w-max backdrop-blur-md"
+                  className="bg-[var(--color-surface)] border border-[var(--color-border)] p-5 rounded-2xl shadow-[var(--shadow-lg)] w-max backdrop-blur-md"
                   layoutId="menu"
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -457,7 +450,7 @@ function DropdownNavigation({ navItems }) {
                   <div className="flex gap-8 shrink-0 overflow-hidden">
                     {navItem.subMenus.map((sub) => (
                       <motion.div layout className="min-w-[200px]" key={sub.title}>
-                        <h3 className="mb-4 text-[10px] font-bold uppercase tracking-wider text-gray-400 border-b border-gray-100 pb-2">
+                        <h3 className="mb-4 text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-secondary)] border-b border-[var(--color-border)] pb-2">
                           {sub.title}
                         </h3>
                         <ul className="space-y-4">
@@ -467,16 +460,16 @@ function DropdownNavigation({ navItems }) {
                               <li key={item.label}>
                                 <Link
                                   href={item.link || "#"}
-                                  className="flex items-start gap-3 group/item p-1.5 rounded-xl hover:bg-purple-50/50 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#170C79] focus-visible:ring-offset-2"
+                                  className="flex items-start gap-3 group/item p-1.5 rounded-xl hover:bg-[var(--color-pink-tint-8)] transition-all duration-200 focus-visible:outline-none"
                                 >
-                                  <div className="border border-gray-200 text-gray-500 rounded-lg flex items-center justify-center size-9 shrink-0 group-hover/item:bg-[#170C79] group-hover/item:text-white group-hover/item:border-[#170C79] transition-colors duration-200">
+                                  <div className="border border-[var(--color-border)] text-[var(--color-text-secondary)] rounded-lg flex items-center justify-center size-9 shrink-0 group-hover/item:bg-[var(--color-pink)] group-hover/item:text-white group-hover/item:border-[var(--color-pink)] transition-colors duration-200">
                                     <Icon className="h-5 w-5 flex-none" />
                                   </div>
                                   <div className="leading-tight">
-                                    <p className="text-sm font-semibold text-gray-800 group-hover/item:text-[#170C79] transition-colors duration-200">
+                                    <p className="text-sm font-semibold text-[var(--color-heading)] group-hover/item:text-[var(--color-pink)] transition-colors duration-200">
                                       {item.label}
                                     </p>
-                                    <p className="text-[11px] text-gray-500 leading-relaxed mt-0.5 max-w-[170px]">
+                                    <p className="text-[11px] text-[var(--color-text-secondary)] leading-relaxed mt-0.5 max-w-[170px]">
                                       {item.description}
                                     </p>
                                   </div>

@@ -712,13 +712,13 @@ export default function AdminMerchandise() {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Nama Produk</label>
-                    <input autoComplete="off" /* autocomplete="off" */  type="text" name="name" placeholder="Masukkan nama produk…" value={formData.name} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] font-semibold text-xs transition-colors" required />
+                    <input autoComplete="off" /* autocomplete="off" */  type="text" name="name" placeholder="Masukkan nama produk…" value={formData.name} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-primary)] font-semibold text-xs transition-colors" required />
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Harga (Rupiah)</label>
-                      <input autoComplete="off" /* autocomplete="off" */  type="number" name="price" placeholder="Misal: 150000" value={formData.price} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] font-semibold text-xs transition-colors" required />
+                      <input autoComplete="off" /* autocomplete="off" */  type="number" name="price" placeholder="Misal: 150000" value={formData.price} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-primary)] font-semibold text-xs transition-colors" required />
                     </div>
                     <div>
                       <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Kategori</label>
@@ -747,7 +747,7 @@ export default function AdminMerchandise() {
                 </p>
 
                 <div className="space-y-4">
-                  <input autoComplete="off" /* autocomplete="off" */  type="text" name="sizesInput" value={formData.sizesInput} onChange={handleInputChange} placeholder="S, M, L, XL" className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] font-semibold text-xs transition-colors" />
+                  <input autoComplete="off" /* autocomplete="off" */  type="text" name="sizesInput" value={formData.sizesInput} onChange={handleInputChange} placeholder="S, M, L, XL" className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-primary)] font-semibold text-xs transition-colors" />
 
                   {/* Size Quick Add chips */}
                   <div className="flex flex-wrap gap-1.5 pt-1">
@@ -770,7 +770,7 @@ export default function AdminMerchandise() {
                 <h3 className="text-xs font-bold text-[var(--color-primary)] uppercase tracking-wider border-b border-slate-100 pb-2">
                   Deskripsi & Spesifikasi Produk
                 </h3>
-                <textarea name="description" rows="5" placeholder="Detail deskripsi bahan, spesifikasi ukuran…" value={formData.description} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] font-semibold text-xs transition-colors resize-none" />
+                <textarea name="description" rows="5" placeholder="Detail deskripsi bahan, spesifikasi ukuran…" value={formData.description} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-primary)] font-semibold text-xs transition-colors resize-none" />
               </Card>
             </div>
 
@@ -855,7 +855,7 @@ export default function AdminMerchandise() {
                         )}
 
                         {/* Image URL text input */}
-                        <input autoComplete="off" /* autocomplete="off" */  type="text" name={imgSlot.key} value={formData[imgSlot.key]} onChange={handleInputChange} placeholder="Paste URL foto dari internet…" className="w-full px-3.5 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] font-semibold text-[10px] transition-colors" />
+                        <input autoComplete="off" /* autocomplete="off" */  type="text" name={imgSlot.key} value={formData[imgSlot.key]} onChange={handleInputChange} placeholder="Paste URL foto dari internet…" className="w-full px-3.5 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-primary)] font-semibold text-[10px] transition-colors" />
                       </div>
                     );
                   })}

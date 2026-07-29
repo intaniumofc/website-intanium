@@ -465,7 +465,7 @@ export default function AdminGames() {
                 <select aria-label="Pilih filter periode"
                   value={period}
                   onChange={(e) => setPeriod(e.target.value)}
-                  className="rounded-xl border border-[var(--border-color)] bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] shadow-xs cursor-pointer"
+                  className="rounded-xl border border-[var(--border-color)] bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] shadow-xs cursor-pointer"
                 >
                   <option value="all-time">Semua Waktu (All Time)</option>
                   <option value="weekly">Minggu Ini (Weekly)</option>
@@ -477,7 +477,7 @@ export default function AdminGames() {
                 <select aria-label="Pilih urutan data"
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="rounded-xl border border-[var(--border-color)] bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] shadow-xs cursor-pointer"
+                  className="rounded-xl border border-[var(--border-color)] bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] shadow-xs cursor-pointer"
                 >
                   <option value="score_desc">Skor Tertinggi</option>
                   <option value="score_asc">Skor Terendah</option>

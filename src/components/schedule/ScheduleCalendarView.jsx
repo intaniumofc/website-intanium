@@ -69,7 +69,7 @@ export default function ScheduleCalendarView({ events, selectedDate, onSelectDat
 
   const getCellStyle = (dayEvents, todayMark, isSelected) => {
     const baseTodayStyle = todayMark ? 'ring-2 ring-cyan-500/85 ring-offset-1 z-10' : '';
-    const selectedStyle = isSelected ? 'ring-2 ring-[#170C79] ring-offset-1 z-20 bg-[#170C79]/5 border-[#170C79]/30 shadow-sm' : '';
+    const selectedStyle = isSelected ? 'ring-2 ring-[var(--color-pink)] ring-offset-1 z-20 bg-[var(--color-pink)]/5 border-[var(--color-pink)]/30 shadow-sm' : '';
 
     let baseStyle = '';
     if (dayEvents.length === 0) {
@@ -280,8 +280,8 @@ export default function ScheduleCalendarView({ events, selectedDate, onSelectDat
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             />
                           ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-[#170C79] to-indigo-700 flex items-center justify-center text-cyan-300">
-                              <CalendarIcon className="w-4 h-4 opacity-50" />
+                            <div className="w-full h-full bg-gradient-to-br from-[var(--color-pink)] to-[var(--color-purple)] flex items-center justify-center text-white">
+                              <CalendarIcon className="w-4 h-4 opacity-75" />
                             </div>
                           )}
                         </div>
@@ -362,10 +362,10 @@ export default function ScheduleCalendarView({ events, selectedDate, onSelectDat
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-[#170C79] via-[#1e1494] to-[#2d1f8f] flex flex-col items-center justify-center p-4 text-center select-none relative">
-                    <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:1rem_1rem] pointer-events-none" />
-                    <div className="h-12 w-12 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center text-cyan-300 mb-2 backdrop-blur-sm">
-                      <Sparkles className="h-6 w-6 text-cyan-300" />
+                  <div className="w-full h-full bg-gradient-to-br from-[var(--color-pink)] via-[var(--color-purple)] to-[var(--color-blue)] flex flex-col items-center justify-center p-4 text-center select-none relative">
+                    <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[size:1rem_1rem] pointer-events-none" />
+                    <div className="h-12 w-12 rounded-2xl bg-white/20 border border-white/30 flex items-center justify-center text-white mb-2 backdrop-blur-sm">
+                      <Sparkles className="h-6 w-6 text-white" />
                     </div>
                   </div>
                 )}

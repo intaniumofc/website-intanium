@@ -1,11 +1,10 @@
 'use client';
 
 import React from 'react';
-import { usePathname } from 'next/navigation';
 
 /**
- * Reusable Card component implementing our premium glassmorphic system (public)
- * and flat clean panels (admin).
+ * Premium Floating Card component aligned with IRIS Design System.
+ * Background #FFFFFF, Border rgba(0,0,0,.05), Shadow 0 8px 32px rgba(15,23,42,.04), Hover translateY(-4px).
  */
 export default function Card({
   children,
@@ -14,9 +13,6 @@ export default function Card({
   padding = 'normal', // none | compact | normal | loose
   ...props
 }) {
-  const pathname = usePathname() || '';
-  const isAdmin = pathname.startsWith('/admin');
-
   const paddingStyles = {
     none: 'p-0',
     compact: 'p-4',
@@ -24,13 +20,9 @@ export default function Card({
     loose: 'p-8',
   };
 
-  const cardClasses = isAdmin
-    ? `bg-white border border-slate-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.04)] rounded-2xl ${
-        hoverEffect ? 'hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:-translate-y-0.5 transition-all duration-250 ease-[cubic-bezier(0.16,1,0.3,1)]' : ''
-      }`
-    : `glass-panel rounded-xl ${
-        hoverEffect ? 'glass-panel-hover' : ''
-      }`;
+  const cardClasses = `bg-[var(--color-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-card)] rounded-2xl ${
+    hoverEffect ? 'hover:-translate-y-1 hover:shadow-[var(--shadow-md)] hover:border-[var(--color-pink-tint-25)] transition-all duration-250 ease-out' : ''
+  }`;
 
   return (
     <div

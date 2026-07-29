@@ -408,7 +408,7 @@ export default function AdminGallery() {
           {/* Title */}
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Judul Foto</label>
-            <input autoComplete="off" /* autocomplete="off" */ type="text" name="title" placeholder="Masukkan judul atau caption singkat foto…" value={formData.title} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" required />
+            <input autoComplete="off" /* autocomplete="off" */ type="text" name="title" placeholder="Masukkan judul atau caption singkat foto…" value={formData.title} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-primary)] transition-colors" required />
           </div>
 
           {/* Display Type */}
@@ -467,14 +467,14 @@ export default function AdminGallery() {
           {/* Fallback URL Input (Optional) */}
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Atau Gunakan Direct URL (Opsional)</label>
-            <input autoComplete="off" /* autocomplete="off" */ type="text" name="url" placeholder="https://images.unsplash.com/photo-..." value={formData.url} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors" disabled={isSubmitting || isFileUploading || isConverting} />
+            <input autoComplete="off" /* autocomplete="off" */ type="text" name="url" placeholder="https://images.unsplash.com/photo-..." value={formData.url} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-primary)] transition-colors" disabled={isSubmitting || isFileUploading || isConverting} />
             <p className="text-[10px] text-[var(--text-muted)]">Kosongkan jika Anda sudah memilih berkas foto di atas.</p>
           </div>
 
           {/* Description */}
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Deskripsi Tambahan</label>
-            <textarea name="description" rows="3" placeholder="Keterangan pendukung untuk foto ini…" value={formData.description} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[var(--color-primary)] transition-colors resize-none" />
+            <textarea name="description" rows="3" placeholder="Keterangan pendukung untuk foto ini…" value={formData.description} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-primary)] transition-colors resize-none" />
           </div>
 
           {/* Submit Action */}

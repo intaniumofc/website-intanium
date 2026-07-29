@@ -7,16 +7,15 @@ import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 
 export default function Error({ error, reset }) {
   useEffect(() => {
-    // Log to external error monitoring service (e.g. Sentry) in production
     console.error('[App Error]', error);
   }, [error]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--bg-primary)] px-6">
+    <div className="min-h-screen flex items-center justify-center bg-[#FAFAFC] px-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         className="text-center max-w-md space-y-6"
       >
         <div className="flex items-center justify-center">
@@ -26,10 +25,10 @@ export default function Error({ error, reset }) {
         </div>
 
         <div className="space-y-2">
-          <h1 className="text-2xl font-extrabold text-[#170C79]">
+          <h1 className="text-2xl font-extrabold text-[#222222]">
             Terjadi Kesalahan
           </h1>
-          <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
+          <p className="text-sm text-[#60697A] leading-relaxed">
             Maaf, terjadi kesalahan saat memuat halaman ini.
             Silakan coba muat ulang atau kembali ke halaman utama.
           </p>
@@ -44,14 +43,14 @@ export default function Error({ error, reset }) {
         <div className="flex items-center justify-center gap-3 pt-2">
           <button
             onClick={reset}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[var(--border-color)] bg-white text-[var(--text-primary)] text-sm font-semibold hover:bg-[#170C79]/5 transition-all duration-200 cursor-pointer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[#E7EAF2] bg-white text-[#222222] text-sm font-semibold hover:bg-[#F5F7FB] transition-all duration-200 cursor-pointer"
           >
             <RefreshCw className="h-4 w-4" />
             Coba Lagi
           </button>
           <Link
             href="/"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#170C79] text-white text-sm font-semibold hover:bg-[#291da9] shadow-md hover:shadow-lg transition-all duration-200"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#FF5FB2] via-[#C96EFF] to-[#72C4FF] text-white text-sm font-semibold shadow-[0_4px_14px_rgba(255,95,178,0.35)] hover:scale-[1.02] transition-all duration-200"
           >
             <Home className="h-4 w-4" />
             Halaman Utama

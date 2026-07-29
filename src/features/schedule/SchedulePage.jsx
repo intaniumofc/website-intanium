@@ -33,10 +33,10 @@ function CompactEventCard({ event }) {
   const timeStr = formatEventTime(time);
   const status = getEventStatus(time);
 
-  const badgeStyles = {
-    upcoming: 'bg-indigo-50/80 text-indigo-600 border border-indigo-100',
-    live: 'bg-rose-500 text-white animate-pulse',
-    completed: 'bg-slate-100 text-slate-500',
+    const badgeStyles = {
+    upcoming: 'bg-[var(--color-blue-tint-12)] text-[var(--color-blue-dark)] border border-[var(--color-blue-tint-25)]',
+    live: 'bg-[var(--color-pink)] text-white animate-pulse',
+    completed: 'bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)]',
   };
 
   const statusLabels = {
@@ -46,9 +46,9 @@ function CompactEventCard({ event }) {
   };
 
   return (
-    <div className="group relative flex gap-3.5 bg-white border border-slate-150 rounded-2xl p-3 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 text-left">
+    <div className="group relative flex gap-3.5 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-3 shadow-[var(--shadow-xs)] hover:shadow-[var(--shadow-md)] transition-all duration-300 hover:-translate-y-0.5 text-left">
       {/* Setlist Image */}
-      <div className="w-20 h-20 rounded-xl overflow-hidden bg-slate-100 border border-slate-150 shrink-0 relative">
+      <div className="w-20 h-20 rounded-xl overflow-hidden bg-[var(--color-bg-secondary)] border border-[var(--color-border)] shrink-0 relative">
         {thumbnail ? (
           <img
             src={thumbnail.src || thumbnail}
@@ -56,8 +56,8 @@ function CompactEventCard({ event }) {
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-[#170C79] to-indigo-700 flex items-center justify-center text-cyan-300">
-            <Calendar className="w-6 h-6 opacity-60" />
+          <div className="w-full h-full bg-[var(--gradient-pink-purple)] flex items-center justify-center text-white">
+            <Calendar className="w-6 h-6 opacity-80" />
           </div>
         )}
       </div>
@@ -66,23 +66,23 @@ function CompactEventCard({ event }) {
       <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
         <div className="space-y-1">
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-[9px] font-black text-cyan-600 uppercase tracking-wide bg-cyan-50 border border-cyan-100 px-2 py-0.5 rounded-full">
+            <span className="text-[9px] font-black text-[var(--color-blue-dark)] uppercase tracking-wide bg-[var(--color-blue-tint-12)] border border-[var(--color-blue-tint-25)] px-2 py-0.5 rounded-full">
               {platform}
             </span>
             <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase ${badgeStyles[status]}`}>
               {statusLabels[status]}
             </span>
-            {duration && <span className="text-[8px] text-slate-400 font-bold">± {duration}</span>}
+            {duration && <span className="text-[8px] text-[var(--color-text-secondary)] font-bold">± {duration}</span>}
           </div>
-          <h4 className="text-xs font-black text-[#170C79] leading-snug line-clamp-2 group-hover:text-cyan-600 transition-colors" title={title}>
+          <h4 className="text-xs font-black text-[var(--color-heading)] leading-snug line-clamp-2 group-hover:text-[var(--color-pink)] transition-colors" title={title}>
             {title}
           </h4>
         </div>
 
         {/* Footer date & link */}
-        <div className="flex items-center justify-between border-t border-slate-100/60 pt-2 mt-1 gap-2">
-          <div className="text-[9px] font-bold text-slate-500 flex items-center gap-1 min-w-0">
-            <Clock className="w-3 h-3 text-cyan-500 shrink-0" />
+        <div className="flex items-center justify-between border-t border-[var(--color-border)] pt-2 mt-1 gap-2">
+          <div className="text-[9px] font-bold text-[var(--color-text-secondary)] flex items-center gap-1 min-w-0">
+                      <Clock className="w-3 h-3 text-[var(--color-blue)] shrink-0" />
             <span className="truncate">{timeStr}</span>
           </div>
           {link && (status === 'live' || status === 'upcoming') && (
@@ -90,7 +90,7 @@ function CompactEventCard({ event }) {
               href={link}
               target="_blank"
               rel="noreferrer"
-              className="text-[9px] font-bold text-[#170C79] hover:text-cyan-600 flex items-center gap-0.5 hover:underline shrink-0"
+              className="text-[9px] font-bold text-[var(--color-pink)] hover:text-[var(--color-primary-hover)] flex items-center gap-0.5 hover:underline shrink-0"
             >
               Link <ArrowRight className="w-2.5 h-2.5" />
             </a>
@@ -118,10 +118,10 @@ function SidebarEventsPanel({ events, selectedDate }) {
   }, [events]);
 
   return (
-    <div className="bg-white/80 border border-indigo-50/50 rounded-[2rem] p-5 shadow-[0_8px_30px_rgba(23,12,121,0.03)] backdrop-blur-xl space-y-6 text-left h-full">
+    <div className="bg-[var(--color-surface)]/80 border border-[var(--color-border)] rounded-[2rem] p-5 shadow-[var(--shadow-sm)] backdrop-blur-xl space-y-6 text-left h-full">
       <div>
-        <h3 className="text-sm font-black text-cyan-600 uppercase tracking-widest leading-none mb-1.5">Agenda Kegiatan</h3>
-        <h4 className="text-base font-black text-[#170C79]">{formatEventDayHeader(selectedDate)}</h4>
+        <h3 className="text-sm font-black text-[var(--color-pink)] uppercase tracking-widest leading-none mb-1.5">Agenda Kegiatan</h3>
+                <h4 className="text-base font-black text-[var(--color-heading)]">{formatEventDayHeader(selectedDate)}</h4>
       </div>
 
       <div className="space-y-4">
@@ -133,15 +133,15 @@ function SidebarEventsPanel({ events, selectedDate }) {
           </div>
         ) : (
           <div className="space-y-5">
-            <div className="py-8 flex flex-col items-center justify-center text-center px-4 rounded-2xl border border-dashed border-slate-200 bg-slate-50/30">
-              <Calendar className="w-8 h-8 text-slate-300 mb-2" />
-              <p className="text-xs font-bold text-slate-500">Tidak ada agenda khusus pada tanggal ini.</p>
+            <div className="py-8 flex flex-col items-center justify-center text-center px-4 rounded-2xl border border-dashed border-[var(--color-border)] bg-[var(--color-bg-secondary)]/30">
+                          <Calendar className="w-8 h-8 text-[var(--color-text-secondary)] mb-2" />
+                          <p className="text-xs font-bold text-[var(--color-text-secondary)]">Tidak ada agenda khusus pada tanggal ini.</p>
             </div>
 
             {upcomingEvents.length > 0 && (
               <div className="space-y-3">
-                <div className="border-b border-slate-100 pb-2">
-                  <h4 className="text-xs font-black text-[#170C79] uppercase tracking-wider flex items-center gap-1.5">
+                <div className="border-b border-[var(--color-border)] pb-2">
+                                  <h4 className="text-xs font-black text-[var(--color-heading)] uppercase tracking-wider flex items-center gap-1.5">
                     Agenda Terdekat
                   </h4>
                 </div>
@@ -190,14 +190,14 @@ export default function SchedulePage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: PREMIUM_EASE }}
       >
-        <section className="border-b border-indigo-100/70 pb-5 text-left">
+        <section className="border-b border-[var(--color-border)] pb-5 text-left">
           <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
             <div className="space-y-2">
               <div className="flex items-center gap-3">
-                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-cyan-600">Kalender Aktivitas</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[var(--color-pink)]">Kalender Aktivitas</p>
               </div>
-              <h1 className="text-3xl font-black tracking-tight text-[#170C79] sm:text-4xl">Jadwal & Kegiatan</h1>
-              <p className="max-w-xl text-sm leading-relaxed text-slate-600 font-semibold">
+              <h1 className="text-3xl font-black tracking-tight text-[var(--color-heading)] sm:text-4xl">Jadwal & Kegiatan</h1>
+                            <p className="max-w-xl text-sm leading-relaxed text-[var(--color-body)] font-semibold">
                 Pantau jadwal teater, video call, birthday, dan event streaming Nur Intan agar Anda tidak ketinggalan momen seru.
               </p>
             </div>
@@ -214,8 +214,8 @@ export default function SchedulePage() {
       </motion.div>
 
       {/* Ambient background glows */}
-      <div className="absolute top-[30%] -left-24 w-80 h-80 bg-gradient-to-tr from-indigo-500/8 to-transparent rounded-full blur-[80px] pointer-events-none -z-10 animate-pulse" />
-      <div className="absolute bottom-[20%] -right-20 w-72 h-72 bg-gradient-to-tr from-cyan-500/6 to-transparent rounded-full blur-[80px] pointer-events-none -z-10" />
+      <div className="absolute top-[30%] -left-24 w-80 h-80 bg-[var(--color-purple-tint-12)] rounded-full blur-[80px] pointer-events-none -z-10 animate-pulse" />
+            <div className="absolute bottom-[20%] -right-20 w-72 h-72 bg-[var(--color-blue-tint-15)] rounded-full blur-[80px] pointer-events-none -z-10" />
 
       {/* ========= MAIN CONTENT VIEW LAYOUT ========= */}
       <div className="relative min-h-[350px] overflow-visible">

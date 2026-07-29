@@ -1,5 +1,4 @@
 // Application-wide constant configurations
-
 export const SITE_NAME = 'IRIS';
 export const SITE_TAGLINE = 'The Official Portal for IRIS Community & Intan';
 export const ADMIN_WHATSAPP_NUMBER = '6281386701549';
@@ -27,7 +26,6 @@ export const ROUTES = {
   ESPORT: '/esport',
   PHOTOBOOTH: '/photobooth',
   JOIN_US: '/join-us',
-
   // Admin Routes
   ADMIN_LOGIN: '/admin/login',
   ADMIN_DASHBOARD: '/admin/dashboard',
@@ -71,9 +69,9 @@ export const MERCH_CATEGORIES = {
 };
 
 export const MADING_COLOR_THEMES = [
-  { id: 'yellow', name: 'Sunny Yellow', bgClass: 'bg-yellow-100 dark:bg-yellow-900/40 text-yellow-800 dark:text-yellow-200 border-yellow-300 dark:border-yellow-800' },
-  { id: 'pink', name: 'Sakura Pink', bgClass: 'bg-pink-100 dark:bg-pink-900/40 text-pink-800 dark:text-pink-200 border-pink-300 dark:border-pink-800' },
-  { id: 'blue', name: 'Sky Blue', bgClass: 'bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 border-blue-300 dark:border-blue-800' },
-  { id: 'purple', name: 'Neon Purple', bgClass: 'bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-200 border-purple-300 dark:border-purple-800' },
-  { id: 'green', name: 'Emerald', bgClass: 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-200 border-emerald-300 dark:border-emerald-800' },
+  { id: 'yellow', name: 'Sunny Yellow', bgClass: 'bg-yellow-100 text-yellow-800 border-yellow-300 ' },
+  { id: 'pink', name: 'Sakura Pink', bgClass: 'bg-pink-100 text-pink-800 border-pink-300 ' },
+  { id: 'blue', name: 'Sky Blue', bgClass: 'bg-blue-100 text-blue-800 border-blue-300 ' },
+  { id: 'purple', name: 'Neon Purple', bgClass: 'bg-purple-100 text-purple-800 border-purple-300 ' },
+  { id: 'green', name: 'Emerald', bgClass: 'bg-emerald-100 text-emerald-800 border-emerald-300 ' },
 ];

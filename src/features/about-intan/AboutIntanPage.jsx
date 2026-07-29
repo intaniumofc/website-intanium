@@ -184,7 +184,7 @@ function VideoModal({ video, onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-fade-in">
       <div className="absolute inset-0" onClick={onClose} />
-      <div className="relative w-full max-w-4xl bg-[#121225] rounded-3xl overflow-hidden shadow-(--box-shadow-lg) aspect-video z-10 border border-(--border-color)">
+      <div className="relative w-full max-w-4xl bg-[var(--color-bg-secondary)] rounded-3xl overflow-hidden shadow-(--box-shadow-lg) aspect-video z-10 border border-(--border-color)">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-black/60 text-white hover:bg-(--color-accent) hover:text-white transition-colors duration-200 cursor-pointer"
@@ -372,7 +372,7 @@ const SetlistPosterCard = ({ setlist }) => {
         className="w-full aspect-[3/3.8] rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary) focus-visible:ring-offset-2"
       >
         {/* ================= FRONT SIDE (Polaroid) ================= */}
-        <FlipCardFront className="p-3 pb-20 bg-[#fdfcf8] rounded-sm border border-black/5 shadow-md flex flex-col justify-between">
+        <FlipCardFront className="p-3 pb-20 bg-[var(--color-surface)] rounded-sm border border-black/5 shadow-md flex flex-col justify-between">
           {/* Push Pin */}
           <div className="absolute top-2 left-1/2 -translate-x-1/2 z-50 drop-shadow-sm">
             <div className={`w-3.5 h-3.5 rounded-full shadow-[inset_-1px_-2px_4px_rgba(0,0,0,0.3),0_2px_4px_rgba(0,0,0,0.4)] border relative overflow-hidden ${getThemePinColor()}`}>
@@ -405,7 +405,7 @@ const SetlistPosterCard = ({ setlist }) => {
 
         {/* ================= BACK SIDE (Polaroid Back) ================= */}
         <FlipCardBack
-          className="bg-[#fdfcf8] p-5 pb-6 rounded-sm border border-black/5 shadow-md text-slate-800 flex flex-col justify-between"
+          className="bg-[var(--color-surface)] p-5 pb-6 rounded-sm border border-black/5 shadow-md text-slate-800 flex flex-col justify-between"
           style={{
             backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'100\' height=\'100\' viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.8\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100\' height=\'100\' filter=\'url(%23noise)\' opacity=\'0.04\'/%3E%3C/svg%3E")'
           }}
@@ -542,11 +542,11 @@ const ScheduleSection = () => {
 
         return `bg-slate-100 text-slate-800 ring-2 ${ringColor} scale-105 shadow-md`;
       }
-      return 'bg-[#170C79] text-white shadow-md scale-105 ring-2 ring-indigo-300';
+      return 'bg-[var(--color-pink)] text-white shadow-md scale-105 ring-2 ring-[var(--color-pink)]/30';
     }
 
     if (events.length === 0) {
-      return 'text-slate-600 hover:bg-indigo-50 hover:text-[#170C79]';
+      return 'text-slate-600 hover:bg-[var(--color-pink-tint-8)] hover:text-[var(--color-pink)]';
     }
 
     const firstType = events[0].type;
@@ -630,7 +630,7 @@ const ScheduleSection = () => {
 
         <div className="relative grid grid-cols-1 lg:grid-cols-[300px_1fr] justify-between gap-5 lg:gap-7 items-start">
           {/* Left Panel: Mini Calendar */}
-          <div className="bg-[#fdfcf8]/95 p-4 rounded-3xl border border-(--border-color) shadow-(--box-shadow-sm) mx-auto w-full max-w-sm lg:max-w-none">
+          <div className="bg-[var(--color-surface)]/95 p-4 rounded-3xl border border-(--border-color) shadow-(--box-shadow-sm) mx-auto w-full max-w-sm lg:max-w-none">
           {/* Header */}
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-base font-black text-(--color-primary) font-heading">
@@ -1041,7 +1041,7 @@ export default function AboutIntanPage() {
                 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight font-heading mb-3"
               >
                 <motion.span
-                  className="inline-block bg-[linear-gradient(110deg,#170c79,28%,#4a7abf,40%,#ffffff,50%,#7dd3fc,58%,#345b8b,70%,#170c79)] bg-size-[240%_100%] bg-clip-text text-transparent select-none drop-shadow-[0_3px_12px_rgba(74,122,191,0.22)]"
+                  className="inline-block bg-[linear-gradient(110deg,#FF5FB2,28%,#C96EFF,40%,#72C4FF,50%,#FFD66D,58%,#FF5FB2,70%,#FF5FB2)] bg-size-[240%_100%] bg-clip-text text-transparent select-none drop-shadow-[0_3px_12px_rgba(255,95,178,0.22)]"
                   initial={{ backgroundPosition: '200% 0' }}
                   animate={{ backgroundPosition: '-200% 0' }}
                   transition={{

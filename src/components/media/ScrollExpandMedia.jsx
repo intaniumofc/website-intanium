@@ -261,7 +261,7 @@ const ScrollExpandMedia = ({
   return (
     <div
       ref={sectionRef}
-      className='relative left-1/2 w-screen -translate-x-1/2 -mt-24 transition-colors duration-700 ease-in-out overflow-x-hidden'
+      className='relative left-1/2 w-screen -translate-x-1/2 mt-0 transition-colors duration-700 ease-in-out overflow-x-hidden'
     >
       <section className='relative flex flex-col items-center justify-start min-h-[100dvh] w-full'>
         <div className='relative w-full flex flex-col items-center min-h-[100dvh]'>

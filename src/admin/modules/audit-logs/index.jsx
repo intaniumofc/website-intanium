@@ -121,7 +121,7 @@ export default function AdminAuditLogs() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-slate-200">
         <div>
           <h1 className="text-xl sm:text-2xl font-extrabold text-slate-800 flex items-center gap-2">
-            <Shield className="h-5.5 w-5.5 text-[#170C79] shrink-0" /> Log Aktivitas Admin
+            <Shield className="h-5.5 w-5.5 text-[var(--color-pink)] shrink-0" /> Log Aktivitas Admin
           </h1>
           <p className="text-xs text-slate-500 mt-1 font-semibold">
             Catatan audit universal untuk melacak tindakan administratif dan modifikasi data.

@@ -253,7 +253,7 @@ export default function AdminJoinUsPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-slate-200">
         <div>
           <h1 className="text-xl sm:text-2xl font-extrabold text-slate-800 flex items-center gap-2">
-            <Users className="h-6 w-6 text-[#170C79] shrink-0" /> Kelola Join Us & Pendaftaran
+            <Users className="h-6 w-6 text-[var(--color-pink)] shrink-0" /> Kelola Join Us & Pendaftaran
           </h1>
           <p className="text-xs text-slate-500 mt-1">
             Pantau pendaftar masuk (Member, Admin, Volunteer) dan atur status buka/kunci form pendaftaran.
@@ -272,7 +272,7 @@ export default function AdminJoinUsPage() {
       <div className="flex border-b border-slate-200 gap-6">
         <button
           className={`pb-3 text-xs font-bold border-b-2 transition-colors cursor-pointer flex items-center gap-2 ${
-            activeTab === 'submissions' ? 'border-[#170C79] text-[#170C79]' : 'border-transparent text-slate-500 hover:text-slate-800'
+            activeTab === 'submissions' ? 'border-[var(--color-pink)] text-[var(--color-pink)]' : 'border-transparent text-slate-500 hover:text-slate-800'
           }`}
           onClick={() => setActiveTab('submissions')}
         >
@@ -281,7 +281,7 @@ export default function AdminJoinUsPage() {
         </button>
         <button
           className={`pb-3 text-xs font-bold border-b-2 transition-colors cursor-pointer flex items-center gap-2 ${
-            activeTab === 'settings' ? 'border-[#170C79] text-[#170C79]' : 'border-transparent text-slate-500 hover:text-slate-800'
+            activeTab === 'settings' ? 'border-[var(--color-pink)] text-[var(--color-pink)]' : 'border-transparent text-slate-500 hover:text-slate-800'
           }`}
           onClick={() => setActiveTab('settings')}
         >

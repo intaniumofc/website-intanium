@@ -572,7 +572,7 @@ export default function AdminMembershipPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-slate-200">
         <div className="text-left">
           <h1 className="text-xl sm:text-2xl font-extrabold text-slate-800 flex items-center gap-2">
-            <Users className="h-5.5 w-5.5 text-[#170C79] shrink-0" /> Kelola Keanggotaan & Role
+            <Users className="h-5.5 w-5.5 text-[var(--color-pink)] shrink-0" /> Kelola Keanggotaan & Role
           </h1>
           <p className="text-xs text-slate-500 mt-1">
             Kelola struktur pengurus fanbase IRIS, edit detail profil media sosial anggota, serta atur izin akses (permissions) staff admin.
@@ -595,19 +595,19 @@ export default function AdminMembershipPage() {
       {/* Tabs */}
       <div className="flex flex-wrap gap-4 border-b border-slate-200 pb-1">
         <button
-          className={`pb-3 text-xs font-bold border-b-2 transition-colors cursor-pointer ${activeTab === 'members' ? 'border-[#170C79] text-[#170C79]' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
+          className={`pb-3 text-xs font-bold border-b-2 transition-colors cursor-pointer ${activeTab === 'members' ? 'border-[var(--color-pink)] text-[var(--color-pink)]' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
           onClick={() => { setActiveTab('members'); setSearchQuery(''); setMemberCurrentPage(0); }}
         >
           Daftar Anggota Pengurus
         </button>
         <button
-          className={`pb-3 text-xs font-bold border-b-2 transition-colors cursor-pointer ${activeTab === 'structure' ? 'border-[#170C79] text-[#170C79]' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
+          className={`pb-3 text-xs font-bold border-b-2 transition-colors cursor-pointer ${activeTab === 'structure' ? 'border-[var(--color-pink)] text-[var(--color-pink)]' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
           onClick={() => { setActiveTab('structure'); setSearchQuery(''); }}
         >
           Divisi & Cabang Organisasi
         </button>
         <button
-          className={`pb-3 text-xs font-bold border-b-2 transition-colors cursor-pointer ${activeTab === 'admins' ? 'border-[#170C79] text-[#170C79]' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
+          className={`pb-3 text-xs font-bold border-b-2 transition-colors cursor-pointer ${activeTab === 'admins' ? 'border-[var(--color-pink)] text-[var(--color-pink)]' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
           onClick={() => { setActiveTab('admins'); setSearchQuery(''); setAdminCurrentPage(0); }}
         >
           Hak Akses & Staff Admin
@@ -650,7 +650,7 @@ export default function AdminMembershipPage() {
                           <div className="flex items-center gap-1">
                             Nama
                             {memberSortField === 'name' ? (
-                              memberSortOrder === 'asc' ? <ArrowUp className="h-3 w-3 text-[#170C79]" /> : <ArrowDown className="h-3 w-3 text-[#170C79]" />
+                              memberSortOrder === 'asc' ? <ArrowUp className="h-3 w-3 text-[var(--color-pink)]" /> : <ArrowDown className="h-3 w-3 text-[var(--color-pink)]" />
                             ) : (
                               <ChevronsUpDown className="h-3 w-3 text-slate-300" />
                             )}
@@ -663,7 +663,7 @@ export default function AdminMembershipPage() {
                           <div className="flex items-center gap-1">
                             Divisi (Cabang)
                             {memberSortField === 'division' ? (
-                              memberSortOrder === 'asc' ? <ArrowUp className="h-3 w-3 text-[#170C79]" /> : <ArrowDown className="h-3 w-3 text-[#170C79]" />
+                              memberSortOrder === 'asc' ? <ArrowUp className="h-3 w-3 text-[var(--color-pink)]" /> : <ArrowDown className="h-3 w-3 text-[var(--color-pink)]" />
                             ) : (
                               <ChevronsUpDown className="h-3 w-3 text-slate-300" />
                             )}
@@ -839,7 +839,7 @@ export default function AdminMembershipPage() {
                       setMemberRowsPerPage(Number(e.target.value));
                       setMemberCurrentPage(0);
                     }}
-                    className="bg-white border border-slate-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[#170C79]/15"
+                    className="bg-white border border-slate-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15"
                   >
                     <option value={5}>5</option>
                     <option value={10}>10</option>
@@ -867,7 +867,7 @@ export default function AdminMembershipPage() {
                         key={i}
                         onClick={() => setMemberCurrentPage(i)}
                         className={`h-7 w-7 rounded-lg text-xs font-bold transition-colors cursor-pointer ${memberCurrentPage === i
-                          ? 'bg-[#170C79] text-white'
+                          ? 'bg-[var(--color-pink)] text-white'
                           : 'border border-slate-200 bg-white hover:bg-slate-50 text-slate-600'
                           }`}
                       >
@@ -905,7 +905,7 @@ export default function AdminMembershipPage() {
                 <div key={branch.id} className="space-y-4">
                   <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl shadow-xs">
                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Koordinator: {branch.coordinator}</span>
-                    <h3 className="font-extrabold text-sm text-[#170C79] mt-1">{branch.name}</h3>
+                    <h3 className="font-extrabold text-sm text-[var(--color-pink)] mt-1">{branch.name}</h3>
                     <p className="text-[11px] text-slate-500 font-semibold leading-relaxed mt-1.5">{branch.description}</p>
                   </div>
 
@@ -913,7 +913,7 @@ export default function AdminMembershipPage() {
                     {branchDivs.map(div => {
                       const memberCount = members.filter(m => m.division_id === div.id).length;
                       return (
-                        <div key={div.id} className="flex justify-between items-center p-4 bg-white border border-slate-200 rounded-2xl hover:border-[#170C79]/30 transition-colors shadow-xs">
+                        <div key={div.id} className="flex justify-between items-center p-4 bg-white border border-slate-200 rounded-2xl hover:border-[var(--color-pink)]/30 transition-colors shadow-xs">
                           <div>
                             <h4 className="text-xs font-extrabold text-slate-800">{div.name}</h4>
                             <span className="text-[10px] font-bold text-slate-400 mt-1 block">{memberCount} Anggota</span>
@@ -995,7 +995,7 @@ export default function AdminMembershipPage() {
                           <div className="flex items-center gap-1">
                             Username (ID)
                             {adminSortField === 'username' ? (
-                              adminSortOrder === 'asc' ? <ArrowUp className="h-3 w-3 text-[#170C79]" /> : <ArrowDown className="h-3 w-3 text-[#170C79]" />
+                              adminSortOrder === 'asc' ? <ArrowUp className="h-3 w-3 text-[var(--color-pink)]" /> : <ArrowDown className="h-3 w-3 text-[var(--color-pink)]" />
                             ) : (
                               <ChevronsUpDown className="h-3 w-3 text-slate-300" />
                             )}
@@ -1008,7 +1008,7 @@ export default function AdminMembershipPage() {
                           <div className="flex items-center gap-1">
                             Role Sistem
                             {adminSortField === 'role' ? (
-                              adminSortOrder === 'asc' ? <ArrowUp className="h-3 w-3 text-[#170C79]" /> : <ArrowDown className="h-3 w-3 text-[#170C79]" />
+                              adminSortOrder === 'asc' ? <ArrowUp className="h-3 w-3 text-[var(--color-pink)]" /> : <ArrowDown className="h-3 w-3 text-[var(--color-pink)]" />
                             ) : (
                               <ChevronsUpDown className="h-3 w-3 text-slate-300" />
                             )}
@@ -1021,7 +1021,7 @@ export default function AdminMembershipPage() {
                           <div className="flex items-center gap-1">
                             Mengelola Divisi
                             {adminSortField === 'division' ? (
-                              adminSortOrder === 'asc' ? <ArrowUp className="h-3 w-3 text-[#170C79]" /> : <ArrowDown className="h-3 w-3 text-[#170C79]" />
+                              adminSortOrder === 'asc' ? <ArrowUp className="h-3 w-3 text-[var(--color-pink)]" /> : <ArrowDown className="h-3 w-3 text-[var(--color-pink)]" />
                             ) : (
                               <ChevronsUpDown className="h-3 w-3 text-slate-300" />
                             )}
@@ -1193,7 +1193,7 @@ export default function AdminMembershipPage() {
                       setAdminRowsPerPage(Number(e.target.value));
                       setAdminCurrentPage(0);
                     }}
-                    className="bg-white border border-slate-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[#170C79]/15"
+                    className="bg-white border border-slate-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15"
                   >
                     <option value={5}>5</option>
                     <option value={10}>10</option>
@@ -1221,7 +1221,7 @@ export default function AdminMembershipPage() {
                         key={i}
                         onClick={() => setAdminCurrentPage(i)}
                         className={`h-7 w-7 rounded-lg text-xs font-bold transition-colors cursor-pointer ${adminCurrentPage === i
-                          ? 'bg-[#170C79] text-white'
+                          ? 'bg-[var(--color-pink)] text-white'
                           : 'border border-slate-200 bg-white hover:bg-slate-50 text-slate-600'
                           }`}
                       >
@@ -1261,7 +1261,7 @@ export default function AdminMembershipPage() {
               <label className="font-bold text-xs uppercase text-slate-500">Foto Profil</label>
               <div
                 onClick={avatarUpload.handleThumbnailClick}
-                className="w-24 h-24 rounded-full border-2 border-dashed border-slate-300 hover:border-[#170C79] bg-slate-50 hover:bg-slate-100/50 flex flex-col items-center justify-center overflow-hidden cursor-pointer transition-all relative group shadow-sm"
+                className="w-24 h-24 rounded-full border-2 border-dashed border-slate-300 hover:border-[var(--color-pink)] bg-slate-50 hover:bg-slate-100/50 flex flex-col items-center justify-center overflow-hidden cursor-pointer transition-all relative group shadow-sm"
                 title="Klik untuk mengunggah foto profil"
               >
                 {avatarUpload.previewUrl ? (
@@ -1307,7 +1307,7 @@ export default function AdminMembershipPage() {
                   placeholder="Misal: Ivan"
                   value={memberFormData.name}
                   onChange={handleMemberInputChange}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                   required
                   disabled={!canManage}
                 />
@@ -1319,7 +1319,7 @@ export default function AdminMembershipPage() {
                   name="division_id"
                   value={memberFormData.division_id}
                   onChange={handleMemberInputChange}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] font-semibold text-xs text-slate-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] font-semibold text-xs text-slate-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                   required
                   disabled={!canManage}
                 >
@@ -1343,7 +1343,7 @@ export default function AdminMembershipPage() {
                 placeholder="https://instagram.com/username"
                 value={memberFormData.instagram_url}
                 onChange={handleMemberInputChange}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors text-xs"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors text-xs"
               />
             </div>
             <div className="flex flex-col gap-1.5">
@@ -1357,7 +1357,7 @@ export default function AdminMembershipPage() {
                 placeholder="https://x.com/username"
                 value={memberFormData.twitter_url}
                 onChange={handleMemberInputChange}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors text-xs"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors text-xs"
               />
             </div>
           </div>
@@ -1372,7 +1372,7 @@ export default function AdminMembershipPage() {
                 placeholder="misal: Casimira@iris.admin"
                 value={memberFormData.email}
                 onChange={handleMemberInputChange}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors text-xs"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors text-xs"
               />
             </div>
           )}
@@ -1419,7 +1419,7 @@ export default function AdminMembershipPage() {
               placeholder="Misal: Humas"
               value={divFormData.name}
               onChange={handleDivInputChange}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors"
               required
             />
           </div>
@@ -1430,7 +1430,7 @@ export default function AdminMembershipPage() {
               name="branch_id"
               value={divFormData.branch_id}
               onChange={handleDivInputChange}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] font-semibold text-xs text-slate-700 transition-colors"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] font-semibold text-xs text-slate-700 transition-colors"
               required
             >
               {branches.map(b => (
@@ -1472,7 +1472,7 @@ export default function AdminMembershipPage() {
                 name="role"
                 value={adminFormData.role}
                 onChange={handleAdminRoleChange}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] font-bold text-xs text-slate-700 transition-colors"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] font-bold text-xs text-slate-700 transition-colors"
                 required
               >
                 <option value="staff">Staff Admin</option>
@@ -1487,7 +1487,7 @@ export default function AdminMembershipPage() {
                 name="division_id"
                 value={adminFormData.division_id}
                 onChange={(e) => setAdminFormData(prev => ({ ...prev, division_id: e.target.value }))}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] font-semibold text-xs text-slate-700 transition-colors"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] font-semibold text-xs text-slate-700 transition-colors"
               >
                 <option value="">Umum / Tidak Ada</option>
                 {divisions.map(div => (
@@ -1515,7 +1515,7 @@ export default function AdminMembershipPage() {
                         type="checkbox"
                         checked={isChecked}
                         onChange={(e) => handlePermissionCheckboxChange(perm.id, e.target.checked)}
-                        className="rounded border-slate-300 text-[#170C79] focus:ring-[#170C79]/15"
+                        className="rounded border-slate-300 text-[var(--color-pink)] focus:ring-[var(--color-pink)]/15"
                       />
                       <span className={isChecked ? 'text-slate-800 font-bold' : 'text-slate-500'}>
                         {perm.label}
@@ -1561,7 +1561,7 @@ export default function AdminMembershipPage() {
               placeholder="Masukkan password baru (min 6 karakter)"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#170C79]/15 focus:border-[#170C79] transition-colors"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors"
               required
               minLength={6}
             />

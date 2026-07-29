@@ -42,10 +42,10 @@ const PLAYER_KEY = 'menangkap-kecoa-username';
 
 function StatCard({ icon: Icon, label, value }) {
   return (
-    <div className="rounded-2xl border border-[#170C79]/10 bg-white/85 p-3 text-center shadow-sm">
-      <Icon className="mx-auto mb-1 size-4 text-[#170C79]" />
+    <div className="rounded-2xl border border-[rgba(0,0,0,0.05)] bg-white p-3 text-center shadow-[0_2px_8px_rgba(15,23,42,0.03)]">
+      <Icon className="mx-auto mb-1 size-4 text-[var(--color-pink)]" />
       <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{label}</p>
-      <p className="mt-0.5 text-lg font-black text-[#170C79] truncate">{value}</p>
+      <p className="mt-0.5 text-lg font-black text-[var(--color-heading)] truncate">{value}</p>
     </div>
   );
 }
@@ -288,17 +288,17 @@ export default function GosokIntanPage() {
 
       {/* Navigation back */}
       <div className="mb-6 text-left">
-        <Link href="/games" className="inline-flex items-center gap-2 text-sm text-[#170C79] hover:text-[#2518a4] font-extrabold transition-colors">
+        <Link href="/games" className="inline-flex items-center gap-2 text-sm text-[var(--color-pink)] hover:text-[var(--color-primary-hover)] font-extrabold transition-colors">
           <ArrowLeft className="size-4" /> Kembali ke Arena Game
         </Link>
       </div>
 
       {/* unified console header */}
       <header className="game-console-header">
-        <span className="inline-flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[0.2em] text-[#170C79]/65">
+        <span className="inline-flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[0.2em] text-[var(--color-pink)]">
           <Gamepad2 className="size-3.5" /> IRIS Mini Game
         </span>
-        <h1 className="mt-2 text-3xl font-black text-[#170C79] sm:text-4xl">Gosok Intan</h1>
+        <h1 className="mt-2 text-3xl font-black text-[var(--color-heading)] sm:text-4xl">Gosok Intan</h1>
         <p className="mt-1 max-w-xl text-sm leading-relaxed text-slate-600">
           Cari foto Kak Intan sebanyak-banyaknya di balik titik koin perak. Hindari bom peledak agar skor Anda aman!
         </p>
@@ -573,7 +573,7 @@ export default function GosokIntanPage() {
                   </div>
                   <div>
                     <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Poin Tertinggi</p>
-                    <p className="text-3xl font-black text-[#170C79]">
+                    <p className="text-3xl font-black text-[var(--color-heading)]">
                       {leaderboard.length > 0 ? leaderboard[0].score.toLocaleString('id-ID') : '0'}
                     </p>
                   </div>
@@ -582,7 +582,7 @@ export default function GosokIntanPage() {
                 <button 
                   type="button" 
                   onClick={openLeaderboard} 
-                  className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#170C79] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#291da9] cursor-pointer"
+                  className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[var(--color-pink)] via-[var(--color-purple)] to-[var(--color-blue)] px-5 py-3 text-sm font-bold text-white shadow-[var(--shadow-pink-glow)] hover:scale-[1.02] transition cursor-pointer"
                 >
                   <Medal className="size-4" /> Lihat Leaderboard
                 </button>
@@ -591,21 +591,21 @@ export default function GosokIntanPage() {
               {/* Cara Bermain */}
               <div className="game-console-side-section text-left">
                 <div className="flex items-center gap-3">
-                  <Crown className="size-6 shrink-0 text-[#170C79]" />
-                  <h2 className="font-black text-[#170C79]">Cara Bermain</h2>
+                  <Crown className="size-6 shrink-0 text-[var(--color-pink)]" />
+                  <h2 className="font-black text-[var(--color-heading)]">Cara Bermain</h2>
                 </div>
                 <ol className="mt-4 space-y-3 text-sm leading-relaxed text-slate-600 font-medium">
-                  <li className="rounded-xl bg-[#170C79]/[0.045] px-3 py-2"><strong>1.</strong> Gosok foil logam perak koin pada bulatan.</li>
-                  <li className="rounded-xl bg-[#170C79]/[0.045] px-3 py-2"><strong>2.</strong> Setiap foto Kak Intan menambah +10 poin.</li>
-                  <li className="rounded-xl bg-[#170C79]/[0.045] px-3 py-2"><strong>3.</strong> Hati-hati! Jika mengenai bom, game berakhir seketika.</li>
-                  <li className="rounded-xl bg-[#170C79]/[0.045] px-3 py-2"><strong>4.</strong> Gosok semua 12 foto Kak Intan untuk kemenangan mutlak!</li>
+                  <li className="rounded-xl bg-[var(--color-pink)]/[0.06] px-3 py-2"><strong>1.</strong> Gosok foil logam perak koin pada bulatan.</li>
+                  <li className="rounded-xl bg-[var(--color-pink)]/[0.06] px-3 py-2"><strong>2.</strong> Setiap foto Kak Intan menambah +10 poin.</li>
+                  <li className="rounded-xl bg-[var(--color-pink)]/[0.06] px-3 py-2"><strong>3.</strong> Hati-hati! Jika mengenai bom, game berakhir seketika.</li>
+                  <li className="rounded-xl bg-[var(--color-pink)]/[0.06] px-3 py-2"><strong>4.</strong> Gosok semua 12 foto Kak Intan untuk kemenangan mutlak!</li>
                 </ol>
               </div>
 
               {/* Small Top Score Leaderboard Preview inside sidebar */}
               {leaderboard.length > 0 && (
-                <div className="game-console-side-section text-left border-t border-[#170C79]/10">
-                  <h2 className="font-black text-[#170C79] flex items-center gap-1.5">
+                <div className="game-console-side-section text-left border-t border-[var(--color-border)]">
+                  <h2 className="font-black text-[var(--color-heading)] flex items-center gap-1.5">
                     <Trophy className="size-5" /> Top Skor
                   </h2>
                   <div className="mt-4 space-y-2.5">

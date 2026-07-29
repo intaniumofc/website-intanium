@@ -37,18 +37,18 @@ const getThemeStyles = (themeName) => {
   const themes = {
     amber: {
       border: 'border-amber-500/25',
-      bg: 'bg-[#090530]',
-      heroBg: 'from-[#0c073a] to-[#1a1168]',
+      bg: 'bg-white',
+      heroBg: 'from-pink-50/50 via-white to-purple-50/50',
       particles: 'bg-amber-400',
       iconText: 'text-amber-400',
       badge: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
-      button: 'bg-gradient-to-r from-amber-400 to-amber-500 text-[#170C79] hover:from-amber-300 hover:to-amber-400',
+      button: 'bg-gradient-to-r from-[#FF5FB2] to-[#A855F7] text-white hover:scale-[1.02]',
       textAccent: 'text-amber-400'
     },
     cyan: {
       border: 'border-cyan-500/25',
-      bg: 'bg-[#031d2b]',
-      heroBg: 'from-[#02111d] to-[#06243a]',
+      bg: 'bg-white',
+      heroBg: 'from-blue-50/50 via-white to-sky-50/50',
       particles: 'bg-cyan-400',
       iconText: 'text-cyan-400',
       badge: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30',
@@ -91,43 +91,22 @@ function NumberCounter({ value, duration = 1 }) {
 }
 
 // Particle generator for custom card visuals
-function FloatingParticles({ count = 12, color = 'bg-[#FFB84D]', containerHeight = 350 }) {
+function FloatingParticles({ count = 12, color = 'bg-[var(--color-yellow)]', containerHeight = 350 }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  /* eslint-disable react-hooks/purity */
-  const particles = useMemo(() => {
-    return Array.from({ length: count }).map(() => ({
-      size: Math.random() * 5 + 2,
-      duration: Math.random() * 6 + 4,
-      delay: Math.random() * 4,
-      left: Math.random() * 100,
-      xOffset: Math.random() * 30 - 15,
-    }));
-  }, [count]);
-  /* eslint-enable react-hooks/purity */
-
   if (!mounted) return null;
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-      {particles.map((p, i) => (
-        <motion.div
+      {Array.from({ length: count }).map((_, i) => (
+        <div
           key={i}
-          className={`absolute rounded-full opacity-30 ${color}`}
+          className={`absolute rounded-full opacity-60 animate-pulse ${color}`}
           style={{
-            width: p.size,
-            height: p.size,
-            left: `${p.left}%`,
-            bottom: '-10px',
-          }}
-          animate={{
-            y: -containerHeight,
-            x: [0, p.xOffset, 0],
-            opacity: [0, 0.5, 0],
           }}
           transition={{
             duration: p.duration,
@@ -314,7 +293,7 @@ export default function GamesPage() {
 
         {/* Header Title */}
         <div className="text-left space-y-2">
-          <h2 className="text-4xl font-black bg-gradient-to-r from-[#170C79] to-[#3a1da8] bg-clip-text text-transparent tracking-tight">
+          <h2 className="text-4xl font-black bg-gradient-to-r from-[#FF5FB2] via-[#C96EFF] to-[#72C4FF] bg-clip-text text-transparent tracking-tight">
             Arena Game IRIS
           </h2>
           <p className="text-sm text-slate-600 max-w-lg font-medium">
@@ -468,42 +447,42 @@ export default function GamesPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.25, ease: PREMIUM_EASE }}
-            className="lg:col-span-2 flex flex-col justify-between rounded-[2.5rem] border border-[#170C79]/10 bg-white/75 backdrop-blur-xl p-6 sm:p-8 shadow-xl text-[#170C79] text-left"
+            className="lg:col-span-2 flex flex-col justify-between rounded-[2.5rem] border border-[rgba(0,0,0,0.05)] bg-white p-6 sm:p-8 shadow-[0_8px_32px_rgba(15,23,42,0.04)] text-[#222222] text-left"
           >
             <div className="space-y-6 w-full">
               {/* Leaderboard Header with Tabs */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <h3 className="text-xl font-black text-[#170C79] flex items-center gap-2">
+                <h3 className="text-xl font-black text-[#222222] flex items-center gap-2">
                   🏆 Papan Skor Terbaik
                 </h3>
 
                 {/* Custom High-Tech Switch Tabs */}
-                <div className="flex items-center gap-3 bg-[#170C79]/5 p-1 border border-[#170C79]/10 rounded-xl text-xs font-bold w-max">
-                  <div className="flex rounded-lg overflow-hidden border border-[#170C79]/10">
+                <div className="flex items-center gap-3 bg-[#F5F7FB] p-1 border border-[#E7EAF2] rounded-xl text-xs font-bold w-max">
+                  <div className="flex rounded-lg overflow-hidden border border-[#E7EAF2]">
                     <button
                       onClick={() => setLeaderboardGame('classic')}
-                      className={`px-3 py-1.5 transition-colors cursor-pointer ${leaderboardGame === 'classic' ? 'bg-[#170C79] text-white' : 'text-[#170C79]/70 hover:bg-[#170C79]/10'}`}
+                      className={`px-3 py-1.5 transition-colors cursor-pointer ${leaderboardGame === 'classic' ? 'bg-[#FF5FB2] text-white' : 'text-[var(--color-body)] hover:bg-[#FF5FB2]/10'}`}
                     >
                       Kecoa
                     </button>
                     <button
                       onClick={() => setLeaderboardGame('gosok-intan')}
-                      className={`px-3 py-1.5 transition-colors cursor-pointer ${leaderboardGame === 'gosok-intan' ? 'bg-[#170C79] text-white' : 'text-[#170C79]/70 hover:bg-[#170C79]/10'}`}
+                      className={`px-3 py-1.5 transition-colors cursor-pointer ${leaderboardGame === 'gosok-intan' ? 'bg-[#FF5FB2] text-white' : 'text-[var(--color-body)] hover:bg-[#FF5FB2]/10'}`}
                     >
                       Gosok Intan
                     </button>
                   </div>
 
-                  <div className="flex rounded-lg overflow-hidden border border-[#170C79]/10">
+                  <div className="flex rounded-lg overflow-hidden border border-[#E7EAF2]">
                     <button
                       onClick={() => setLeaderboardTab('weekly')}
-                      className={`px-3 py-1.5 transition-colors cursor-pointer ${leaderboardTab === 'weekly' ? 'bg-[#170C79] text-white' : 'text-[#170C79]/70 hover:bg-[#170C79]/10'}`}
+                      className={`px-3 py-1.5 transition-colors cursor-pointer ${leaderboardTab === 'weekly' ? 'bg-[#FF5FB2] text-white' : 'text-[#60697A] hover:bg-[#FF5FB2]/10'}`}
                     >
                       Mingguan
                     </button>
                     <button
                       onClick={() => setLeaderboardTab('all-time')}
-                      className={`px-3 py-1.5 transition-colors cursor-pointer ${leaderboardTab === 'all-time' ? 'bg-[#170C79] text-white' : 'text-[#170C79]/70 hover:bg-[#170C79]/10'}`}
+                      className={`px-3 py-1.5 transition-colors cursor-pointer ${leaderboardTab === 'all-time' ? 'bg-[#FF5FB2] text-white' : 'text-[#60697A] hover:bg-[#FF5FB2]/10'}`}
                     >
                       Abadi
                     </button>
@@ -530,10 +509,10 @@ export default function GamesPage() {
               </div>
             </div>
 
-            <div className="pt-4 border-t border-[#170C79]/10 mt-4">
+            <div className="pt-4 border-t border-[#E7EAF2] mt-4">
               <Link
                 href={ROUTES.GAME_MENANGKAP_KECOA}
-                className="flex w-full items-center justify-center gap-2 rounded-xl py-3 border border-[#170C79]/15 text-[#170C79] hover:bg-[#170C79] hover:text-white transition-all duration-300 text-xs font-bold"
+                className="flex w-full items-center justify-center gap-2 rounded-full py-3 border border-[#E7EAF2] text-[#FF5FB2] hover:bg-[#FFF0F7] transition-all duration-300 text-xs font-bold"
               >
                 Lihat Klasemen Lengkap <ArrowRight className="size-4 animate-bounce-horizontal" />
               </Link>
@@ -583,14 +562,14 @@ function StatCard({ icon: Icon, title, value, color }) {
   return (
     <motion.div
       whileHover={{ y: -4, scale: 1.015 }}
-      className="flex items-center gap-4 p-5 rounded-[1.8rem] bg-white/75 backdrop-blur-xl border border-[#170C79]/8 text-[#170C79] hover:border-[#170C79]/20 hover:shadow-lg transition-all text-left shadow-md"
+      className="flex items-center gap-4 p-5 rounded-2xl bg-white border border-[rgba(0,0,0,0.05)] text-[#222222] hover:border-[#FF5FB2]/20 hover:shadow-md transition-all text-left shadow-[0_2px_8px_rgba(15,23,42,0.03)]"
     >
       <div className={`p-3.5 rounded-2xl shrink-0 border ${color}`}>
         <Icon className="size-5" />
       </div>
       <div className="leading-tight">
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{title}</p>
-        <p className="text-xl sm:text-2xl font-black text-[#170C79] mt-1">
+        <p className="text-xl sm:text-2xl font-black text-[#222222] mt-1">
           <NumberCounter value={value} />
         </p>
       </div>

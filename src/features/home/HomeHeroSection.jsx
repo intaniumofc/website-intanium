@@ -157,7 +157,7 @@ export default function HomeHeroSection() {
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-screen overflow-hidden bg-[#05021A]"
+      className="relative w-full h-screen overflow-hidden bg-white"
       aria-label="Hero Section"
     >
       {/* Background Video Container */}
@@ -191,10 +191,9 @@ export default function HomeHeroSection() {
 
       {/* Vignettes */}
       <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black/75 via-black/30 to-transparent pointer-events-none z-[2]" />
-      <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[#05021A] via-black/60 to-transparent pointer-events-none z-[2]" />
       <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-black/40 to-transparent pointer-events-none z-[2]" />
       <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-black/40 to-transparent pointer-events-none z-[2]" />
-      <div className="absolute inset-0 bg-[#170C79]/15 pointer-events-none z-[2]" />
+      <div className="absolute inset-0 bg-[rgba(168,85,247,0.12)] pointer-events-none z-[2]" />
 
       {/* Hero content */}
       <div className="absolute inset-0 z-10 flex flex-col items-center justify-center px-6 text-center">
@@ -213,7 +212,7 @@ export default function HomeHeroSection() {
               <span
                 ref={titleLine2Ref}
                 className="block text-[clamp(2.2rem,6vw,4.5rem)] text-transparent will-change-transform"
-                style={{ WebkitTextStroke: '1.5px #FFE285', transformOrigin: 'left bottom' }}
+                style={{ WebkitTextStroke: '1.5px var(--color-yellow)', transformOrigin: 'left bottom' }}
               >
                 #GEMINTANG
               </span>
@@ -261,7 +260,7 @@ export default function HomeHeroSection() {
                 }
               }
             }}
-            className="group inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-[#FFE285] text-[#170C79] font-extrabold text-xs uppercase tracking-[0.15em] shadow-[0_0_30px_rgba(255,226,133,0.3)] hover:shadow-[0_0_50px_rgba(255,226,133,0.6)] hover:scale-105 active:scale-95 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFE285] cursor-pointer"
+            className="group inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-gradient-cta text-white font-extrabold text-xs uppercase tracking-[0.15em] shadow-[0_8px_20px_rgba(255,95,178,0.25)] hover:shadow-[0_12px_28px_rgba(255,95,178,0.4)] hover:scale-105 active:scale-95 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white cursor-pointer"
           >
             Kenali Intan
             <ArrowDown className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-y-1" />

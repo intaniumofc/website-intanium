@@ -24,9 +24,9 @@ const JourneyPath = forwardRef(function JourneyPath(
         {/* Bright golden gradient for the traveled progress path */}
         {/* Deep blue to pink gradient for the traveled progress path */}
         <linearGradient id="journey-path-gradient" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#170C79" />
-          <stop offset="50%" stopColor="#6d5cff" />
-          <stop offset="100%" stopColor="#ec4899" />
+          <stop offset="0%" stopColor="var(--color-pink)" />
+          <stop offset="50%" stopColor="var(--color-purple)" />
+          <stop offset="100%" stopColor="var(--color-blue)" />
         </linearGradient>
         <filter id="journey-path-glow" x="-20%" y="-20%" width="140%" height="140%">
           <feGaussianBlur stdDeviation="6" result="blur" />

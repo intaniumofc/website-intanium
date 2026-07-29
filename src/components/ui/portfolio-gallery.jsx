@@ -94,10 +94,10 @@ export function PortfolioGallery({
         }
       `}} />
 
-      <div className="max-w-7xl mx-auto bg-white/40 backdrop-blur-md rounded-[2.5rem] border border-[var(--border-color)] overflow-hidden shadow-xl shadow-[var(--color-primary)]/5">
+      <div className="max-w-7xl mx-auto bg-[var(--color-surface)]/40 backdrop-blur-md rounded-[2.5rem] border border-[var(--border-color)] overflow-hidden shadow-xl shadow-[var(--color-primary)]/5">
         {/* Header Section */}
         <div className="relative z-10 text-center pt-16 pb-4 px-8">
-          <h2 className="text-3xl md:text-5xl font-black text-slate-800 mb-6 text-balance">{title}</h2>
+          <h2 className="text-3xl md:text-5xl font-black text-[var(--color-heading)] mb-6 text-balance">{title}</h2>
 
           <Link
             href={archiveButton.href}

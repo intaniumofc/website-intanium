@@ -426,9 +426,9 @@ function DigitalZineList() {
         <Link
           href={`/recaps/${zine.id}`}
           key={zine.id}
-          className="group flex flex-col bg-white border border-[var(--border-color)] rounded-2xl overflow-hidden hover:border-[var(--color-primary)]/40 hover:shadow-xl transition-all duration-300"
+          className="group flex flex-col bg-[var(--color-surface)] border border-[var(--border-color)] rounded-2xl overflow-hidden hover:border-[var(--color-primary)]/40 hover:shadow-xl transition-all duration-300"
         >
-          <div className="aspect-[3/4] w-full overflow-hidden bg-gray-100 relative">
+          <div className="aspect-[3/4] w-full overflow-hidden bg-[var(--color-bg-secondary)] relative">
             <img
               src={(zine.thumbnailUrl || 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400')?.src || (zine.thumbnailUrl || 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400')}
               alt={zine.title}

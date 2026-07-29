@@ -8,14 +8,14 @@
 
 /* Eyebrow badge */
 .eyebrow-badge {
-  background-color: rgba(23, 12, 121, 0.07);
-  color: #170C79;
-  border: 1px solid rgba(23, 12, 121, 0.12);
+  background-color: rgba(255, 95, 178, 0.08);
+  color: #FF5FB2;
+  border: 1px solid rgba(255, 95, 178, 0.2);
 }
 
 /* Section Title */
 .section-title {
-  color: #170C79;
+  color: #222222;
 }
 
 /* Description text */
@@ -27,6 +27,7 @@
 .feature-chip {
   position: relative;
 }
+
 @media (max-width: 1024px) {
   .feature-chip {
     border-left: none !important;
@@ -41,20 +42,24 @@
   min-width: 320px;
   border: 1px solid rgba(23, 12, 121, 0.12);
 }
+
 .cta-icon-box {
   background: rgba(23, 12, 121, 0.05);
 }
+
 .cta-arrow-btn {
-  background: #170C79;
+  background: linear-gradient(135deg, #FF5FB2, #C96EFF);
   transition: transform 180ms ease;
 }
 
 /* Outer Wooden Frame of Corkboard */
 .corkboard-outer {
   border-radius: 20px;
-  background-color: #5c2c04; /* Warm wood frames */
-  padding: 14px; /* thick framing */
-  box-shadow: 
+  background-color: #5c2c04;
+  /* Warm wood frames */
+  padding: 14px;
+  /* thick framing */
+  box-shadow:
     0 25px 50px -12px rgba(0, 0, 0, 0.25),
     inset 0 2px 5px rgba(255, 255, 255, 0.15),
     inset 0 -2px 5px rgba(0, 0, 0, 0.4);
@@ -62,7 +67,8 @@
 
 /* 3D frame border beveling */
 .corkboard-bevel-frame {
-  border: 6px solid #4a2202; /* inner shadow frame border */
+  border: 6px solid #4a2202;
+  /* inner shadow frame border */
   border-radius: 10px;
   background: #3a1a01;
   box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.85);
@@ -70,15 +76,16 @@
 
 /* Corkboard surface background with dotted texture overlays */
 .corkboard-surface {
-  background-color: #cb9b6c; /* Warm cork */
-  background-image: 
+  background-color: #cb9b6c;
+  /* Warm cork */
+  background-image:
     radial-gradient(rgba(92, 44, 4, 0.18) 12%, transparent 16%),
     radial-gradient(rgba(92, 44, 4, 0.12) 15%, transparent 16%),
     radial-gradient(rgba(255, 255, 255, 0.25) 15%, transparent 20%);
   background-size: 12px 12px, 8px 8px, 10px 10px;
   background-position: 0 0, 4px 4px, 5px 2px;
   min-height: 480px;
-  box-shadow: inset 0 8px 24px rgba(0,0,0,0.35);
+  box-shadow: inset 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
 /* Banner Tape di atas tengah */
@@ -92,17 +99,19 @@
   align-items: center;
   justify-content: center;
 }
+
 .banner-paper {
   background: #ffffff;
-  color: #170C79;
+  color: #222222;
   font-family: 'Patrick Hand', 'Caveat', cursive;
   font-size: 20px;
   font-weight: 700;
   padding: 5px 24px;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(23, 12, 121, 0.08);
   transform: rotate(-1deg);
 }
+
 .banner-washi {
   position: absolute;
   width: 35px;
@@ -112,11 +121,13 @@
   border-left: 1px dashed rgba(0, 0, 0, 0.1);
   border-right: 1px dashed rgba(0, 0, 0, 0.1);
 }
+
 .banner-washi.left {
   left: -20px;
   top: -2px;
   transform: rotate(-35deg);
 }
+
 .banner-washi.right {
   right: -20px;
   top: -2px;
@@ -130,6 +141,7 @@
   right: 15px;
   z-index: 10;
 }
+
 .butterfly-pin-circle {
   width: 32px;
   height: 32px;
@@ -140,7 +152,7 @@
   align-items: center;
   justify-content: center;
   font-size: 16px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   cursor: default;
 }
 
@@ -163,18 +175,22 @@
   background-color: #ffe5ec;
   border-left: 2px solid rgba(255, 77, 109, 0.15);
 }
+
 .pastel-lavender {
   background-color: #f3e8ff;
   border-left: 2px solid rgba(168, 85, 247, 0.15);
 }
+
 .pastel-yellow {
   background-color: #fef9c3;
   border-left: 2px solid rgba(234, 179, 8, 0.15);
 }
+
 .pastel-blue {
   background-color: #e0f2fe;
   border-left: 2px solid rgba(14, 165, 233, 0.15);
 }
+
 .pastel-peach {
   background-color: #ffedd5;
   border-left: 2px solid rgba(249, 115, 22, 0.15);
@@ -187,11 +203,13 @@
   color: #1e293b;
   word-break: break-word;
 }
+
 .note-author {
   font-family: 'Patrick Hand', 'Caveat', cursive;
   font-size: 12px;
   color: #475569;
 }
+
 .note-doodle {
   font-size: 16px;
   line-height: 1;
@@ -207,12 +225,13 @@
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  box-shadow: 
+  box-shadow:
     0 2px 3px rgba(0, 0, 0, 0.4),
     inset -2px -2px 3px rgba(0, 0, 0, 0.4),
     inset 2px 2px 3px rgba(255, 255, 255, 0.6);
   z-index: 15;
 }
+
 .note-push-pin::after {
   content: '';
   position: absolute;
@@ -223,9 +242,18 @@
   background-color: rgba(255, 255, 255, 0.85);
   border-radius: 50%;
 }
-.note-push-pin.pink { background-color: #ec4899; }
-.note-push-pin.blue { background-color: #0ea5e9; }
-.note-push-pin.yellow { background-color: #eab308; }
+
+.note-push-pin.pink {
+  background-color: #ec4899;
+}
+
+.note-push-pin.blue {
+  background-color: #0ea5e9;
+}
+
+.note-push-pin.yellow {
+  background-color: #eab308;
+}
 
 /* Note Washi Tape */
 .note-washi-tape {
@@ -238,13 +266,15 @@
   backdrop-filter: blur(0.5px);
   border-left: 1px dashed rgba(0, 0, 0, 0.08);
   border-right: 1px dashed rgba(0, 0, 0, 0.08);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   z-index: 10;
 }
+
 .note-washi-tape.washi {
   top: -8px;
   transform: translateX(-50%) rotate(-3deg);
 }
+
 .note-washi-tape.washi-bottom {
   bottom: -6px;
   top: auto;
@@ -255,12 +285,13 @@
 /* Disclaimer & badge card styling */
 .disclaimer-card {
   background-color: #ffffff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
+
 .preview-badge {
-  color: #170C79;
-  background-color: rgba(23, 12, 121, 0.05);
-  border: 1px solid rgba(23, 12, 121, 0.1);
+  color: #FF5FB2;
+  background-color: rgba(255, 95, 178, 0.08);
+  border: 1px solid rgba(255, 95, 178, 0.2);
 }
 
 /* Default mobile surface wrapper should be hidden on desktop */
@@ -270,6 +301,7 @@
 
 /* Mobile responsive horizontal scrolling and scaling adjustments */
 @media (max-width: 640px) {
+
   /* Sembunyikan grid mading desktop di mobile */
   .corkboard-surface-desktop {
     display: none !important;
@@ -279,7 +311,7 @@
     padding: 8px;
     border-radius: 12px;
   }
-  
+
   .corkboard-bevel-frame {
     border-width: 3px;
     border-radius: 6px;
@@ -290,11 +322,13 @@
     display: flex;
     overflow: hidden;
     padding: 16px 12px;
-    padding-top: 48px; /* Space for the scaled-down title banner overlay */
+    padding-top: 48px;
+    /* Space for the scaled-down title banner overlay */
     min-height: 200px;
-    box-shadow: inset 0 4px 12px rgba(0,0,0,0.3);
-    background-color: #cb9b6c; /* Warm cork */
-    background-image: 
+    box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.3);
+    background-color: #cb9b6c;
+    /* Warm cork */
+    background-image:
       radial-gradient(rgba(92, 44, 4, 0.18) 12%, transparent 16%),
       radial-gradient(rgba(92, 44, 4, 0.12) 15%, transparent 16%),
       radial-gradient(rgba(255, 255, 255, 0.25) 15%, transparent 20%);
@@ -327,8 +361,13 @@
 
   /* Keyframe animasi geser kiri mading */
   @keyframes mading-marquee-left {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+    0% {
+      transform: translateX(0);
+    }
+
+    100% {
+      transform: translateX(-50%);
+    }
   }
 
   /* Readable sticky notes on mobile */
@@ -354,6 +393,7 @@
     height: 11px;
     top: -6px;
   }
+
   .corkboard-surface-mobile .note-push-pin::after {
     top: 3px;
     left: 3px;
@@ -365,6 +405,7 @@
     width: 38px;
     height: 11px;
   }
+
   .corkboard-surface-mobile .note-washi-tape.washi {
     top: -6px;
   }
@@ -414,17 +455,19 @@
     font-size: 13px;
     padding: 2.5px 12px;
     border-radius: 1px;
-    box-shadow: 0 1.5px 3px rgba(0,0,0,0.1);
+    box-shadow: 0 1.5px 3px rgba(0, 0, 0, 0.1);
   }
 
   .corkboard-surface-mobile .banner-washi {
     width: 22px;
     height: 9px;
   }
+
   .corkboard-surface-mobile .banner-washi.left {
     left: -12px;
     top: -2px;
   }
+
   .corkboard-surface-mobile .banner-washi.right {
     right: -12px;
     top: -2px;
@@ -441,6 +484,6 @@
     height: 22px;
     font-size: 11px;
     border-width: 1px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
   }
 }
