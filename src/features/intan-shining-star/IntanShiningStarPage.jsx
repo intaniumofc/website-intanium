@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { Sparkles, Star } from 'lucide-react';
 import { useSafeReducedMotion } from '../../hooks/useSafeReducedMotion';
 import Loading from '../../components/common/Loading';
 import ComicFlipbook from '../../components/common/ComicFlipbook';
@@ -59,6 +60,18 @@ export default function IntanShiningStarPage() {
           <ComicFlipbook />
         </motion.div>
       </section>
+
+      {/* Decorative Transition Border Element between Comic and Journey */}
+      <div className="shining-divider-wrap" aria-hidden="true">
+        <div className="shining-divider-line" />
+        <div className="shining-divider-badge">
+          <Sparkles className="h-4 w-4 text-amber-500 animate-pulse" />
+          <span>Jejak Perjalanan</span>
+          <Star className="h-4 w-4 text-pink-500" />
+        </div>
+        <div className="shining-divider-line" />
+      </div>
+
       {/* Journey Timeline — Jejak Cahaya Intan */}
       <div id="journey-start">
         <JourneyMap achievements={achievements} />

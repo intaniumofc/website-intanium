@@ -6,7 +6,6 @@
   --shine-muted: #736d8c;
   --shine-border: rgba(82, 62, 164, 0.16);
   color: var(--shine-navy);
-  margin: -2rem calc(50% - 50vw) -2rem;
   overflow: hidden;
   padding-bottom: 0;
 }
@@ -117,16 +116,55 @@
 
 /* ---------- Comic Section ---------- */
 .shining-comic-section {
-  background: linear-gradient(180deg, #0b0728 0%, #110d3a 45%, #17105f 100%);
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.6) 0%, rgba(245, 243, 255, 0.8) 50%, rgba(253, 242, 248, 0.9) 100%);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 5rem 1.5rem 5rem;
+  padding: 4rem 1.5rem 5rem;
   text-align: center;
   position: relative;
   overflow: hidden;
+}
+
+/* ---------- Decorative Border / Divider between Comic and Journey ---------- */
+.shining-divider-wrap {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(180deg, rgba(253, 242, 248, 0.9) 0%, #fdf2f8 100%);
+  border-top: 1px dashed rgba(236, 72, 153, 0.3);
+  border-bottom: 1px solid rgba(236, 72, 153, 0.2);
+  box-shadow: 0 4px 20px rgba(236, 72, 153, 0.08);
+}
+
+.shining-divider-line {
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(236, 72, 153, 0.4), transparent);
+}
+
+.shining-divider-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(236, 72, 153, 0.3);
+  box-shadow: 0 4px 14px rgba(236, 72, 153, 0.15);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #be185d;
 }
 
 .shining-comic-section::before {
@@ -141,7 +179,7 @@
 .shining-comic-header {
   position: relative;
   z-index: 1;
-  margin-bottom: 2.8rem;
+  margin-bottom: 2.5rem;
 }
 
 .shining-comic-eyebrow {
@@ -150,32 +188,32 @@
   font-weight: 900;
   letter-spacing: .12em;
   text-transform: uppercase;
-  color: #a78bfa;
-  background: rgba(109, 92, 255, .12);
-  border: 1px solid rgba(109, 92, 255, .25);
-  padding: .25rem .7rem;
+  color: var(--color-secondary, #7c3aed);
+  background: rgba(124, 58, 237, 0.1);
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  padding: .28rem .8rem;
   border-radius: 999px;
 }
 
 .shining-comic-title {
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-size: clamp(2rem, 4.5vw, 3.2rem);
   font-weight: 900;
-  line-height: 1.05;
-  letter-spacing: -.04em;
-  color: #eee9ff;
+  line-height: 1.1;
+  letter-spacing: -.03em;
+  color: var(--color-primary, #1c0f84);
   margin-top: .85rem;
 }
 
 .shining-comic-desc {
-  font-size: .88rem;
+  font-size: .9rem;
   font-weight: 500;
-  color: rgba(209, 200, 240, .65);
+  color: #4b5563;
   margin-top: .6rem;
   line-height: 1.6;
 }
 
 #journey-start {
-  background: #17105f;
+  background: transparent;
   margin: 0;
   padding: 0;
   position: relative;
@@ -200,13 +238,14 @@
   justify-content: center;
   position: relative;
   z-index: 5;
-  width: min(520px, 94vw);
+  width: min(540px, 94vw);
   margin: 0 auto;
-  background: linear-gradient(160deg, #130c3a 0%, #0a0620 100%);
-  border: 1px solid rgba(167, 139, 250, 0.25);
-  border-radius: 20px;
-  padding: 1.25rem 1.5rem 1.5rem;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85), 0 0 80px rgba(109, 92, 255, 0.25);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(167, 139, 250, 0.35);
+  border-radius: 28px;
+  padding: 1.5rem 1.75rem;
+  box-shadow: 0 20px 50px rgba(28, 15, 132, 0.12), 0 0 40px rgba(109, 92, 255, 0.1);
+  backdrop-filter: blur(16px);
 }
 
 .comic-inline-header {
@@ -216,7 +255,7 @@
   justify-content: space-between;
   margin-bottom: 1.2rem;
   padding-bottom: 0.75rem;
-  border-bottom: 1px solid rgba(167, 139, 250, 0.12);
+  border-bottom: 1px solid rgba(167, 139, 250, 0.2);
 }
 
 .comic-inline-title {
@@ -225,7 +264,7 @@
   gap: 0.5rem;
   font-size: 0.85rem;
   font-weight: 700;
-  color: #eee9ff;
+  color: var(--color-primary, #1c0f84);
 }
 
 .comic-inline-hint {
@@ -234,7 +273,7 @@
   gap: 0.4rem;
   font-size: 0.72rem;
   font-weight: 600;
-  color: rgba(196, 181, 253, 0.8);
+  color: #6d28d9;
 }
 
 .comic-inline-stage {

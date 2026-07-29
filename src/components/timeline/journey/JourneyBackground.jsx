@@ -28,8 +28,11 @@ function JourneyBackground({ reducedMotion = false }) {
 
   return (
     <div className="journey-bg" aria-hidden="true">
-      {/* Warm yellow gradient base */}
-      <div className="journey-bg-gradient" />
+      {/* Warm yellow gradient & image base */}
+      <div 
+        className="journey-bg-gradient" 
+        style={{ backgroundImage: "url('/bg-shining-star.png')", backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}
+      />
 
       {/* Very soft blobs */}
       <div className="journey-blob journey-blob-1" />

@@ -6,7 +6,7 @@
 .journey-section {
   position: relative;
   width: 100%;
-  background: #17105f;
+  background: #fdf2f8;
 }
 
 .journey-stage {
@@ -18,7 +18,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: 1px solid rgba(109, 92, 255, 0.15);
+  border-bottom: 1px solid rgba(236, 72, 153, 0.15);
   will-change: transform;
   transform-origin: 50% 50%;
 }
@@ -37,20 +37,17 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 70% 60% at 50% 50%, transparent 40%, rgba(5, 2, 20, 0.55) 100%);
+  background: radial-gradient(ellipse 85% 75% at 50% 50%, transparent 45%, rgba(253, 242, 248, 0.35) 100%);
   pointer-events: none;
 }
 
 .journey-bg-gradient {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg,
-      #0b0728 0%,
-      #110d3a 18%,
-      #17105f 40%,
-      #1e1472 60%,
-      #15103d 82%,
-      #0a0620 100%);
+  background-image: url('/bg-shining-star.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .journey-bg-paper {
@@ -199,14 +196,15 @@
   font-weight: 900;
   line-height: 1.05;
   letter-spacing: -0.04em;
-  color: #eee9ff;
+  color: #831843;
+  text-shadow: 0 2px 8px rgba(255, 255, 255, 0.7);
   margin-top: 0.85rem;
 }
 
 .journey-sub {
   font-size: 0.94rem;
-  font-weight: 500;
-  color: rgba(209, 200, 240, 0.75);
+  font-weight: 600;
+  color: #9f1239;
   margin-top: 0.75rem;
   line-height: 1.6;
   max-width: 32rem;
@@ -723,13 +721,19 @@
   z-index: 20;
   max-height: 60vh;
   pointer-events: auto;
+  padding: 0.5rem 0.35rem;
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(236, 72, 153, 0.25);
+  box-shadow: 0 6px 24px rgba(190, 24, 93, 0.12);
 }
 
 .journey-wheel-track {
   display: flex;
   flex-direction: column;
   gap: 0;
-  max-height: 60vh;
+  max-height: 56vh;
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: none;
@@ -748,7 +752,7 @@
   font-size: 0.58rem;
   font-weight: 900;
   letter-spacing: 0.1em;
-  color: rgba(167, 139, 250, 0.5);
+  color: #9f1239;
   padding: 6px 0 2px 8px;
   text-transform: uppercase;
   user-select: none;
@@ -759,23 +763,24 @@
   align-items: center;
   gap: 6px;
   padding: 3px 10px 3px 6px;
-  border: 0;
+  border: 1px solid transparent;
   background: transparent;
   cursor: pointer;
   border-radius: 999px;
-  transition: background 0.25s ease;
+  transition: all 0.25s ease;
   position: relative;
 }
 
 .journey-wheel-item:hover {
-  background: rgba(109, 92, 255, 0.12);
+  background: rgba(251, 207, 232, 0.45);
+  border-color: rgba(244, 114, 182, 0.3);
 }
 
 .journey-wheel-dot {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: rgba(167, 139, 250, 0.3);
+  background: rgba(244, 114, 182, 0.5);
   transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
   flex-shrink: 0;
 }
@@ -784,34 +789,35 @@
   font-size: 0.6rem;
   font-weight: 700;
   letter-spacing: 0.04em;
-  color: rgba(209, 200, 240, 0.45);
+  color: #64748b;
   white-space: nowrap;
   transition: color 0.3s ease;
 }
 
 .journey-wheel-item:hover .journey-wheel-label {
-  color: rgba(209, 200, 240, 0.8);
+  color: #be185d;
 }
 
 .journey-wheel-item:hover .journey-wheel-dot {
-  background: rgba(167, 139, 250, 0.6);
-  box-shadow: 0 0 6px rgba(109, 92, 255, 0.4);
+  background: #ec4899;
+  box-shadow: 0 0 6px rgba(236, 72, 153, 0.4);
 }
 
 .journey-wheel-item.is-active .journey-wheel-dot {
-  background: #a78bfa;
+  background: #db2777;
   width: 7px;
   height: 7px;
-  box-shadow: 0 0 10px rgba(167, 139, 250, 0.8), 0 0 20px rgba(109, 92, 255, 0.3);
+  box-shadow: 0 0 8px rgba(219, 39, 119, 0.7);
 }
 
 .journey-wheel-item.is-active .journey-wheel-label {
-  color: #eee9ff;
+  color: #831843;
   font-weight: 900;
 }
 
 .journey-wheel-item.is-active {
-  background: rgba(109, 92, 255, 0.15);
+  background: linear-gradient(135deg, rgba(251, 207, 232, 0.85), rgba(244, 114, 182, 0.3));
+  border-color: rgba(236, 72, 153, 0.4);
 }
 
 /* ---------- Static (reduced-motion) ---------- */
