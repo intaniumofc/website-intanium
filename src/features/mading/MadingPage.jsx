@@ -246,7 +246,7 @@ export default function MadingPage() {
       </AnimatePresence>
 
       {/* HERO HERO SECTION */}
-      <section className="text-center relative max-w-4xl mx-auto pb-8 pt-0 select-none">
+      <section className="text-center relative max-w-4xl mx-auto pb-6 pt-0 select-none">
         <div className="space-y-4">
           <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-[var(--color-primary)]">
             Mading IRIS
@@ -285,9 +285,51 @@ export default function MadingPage() {
             </button>
           </div>
         </div>
+      </section>
 
-        {/* Home-aligned Horizontal Divider Line */}
-        <div className="mading-divider-line" />
+      {/* GUIDELINES CARD (Jaga Kenyamanan Ruang) AT THE TOP */}
+      <section className="max-w-6xl mx-auto">
+        <div className="sidebar-panel-card space-y-4 text-left border border-pink-200/80 bg-gradient-to-br from-pink-50/60 via-white to-purple-50/60 shadow-sm rounded-2xl p-5 sm:p-6">
+          <div className="flex items-center justify-between border-b border-pink-100/80 pb-3">
+            <h3 className="font-extrabold text-base text-[var(--color-primary)] flex items-center gap-2">
+              <ShieldCheck className="h-5 w-5 text-[var(--color-primary)] shrink-0" /> Jaga Kenyamanan Ruang
+            </h3>
+            <span className="text-[10px] font-extrabold uppercase tracking-wider text-pink-600 bg-pink-100/80 px-3 py-1 rounded-full border border-pink-200/60">
+              Panduan Mading
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-[var(--text-secondary)]">
+            <div className="flex gap-3 items-start p-3 rounded-xl bg-white/90 border border-slate-100 shadow-xs">
+              <span className="w-6 h-6 rounded-lg bg-[var(--color-primary)] text-white flex items-center justify-center shrink-0 text-xs font-black shadow-xs mt-0.5">1</span>
+              <p className="leading-relaxed">
+                <strong className="text-slate-800 block mb-0.5">Gunakan Kata Sopan</strong>
+                Tuliskan kata-kata pendukung yang baik, sopan, dan membangun untuk Nur Intan.
+              </p>
+            </div>
+            <div className="flex gap-3 items-start p-3 rounded-xl bg-white/90 border border-slate-100 shadow-xs">
+              <span className="w-6 h-6 rounded-lg bg-[var(--color-primary)] text-white flex items-center justify-center shrink-0 text-xs font-black shadow-xs mt-0.5">2</span>
+              <p className="leading-relaxed">
+                <strong className="text-slate-800 block mb-0.5">Positif & Sehat</strong>
+                Tidak menyisipkan ujaran kebencian, SARA, spam, atau promosi iklan tak berizin.
+              </p>
+            </div>
+            <div className="flex gap-3 items-start p-3 rounded-xl bg-white/90 border border-slate-100 shadow-xs">
+              <span className="w-6 h-6 rounded-lg bg-[var(--color-primary)] text-white flex items-center justify-center shrink-0 text-xs font-black shadow-xs mt-0.5">3</span>
+              <p className="leading-relaxed">
+                <strong className="text-slate-800 block mb-0.5">Sebarkan Semangat</strong>
+                Bagikan candaan bersahabat, apresiasi tulus, dan ungkapan terima kasihmu.
+              </p>
+            </div>
+          </div>
+
+          <div className="p-3 bg-slate-50/90 rounded-xl flex gap-2.5 items-center border border-slate-200/70">
+            <Info className="h-4 w-4 text-[var(--color-primary)] shrink-0" />
+            <p className="text-[11px] text-[var(--text-secondary)] leading-relaxed">
+              Setiap pesan yang dikirimkan terpasang otomatis. Admin berhak menghapus pesan yang dinilai melanggar aturan.
+            </p>
+          </div>
+        </div>
       </section>
 
       {/* FILTER & TOOLBAR CONTROLS */}
@@ -346,8 +388,8 @@ export default function MadingPage() {
         </p>
       </section>
 
-      {/* BOTTOM WIDGETS SECTION: 3 Columns on desktop, 1 Column on mobile */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto pt-6">
+      {/* BOTTOM WIDGETS SECTION: 2 Columns on desktop */}
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto pt-6">
 
         {/* CTA Card widget */}
         <div className="sidebar-panel-card space-y-4 text-left">
@@ -405,41 +447,6 @@ export default function MadingPage() {
             </p>
           </div>
         )}
-
-        {/* Rules / Guidelines Card */}
-        <div className="sidebar-panel-card space-y-4 text-left">
-          <h3 className="font-extrabold text-sm text-[var(--color-primary)] flex items-center gap-1.5">
-            <ShieldCheck className="h-4.5 w-4.5 text-[var(--color-primary)]" /> Jaga Kenyamanan Ruang
-          </h3>
-
-          <ul className="space-y-3 text-xs text-[var(--text-secondary)]">
-            <li className="flex gap-2">
-              <span className="text-indigo-900 text-sm font-black">1.</span>
-              <p className="leading-relaxed">
-                <strong className="text-slate-800">Gunakan Kata Sopan:</strong> Tuliskan kata-kata pendukung yang baik, sopan, dan membangun untuk Nur Intan.
-              </p>
-            </li>
-            <li className="flex gap-2">
-              <span className="text-indigo-900 text-sm font-black">2.</span>
-              <p className="leading-relaxed">
-                <strong className="text-slate-800">Positif & Sehat:</strong> Tidak diperkenankan menyisipkan ujaran kebencian, sara, spam, atau promosi iklan tak berizin.
-              </p>
-            </li>
-            <li className="flex gap-2">
-              <span className="text-indigo-900 text-sm font-black">3.</span>
-              <p className="leading-relaxed">
-                <strong className="text-slate-800">Sebarkan Semangat:</strong> Bagikan candaan bersahabat, apresiasi tulus, dan ungkapan terima kasihmu.
-              </p>
-            </li>
-          </ul>
-
-          <div className="p-3 bg-[var(--bg-primary)] rounded-lg flex gap-2 items-start border border-[var(--border-color)]">
-            <Info className="h-4 w-4 text-indigo-700 shrink-0 mt-0.5" />
-            <p className="text-[10px] text-[var(--text-secondary)] leading-relaxed">
-              Setiap pesan yang dikirimkan terpasang otomatis. Admin berhak menghapus pesan yang dinilai melanggar aturan.
-            </p>
-          </div>
-        </div>
       </section>
 
       {/* POPUP MODAL COMPONENT WINDOWS */}
