@@ -285,19 +285,32 @@ function BranchCard({ branch, highlight = false }) {
     ? branch.divisions?.flatMap((d) => d.members || [])[0]
     : null;
 
-  // Temukan Koordinator di branch non-highlight
+  // Temukan Koordinator di branch non-highlight (termasuk Bogel & Cipani)
   const coordinatorMember = !highlight
-    ? (branch.divisions?.flatMap((d) => d.members || []) || []).find((m) =>
-      (m.role_badge || '').toLowerCase().includes('coordinator') ||
-      (m.role_badge || '').toLowerCase().includes('koordinator')
-    )
+    ? (branch.divisions?.flatMap((d) =>
+        (d.members || []).map((m) => ({ ...m, _divName: d.name }))
+      ) || []).find((m) => {
+        const badge = (m.role_badge || '').toLowerCase();
+        const divName = (m._divName || '').toLowerCase();
+        const nameLower = (m.name || '').toLowerCase();
+        return (
+          badge.includes('coordinator') ||
+          badge.includes('koordinator') ||
+          divName.includes('coordinator') ||
+          divName.includes('koordinator') ||
+          nameLower === 'bogel' ||
+          nameLower === 'cipani'
+        );
+      })
     : null;
 
-  // Filter divisi agar tidak menampilkan "Koordinator" sebagai divisi biasa
-  const divisionsToShow = branch.divisions?.filter((d) =>
-    d.name.toLowerCase() !== 'koordinator' &&
-    d.name.toLowerCase() !== 'general coordinator'
-  ) || [];
+  // Filter divisi agar tidak menampilkan "Koordinator" / "Coordinator" / divisi milik koordinator sebagai divisi biasa di bawah
+  const divisionsToShow = branch.divisions?.filter((d) => {
+    const nameLower = d.name.toLowerCase();
+    const isCoordinatorDiv = nameLower.includes('koordinator') || nameLower.includes('coordinator');
+    const hasCoordinatorMember = coordinatorMember && d.members?.some((m) => m.id === coordinatorMember.id || m.name === coordinatorMember.name);
+    return !isCoordinatorDiv && !hasCoordinatorMember;
+  }) || [];
 
   return (
     <motion.article
@@ -318,15 +331,11 @@ function BranchCard({ branch, highlight = false }) {
               {branch.name}
             </h3>
           </div>
-          <p className={`text-xs leading-relaxed text-[var(--text-secondary)] max-w-2xl ${highlight ? 'mx-auto' : ''}`}>{branch.description}</p>
 
-          {/* Coordinator Pill */}
+          {/* Coordinator Member Pill */}
           {!highlight && coordinatorMember && (
-            <div className="flex flex-col items-start gap-1 pt-1 select-none">
-              <span className="text-[9px] font-black uppercase tracking-widest text-[var(--color-secondary)] bg-purple-100/70 border border-purple-200/50 px-2.5 py-0.5 rounded-full">
-                Koor
-              </span>
-              <MemberAvatar member={coordinatorMember} size={28} isCoordinator />
+            <div className="pt-1 select-none">
+              <MemberAvatar member={coordinatorMember} size={30} isCoordinator />
             </div>
           )}
         </div>

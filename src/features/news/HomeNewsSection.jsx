@@ -1,15 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import Image from 'next/image';
 
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { useSafeReducedMotion } from '../../hooks/useSafeReducedMotion';
-import { BookmarkIcon, X, ArrowRight, Newspaper } from 'lucide-react';
+import { BookmarkIcon, X, ArrowRight, Newspaper, Calendar, Clock, MapPin, User } from 'lucide-react';
 import { ROUTES } from '../../lib/constants';
 import Card from '../../components/common/Card';
 import bannerIris from '../../assets/logos/banner-nium.webp';
+import logoNobg from '../../assets/logos/logo-nobg.webp';
 import intanOne from '../../assets/images/intan-01.webp';
 import intanTwo from '../../assets/images/intan-02.webp';
 import intanThree from '../../assets/images/intan-03.webp';
@@ -87,8 +89,31 @@ function formatDateSafely(dateStr) {
 export default function HomeNewsSection({ articles = [] }) {
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [bookmarkedArticles, setBookmarkedArticles] = useState(() => new Set());
+  const [mounted, setMounted] = useState(false);
   const shouldReduceMotion = useSafeReducedMotion();
   const shouldAnimate = !shouldReduceMotion;
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setSelectedArticle(null);
+      }
+    };
+    if (selectedArticle) {
+      document.body.style.overflow = 'hidden';
+      window.addEventListener('keydown', handleKeyDown);
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedArticle]);
 
   const toggleBookmark = (articleId, e) => {
     e.stopPropagation();
@@ -156,6 +181,159 @@ export default function HomeNewsSection({ articles = [] }) {
     },
   };
 
+  const renderModal = () => {
+    if (!selectedArticle) return null;
+    
+    const modalContent = (
+      <AnimatePresence>
+        {selectedArticle && (
+          <div className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-4 md:p-6 overflow-hidden">
+            {/* Blur backdrop overlay */}
+            <motion.div
+              className="fixed inset-0 bg-black/75 backdrop-blur-md z-[99998]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={closeArticle}
+            />
+
+            {/* Centered modal container */}
+            <motion.div
+              layoutId={`article-${selectedArticle.id}`}
+              className="relative z-[99999] flex flex-col w-full max-w-3xl max-h-[85vh] overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xl my-auto"
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ type: "spring", stiffness: 350, damping: 30 }}
+            >
+              {/* Floating close button */}
+              <motion.button
+                className="absolute top-3.5 right-3.5 sm:top-4 sm:right-4 w-9 h-9 bg-black/60 hover:bg-black/85 text-white border border-white/20 rounded-full flex items-center justify-center z-50 cursor-pointer shadow-lg transition-transform hover:scale-105 active:scale-95"
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.15 }}
+                onClick={closeArticle}
+                aria-label="Tutup berita"
+              >
+                <X className="w-4 h-4 stroke-[2.5]" />
+              </motion.button>
+
+              <div
+                className="custom-scrollbar flex h-full flex-col overflow-y-auto overscroll-contain min-w-0"
+                data-lenis-prevent
+              >
+                {/* Hero banner inside modal */}
+                <motion.div
+                  layoutId={`article-image-${selectedArticle.id}`}
+                  className="relative h-48 sm:h-56 md:h-64 w-full flex-shrink-0 bg-black/10 overflow-hidden"
+                >
+                  <Image
+                    src={(selectedArticle.image)?.src || (selectedArticle.image)}
+                    alt={selectedArticle.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 800px"
+                    className="object-cover object-top"
+                    unoptimized={Boolean(
+                      typeof selectedArticle.image === 'string' &&
+                      (selectedArticle.image.startsWith('http') || selectedArticle.image.includes('/api/') || selectedArticle.image.includes('?'))
+                    )}
+                  />
+                  
+                  {/* Top Vignette for close button visibility */}
+                  <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/70 to-transparent z-10" />
+
+                  {/* Bottom Shadow Gradient Overlay */}
+                  <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10" />
+                  
+                  {selectedArticle.gradientColors && (
+                    <div
+                      className={`absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t ${selectedArticle.gradientColors[0]} ${selectedArticle.gradientColors[1]} to-transparent opacity-50 z-10`}
+                    />
+                  )}
+
+                  {/* Category Badge & Meta Overlay */}
+                  <div className="absolute bottom-4 left-5 sm:left-6 text-white z-20 space-y-1.5 max-w-[calc(100%-3rem)]">
+                    <span className={`inline-block px-2.5 py-0.5 text-[9px] sm:text-[10px] uppercase font-black tracking-widest border rounded-md shadow-sm ${selectedArticle.badgeClass}`}>
+                      {selectedArticle.category}
+                    </span>
+                    <div className="flex items-center gap-2 text-[11px] sm:text-xs text-white/90 font-medium">
+                      <Calendar className="w-3.5 h-3.5 text-white/80" />
+                      <span>Dipublikasikan pada {selectedArticle.published}</span>
+                      <span>•</span>
+                      <MapPin className="w-3.5 h-3.5 text-white/80" />
+                      <span>{selectedArticle.location}</span>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Body Paragraph Content */}
+                <div className="flex-grow bg-gradient-to-b from-[var(--color-surface)] to-[var(--color-pink-tint-8)] px-5 py-6 sm:px-8 sm:py-8 md:px-10 md:py-9 min-w-0">
+                  <div className="mx-auto max-w-3xl space-y-5 w-full min-w-0">
+                    <motion.h1
+                      layoutId={`article-title-${selectedArticle.id}`}
+                      className="text-xl sm:text-2xl md:text-3xl font-black leading-tight text-[var(--color-heading)] tracking-tight break-all [word-break:break-all] [overflow-wrap:anywhere]"
+                    >
+                      {selectedArticle.title}
+                    </motion.h1>
+
+                      <div className="flex items-center justify-between text-xs text-[var(--color-text-secondary)] pb-4 border-b border-[var(--color-border)]">
+                        <div className="flex items-center gap-2">
+                          <div className="flex size-7 shrink-0 items-center justify-center rounded-full border border-[var(--color-pink-tint-25)] bg-white p-0.5 shadow-sm">
+                            <img src={(logoNobg)?.src || (logoNobg)} alt="IRIS" className="size-4.5 object-contain" />
+                          </div>
+                          <span className="font-semibold text-[var(--color-heading)]">IRIS Official</span>
+                        </div>
+                        <div className="flex items-center gap-1 font-bold text-[var(--color-pink)]">
+                          <Clock className="w-3.5 h-3.5" />
+                          <span>{selectedArticle.timeAgo}</span>
+                        </div>
+                      </div>
+
+                    <motion.div
+                      className="max-w-none space-y-4 text-sm leading-relaxed text-[var(--color-body)] md:text-base md:leading-8 break-all [word-break:break-all] [overflow-wrap:anywhere] whitespace-pre-line min-w-0"
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.15, duration: 0.25 }}
+                    >
+                      {selectedArticle.contentParagraphs.map((paragraph, index) => (
+                        <p key={index} className="break-all [word-break:break-all] [overflow-wrap:anywhere] min-w-0">
+                          {paragraph}
+                        </p>
+                      ))}
+                    </motion.div>
+                  </div>
+                </div>
+
+                {/* Footer Action Bar */}
+                <div className="sticky bottom-0 px-6 py-3.5 bg-[var(--color-surface)] border-t border-[var(--color-border)] flex items-center justify-between gap-3 shrink-0 z-20">
+                  <button
+                    onClick={closeArticle}
+                    className="px-4 py-2 text-xs font-bold rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-heading)] hover:bg-[var(--color-neutral-secondary)] transition-colors cursor-pointer"
+                  >
+                    Tutup
+                  </button>
+                  <Link
+                    href={ROUTES.NEWS}
+                    onClick={closeArticle}
+                    className="px-4 py-2 text-xs font-extrabold text-white rounded-xl bg-[var(--color-pink)] hover:bg-[var(--color-iris-pink-dark)] transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
+                  >
+                    <span>Semua Berita</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    );
+
+    if (mounted && typeof document !== 'undefined') {
+      return createPortal(modalContent, document.body);
+    }
+    return null;
+  };
+
   return (
     <section className="space-y-6">
       {/* Header section identical to layout */}
@@ -180,8 +358,6 @@ export default function HomeNewsSection({ articles = [] }) {
           variants={shouldAnimate ? cardContainerVariants : {}}
         >
           {formattedArticles.map((article) => {
-
-
             return (
               <motion.article
                 key={article.id}
@@ -289,106 +465,8 @@ export default function HomeNewsSection({ articles = [] }) {
           })}
         </motion.div>
 
-        {/* Liquid Fluid Detail Modal overlay */}
-        <AnimatePresence>
-          {selectedArticle && (
-            <>
-              {/* Blur backdrop overlay */}
-              <motion.div
-                className="fixed inset-0 bg-black/60 backdrop-blur-md z-[999]"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={closeArticle}
-              />
-
-              {/* Centered paper layout */}
-              <motion.div
-                layoutId={`article-${selectedArticle.id}`}
-                className="fixed top-24 bottom-4 inset-x-4 z-[1000] flex flex-col overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xl md:inset-auto md:top-[53%] md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-full md:max-w-3xl md:h-[75vh]"
-              >
-                {/* Float close button */}
-                <motion.button
-                  className="absolute top-4 right-4 w-9 h-9 bg-black/50 hover:bg-black/75 text-white border border-white/10 rounded-full flex items-center justify-center z-50 cursor-pointer shadow-md"
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.2 }}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={closeArticle}
-                >
-                  <X className="w-4 h-4 stroke-[2.5]" />
-                </motion.button>
-
-                <div
-                  className="custom-scrollbar flex h-full flex-col overflow-y-auto overscroll-contain"
-                  data-lenis-prevent
-                >
-                  {/* Hero banner inside modal */}
-                  <motion.div
-                    layoutId={`article-image-${selectedArticle.id}`}
-                    className="relative h-56 md:h-72 lg:h-80 w-full flex-shrink-0 bg-black/10"
-                  >
-                    <Image
-                      src={(selectedArticle.image)?.src || (selectedArticle.image)}
-                      alt={selectedArticle.title}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 800px"
-                      className="object-cover"
-                      unoptimized={Boolean(
-                        typeof selectedArticle.image === 'string' &&
-                        (selectedArticle.image.startsWith('http') || selectedArticle.image.includes('/api/') || selectedArticle.image.includes('?'))
-                      )}
-                    />
-                    
-                    {/* Shadow gradient Overlay */}
-                    <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/90 via-black/30 to-transparent z-10" />
-                    
-                    {selectedArticle.gradientColors && (
-                      <div
-                        className={`absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t ${selectedArticle.gradientColors[0]} ${selectedArticle.gradientColors[1]} to-transparent opacity-50 z-10`}
-                      />
-                    )}
-
-                    <div className="absolute bottom-5 left-6 text-white z-20 space-y-1.5">
-                      <span className={`inline-block px-2.5 py-0.5 text-[9px] sm:text-[10px] uppercase font-black tracking-widest border rounded-md ${selectedArticle.badgeClass}`}>
-                        {selectedArticle.category}
-                      </span>
-                      <div className="text-[11px] sm:text-xs text-white/70">
-                        Dipublikasikan pada {selectedArticle.published} • {selectedArticle.location}
-                      </div>
-                    </div>
-                  </motion.div>
-
-                  {/* Body Paragraph Content */}
-                  <div className="flex-grow bg-gradient-to-b from-[var(--color-surface)] to-[var(--color-pink-tint-8)] px-6 py-7 md:px-10 md:py-9">
-                    <div className="mx-auto max-w-4xl space-y-6">
-                      <motion.h1
-                        layoutId={`article-title-${selectedArticle.id}`}
-                        className="text-xl font-black leading-tight text-[var(--color-heading)] md:text-3xl"
-                      >
-                        {selectedArticle.title}
-                      </motion.h1>
-
-                      <motion.div
-                        className="max-w-none space-y-4 border-t border-[var(--color-border)] pt-5 text-sm leading-7 text-[var(--color-body)] md:text-base md:leading-8"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2, duration: 0.3 }}
-                      >
-                        {selectedArticle.contentParagraphs.map((paragraph, index) => (
-                          <p key={index}>
-                            {paragraph}
-                          </p>
-                        ))}
-                      </motion.div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
+        {/* Render Modal via Portal */}
+        {renderModal()}
       </LayoutGroup>
     </section>
   );

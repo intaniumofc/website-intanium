@@ -162,12 +162,12 @@ function GlassNewsCard({ item, index = 0, featured = false }) {
 
                       <div className="mt-auto flex items-center justify-between border-t border-[var(--color-border)] pt-4">
             <div className="flex min-w-0 items-center gap-2.5">
-              <div className="flex size-8 shrink-0 items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-pink)]">
-                <img src={(logoNobg)?.src || (logoNobg)} alt="" className="size-5 object-contain brightness-0 invert" />
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-full border border-[var(--color-pink-tint-25)] bg-white p-1 shadow-sm">
+                <img src={(logoNobg)?.src || (logoNobg)} alt="IRIS Logo" className="size-5 object-contain" />
               </div>
               <div className="min-w-0 text-[10px]">
                 <p className="truncate font-black text-[var(--color-heading)]">IRIS Official</p>
-                                <p className="truncate font-bold text-[var(--color-text-secondary)]">{formatDate(item.date)}</p>
+                <p className="truncate font-bold text-[var(--color-text-secondary)]">{formatDate(item.date)}</p>
               </div>
             </div>
 

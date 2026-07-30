@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import Link from 'next/link';
 
+import { ArrowLeft, Calendar, User } from 'lucide-react';
 import { newsService } from '../../services/public/newsService';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
@@ -10,6 +12,7 @@ import Loading from '../../components/common/Loading';
 import { formatDate } from '../../lib/formatDate';
 import { ROUTES } from '../../lib/constants';
 import bannerIris from '../../assets/logos/banner-nium.webp';
+import logoNobg from '../../assets/logos/logo-nobg.webp';
 import intanOne from '../../assets/images/intan-01.webp';
 import intanTwo from '../../assets/images/intan-02.webp';
 import intanThree from '../../assets/images/intan-03.webp';
@@ -72,39 +75,54 @@ export default function NewsDetailPage() {
   }
 
   return (
-    <div className="space-y-8 max-w-3xl mx-auto animate-fade-in">
+    <div className="space-y-6 max-w-4xl mx-auto px-4 py-8 animate-fade-in">
       <div>
-        <Link href={ROUTES.NEWS} className="text-sm text-[var(--text-secondary)] hover:text-[var(--color-primary)] font-semibold transition-colors">
-          ← Kembali ke Semua Berita
+        <Link
+          href={ROUTES.NEWS}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold text-[var(--color-heading)] bg-[var(--color-surface)] border border-[var(--color-border)] hover:bg-[var(--color-pink-tint-12)] hover:border-[var(--color-pink-tint-25)] hover:text-[var(--color-pink)] transition-all shadow-sm group"
+        >
+          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1 text-[var(--color-pink)]" />
+          <span>Kembali ke Semua Berita</span>
         </Link>
       </div>
 
-      <Card hoverEffect={false} className="overflow-hidden border border-[var(--color-border)] bg-[var(--color-surface)] shadow-lg" padding="none">
+      <Card hoverEffect={false} className="overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-xl" padding="none">
         {/* Banner image */}
-        <div className="aspect-[21/9] w-full bg-black/20 overflow-hidden border-b border-[var(--border-color)]">
+        <div className="relative aspect-[16/9] sm:aspect-[21/9] max-h-[380px] w-full overflow-hidden bg-[var(--color-bg-secondary)] border-b border-[var(--color-border)]">
           <img
             src={(getNewsImage(news))?.src || (getNewsImage(news))}
             alt={news.title}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover object-top"
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-50" />
         </div>
 
         {/* Content Details */}
-        <div className="space-y-6 bg-gradient-to-b from-[var(--color-surface)] to-[var(--color-pink-tint-8)] p-6 sm:p-10">
-          <div className="flex items-center gap-3 text-xs">
-            <span className="rounded border border-purple-300 bg-purple-100 px-2.5 py-1 font-bold uppercase tracking-wider text-purple-800">
-              {news.category}
-            </span>
-            <span className="font-semibold text-[var(--color-text-secondary)]">
-              Dipublikasi: {formatDate(news.date)}
-            </span>
+        <div className="space-y-6 bg-gradient-to-b from-[var(--color-surface)] to-[var(--color-pink-tint-8)] p-6 sm:p-10 min-w-0">
+          <div className="flex flex-wrap items-center justify-between gap-3 text-xs border-b border-[var(--color-border)] pb-4">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <span className="rounded-md border border-purple-300 bg-purple-100 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-purple-800 shadow-sm">
+                {news.category || 'Announcement'}
+              </span>
+              <div className="flex items-center gap-1.5 font-semibold text-[var(--color-text-secondary)]">
+                <Calendar className="w-3.5 h-3.5 text-[var(--color-pink)]" />
+                <span>Dipublikasikan: {formatDate(news.date)}</span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 font-bold text-[var(--color-heading)]">
+              <div className="flex size-7 shrink-0 items-center justify-center rounded-full border border-[var(--color-pink-tint-25)] bg-white p-0.5 shadow-sm">
+                <img src={(logoNobg)?.src || (logoNobg)} alt="IRIS" className="size-4.5 object-contain" />
+              </div>
+              <span className="text-xs font-bold text-[var(--color-heading)]">IRIS Official Admin</span>
+            </div>
           </div>
 
-          <h1 className="text-2xl font-extrabold leading-tight text-[var(--color-heading)] sm:text-3xl">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black leading-tight text-[var(--color-heading)] tracking-tight break-all [word-break:break-all] [overflow-wrap:anywhere]">
             {news.title}
           </h1>
 
-          <div className="whitespace-pre-wrap border-t border-[var(--color-border)] pt-5 text-sm font-medium leading-7 text-[var(--color-body)] sm:text-base sm:leading-8">
+          <div className="max-w-none space-y-4 text-sm font-medium leading-relaxed text-[var(--color-body)] sm:text-base sm:leading-8 break-all [word-break:break-all] [overflow-wrap:anywhere] whitespace-pre-line min-w-0">
             {news.content}
           </div>
         </div>

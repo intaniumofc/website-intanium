@@ -55,7 +55,7 @@ export default function Footer({
   legalLinks = defaultLegalLinks,
 }) {
   return (
-    <footer className="relative mt-auto border-t border-[#d83584] bg-[var(--color-pink-dark)] text-white transition-colors duration-300 select-none overflow-hidden shadow-md" role="contentinfo">
+    <footer className="relative mt-auto border-t border-[#ff4fbd] bg-[var(--color-pink-dark)] text-white transition-colors duration-300 select-none overflow-hidden shadow-md" role="contentinfo">
       {/* Soft ambient edge glow */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-[radial-gradient(circle,rgba(255,255,255,0.12)_0%,transparent_70%)] rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-[radial-gradient(circle,rgba(255,255,255,0.08)_0%,transparent_70%)] rounded-full blur-3xl pointer-events-none" />

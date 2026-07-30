@@ -1,7 +1,7 @@
 .recap-book-page {
-  --recap-navy: #17105f;
-  --recap-violet: #25158f;
-  --recap-muted: #7f7898;
+  --recap-navy: #D83584;
+  --recap-violet: #FF5FB2;
+  --recap-muted: #8B94A7;
   --recap-takeover-x: clamp(3.5rem, 6vw, 5.5rem);
   --recap-takeover-y: -1.75rem;
   width: 100%;
@@ -64,11 +64,11 @@
   display: flex;
   width: fit-content;
   margin: 0 auto 2.5rem;
-  padding: 0.3rem;
-  border: 1px solid rgba(37, 21, 143, 0.12);
+  padding: 0.35rem;
+  border: 1px solid var(--color-border, #E8EAF2);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.72);
-  box-shadow: 0 12px 35px rgba(23, 16, 95, 0.08);
+  background: var(--color-surface, #FFFFFF);
+  box-shadow: 0 10px 30px rgba(255, 95, 178, 0.08);
 }
 
 .recap-mode-switcher button {
@@ -77,7 +77,7 @@
   border: 0;
   border-radius: 999px;
   background: transparent;
-  color: var(--recap-muted);
+  color: var(--color-neutral-body, #5C6470);
   cursor: pointer;
   font-size: 0.78rem;
   font-weight: 800;
@@ -85,9 +85,9 @@
 }
 
 .recap-mode-switcher button.active {
-  background: var(--recap-navy);
+  background: linear-gradient(90deg, #FF5FB2 0%, #A855F7 100%);
   color: white;
-  box-shadow: 0 7px 20px rgba(23, 16, 95, 0.23);
+  box-shadow: 0 7px 20px rgba(255, 95, 178, 0.35);
 }
 
 .recap-closed-state {
@@ -440,8 +440,8 @@
   padding: 2.2rem 2rem;
   color: white;
   background:
-    radial-gradient(circle at 72% 16%, rgba(255, 255, 255, 0.22), transparent 24%),
-    repeating-linear-gradient(115deg, transparent 0 20px, rgba(255, 255, 255, 0.025) 20px 21px);
+    radial-gradient(circle at 72% 16%, rgba(255, 255, 255, 0.28), transparent 28%),
+    linear-gradient(135deg, #FF5FB2 0%, #D83584 45%, #A855F7 100%);
 }
 
 .recap-cover-art::before {
@@ -620,8 +620,9 @@
   margin: auto;
   padding: 1.5rem 1.7rem;
   border-radius: 2rem;
-  background: linear-gradient(145deg, #261a72, #100b44);
-  box-shadow: 0 35px 70px rgba(23, 16, 95, 0.25);
+  background: linear-gradient(145deg, #2D1435, #15091C);
+  box-shadow: 0 35px 70px rgba(216, 53, 132, 0.22);
+  border: 1px solid rgba(255, 95, 178, 0.2);
 }
 
 .recap-flip-stage::after {
@@ -712,10 +713,11 @@
 }
 
 .recap-badge {
-  padding: 0.27rem 0.5rem;
+  padding: 0.27rem 0.6rem;
   border-radius: 999px;
-  background: #eee9ff;
-  color: var(--recap-violet);
+  background: #FFF0F7;
+  border: 1px solid #FFD1E6;
+  color: #D83584;
   font-size: 0.57rem;
   font-weight: 800;
 }
@@ -817,9 +819,10 @@
 
 .recap-toc button.active,
 .recap-toc button:hover {
-  border-color: var(--recap-violet);
-  background: var(--recap-navy);
+  border-color: var(--color-pink, #FF5FB2);
+  background: linear-gradient(90deg, #FF5FB2 0%, #A855F7 100%);
   color: white;
+  box-shadow: 0 4px 12px rgba(255, 95, 178, 0.25);
 }
 
 .recap-mobile-reader {
@@ -1376,9 +1379,9 @@
   }
 
   .recap-mobile-tab-btn.active {
-    background: var(--recap-navy);
+    background: linear-gradient(90deg, #FF5FB2 0%, #A855F7 100%);
     color: white;
-    box-shadow: 0 4px 12px rgba(23, 16, 95, 0.15);
+    box-shadow: 0 4px 12px rgba(255, 95, 178, 0.25);
   }
 
   .recap-mobile-pages {
