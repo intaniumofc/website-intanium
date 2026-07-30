@@ -151,7 +151,7 @@ export function useJourneyAnimation({
         const baseScale = tier.camScale ?? 1.05;
         cam.scale = baseScale + proximity * (tier.camZoom ?? 0.16);
 
-        // Center the butterfly right on the path point
+        // Center the logo right on the path point
         gsap.set(charRoot, {
           x: pt.x - charSize / 2,
           y: pt.y - charSize / 2,

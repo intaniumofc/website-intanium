@@ -3,14 +3,13 @@
 import { memo } from 'react';
 
 function JourneyPolaroid({ x, y, side, rotation = 0, imgSrc = null }) {
-  const translateX = side === 'left' ? -1 : 1;
   return (
     <div
       className={`journey-polaroid anchor-${side}`}
       style={{
         left: x,
         top: y,
-        transform: `translate(${translateX * 100}%, -50%) rotate(${rotation}deg)`,
+        transform: `rotate(${rotation}deg)`,
       }}
     >
       <div className="journey-polaroid-inner">
