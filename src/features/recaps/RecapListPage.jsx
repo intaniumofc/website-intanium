@@ -12,7 +12,6 @@ import {
   ChevronLeft,
   ChevronRight,
   List,
-  FileText,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Book from './Book';
@@ -112,7 +111,7 @@ function ClosedBookIntro({ state, onOpen, onOpenEnd }) {
         <Book isOpening={isOpening} onOpenEnd={onOpenEnd}>
           <div className="recap-cover-art">
             <span className="recap-cover-art__brand">IRIS</span>
-            <span className="recap-cover-art__tag">#Berkilau</span>
+            <span className="recap-cover-art__tag">#Gemintang</span>
             <div className="recap-cover-art__title">Recap<br />Book</div>
             <p className="recap-cover-art__footer">
               Nur Intan<br />Monthly & Yearly Journey · 2026
@@ -132,10 +131,6 @@ function ClosedBookIntro({ state, onOpen, onOpenEnd }) {
           Buka catatan aktivitas Intan dari theater, live, video call, event,
           dan momen spesial bersama IRIS.
         </p>
-        <div className="recap-open-hint" aria-hidden="true">
-          <span className="recap-open-hint__dot" />
-          <span>Klik cover untuk memulai experience</span>
-        </div>
       </div>
     </div>
   );
@@ -388,82 +383,7 @@ function AnnualRecap({ monthlyRecaps }) {
   );
 }
 
-function DigitalZineList() {
-  const [zines, setZines] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  useEffect(() => {
-    recapService.getRecaps()
-      .then(data => {
-        setZines(data);
-        setIsLoading(false);
-      })
-      .catch(err => {
-        console.error(err);
-        setIsLoading(false);
-      });
-  }, []);
-  if (isLoading) {
-    return (
-      <div className="py-12 flex justify-center">
-        <Loading message="Memuat daftar Zine Digital..." />
-      </div>
-    );
-  }
-  if (zines.length === 0) {
-    return (
-      <div className="text-center py-12 max-w-md mx-auto animate-fade-in">
-        <FileText className="h-12 w-12 text-[var(--color-primary)] mx-auto mb-3 opacity-60" />
-        <h3 className="text-lg font-bold text-[var(--text-primary)] mb-2">Belum Ada Zine</h3>
-        <p className="text-sm text-[var(--text-secondary)]">
-          Admin belum mengunggah Zine Digital untuk saat ini. Silakan kembali lagi nanti!
-        </p>
-      </div>
-    );
-  }
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-5xl mx-auto animate-fade-in p-4">
-      {zines.map((zine) => (
-        <Link
-          href={`/recaps/${zine.id}`}
-          key={zine.id}
-          className="group flex flex-col bg-[var(--color-surface)] border border-[var(--border-color)] rounded-2xl overflow-hidden hover:border-[var(--color-primary)]/40 hover:shadow-xl transition-all duration-300"
-        >
-          <div className="aspect-[3/4] w-full overflow-hidden bg-[var(--color-bg-secondary)] relative">
-            <img
-              src={(zine.thumbnailUrl || 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400')?.src || (zine.thumbnailUrl || 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400')}
-              alt={zine.title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              loading="lazy"
-            />
-            <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-md text-white border border-white/10 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-              <FileText className="h-3 w-3" />
-              {zine.pages?.length || 0} Hal
-            </div>
-          </div>
-          <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
-            <div className="space-y-1 text-left">
-              <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)] font-semibold">
-                <CalendarDays className="h-3.5 w-3.5" />
-                <span>{zine.publishDate}</span>
-              </div>
-              <h3 className="font-extrabold text-base text-[var(--text-primary)] group-hover:text-[var(--color-primary)] transition-colors line-clamp-1">
-                {zine.title}
-              </h3>
-              {zine.summary && (
-                <p className="text-xs text-[var(--text-secondary)] line-clamp-2 leading-relaxed">
-                  {zine.summary}
-                </p>
-              )}
-            </div>
-            <span className="inline-flex items-center justify-center w-full py-2 bg-[var(--bg-primary)] group-hover:bg-[var(--color-primary)] text-xs font-bold text-[var(--color-primary)] group-hover:text-white rounded-xl border border-[var(--border-color)] group-hover:border-transparent transition-all duration-300">
-              Baca Zine →
-            </span>
-          </div>
-        </Link>
-      ))}
-    </div>
-  );
-}
+
 
 export default function RecapListPage() {
   const [mode, setMode] = useState('monthly');
@@ -581,13 +501,10 @@ export default function RecapListPage() {
       <div className="recap-mode-switcher" aria-label="Pilih mode recap">
         <button className={mode === 'monthly' ? 'active' : ''} onClick={() => handleModeChange('monthly')}><CalendarDays size={13} className="inline mr-1.5" />Bulanan</button>
         <button className={mode === 'annual' ? 'active' : ''} onClick={() => handleModeChange('annual')}><BookOpen size={13} className="inline mr-1.5" />Tahunan</button>
-        <button className={mode === 'zine' ? 'active' : ''} onClick={() => handleModeChange('zine')}><FileText size={13} className="inline mr-1.5" />Zine Digital</button>
       </div>
 
       {mode === 'annual' ? (
         <AnnualRecap monthlyRecaps={bookRecaps} />
-      ) : mode === 'zine' ? (
-        <DigitalZineList />
       ) : (
         <>
           {(readerState === 'closed' || readerState === 'opening' || readerState === 'transitioning') && (

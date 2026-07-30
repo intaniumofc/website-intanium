@@ -27,7 +27,7 @@ export default function Button({
 
   const variantStyles = {
     // Primary CTA — 2-stop gradient per Section 5 (pink→peach, more readable on buttons)
-    primary: 'bg-[var(--gradient-cta)] text-white shadow-[var(--shadow-pink-glow)] hover:brightness-105',
+    primary: 'bg-gradient-to-r from-[#FF5FB2] to-[#FFA66E] text-white font-extrabold shadow-[0_4px_14px_rgba(255,95,178,0.35)] hover:brightness-105',
     // Secondary Button — White bg, pink border, pink text
     secondary: 'bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-pink)] hover:bg-[var(--color-pink-tint-8)] shadow-[var(--shadow-xs)]',
     // Neutral outline

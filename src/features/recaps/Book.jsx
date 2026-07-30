@@ -3,7 +3,7 @@
 import { forwardRef, useEffect, useRef } from 'react';
 
 const Book = forwardRef(function Book(
-  { children, isOpening = false, onOpenEnd, color = '#17105F', width = 292 },
+  { children, isOpening = false, onOpenEnd, color = 'linear-gradient(135deg, #FF5FB2 0%, #D83584 45%, #A855F7 100%)', width = 292 },
   ref
 ) {
   const bodyRef = useRef(null);

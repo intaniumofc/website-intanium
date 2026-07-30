@@ -17,7 +17,7 @@ const SocialTooltip = React.forwardRef(({ className, items, ...props }, ref) => 
     "absolute bottom-0 left-0 w-full h-0 transition-all duration-300 ease-in-out group-hover:h-full z-0";
 
   const baseTooltipStyles =
-    "absolute bottom-[-32px] left-1/2 -translate-x-1/2 px-2.5 py-1 text-[10px] sm:text-xs text-white whitespace-nowrap rounded-md opacity-0 invisible transition-all duration-300 ease-in-out group-hover:opacity-100 group-hover:visible group-hover:bottom-[-42px] font-bold z-20 shadow-md";
+    "absolute top-[-30px] left-1/2 -translate-x-1/2 px-2.5 py-1 text-[10px] sm:text-xs text-white whitespace-nowrap rounded-lg opacity-0 invisible transition-all duration-300 ease-in-out group-hover:opacity-100 group-hover:visible group-hover:top-[-40px] font-bold z-30 shadow-md pointer-events-none";
 
   return (
     <ul

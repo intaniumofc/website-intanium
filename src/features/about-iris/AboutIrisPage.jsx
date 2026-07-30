@@ -603,7 +603,7 @@ export default function AboutIrisPage() {
             <motion.div
               variants={visiCardVariants}
               style={VISI_CLIP}
-              className="absolute inset-0 bg-[#222222] z-10"
+              className="absolute inset-0 bg-gradient-to-br from-[var(--color-iris-pink-dark)] via-[#B83E9C] to-[var(--color-iris-purple-dark)] z-10"
             />
             {/* MISI Panel (Right Side) */}
             <motion.div
@@ -619,10 +619,10 @@ export default function AboutIrisPage() {
                 className="col-span-4 col-start-1 flex flex-col justify-start items-center text-center text-white space-y-6 pt-4"
               >
                 <div className="flex flex-col items-center">
-                  <h3 className="text-4xl font-black tracking-widest text-white">VISI</h3>
-                  <div className="w-16 h-1 bg-cyan-400 rounded-full mt-2" />
+                  <h3 className="text-4xl font-black tracking-widest text-white drop-shadow-md">VISI</h3>
+                  <div className="w-16 h-1 bg-white/90 rounded-full mt-2 shadow-sm" />
                 </div>
-                <p className="text-base sm:text-lg font-medium leading-relaxed italic text-white/90 max-w-sm">
+                <p className="text-base sm:text-lg font-medium leading-relaxed italic text-white/95 max-w-sm drop-shadow-sm">
                   “Mewujudkan wadah yang harmonis dan terbuka bagi seluruh penggemar untuk menyatukan setiap bentuk dukungan menjadi gerakan bersama yang kreatif demi mengiringi perjalanan Intan, serta menjadi jembatan yang mempererat hubungan antara Intan dan para penggemarnya."
                 </p>
               </motion.div>
@@ -702,10 +702,11 @@ export default function AboutIrisPage() {
           {/* Mobile/Tablet Version: Full-Bleed Stacked Layout */}
           <div className="block lg:hidden w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] space-y-0">
             {/* VISI Section */}
-            <div className="bg-[#222222] text-white py-16 px-6">
+            <div className="bg-gradient-to-br from-[var(--color-iris-pink-dark)] via-[#B83E9C] to-[var(--color-iris-purple-dark)] text-white py-16 px-6">
               <div className="max-w-xl mx-auto text-center space-y-4">
-                <h3 className="text-3xl font-black tracking-widest text-white">VISI</h3>
-                <p className="text-base sm:text-lg font-medium leading-relaxed italic text-white/90">
+                <h3 className="text-3xl font-black tracking-widest text-white drop-shadow-md">VISI</h3>
+                <div className="w-16 h-1 bg-white/90 rounded-full mx-auto shadow-sm" />
+                <p className="text-base sm:text-lg font-medium leading-relaxed italic text-white/95 drop-shadow-sm">
                   “Mewujudkan wadah yang harmonis dan terbuka bagi seluruh penggemar untuk menyatukan setiap bentuk dukungan menjadi gerakan bersama yang kreatif demi mengiringi perjalanan Intan, serta menjadi jembatan yang mempererat hubungan antara Intan dan para penggemarnya.”
                 </p>
               </div>

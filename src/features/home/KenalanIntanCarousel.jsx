@@ -70,7 +70,7 @@ export default function KenalanIntanCarousel({ socialLinks, className }) {
         {/* Desktop layout */}
         <div className="hidden md:flex relative items-center">
           {/* Avatar (Auto-changing Photos) */}
-          <div className="w-[430px] lg:w-[450px] h-[480px] lg:h-[500px] rounded-3xl overflow-hidden bg-white shadow-lg border border-[var(--color-border)] flex-shrink-0 relative">
+          <div className="w-[450px] lg:w-[480px] h-[520px] lg:h-[550px] rounded-3xl overflow-hidden bg-white shadow-lg border border-[var(--color-border)] flex-shrink-0 relative">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentImageIndex}
@@ -83,8 +83,8 @@ export default function KenalanIntanCarousel({ socialLinks, className }) {
                 <Image
                   src={currentImage}
                   alt={cardContent.name}
-                  width={470}
-                  height={500}
+                  width={480}
+                  height={550}
                   className="w-full h-full object-cover"
                   draggable={false}
                   priority
@@ -94,7 +94,7 @@ export default function KenalanIntanCarousel({ socialLinks, className }) {
           </div>
 
           {/* Card (Highlighted Design with Lucide Icons) */}
-          <div className="bg-white rounded-3xl shadow-xl border border-[var(--color-border)] p-7 lg:p-9 ml-[-70px] z-10 max-w-2xl flex-1 relative overflow-hidden">
+          <div className="bg-white rounded-3xl shadow-xl border border-[var(--color-border)] p-8 lg:p-10 ml-[-60px] z-10 max-w-3xl flex-1 relative overflow-visible">
             {/* Ambient edge glow */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-[radial-gradient(circle,rgba(248,111,175,0.08)_0%,transparent_70%)] rounded-full blur-2xl pointer-events-none" />
             
@@ -130,15 +130,15 @@ export default function KenalanIntanCarousel({ socialLinks, className }) {
 
               {/* Quick Stat Chips (Lucide Icons) */}
               <div className="flex flex-wrap gap-2 text-[11px] font-semibold text-[var(--color-body)]">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--color-bg-secondary)] border border-[var(--color-border)]">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--color-bg-secondary)] border border-[var(--color-border)]">
                   <Calendar className="w-3.5 h-3.5 text-[var(--color-pink)]" />
                   {cardContent.birthInfo}
                 </span>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--color-bg-secondary)] border border-[var(--color-border)]">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--color-bg-secondary)] border border-[var(--color-border)]">
                   <GraduationCap className="w-3.5 h-3.5 text-[var(--color-purple)]" />
                   {cardContent.education}
                 </span>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--color-bg-secondary)] border border-[var(--color-border)]">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--color-bg-secondary)] border border-[var(--color-border)]">
                   <Trophy className="w-3.5 h-3.5 text-amber-500" />
                   {cardContent.achievement}
                 </span>
@@ -156,8 +156,8 @@ export default function KenalanIntanCarousel({ socialLinks, className }) {
 
               {/* Theater & Setlist Highlights */}
               <div className="grid grid-cols-2 gap-3 pt-1">
-                <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-gray-50 border border-[var(--color-border)]">
-                  <div className="p-1.5 rounded-lg bg-[var(--color-pink-tint-15)] text-[var(--color-pink-dark)]">
+                <div className="flex items-center gap-2.5 p-3 rounded-xl bg-gray-50 border border-[var(--color-border)]">
+                  <div className="p-2 rounded-lg bg-[var(--color-pink-tint-15)] text-[var(--color-pink-dark)]">
                     <Theater className="w-4 h-4" />
                   </div>
                   <div>
@@ -165,8 +165,8 @@ export default function KenalanIntanCarousel({ socialLinks, className }) {
                     <p className="text-[10px] text-[var(--color-text-secondary)]">Penampilan Teater</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-gray-50 border border-[var(--color-border)]">
-                  <div className="p-1.5 rounded-lg bg-[var(--color-pink-tint-15)] text-[var(--color-pink-dark)]">
+                <div className="flex items-center gap-2.5 p-3 rounded-xl bg-gray-50 border border-[var(--color-border)]">
+                  <div className="p-2 rounded-lg bg-[var(--color-pink-tint-15)] text-[var(--color-pink-dark)]">
                     <Music className="w-4 h-4" />
                   </div>
                   <div>
@@ -177,10 +177,10 @@ export default function KenalanIntanCarousel({ socialLinks, className }) {
               </div>
 
               {/* Social media & CTA row */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-[var(--color-border)]">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-[var(--color-border)]">
                 {socialLinks && (
                   <div className="flex items-center gap-2.5 flex-wrap sm:flex-nowrap">
-                    <span className="text-[10px] font-bold text-[var(--color-text-secondary)] uppercase tracking-wider whitespace-nowrap">Ikuti Intan:</span>
+                    <span className="text-[11px] font-bold text-[var(--color-text-secondary)] uppercase tracking-wider whitespace-nowrap">Ikuti Intan:</span>
                     <SocialTooltip items={socialLinks} />
                   </div>
                 )}
