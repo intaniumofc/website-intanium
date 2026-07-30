@@ -270,7 +270,7 @@ export default function MenangkapKecoaPage() {
                 <div className="game-start-hero mx-auto grid size-28 place-items-center">
                   <img src={(cockroachImage)?.src || (cockroachImage)} alt="Kecoa" className="game-start-hero-roach w-24" />
                 </div>
-                <h2 className="mt-6 text-3xl font-black">Berani seperti Intan?</h2>
+                <h2 className="mt-6 text-3xl font-black text-white">Berani seperti Intan?</h2>
                 <p className="mt-3 text-sm leading-relaxed text-white/70">
                   Buktikan keberanianmu dalam 60 detik. Tangkap kecoa, jaga combo, dan raih posisi teratas di IRIS.
                 </p>

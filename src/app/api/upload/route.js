@@ -58,9 +58,10 @@ export async function POST(request) {
     });
 
     const rawBuffer = Buffer.from(await file.arrayBuffer());
-    const shouldSkip = SKIP_PREFIXES.some((p) => file.type && file.type.startsWith(p));
+    const skipCompressionParam = formData.get('skipCompression') === 'true' || bucketName === 'frame-pb' || folderPath.includes('frame-pb');
+    const shouldSkip = SKIP_PREFIXES.some((p) => file.type && file.type.startsWith(p)) || skipCompressionParam;
     const { buffer: finalBuffer, contentType, ext } = shouldSkip
-      ? { buffer: rawBuffer, contentType: file.type, ext: (file.name.split('.').pop() || 'bin') }
+      ? { buffer: rawBuffer, contentType: file.type || 'image/png', ext: (file.name.split('.').pop() || 'png') }
       : await maybeCompressImage(file, rawBuffer);
 
     const fileName = `${Math.random().toString(36).substring(2, 9) + Date.now().toString(36)}.${ext}`;

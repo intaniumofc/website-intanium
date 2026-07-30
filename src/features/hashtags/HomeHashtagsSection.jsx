@@ -176,41 +176,52 @@ export default function HomeHashtagsSection() {
             ref={row1Ref}
             className="flex gap-4 shrink-0 pr-4 will-change-transform"
           >
-            {doubleRow1.map((hash, idx) => (
-              <div
-                key={`r1-${idx}`}
-                onClick={() => setSelectedHashtag(hash)}
-                className="bg-white border border-[var(--border-color)] rounded-2xl p-4 flex items-center gap-3 shadow-sm min-w-[200px] cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all"
-              >
-                <div className="w-8 h-8 rounded-full bg-[var(--color-primary-light)] flex items-center justify-center text-[var(--color-primary)] text-xs font-bold shrink-0">
-                  ✨
+            {doubleRow1.map((hash, idx) => {
+              const isSelected = selectedHashtag?.text === hash.text;
+              return (
+                <div
+                  key={`r1-${idx}`}
+                  onClick={() => setSelectedHashtag(hash)}
+                  className={`border rounded-2xl px-5 py-3 flex items-center justify-between gap-3 shadow-sm min-w-[180px] cursor-pointer transition-all duration-300 group ${
+                    isSelected
+                      ? 'bg-gradient-to-r from-[#FF5FB2] via-[#FF75C3] to-[#FFA66E] border-transparent text-white shadow-md shadow-pink-500/20 -translate-y-0.5'
+                      : 'bg-white border-[var(--border-color)] hover:bg-gradient-to-r hover:from-[#FF5FB2] hover:via-[#FF75C3] hover:to-[#FFA66E] hover:border-transparent hover:shadow-md hover:shadow-pink-500/20 hover:-translate-y-0.5'
+                  }`}
+                >
+                  <span className={`font-extrabold text-sm sm:text-base tracking-tight truncate transition-colors duration-300 ${isSelected ? 'text-white' : 'text-slate-800 group-hover:text-white'}`}>
+                    {hash.text}
+                  </span>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      onClick={(e) => handleCopyHashtag(e, hash.text)}
+                      className={`p-1.5 rounded-lg transition-colors cursor-pointer min-w-[36px] min-h-[36px] flex items-center justify-center ${
+                        isSelected
+                          ? 'text-white bg-white/20 hover:bg-white/30'
+                          : 'text-slate-400 group-hover:text-white group-hover:bg-white/20 hover:bg-slate-100'
+                      }`}
+                      title="Salin Tagar"
+                    >
+                      {copiedText === hash.text ? (
+                        <Check className="w-4 h-4 text-emerald-300" />
+                      ) : (
+                        <Copy className="w-4 h-4" />
+                      )}
+                    </button>
+                    <button
+                      onClick={(e) => handleShareOnX(e, hash.text)}
+                      className={`p-1.5 rounded-lg transition-colors cursor-pointer min-w-[36px] min-h-[36px] flex items-center justify-center ${
+                        isSelected
+                          ? 'text-white bg-white/20 hover:bg-white/30'
+                          : 'text-slate-700 group-hover:text-white group-hover:bg-white/20 hover:bg-slate-100'
+                      }`}
+                      title="Posting di X"
+                    >
+                      <TwitterIcon className={isSelected ? 'text-white fill-white' : 'text-slate-700 group-hover:text-white fill-current'} />
+                    </button>
+                  </div>
                 </div>
-                <div className="flex-grow min-w-0">
-                  <span className="font-extrabold text-sm text-slate-800 block truncate">{hash.text}</span>
-                  <span className="text-[10px] text-slate-400 block mt-0.5">{hash.count}</span>
-                </div>
-                <div className="flex gap-1 shrink-0">
-                  <button
-                    onClick={(e) => handleCopyHashtag(e, hash.text)}
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center"
-                    title="Salin Tagar"
-                  >
-                    {copiedText === hash.text ? (
-                      <Check className="w-4 h-4 text-emerald-500" />
-                    ) : (
-                      <Copy className="w-4 h-4" />
-                    )}
-                  </button>
-                  <button
-                    onClick={(e) => handleShareOnX(e, hash.text)}
-                    className="p-1.5 rounded-lg text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center"
-                    title="Posting di X"
-                  >
-                    <TwitterIcon />
-                  </button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
@@ -220,41 +231,52 @@ export default function HomeHashtagsSection() {
             ref={row2Ref}
             className="flex gap-4 shrink-0 pr-4 will-change-transform"
           >
-            {doubleRow2.map((hash, idx) => (
-              <div
-                key={`r2-${idx}`}
-                onClick={() => setSelectedHashtag(hash)}
-                className="bg-white border border-[var(--border-color)] rounded-2xl p-4 flex items-center gap-3 shadow-sm min-w-[200px] cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all"
-              >
-                <div className="w-8 h-8 rounded-full bg-[var(--color-primary-light)] flex items-center justify-center text-[var(--color-primary)] text-xs font-bold shrink-0">
-                  🍵
+            {doubleRow2.map((hash, idx) => {
+              const isSelected = selectedHashtag?.text === hash.text;
+              return (
+                <div
+                  key={`r2-${idx}`}
+                  onClick={() => setSelectedHashtag(hash)}
+                  className={`border rounded-2xl px-5 py-3 flex items-center justify-between gap-3 shadow-sm min-w-[180px] cursor-pointer transition-all duration-300 group ${
+                    isSelected
+                      ? 'bg-gradient-to-r from-[#FF5FB2] via-[#FF75C3] to-[#FFA66E] border-transparent text-white shadow-md shadow-pink-500/20 -translate-y-0.5'
+                      : 'bg-white border-[var(--border-color)] hover:bg-gradient-to-r hover:from-[#FF5FB2] hover:via-[#FF75C3] hover:to-[#FFA66E] hover:border-transparent hover:shadow-md hover:shadow-pink-500/20 hover:-translate-y-0.5'
+                  }`}
+                >
+                  <span className={`font-extrabold text-sm sm:text-base tracking-tight truncate transition-colors duration-300 ${isSelected ? 'text-white' : 'text-slate-800 group-hover:text-white'}`}>
+                    {hash.text}
+                  </span>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      onClick={(e) => handleCopyHashtag(e, hash.text)}
+                      className={`p-1.5 rounded-lg transition-colors cursor-pointer min-w-[36px] min-h-[36px] flex items-center justify-center ${
+                        isSelected
+                          ? 'text-white bg-white/20 hover:bg-white/30'
+                          : 'text-slate-400 group-hover:text-white group-hover:bg-white/20 hover:bg-slate-100'
+                      }`}
+                      title="Salin Tagar"
+                    >
+                      {copiedText === hash.text ? (
+                        <Check className="w-4 h-4 text-emerald-300" />
+                      ) : (
+                        <Copy className="w-4 h-4" />
+                      )}
+                    </button>
+                    <button
+                      onClick={(e) => handleShareOnX(e, hash.text)}
+                      className={`p-1.5 rounded-lg transition-colors cursor-pointer min-w-[36px] min-h-[36px] flex items-center justify-center ${
+                        isSelected
+                          ? 'text-white bg-white/20 hover:bg-white/30'
+                          : 'text-slate-700 group-hover:text-white group-hover:bg-white/20 hover:bg-slate-100'
+                      }`}
+                      title="Posting di X"
+                    >
+                      <TwitterIcon className={isSelected ? 'text-white fill-white' : 'text-slate-700 group-hover:text-white fill-current'} />
+                    </button>
+                  </div>
                 </div>
-                <div className="flex-grow min-w-0">
-                  <span className="font-extrabold text-sm text-slate-800 block truncate">{hash.text}</span>
-                  <span className="text-[10px] text-slate-400 block mt-0.5">{hash.count}</span>
-                </div>
-                <div className="flex gap-1 shrink-0">
-                  <button
-                    onClick={(e) => handleCopyHashtag(e, hash.text)}
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center"
-                    title="Salin Tagar"
-                  >
-                    {copiedText === hash.text ? (
-                      <Check className="w-4 h-4 text-emerald-500" />
-                    ) : (
-                      <Copy className="w-4 h-4" />
-                    )}
-                  </button>
-                  <button
-                    onClick={(e) => handleShareOnX(e, hash.text)}
-                    className="p-1.5 rounded-lg text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center"
-                    title="Posting di X"
-                  >
-                    <TwitterIcon />
-                  </button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
@@ -300,17 +322,14 @@ export default function HomeHashtagsSection() {
               </button>
               
               <div className="flex flex-col items-center text-center space-y-4">
-                <div className="w-16 h-16 rounded-full bg-[var(--color-primary-light)] flex items-center justify-center text-[var(--color-primary)] text-2xl shadow-inner">
+                <div className="w-14 h-14 rounded-full bg-[var(--color-pink-tint-15)] flex items-center justify-center text-[var(--color-pink)] text-2xl font-black shadow-inner">
                   #
                 </div>
                 
                 <div>
-                  <h4 className="text-xl font-extrabold text-slate-800 mb-1">
+                  <h4 className="text-xl font-extrabold text-slate-800">
                     {selectedHashtag.text}
                   </h4>
-                  <span className="inline-block px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-xs font-medium">
-                    {selectedHashtag.count}
-                  </span>
                 </div>
                 
                 <div className="bg-slate-50 rounded-2xl p-4 w-full border border-slate-100">

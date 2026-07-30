@@ -140,10 +140,6 @@ export default function AdminGames() {
   };
 
   const handleDeleteGame = (gameId) => {
-    if (gameId === 'menangkap-kecoa') {
-      notify.error('Tidak Bisa Dihapus', 'Game Menangkap Kecoa adalah game utama sistem.');
-      return;
-    }
     setGameSettings(prev => {
       const updated = { ...prev.games };
       delete updated[gameId];
@@ -827,16 +823,14 @@ export default function AdminGames() {
                               </span>
                             )}
 
-                            {gameId !== 'menangkap-kecoa' && (
-                              <button
-                                type="button"
-                                onClick={() => handleDeleteGame(gameId)}
-                                className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors duration-200 cursor-pointer"
-                                title="Hapus Game"
-                              >
-                                <Trash2 className="h-3.5 w-3.5" />
-                              </button>
-                            )}
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteGame(gameId)}
+                              className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg transition-colors duration-200 cursor-pointer"
+                              title="Hapus Game"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
 
                             <button
                               type="button"

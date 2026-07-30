@@ -17,7 +17,8 @@ import {
   Users,
   Target,
   ChevronRight,
-  Gamepad
+  Gamepad,
+  ExternalLink
 } from 'lucide-react';
 
 import cockroachImage from './menangkap-kecoa/kecoa.webp';
@@ -36,24 +37,24 @@ const ICON_MAP = {
 const getThemeStyles = (themeName) => {
   const themes = {
     amber: {
-      border: 'border-amber-500/25',
+      border: 'border-pink-500/30',
       bg: 'bg-white',
-      heroBg: 'from-pink-50/50 via-white to-purple-50/50',
-      particles: 'bg-amber-400',
-      iconText: 'text-amber-400',
-      badge: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
-      button: 'bg-gradient-to-r from-[#FF5FB2] to-[#A855F7] text-white hover:scale-[1.02]',
-      textAccent: 'text-amber-400'
+      heroBg: 'from-[#1A0B2E] via-[#2A1145] to-[#120722]',
+      particles: 'bg-[#FF5FB2]',
+      iconText: 'text-[#FF5FB2]',
+      badge: 'bg-gradient-to-r from-[#FF5FB2] to-[#FFA66E] text-white border-none shadow-md',
+      button: 'bg-gradient-to-r from-[#FF5FB2] to-[#FFA66E] text-white font-extrabold shadow-[0_4px_16px_rgba(255,95,178,0.35)] hover:scale-[1.03] active:scale-95',
+      textAccent: 'text-[#FF5FB2]'
     },
     cyan: {
-      border: 'border-cyan-500/25',
+      border: 'border-purple-500/30',
       bg: 'bg-white',
-      heroBg: 'from-blue-50/50 via-white to-sky-50/50',
-      particles: 'bg-cyan-400',
-      iconText: 'text-cyan-400',
-      badge: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30',
-      button: 'bg-cyan-500 hover:bg-cyan-400 text-black',
-      textAccent: 'text-cyan-400'
+      heroBg: 'from-[#1A0B2E] via-[#240E3C] to-[#10061E]',
+      particles: 'bg-[#A855F7]',
+      iconText: 'text-[#FF5FB2]',
+      badge: 'bg-purple-500/20 text-purple-200 border-purple-400/30',
+      button: 'bg-gradient-to-r from-[#FF5FB2] to-[#FFA66E] text-white font-extrabold shadow-[0_4px_16px_rgba(255,95,178,0.35)] hover:scale-[1.03] active:scale-95',
+      textAccent: 'text-[#FF5FB2]'
     }
   };
   return themes[themeName] || themes.amber;
@@ -91,7 +92,7 @@ function NumberCounter({ value, duration = 1 }) {
 }
 
 // Particle generator for custom card visuals
-function FloatingParticles({ count = 12, color = 'bg-[var(--color-yellow)]', containerHeight = 350 }) {
+function FloatingParticles({ count = 12, color = 'bg-[var(--color-pink)]', containerHeight = 350 }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -279,22 +280,42 @@ export default function GamesPage() {
     setActiveTheme('default');
   };
 
-  const featuredGame = settings.games['menangkap-kecoa'];
-  const scratchGame = settings.games['gosok-intan'];
-  const heroTheme = getThemeStyles(featuredGame.theme || 'amber');
-  const scratchTheme = getThemeStyles(scratchGame.theme || 'cyan');
+  // Active Games computed dynamically from DB
+  const activeGames = useMemo(() => {
+    const gamesObj = settings?.games || {};
+    return Object.entries(gamesObj)
+      .filter(([_, g]) => g && g.active)
+      .map(([id, g]) => ({ id, ...g }));
+  }, [settings]);
+
+  // Featured Game selection (matches settings.featuredGameId or first active game)
+  const featuredGame = useMemo(() => {
+    const featId = settings?.featuredGameId;
+    if (featId && settings?.games?.[featId]?.active) {
+      return { id: featId, ...settings.games[featId] };
+    }
+    return activeGames[0] || null;
+  }, [settings, activeGames]);
+
+  // Secondary Active Games (other active games excluding the featured one)
+  const secondaryGames = useMemo(() => {
+    if (!featuredGame) return activeGames;
+    return activeGames.filter((g) => g.id !== featuredGame.id);
+  }, [activeGames, featuredGame]);
+
+  const heroTheme = getThemeStyles(featuredGame?.theme || 'amber');
 
   return (
     <div className="relative min-h-[90vh] pb-12 pt-0 px-4 sm:px-6 lg:px-8 overflow-hidden font-sans">
       <h1 className="sr-only">Arena Game IRIS - Ruang Komunitas Resmi</h1>
 
       {/* Ambient Morphing Background Glow Orbs */}
-      <div className={`absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-[120px] pointer-events-none -z-10 transition-all duration-1000 ${activeTheme === 'amber' ? 'bg-amber-500/12' :
-        activeTheme === 'cyan' ? 'bg-cyan-500/15' : 'bg-purple-500/8'
+      <div className={`absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-[120px] pointer-events-none -z-10 transition-all duration-1000 ${activeTheme === 'amber' ? 'bg-pink-500/15' :
+        activeTheme === 'cyan' ? 'bg-purple-500/15' : 'bg-pink-500/10'
         }`} />
 
-      <div className={`absolute bottom-1/4 left-10 w-[500px] h-[500px] rounded-full blur-[100px] pointer-events-none -z-10 transition-all duration-1000 ${activeTheme === 'amber' ? 'bg-orange-500/8' :
-        activeTheme === 'cyan' ? 'bg-teal-500/12' : 'bg-cyan-500/8'
+      <div className={`absolute bottom-1/4 left-10 w-[500px] h-[500px] rounded-full blur-[100px] pointer-events-none -z-10 transition-all duration-1000 ${activeTheme === 'amber' ? 'bg-purple-500/10' :
+        activeTheme === 'cyan' ? 'bg-pink-500/12' : 'bg-purple-500/10'
         }`} />
 
       <div className="max-w-6xl mx-auto space-y-10 relative z-10">
@@ -312,143 +333,170 @@ export default function GamesPage() {
         {/* ================= BENTO GRID CONTAINER ================= */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
 
-          {/* BENTO CARD 1: FEATURED GAME (Menangkap Kecoa - Width 2) */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: PREMIUM_EASE }}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-            onMouseEnter={() => setActiveTheme('amber')}
-            className={`lg:col-span-2 relative bg-gradient-to-br ${heroTheme.heroBg} rounded-[2.5rem] border ${heroTheme.border} shadow-2xl overflow-hidden min-h-[460px] flex flex-col justify-between group pointer-events-auto`}
-          >
-            {/* Reflective Glare Overlay */}
-            <div className="card-glare absolute inset-0 pointer-events-none z-30 transition-opacity duration-300 rounded-[2.5rem]" />
+          {/* BENTO CARD 1: DYNAMIC FEATURED GAME (Width 2) */}
+          {featuredGame ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: PREMIUM_EASE }}
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleMouseLeave}
+              onMouseEnter={() => setActiveTheme('amber')}
+              className={`lg:col-span-2 relative bg-gradient-to-br ${heroTheme.heroBg} rounded-[2.5rem] border ${heroTheme.border} shadow-2xl overflow-hidden min-h-[460px] flex flex-col justify-between group pointer-events-auto`}
+            >
+              {/* Reflective Glare Overlay */}
+              <div className="card-glare absolute inset-0 pointer-events-none z-30 transition-opacity duration-300 rounded-[2.5rem]" />
 
-            {/* Neon Grid Backplate */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
-            <FloatingParticles count={15} color={heroTheme.particles} containerHeight={460} />
+              {/* Neon Grid Backplate */}
+              <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+              <FloatingParticles count={15} color={heroTheme.particles} containerHeight={460} />
 
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 p-8 sm:p-10 relative z-10 items-center h-full">
-              {/* Info Column */}
-              <div className="md:col-span-7 space-y-6 text-left flex flex-col justify-center h-full">
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/10 border border-amber-500/25 rounded-full text-[10px] font-black uppercase tracking-widest text-[#fff18a] w-max">
-                  {featuredGame.badge || 'GAME UNGGULAN'}
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-8 p-8 sm:p-10 relative z-10 items-center h-full">
+                {/* Info Column */}
+                <div className="md:col-span-7 space-y-6 text-left flex flex-col justify-center h-full">
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-gradient-to-r from-[#FF5FB2] to-[#FFA66E] rounded-full text-[10px] font-black uppercase tracking-widest text-white shadow-sm w-max">
+                    {featuredGame.badge || 'GAME UNGGULAN'}
+                  </div>
+
+                  <h3 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-none">
+                    {featuredGame.title}
+                  </h3>
+
+                  <p className="text-xs sm:text-sm text-pink-100/80 leading-relaxed max-w-md">
+                    {featuredGame.description}
+                  </p>
+
+                  {/* Stats Row */}
+                  <div className="grid grid-cols-3 gap-4 border-y border-white/15 py-4 max-w-md">
+                    <div>
+                      <p className="text-[9px] font-bold text-pink-200/70 uppercase tracking-wider">Rekor Terbaik</p>
+                      <p className="text-base font-extrabold text-amber-300 mt-0.5">
+                        {loadingLeaderboard ? '...' : highScore.toLocaleString('id-ID')}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-[9px] font-bold text-pink-200/70 uppercase tracking-wider">Kesulitan</p>
+                      <p className="text-base font-extrabold mt-0.5 text-pink-300">
+                        {featuredGame.difficulty || 'Mudah'}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-[9px] font-bold text-pink-200/70 uppercase tracking-wider">Durasi</p>
+                      <p className="text-base font-extrabold text-white mt-0.5">
+                        {featuredGame.playTime || '-'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="pt-2">
+                    <Link
+                      href={featuredGame.link || '#'}
+                      className={`inline-flex items-center gap-3 ${heroTheme.button} transition-all duration-300 font-extrabold text-sm px-6 py-3.5 rounded-xl shadow-lg`}
+                    >
+                      <Play className="size-4 fill-current" /> Main Sekarang <ChevronRight className="size-4" />
+                    </Link>
+                  </div>
                 </div>
 
-                <h3 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-none">
-                  {featuredGame.title}
-                </h3>
-
-                <p className="text-xs sm:text-sm text-purple-200/70 leading-relaxed max-w-md">
-                  {featuredGame.description}
-                </p>
-
-                {/* Stats Row */}
-                <div className="grid grid-cols-3 gap-4 border-y border-white/10 py-4 max-w-md">
-                  <div>
-                    <p className="text-[9px] font-bold text-purple-300/60 uppercase tracking-wider">Rekor Terbaik</p>
-                    <p className="text-base font-extrabold text-amber-400 mt-0.5">
-                      {loadingLeaderboard ? '...' : highScore.toLocaleString('id-ID')}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-[9px] font-bold text-purple-300/60 uppercase tracking-wider">Kesulitan</p>
-                    <p className={`text-base font-extrabold mt-0.5 ${heroTheme.textAccent}`}>
-                      {featuredGame.difficulty || 'Mudah'}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-[9px] font-bold text-purple-300/60 uppercase tracking-wider">Durasi</p>
-                    <p className="text-base font-extrabold text-white mt-0.5">
-                      {featuredGame.playTime || '-'}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="pt-2">
-                  <Link
-                    href={featuredGame.link || '#'}
-                    className={`inline-flex items-center gap-3 ${heroTheme.button} transition-all duration-300 font-extrabold text-sm px-6 py-3.5 rounded-xl shadow-lg`}
+                {/* Graphic Column */}
+                <div className="md:col-span-5 h-[220px] md:h-[280px] relative flex items-center justify-center pointer-events-none">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.05)_0%,transparent_60%)] animate-pulse" />
+                  <motion.div
+                    animate={{
+                      y: [0, -10, 0],
+                      rotate: [0, 2, -2, 0],
+                    }}
+                    transition={{
+                      duration: 5,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                    className="w-40 md:w-48 relative z-10 filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.5)] flex items-center justify-center"
                   >
-                    <Play className="size-4 fill-current" /> Main Sekarang <ChevronRight className="size-4" />
-                  </Link>
+                    {featuredGame.id === 'menangkap-kecoa' || featuredGame.icon === 'Bug' ? (
+                      <img src={(cockroachImage)?.src || (cockroachImage)} alt="Kecoa Game Visual" className="w-full h-auto object-contain" />
+                    ) : (
+                      <span className="text-7xl sm:text-8xl select-none">{featuredGame.emoji || '🎮'}</span>
+                    )}
+                  </motion.div>
                 </div>
               </div>
+            </motion.div>
+          ) : null}
 
-              {/* Graphic Column */}
-              <div className="md:col-span-5 h-[220px] md:h-[280px] relative flex items-center justify-center pointer-events-none">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.05)_0%,transparent_60%)] animate-pulse" />
-                <motion.div
-                  animate={{
-                    y: [0, -10, 0],
-                    rotate: [0, 2, -2, 0],
-                  }}
-                  transition={{
-                    duration: 5,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                  className="w-40 md:w-48 relative z-10 filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.5)]"
-                >
-                  <img src={(cockroachImage)?.src || (cockroachImage)} alt="Kecoa Game Visual" className="w-full h-auto object-contain" />
-                </motion.div>
-              </div>
-            </div>
-          </motion.div>
+          {/* BENTO CARD 2: DYNAMIC SECONDARY GAME(S) (Width 1 each) */}
+          {secondaryGames.map((secGame) => {
+            const secTheme = getThemeStyles(secGame.theme || 'cyan');
+            const isExternalLink = secGame.link && (secGame.link.startsWith('http://') || secGame.link.startsWith('https://'));
 
-          {/* BENTO CARD 2: SECOND GAME (Gosok Intan - Width 1) */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15, ease: PREMIUM_EASE }}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-            onMouseEnter={() => setActiveTheme('cyan')}
-            className={`lg:col-span-1 relative bg-gradient-to-br ${scratchTheme.heroBg} rounded-[2.5rem] border ${scratchTheme.border} shadow-2xl overflow-hidden min-h-[460px] flex flex-col justify-between group p-8 text-white pointer-events-auto`}
-          >
-            {/* Reflective Glare Overlay */}
-            <div className="card-glare absolute inset-0 pointer-events-none z-30 transition-opacity duration-300 rounded-[2.5rem]" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-0" />
-            <FloatingParticles count={8} color={scratchTheme.particles} containerHeight={460} />
+            return (
+              <motion.div
+                key={secGame.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.15, ease: PREMIUM_EASE }}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
+                onMouseEnter={() => setActiveTheme('cyan')}
+                className={`lg:col-span-1 relative bg-gradient-to-br ${secTheme.heroBg} rounded-[2.5rem] border ${secTheme.border} shadow-2xl overflow-hidden min-h-[460px] flex flex-col justify-between group p-8 text-white pointer-events-auto`}
+              >
+                {/* Reflective Glare Overlay */}
+                <div className="card-glare absolute inset-0 pointer-events-none z-30 transition-opacity duration-300 rounded-[2.5rem]" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#10061E] via-transparent to-transparent z-0" />
+                <FloatingParticles count={8} color={secTheme.particles} containerHeight={460} />
 
-            <div className="relative z-10 flex flex-col justify-between h-full space-y-6">
-              {/* Card Header */}
-              <div className="flex items-start justify-between">
-                <div className={`flex h-12 w-12 items-center justify-center rounded-2xl border border-white/20 bg-black/40 backdrop-blur-md ${scratchTheme.iconText}`}>
-                  <Sparkles className="size-6 animate-pulse" />
+                <div className="relative z-10 flex flex-col justify-between h-full space-y-6">
+                  {/* Card Header */}
+                  <div className="flex items-start justify-between">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/20 bg-white/10 backdrop-blur-md text-[var(--color-pink)] text-xl">
+                      {secGame.emoji || <Sparkles className="size-6 animate-pulse" />}
+                    </div>
+                    {secGame.badge && (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black tracking-wide border backdrop-blur-md bg-purple-500/20 text-purple-200 border-purple-400/30">
+                        {secGame.badge}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Main Content */}
+                  <div className="text-left space-y-2 flex-grow flex flex-col justify-end">
+                    <h3 className="text-3xl font-black text-white tracking-tight leading-tight">
+                      {secGame.title}
+                    </h3>
+
+                    <div className="flex items-center gap-3 text-[10px] font-bold text-[var(--color-pink)] uppercase tracking-widest py-1">
+                      <span>Kesulitan: {secGame.difficulty || 'Sedang'}</span>
+                    </div>
+
+                    <p className="text-xs text-slate-200 leading-relaxed pt-1">
+                      {secGame.description}
+                    </p>
+                  </div>
+
+                  {/* Action Button */}
+                  <div className="pt-2">
+                    {isExternalLink ? (
+                      <a
+                        href={secGame.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`flex w-full items-center justify-center gap-2 rounded-xl py-3.5 font-black text-sm ${secTheme.button} transition-all duration-305`}
+                      >
+                        <Play className="size-4 fill-current" /> Main Sekarang <ExternalLink className="size-4" />
+                      </a>
+                    ) : (
+                      <Link
+                        href={secGame.link || '#'}
+                        className={`flex w-full items-center justify-center gap-2 rounded-xl py-3.5 font-black text-sm ${secTheme.button} transition-all duration-305`}
+                      >
+                        <Play className="size-4 fill-current" /> Main Sekarang <ArrowRight className="size-4" />
+                      </Link>
+                    )}
+                  </div>
                 </div>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black tracking-wide border backdrop-blur-md bg-cyan-500/20 text-cyan-300 border-cyan-500/30">
-                  {scratchGame.badge}
-                </span>
-              </div>
-
-              {/* Main Content */}
-              <div className="text-left space-y-2 flex-grow flex flex-col justify-end">
-                <h3 className="text-3xl font-black text-white tracking-tight leading-tight">
-                  {scratchGame.title}
-                </h3>
-
-                <div className="flex items-center gap-3 text-[9px] font-bold text-cyan-400 uppercase tracking-widest py-1">
-                  <span>Kesulitan: {scratchGame.difficulty}</span>
-                </div>
-
-                <p className="text-xs text-slate-300 leading-relaxed pt-1">
-                  {scratchGame.description}
-                </p>
-              </div>
-
-              {/* Action Button */}
-              <div className="pt-2">
-                <Link
-                  href={scratchGame.link}
-                  className={`flex w-full items-center justify-center gap-2 rounded-xl py-3.5 font-black text-sm ${scratchTheme.button} transition-all duration-305`}
-                >
-                  <Play className="size-4 fill-current" /> Main Sekarang <ArrowRight className="size-4" />
-                </Link>
-              </div>
-            </div>
-          </motion.div>
+              </motion.div>
+            );
+          })}
 
           {/* BENTO CARD 3: LEADERBOARD PREVIEW (Width 2) */}
           <motion.div
@@ -467,18 +515,23 @@ export default function GamesPage() {
                 {/* Custom High-Tech Switch Tabs */}
                 <div className="flex items-center gap-3 bg-[#F5F7FB] p-1 border border-[#E7EAF2] rounded-xl text-xs font-bold w-max">
                   <div className="flex rounded-lg overflow-hidden border border-[#E7EAF2]">
-                    <button
-                      onClick={() => setLeaderboardGame('classic')}
-                      className={`px-3 py-1.5 transition-colors cursor-pointer ${leaderboardGame === 'classic' ? 'bg-[#FF5FB2] text-white' : 'text-[var(--color-body)] hover:bg-[#FF5FB2]/10'}`}
-                    >
-                      Kecoa
-                    </button>
-                    <button
-                      onClick={() => setLeaderboardGame('gosok-intan')}
-                      className={`px-3 py-1.5 transition-colors cursor-pointer ${leaderboardGame === 'gosok-intan' ? 'bg-[#FF5FB2] text-white' : 'text-[var(--color-body)] hover:bg-[#FF5FB2]/10'}`}
-                    >
-                      Gosok Intan
-                    </button>
+                    {activeGames.map((g) => {
+                      const modeKey = g.id === 'menangkap-kecoa' ? 'classic' : g.id;
+                      const isSelected = leaderboardGame === modeKey;
+                      return (
+                        <button
+                          key={g.id}
+                          onClick={() => setLeaderboardGame(modeKey)}
+                          className={`px-3 py-1.5 transition-colors cursor-pointer ${
+                            isSelected
+                              ? 'bg-[#FF5FB2] text-white'
+                              : 'text-[var(--color-body)] hover:bg-[#FF5FB2]/10'
+                          }`}
+                        >
+                          {g.title.split(' ')[0]}
+                        </button>
+                      );
+                    })}
                   </div>
 
                   <div className="flex rounded-lg overflow-hidden border border-[#E7EAF2]">

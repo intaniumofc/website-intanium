@@ -225,34 +225,37 @@ export default function HomeNewsSection({ articles = [] }) {
                 {/* Hero banner inside modal */}
                 <motion.div
                   layoutId={`article-image-${selectedArticle.id}`}
-                  className="relative h-48 sm:h-56 md:h-64 w-full flex-shrink-0 bg-black/10 overflow-hidden"
+                  className="relative w-full flex-shrink-0 bg-slate-950 flex items-center justify-center min-h-[240px] max-h-[460px] sm:max-h-[520px] overflow-hidden"
                 >
-                  <Image
+                  {/* Blurred ambient background image */}
+                  <img
+                    src={(selectedArticle.image)?.src || (selectedArticle.image)}
+                    alt=""
+                    aria-hidden="true"
+                    className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-110 pointer-events-none"
+                  />
+
+                  {/* Main Full Image (Uncropped) */}
+                  <img
                     src={(selectedArticle.image)?.src || (selectedArticle.image)}
                     alt={selectedArticle.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 800px"
-                    className="object-cover object-top"
-                    unoptimized={Boolean(
-                      typeof selectedArticle.image === 'string' &&
-                      (selectedArticle.image.startsWith('http') || selectedArticle.image.includes('/api/') || selectedArticle.image.includes('?'))
-                    )}
+                    className="relative z-10 w-full h-auto max-h-[460px] sm:max-h-[520px] object-contain mx-auto"
                   />
                   
                   {/* Top Vignette for close button visibility */}
-                  <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/70 to-transparent z-10" />
+                  <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/80 to-transparent z-20 pointer-events-none" />
 
                   {/* Bottom Shadow Gradient Overlay */}
-                  <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10" />
+                  <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/90 via-black/50 to-transparent z-20 pointer-events-none" />
                   
                   {selectedArticle.gradientColors && (
                     <div
-                      className={`absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t ${selectedArticle.gradientColors[0]} ${selectedArticle.gradientColors[1]} to-transparent opacity-50 z-10`}
+                      className={`absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t ${selectedArticle.gradientColors[0]} ${selectedArticle.gradientColors[1]} to-transparent opacity-50 z-20 pointer-events-none`}
                     />
                   )}
 
                   {/* Category Badge & Meta Overlay */}
-                  <div className="absolute bottom-4 left-5 sm:left-6 text-white z-20 space-y-1.5 max-w-[calc(100%-3rem)]">
+                  <div className="absolute bottom-4 left-5 sm:left-6 text-white z-30 space-y-1.5 max-w-[calc(100%-3rem)]">
                     <span className={`inline-block px-2.5 py-0.5 text-[9px] sm:text-[10px] uppercase font-black tracking-widest border rounded-md shadow-sm ${selectedArticle.badgeClass}`}>
                       {selectedArticle.category}
                     </span>

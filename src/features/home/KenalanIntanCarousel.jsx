@@ -4,15 +4,13 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  User, 
-  Sparkles, 
-  Calendar, 
-  GraduationCap, 
-  Trophy, 
-  Theater, 
+import {
+  ChevronLeft,
+  ChevronRight,
+  User,
+  Sparkles,
+  Calendar,
+  Theater,
   Music,
   MapPin
 } from 'lucide-react';
@@ -20,6 +18,7 @@ import { cn } from '../../lib/utils';
 import { ROUTES } from '../../lib/constants';
 import { SocialTooltip } from '../../components/ui/social-media';
 import ScrollFloat from '../../components/ui/ScrollFloat';
+import { aboutIntanService } from '../../services/public/aboutIntanService';
 import intan1 from '../../assets/images/intan-01.webp';
 import intan2 from '../../assets/images/intan-02.webp';
 import intan3 from '../../assets/images/intan-03.webp';
@@ -32,16 +31,39 @@ const cardContent = {
   subTitle: "Member JKT48 Generasi 13 (Trainee)",
   catchphrase: "Intan permata yang berkilau, temukan cahayaku di hatimu!",
   birthInfo: "Bogor, 23 Feb 2006",
-  education: "Vokasi UI 2024",
-  achievement: "Juara 1 Silat & Dancer",
-  showCount: "128+ Show Teater",
-  setlistCount: "3 Setlist Aktif",
   description:
     "Member Generasi 13 JKT48 yang dikenal ramah, penuh energi, dan berdedikasi tinggi. Selain aktif di panggung teater, Intan merupakan mahasiswi D3 Periklanan Kreatif Vokasi Universitas Indonesia dan mantan atlet pencak silat berprestasi.",
 };
 
 export default function KenalanIntanCarousel({ socialLinks, className }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [dynamicStats, setDynamicStats] = useState({
+    showCount: '128+ Show',
+    setlistCount: '3 Setlist',
+  });
+
+  useEffect(() => {
+    let isMounted = true;
+    aboutIntanService.getBio().then((bio) => {
+      if (!isMounted || !bio) return;
+      const theaterStat = bio.stats?.find(s =>
+        s.label?.toLowerCase().includes('teater') || s.label?.toLowerCase().includes('show')
+      );
+      const setlistStat = bio.stats?.find(s =>
+        s.label?.toLowerCase().includes('setlist')
+      );
+
+      const showVal = theaterStat ? theaterStat.value : (bio.stats?.[0]?.value || '128+ Show');
+      const setlistVal = setlistStat ? setlistStat.value : (bio.stats?.[2]?.value || '3 Setlist');
+
+      setDynamicStats({
+        showCount: showVal,
+        setlistCount: setlistVal,
+      });
+    }).catch(err => console.error('Error fetching dynamic stats:', err));
+
+    return () => { isMounted = false; };
+  }, []);
 
   // Auto-play slideshow every 4 seconds
   useEffect(() => {
@@ -97,7 +119,7 @@ export default function KenalanIntanCarousel({ socialLinks, className }) {
           <div className="bg-white rounded-3xl shadow-xl border border-[var(--color-border)] p-8 lg:p-10 ml-[-60px] z-10 max-w-3xl flex-1 relative overflow-visible">
             {/* Ambient edge glow */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-[radial-gradient(circle,rgba(248,111,175,0.08)_0%,transparent_70%)] rounded-full blur-2xl pointer-events-none" />
-            
+
             <div className="relative z-10 space-y-4">
               {/* Header & Subtitle */}
               <div>
@@ -105,7 +127,7 @@ export default function KenalanIntanCarousel({ socialLinks, className }) {
                   as="h3"
                   animationDuration={1}
                   ease="back.inOut(2)"
-                  stagger={0.03}
+                  stagger={0.04}
                   textClassName="text-2xl lg:text-3xl font-extrabold text-[var(--color-heading)] tracking-tight block"
                   scrollStart="top 90%"
                 >
@@ -116,17 +138,10 @@ export default function KenalanIntanCarousel({ socialLinks, className }) {
                 </p>
               </div>
 
-              {/* Jidoshoukai / Catchphrase Animated ScrollFloat */}
-              <ScrollFloat
-                as="p"
-                animationDuration={1}
-                ease="back.inOut(2)"
-                stagger={0.02}
-                textClassName="text-xs lg:text-sm font-semibold italic text-[var(--color-pink-dark)] leading-relaxed block"
-                scrollStart="top 90%"
-              >
+              {/* Jidoshoukai / Catchphrase */}
+              <p className="text-xs lg:text-sm font-semibold italic text-[var(--color-pink-dark)] leading-relaxed block">
                 {`"${cardContent.catchphrase}"`}
-              </ScrollFloat>
+              </p>
 
               {/* Quick Stat Chips (Lucide Icons) */}
               <div className="flex flex-wrap gap-2 text-[11px] font-semibold text-[var(--color-body)]">
@@ -134,25 +149,12 @@ export default function KenalanIntanCarousel({ socialLinks, className }) {
                   <Calendar className="w-3.5 h-3.5 text-[var(--color-pink)]" />
                   {cardContent.birthInfo}
                 </span>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--color-bg-secondary)] border border-[var(--color-border)]">
-                  <GraduationCap className="w-3.5 h-3.5 text-[var(--color-purple)]" />
-                  {cardContent.education}
-                </span>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--color-bg-secondary)] border border-[var(--color-border)]">
-                  <Trophy className="w-3.5 h-3.5 text-amber-500" />
-                  {cardContent.achievement}
-                </span>
               </div>
 
               {/* Short Bio Description */}
-              <ScrollFloat
-                as="p"
-                animationDuration={0.8}
-                stagger={0.015}
-                textClassName="text-[var(--color-body)] text-xs lg:text-sm leading-relaxed block"
-              >
+              <p className="text-[var(--color-body)] text-xs lg:text-sm leading-relaxed block">
                 {cardContent.description}
-              </ScrollFloat>
+              </p>
 
               {/* Theater & Setlist Highlights */}
               <div className="grid grid-cols-2 gap-3 pt-1">
@@ -161,7 +163,7 @@ export default function KenalanIntanCarousel({ socialLinks, className }) {
                     <Theater className="w-4 h-4" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-[var(--color-heading)]">{cardContent.showCount}</p>
+                    <p className="text-xs font-bold text-[var(--color-heading)]">{dynamicStats.showCount}</p>
                     <p className="text-[10px] text-[var(--color-text-secondary)]">Penampilan Teater</p>
                   </div>
                 </div>
@@ -170,8 +172,8 @@ export default function KenalanIntanCarousel({ socialLinks, className }) {
                     <Music className="w-4 h-4" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-[var(--color-heading)]">{cardContent.setlistCount}</p>
-                    <p className="text-[10px] text-[var(--color-text-secondary)]">Setlist Dikuasai</p>
+                    <p className="text-xs font-bold text-[var(--color-heading)]">{dynamicStats.setlistCount}</p>
+                    <p className="text-[10px] text-[var(--color-text-secondary)]">Setlist Yang Dibawakan</p>
                   </div>
                 </div>
               </div>
@@ -230,7 +232,7 @@ export default function KenalanIntanCarousel({ socialLinks, className }) {
                 as="h3"
                 animationDuration={1}
                 ease="back.inOut(2)"
-                stagger={0.03}
+                stagger={0.04}
                 textClassName="text-xl font-extrabold text-[var(--color-heading)] block"
                 scrollStart="top 90%"
               >
@@ -241,17 +243,10 @@ export default function KenalanIntanCarousel({ socialLinks, className }) {
               </p>
             </div>
 
-            {/* Jidoshoukai / Catchphrase Animated ScrollFloat */}
-            <ScrollFloat
-              as="p"
-              animationDuration={1}
-              ease="back.inOut(2)"
-              stagger={0.02}
-              textClassName="text-xs font-semibold italic text-[var(--color-pink-dark)] leading-relaxed block"
-              scrollStart="top 90%"
-            >
+            {/* Jidoshoukai / Catchphrase */}
+            <p className="text-xs font-semibold italic text-[var(--color-pink-dark)] leading-relaxed block">
               {`"${cardContent.catchphrase}"`}
-            </ScrollFloat>
+            </p>
 
             {/* Stat Chips */}
             <div className="flex flex-wrap gap-1.5 text-[10px] font-semibold text-[var(--color-body)]">
@@ -259,24 +254,11 @@ export default function KenalanIntanCarousel({ socialLinks, className }) {
                 <Calendar className="w-3 h-3 text-[var(--color-pink)]" />
                 {cardContent.birthInfo}
               </span>
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[var(--color-bg-secondary)] border border-[var(--color-border)]">
-                <GraduationCap className="w-3 h-3 text-[var(--color-purple)]" />
-                {cardContent.education}
-              </span>
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[var(--color-bg-secondary)] border border-[var(--color-border)]">
-                <Trophy className="w-3 h-3 text-amber-500" />
-                {cardContent.achievement}
-              </span>
             </div>
 
-            <ScrollFloat
-              as="p"
-              animationDuration={0.8}
-              stagger={0.015}
-              textClassName="text-[var(--color-body)] text-xs leading-relaxed block"
-            >
+            <p className="text-[var(--color-body)] text-xs leading-relaxed block">
               {cardContent.description}
-            </ScrollFloat>
+            </p>
 
             {/* Social & CTA */}
             <div className="flex flex-col items-center gap-3 pt-3 border-t border-[var(--color-border)]">
