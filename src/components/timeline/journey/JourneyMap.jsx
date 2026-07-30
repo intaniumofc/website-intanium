@@ -389,12 +389,12 @@ export default function JourneyMap({ achievements = [] }) {
                       <p>{achievement.description || achievement.details || 'Tidak ada deskripsi tambahan.'}</p>
 
                       {achievement.details &&
-                       achievement.details !== achievement.description && (
-                        <div className="p-4 rounded-xl bg-[var(--color-pink-tint-25)] border border-[var(--color-pink-tint-50)] text-xs sm:text-sm text-[var(--color-heading)] space-y-1 mt-4">
-                          <span className="font-extrabold block text-[var(--color-pink)] uppercase tracking-wider text-[11px]">Catatan Tambahan:</span>
-                          <p className="leading-relaxed whitespace-pre-line">{achievement.details}</p>
-                        </div>
-                      )}
+                        achievement.details !== achievement.description && (
+                          <div className="p-4 rounded-xl bg-[var(--color-pink-tint-25)] border border-[var(--color-pink-tint-50)] text-xs sm:text-sm text-[var(--color-heading)] space-y-1 mt-4">
+                            <span className="font-extrabold block text-[var(--color-pink)] uppercase tracking-wider text-[11px]">Catatan Tambahan:</span>
+                            <p className="leading-relaxed whitespace-pre-line">{achievement.details}</p>
+                          </div>
+                        )}
                     </div>
                   </div>
                 </div>

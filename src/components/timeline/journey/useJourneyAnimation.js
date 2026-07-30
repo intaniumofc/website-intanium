@@ -291,7 +291,35 @@ export function useJourneyAnimation({
       // Initial placement so nothing pops on first paint.
       place(TRAVEL_START, true);
 
+      // Force immediate and delayed ScrollTrigger refreshes to prevent early trigger
+      // caused by comic/flipbook section layout expansion above journey section
+      ScrollTrigger.refresh();
+
+      const refreshTimers = [
+        setTimeout(() => ScrollTrigger.refresh(), 150),
+        setTimeout(() => ScrollTrigger.refresh(), 500),
+        setTimeout(() => ScrollTrigger.refresh(), 1200),
+      ];
+
+      const handleRefresh = () => ScrollTrigger.refresh();
+      window.addEventListener('load', handleRefresh);
+      window.addEventListener('resize', handleRefresh);
+
+      // Observe parent layout shifts (e.g. comic images loading above)
+      let resizeObserver;
+      const parentEl = sectionRef.current?.closest('.shining-page') || document.body;
+      if (typeof ResizeObserver !== 'undefined' && parentEl) {
+        resizeObserver = new ResizeObserver(() => {
+          ScrollTrigger.refresh();
+        });
+        resizeObserver.observe(parentEl);
+      }
+
       return () => {
+        refreshTimers.forEach(clearTimeout);
+        window.removeEventListener('load', handleRefresh);
+        window.removeEventListener('resize', handleRefresh);
+        if (resizeObserver) resizeObserver.disconnect();
         bob.kill();
         breathe.kill();
       };

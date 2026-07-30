@@ -586,8 +586,15 @@
 }
 
 @keyframes butterfly-glow-pulse {
-  0% { opacity: 0.6; transform: scale(0.9); }
-  100% { opacity: 1; transform: scale(1.15); }
+  0% {
+    opacity: 0.6;
+    transform: scale(0.9);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
 }
 
 .journey-butterfly-wrapper {
@@ -617,6 +624,7 @@
   0% {
     transform: scaleX(1) scaleY(1) rotateZ(0deg);
   }
+
   100% {
     transform: scaleX(0.42) scaleY(0.92) rotateZ(-3deg);
   }
@@ -691,6 +699,7 @@
 }
 
 @keyframes journey-polaroid-float {
+
   0%,
   100% {
     transform: translate(-50%, -50%) translateY(0);

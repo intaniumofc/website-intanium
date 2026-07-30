@@ -3,12 +3,16 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, Star } from 'lucide-react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useSafeReducedMotion } from '../../hooks/useSafeReducedMotion';
 import Loading from '../../components/common/Loading';
 import ComicFlipbook from '../../components/common/ComicFlipbook';
 import { achievementService } from '../../services/public/achievementService';
 import JourneyMap from '../../components/timeline/journey/JourneyMap';
 import './IntanShiningStarPage.css';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const reveal = {
   hidden: { opacity: 0, y: 32 },
@@ -27,6 +31,9 @@ export default function IntanShiningStarPage() {
       if (mounted) {
         setAchievements(data);
         setIsLoading(false);
+        setTimeout(() => {
+          ScrollTrigger.refresh();
+        }, 150);
       }
     });
     return () => { mounted = false; };
