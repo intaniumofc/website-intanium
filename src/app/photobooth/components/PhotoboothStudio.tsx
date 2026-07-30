@@ -51,7 +51,7 @@ const initialState: State = {
   photoScales: [1.0, 1.0, 1.0, 1.0],
   photoIndex: 0,
   countdown: 0,
-  activeFrameId: FRAMES_CONFIG[0].id,
+  activeFrameId: FRAMES_CONFIG[0]?.id ?? "",
   errorMsg: "",
   inputMode: null
 };
@@ -237,17 +237,24 @@ export default function PhotoboothStudio() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
+  const [framesList, setFramesList] = useState<FrameConfig[]>(FRAMES_CONFIG);
   const [canShare, setCanShare] = useState(false);
   const [settings, setSettings] = useState<{ active: boolean; maintenanceMessage: string } | null>(null);
   const [loadingSettings, setLoadingSettings] = useState(true);
-  const activeFrame = FRAMES_CONFIG.find((f) => f.id === state.activeFrameId) || FRAMES_CONFIG[0];
+  const activeFrame = framesList.find((f) => f.id === state.activeFrameId) || framesList[0] || null;
 
-  // Fetch photobooth configuration settings
+  // Fetch photobooth configuration settings and dynamic PNG frames
   useEffect(() => {
-    async function loadSettings() {
+    async function loadConfig() {
       try {
-        const data = await photoboothService.getSettings();
+        const [data, framesData] = await Promise.all([
+          photoboothService.getSettings(),
+          photoboothService.getFrames()
+        ]);
         setSettings(data);
+        if (framesData && framesData.length > 0) {
+          setFramesList(framesData);
+        }
       } catch (err) {
         console.error("Gagal memuat pengaturan photobooth:", err);
         setSettings({ active: true, maintenanceMessage: "" }); // fallback
@@ -255,12 +262,12 @@ export default function PhotoboothStudio() {
         setLoadingSettings(false);
       }
     }
-    loadSettings();
+    loadConfig();
   }, []);
 
   // Calculate filled count
   const filledPhotosCount = state.capturedPhotos.filter(p => p !== "").length;
-  const isAllCaptured = filledPhotosCount === activeFrame.slots.length;
+  const isAllCaptured = activeFrame ? filledPhotosCount === activeFrame.slots.length : false;
 
   // Sync ref with stream state for cleanup
   useEffect(() => {
@@ -285,7 +292,7 @@ export default function PhotoboothStudio() {
 
   // Handle Canvas Compositing in REVIEW mode
   useEffect(() => {
-    if (state.state === "REVIEW" && canvasRef.current && state.capturedPhotos.length === activeFrame.slots.length) {
+    if (activeFrame && state.state === "REVIEW" && canvasRef.current && state.capturedPhotos.length === activeFrame.slots.length) {
       const mirrorPhotos = state.inputMode === "camera";
       compositePhotostrip(canvasRef.current, state.capturedPhotos, activeFrame, mirrorPhotos, state.photoScales);
     }
@@ -424,8 +431,8 @@ export default function PhotoboothStudio() {
   const showZoomSlider = state.state === "CONFIRM_CAPTURE" || (state.state === "UPLOAD_PREVIEW" && currentSlotHasPhoto);
   const currentScale = state.photoScales[state.photoIndex] || 1.0;
 
-  // Show Loading Spinner while loading settings
-  if (loadingSettings) {
+  // Show Loading Spinner while loading settings OR while frames haven't loaded yet
+  if (loadingSettings || (!activeFrame && framesList.length === 0)) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] w-full text-center">
         <div className="w-12 h-12 rounded-full border-4 border-[var(--color-primary-light)] border-t-[var(--color-primary)] animate-spin mb-4" />
@@ -456,6 +463,19 @@ export default function PhotoboothStudio() {
     );
   }
 
+  // Guard: no frames available at all — instruct admin to add templates
+  if (framesList.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center text-center max-w-lg mx-auto py-16 px-4 gap-4">
+        <div className="p-4 rounded-2xl bg-pink-50 border border-pink-200 text-pink-700 text-sm">
+          <p className="font-bold mb-1">Belum Ada Template Bingkai</p>
+          <p>Admin belum menambahkan template bingkai foto. Silakan tambahkan melalui <strong>Admin &gt; Photobooth &gt; Tambah Template Bingkai PNG</strong>.</p>
+        </div>
+        <a href="/" className="text-[var(--color-primary)] font-bold text-sm hover:underline">← Kembali ke Beranda</a>
+      </div>
+    );
+  }
+
   // Step 1 Layout: Full-Screen Template Selection Grid
   if (isSelectFrame) {
     return (
@@ -472,7 +492,7 @@ export default function PhotoboothStudio() {
 
         {/* Grid of Frame Selection Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 w-full justify-center px-4 max-w-2xl">
-          {FRAMES_CONFIG.map((frame) => {
+          {framesList.map((frame) => {
             const isActive = frame.id === state.activeFrameId;
             const usesCount = frame.id === "frame-classic" ? "2,124" : "1,052";
 

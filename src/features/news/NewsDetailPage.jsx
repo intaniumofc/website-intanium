@@ -88,13 +88,21 @@ export default function NewsDetailPage() {
 
       <Card hoverEffect={false} className="overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-xl" padding="none">
         {/* Banner image */}
-        <div className="relative aspect-[16/9] sm:aspect-[21/9] max-h-[380px] w-full overflow-hidden bg-[var(--color-bg-secondary)] border-b border-[var(--color-border)]">
+        <div className="relative w-full min-h-[250px] max-h-[480px] sm:max-h-[540px] overflow-hidden bg-slate-950 flex items-center justify-center border-b border-[var(--color-border)]">
+          {/* Ambient Blurred Background */}
+          <img
+            src={(getNewsImage(news))?.src || (getNewsImage(news))}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-110 pointer-events-none"
+          />
+          
+          {/* Main Full Image (Uncropped) */}
           <img
             src={(getNewsImage(news))?.src || (getNewsImage(news))}
             alt={news.title}
-            className="w-full h-full object-cover object-top"
+            className="relative z-10 w-full h-auto max-h-[480px] sm:max-h-[540px] object-contain mx-auto"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-50" />
         </div>
 
         {/* Content Details */}

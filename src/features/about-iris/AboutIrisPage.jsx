@@ -222,24 +222,24 @@ const MISI_CLIP = { clipPath: 'polygon(50vw 0, 100% 0, 100% 100%, calc(50vw - 80
 
 function LogoPngViewer({ fallbackImage, className = 'w-72 h-72 sm:w-80 sm:h-80' }) {
   return (
-    <div className={`relative ${className} rounded-full bg-[radial-gradient(circle_at_30%_25%,#737985_0%,#4B5563_45%,#272B33_100%)] border border-white/10 p-1 flex items-center justify-center shadow-[0_18px_60px_-25px_rgba(55,65,81,0.7)] overflow-hidden group select-none`}>
-      {/* Soft pulsing rings — pearl/lavender, very low opacity */}
-      <div className="absolute inset-4 rounded-full border border-white/10 animate-[pulse_4s_cubic-bezier(0.4,0,0.6,1)_infinite] z-0 pointer-events-none" />
-      <div className="absolute inset-9 rounded-full border border-white/[0.06] animate-[pulse_5s_cubic-bezier(0.4,0,0.6,1)_infinite] z-0 pointer-events-none" />
+    <div className={`relative ${className} rounded-full bg-[radial-gradient(circle_at_50%_40%,#FFF0F7_0%,#FFC2E2_35%,#FF6BB9_70%,#E63B96_100%)] border-2 border-white/80 p-1 flex items-center justify-center shadow-[0_20px_60px_-15px_rgba(255,95,178,0.5)] overflow-hidden group select-none`}>
+      {/* Soft pulsing rings — white/pink glow */}
+      <div className="absolute inset-4 rounded-full border border-white/50 animate-[pulse_4s_cubic-bezier(0.4,0,0.6,1)_infinite] z-0 pointer-events-none" />
+      <div className="absolute inset-9 rounded-full border border-white/30 animate-[pulse_5s_cubic-bezier(0.4,0,0.6,1)_infinite] z-0 pointer-events-none" />
 
-      {/* Thin lavender orbit (menggantikan cyan ring yang kuat) */}
+      {/* White/Golden orbit ring */}
       <div
-        className="absolute inset-3 rounded-full border border-purple-200/15 border-t-purple-200/40 animate-[spin_16s_linear_infinite] z-10 pointer-events-none"
+        className="absolute inset-3 rounded-full border border-white/40 border-t-amber-200/80 animate-[spin_16s_linear_infinite] z-10 pointer-events-none"
         style={OUTER_ORBIT_STYLE}
       />
-      {/* Thin indigo orbit, reverse */}
+      {/* Pink/White inner orbit ring, reverse */}
       <div
-        className="absolute inset-7 rounded-full border border-indigo-200/10 border-b-indigo-200/30 animate-[spin_11s_linear_infinite_reverse] z-10 pointer-events-none"
+        className="absolute inset-7 rounded-full border border-pink-200/40 border-b-white/60 animate-[spin_11s_linear_infinite_reverse] z-10 pointer-events-none"
         style={INNER_ORBIT_STYLE}
       />
 
-      {/* Pearl backplate glow (soft, not neon) */}
-      <div className="absolute w-2/3 h-2/3 bg-[radial-gradient(circle,rgba(214,206,255,0.35)_0%,rgba(196,181,253,0.12)_55%,transparent_75%)] rounded-full blur-2xl pointer-events-none z-0" />
+      {/* Radiant pink & white backplate aura */}
+      <div className="absolute w-3/4 h-3/4 bg-[radial-gradient(circle,rgba(255,255,255,0.75)_0%,rgba(255,214,237,0.5)_40%,rgba(255,95,178,0.3)_75%,transparent_100%)] rounded-full blur-xl pointer-events-none z-0" />
 
       {/* Floating crystalline butterfly medallion */}
       <motion.div
@@ -252,7 +252,7 @@ function LogoPngViewer({ fallbackImage, className = 'w-72 h-72 sm:w-80 sm:h-80' 
           alt="IRIS Official Logo"
           width={200}
           height={200}
-          className="w-full h-full object-contain filter drop-shadow-[0_0_14px_rgba(221,214,254,0.55)]"
+          className="w-full h-full object-contain filter drop-shadow-[0_0_16px_rgba(255,255,255,0.9)] drop-shadow-[0_0_30px_rgba(255,95,178,0.6)]"
         />
       </motion.div>
     </div>
@@ -342,24 +342,24 @@ function OrbitConnectors({ activeId }) {
     >
       <defs>
         <linearGradient id="connectorGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="var(--color-purple)" stopOpacity="0" />
-          <stop offset="50%" stopColor="var(--color-purple)" stopOpacity="0.5" />
-          <stop offset="100%" stopColor="var(--color-blue)" stopOpacity="0.12" />
+          <stop offset="0%" stopColor="var(--color-pink)" stopOpacity="0" />
+          <stop offset="50%" stopColor="var(--color-pink)" stopOpacity="0.5" />
+          <stop offset="100%" stopColor="#FFA66E" stopOpacity="0.12" />
         </linearGradient>
         <linearGradient id="connectorGradActive" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="var(--color-purple)" stopOpacity="0.4" />
-          <stop offset="50%" stopColor="var(--color-purple)" stopOpacity="1" />
-          <stop offset="100%" stopColor="var(--color-blue)" stopOpacity="0.7" />
+          <stop offset="0%" stopColor="var(--color-pink)" stopOpacity="0.4" />
+          <stop offset="50%" stopColor="var(--color-pink)" stopOpacity="1" />
+          <stop offset="100%" stopColor="#FFA66E" stopOpacity="0.8" />
         </linearGradient>
         <linearGradient id="connectorGradVertical" gradientUnits="userSpaceOnUse" x1="500" y1="520" x2="500" y2="335">
-          <stop offset="0%" stopColor="var(--color-purple)" stopOpacity="0.2" />
-          <stop offset="50%" stopColor="var(--color-blue)" stopOpacity="0.55" />
-          <stop offset="100%" stopColor="#818CF8" stopOpacity="0.2" />
+          <stop offset="0%" stopColor="var(--color-pink)" stopOpacity="0.2" />
+          <stop offset="50%" stopColor="#FFA66E" stopOpacity="0.55" />
+          <stop offset="100%" stopColor="var(--color-pink)" stopOpacity="0.2" />
         </linearGradient>
         <linearGradient id="connectorGradVerticalActive" gradientUnits="userSpaceOnUse" x1="500" y1="520" x2="500" y2="335">
-          <stop offset="0%" stopColor="#C4B5FD" stopOpacity="0.55" />
-          <stop offset="50%" stopColor="var(--color-purple)" stopOpacity="1" />
-          <stop offset="100%" stopColor="#A78BFA" stopOpacity="0.75" />
+          <stop offset="0%" stopColor="#FF75C3" stopOpacity="0.55" />
+          <stop offset="50%" stopColor="var(--color-pink)" stopOpacity="1" />
+          <stop offset="100%" stopColor="#FFA66E" stopOpacity="0.85" />
         </linearGradient>
       </defs>
 
@@ -393,7 +393,7 @@ function OrbitConnectors({ activeId }) {
             cx={path.cx}
             cy={path.cy}
             r={isActive ? 4 : 2.5}
-            fill={isActive ? 'var(--color-purple)' : '#C4B5FD'}
+            fill={isActive ? 'var(--color-pink)' : '#FF75C3'}
             fillOpacity={isActive ? 1 : 0.6}
             style={CIRCLE_TRANSITION_STYLE}
           />

@@ -62,7 +62,7 @@ export default function ScrollFloat({
         viewport={{ once: false, amount: 0.2 }}
       >
         {words.map(({ word, chars, wordIndex }) => (
-          <span key={wordIndex} className="inline-block whitespace-nowrap mr-[0.28em]">
+          <span key={wordIndex} className="inline-block whitespace-nowrap mr-[0.35em] last:mr-0">
             {chars.map((char, charIndex) => (
               <motion.span
                 key={charIndex}

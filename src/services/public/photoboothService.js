@@ -1,11 +1,13 @@
 import { createClient } from '../../utils/supabase/client';
+import { FRAMES_CONFIG } from '../../lib/photobooth/frames';
 
 const supabase = createClient();
 
 const DEFAULT_SETTINGS = {
   active: true,
   maintenanceMessage: 'Studio Foto sedang dinonaktifkan sementara. Nantikan event spesial berikutnya!',
-  activeEventName: 'Event Spesial JKT48'
+  activeEventName: 'Event Spesial JKT48',
+  customFrames: []
 };
 
 export const photoboothService = {
@@ -25,11 +27,23 @@ export const photoboothService = {
       const settings = JSON.parse(data.description);
       return {
         ...DEFAULT_SETTINGS,
-        ...settings
+        ...settings,
+        customFrames: settings.customFrames || []
       };
     } catch (err) {
       console.error('Error loading photobooth settings:', err);
       return DEFAULT_SETTINGS;
+    }
+  },
+
+  async getFrames() {
+    try {
+      const settings = await this.getSettings();
+      const customFrames = settings.customFrames || [];
+      return [...FRAMES_CONFIG, ...customFrames];
+    } catch (err) {
+      console.error('Error getting combined photobooth frames:', err);
+      return FRAMES_CONFIG;
     }
   },
 
