@@ -41,6 +41,56 @@ export default function AdminJoinUsPage() {
 
   // Settings data
   const [settings, setSettings] = useState({});
+  const [newAdminPosition, setNewAdminPosition] = useState('');
+  const [newVolunteerDivision, setNewVolunteerDivision] = useState('');
+
+  const handleAddAdminPosition = () => {
+    const val = newAdminPosition.trim();
+    if (!val) return;
+    const currentList = settings.admin?.available_positions || [
+      'Data Archiver', 'Keanggotaan dan Lapangan', 'Video Editor', 'Media Sosial', 'Design Grafis', 'Illustrator', 'E-Sport Management', 'Merchandise'
+    ];
+    if (currentList.includes(val)) return;
+    const updated = [...currentList, val];
+    setSettings(prev => ({
+      ...prev,
+      admin: { ...prev.admin, available_positions: updated }
+    }));
+    setNewAdminPosition('');
+  };
+
+  const handleRemoveAdminPosition = (posToRemove) => {
+    const currentList = settings.admin?.available_positions || [];
+    const updated = currentList.filter(p => p !== posToRemove);
+    setSettings(prev => ({
+      ...prev,
+      admin: { ...prev.admin, available_positions: updated }
+    }));
+  };
+
+  const handleAddVolunteerDivision = () => {
+    const val = newVolunteerDivision.trim();
+    if (!val) return;
+    const currentList = settings.volunteer?.available_divisions || [
+      'Divisi Acara', 'Divisi Konsumsi', 'Divisi Sarana & Prasarana', 'Divisi Dokumentasi & Media'
+    ];
+    if (currentList.includes(val)) return;
+    const updated = [...currentList, val];
+    setSettings(prev => ({
+      ...prev,
+      volunteer: { ...prev.volunteer, available_divisions: updated }
+    }));
+    setNewVolunteerDivision('');
+  };
+
+  const handleRemoveVolunteerDivision = (divToRemove) => {
+    const currentList = settings.volunteer?.available_divisions || [];
+    const updated = currentList.filter(d => d !== divToRemove);
+    setSettings(prev => ({
+      ...prev,
+      volunteer: { ...prev.volunteer, available_divisions: updated }
+    }));
+  };
 
   // Detail Modal
   const [selectedSub, setSelectedSub] = useState(null);
@@ -462,19 +512,108 @@ export default function AdminJoinUsPage() {
                         className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800"
                       />
                     </div>
+
+                    {type === 'admin' && (
+                      <div className="pt-3 border-t border-slate-100 space-y-2">
+                        <label className="block text-xs font-bold text-purple-900">
+                          Posisi Open Recruitment Admin
+                        </label>
+                        <div className="flex flex-wrap gap-1.5 p-2 bg-slate-50 border border-slate-200 rounded-xl min-h-[42px]">
+                          {(cur.available_positions || [
+                            'Data Archiver', 'Keanggotaan dan Lapangan', 'Video Editor', 'Media Sosial', 'Design Grafis', 'Illustrator', 'E-Sport Management', 'Merchandise'
+                          ]).map((pos) => (
+                            <span key={pos} className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-purple-100 text-purple-900 border border-purple-200 flex items-center gap-1.5 shadow-2xs">
+                              {pos}
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveAdminPosition(pos)}
+                                className="w-4 h-4 rounded-full hover:bg-purple-200 flex items-center justify-center text-purple-700 hover:text-red-600 transition-colors cursor-pointer text-xs leading-none"
+                                title="Hapus posisi ini"
+                              >
+                                &times;
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            placeholder="Ketik posisi baru..."
+                            value={newAdminPosition}
+                            onChange={(e) => setNewAdminPosition(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddAdminPosition(); } }}
+                            className="flex-1 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-purple-500"
+                          />
+                          <button
+                            type="button"
+                            onClick={handleAddAdminPosition}
+                            className="px-3.5 py-1.5 bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs rounded-lg transition-colors cursor-pointer"
+                          >
+                            + Tambah
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {type === 'volunteer' && (
+                      <div className="pt-3 border-t border-slate-100 space-y-2">
+                        <label className="block text-xs font-bold text-pink-900">
+                          Divisi Open Recruitment Volunteer
+                        </label>
+                        <div className="flex flex-wrap gap-1.5 p-2 bg-slate-50 border border-slate-200 rounded-xl min-h-[42px]">
+                          {(cur.available_divisions || [
+                            'Divisi Acara', 'Divisi Konsumsi', 'Divisi Sarana & Prasarana', 'Divisi Dokumentasi & Media'
+                          ]).map((div) => (
+                            <span key={div} className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-pink-100 text-pink-900 border border-pink-200 flex items-center gap-1.5 shadow-2xs">
+                              {div}
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveVolunteerDivision(div)}
+                                className="w-4 h-4 rounded-full hover:bg-pink-200 flex items-center justify-center text-pink-700 hover:text-red-600 transition-colors cursor-pointer text-xs leading-none"
+                                title="Hapus divisi ini"
+                              >
+                                &times;
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            placeholder="Ketik divisi baru..."
+                            value={newVolunteerDivision}
+                            onChange={(e) => setNewVolunteerDivision(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddVolunteerDivision(); } }}
+                            className="flex-1 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-pink-500"
+                          />
+                          <button
+                            type="button"
+                            onClick={handleAddVolunteerDivision}
+                            className="px-3.5 py-1.5 bg-pink-600 hover:bg-pink-700 text-white font-extrabold text-xs rounded-lg transition-colors cursor-pointer"
+                          >
+                            + Tambah
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 
                 <div className="pt-4 border-t border-slate-100 mt-6 flex justify-end">
-                  <Button
-                    variant="primary"
-                    size="sm"
+                  <button
+                    type="button"
                     disabled={isSubmitting}
                     onClick={() => handleSaveSetting(type, cur)}
-                    className="flex items-center gap-1.5 cursor-pointer text-xs"
+                    className={`px-4 py-2.5 text-white font-extrabold text-xs rounded-xl shadow-sm hover:shadow flex items-center gap-1.5 cursor-pointer transition-all disabled:opacity-50 ${
+                      type === 'member'
+                        ? 'bg-amber-600 hover:bg-amber-700'
+                        : type === 'admin'
+                        ? 'bg-purple-600 hover:bg-purple-700'
+                        : 'bg-pink-600 hover:bg-pink-700'
+                    }`}
                   >
                     <Save className="h-4 w-4" /> Simpan Form {type}
-                  </Button>
+                  </button>
                 </div>
               </Card>
             );

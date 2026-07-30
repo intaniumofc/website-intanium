@@ -15,6 +15,16 @@ const DEFAULT_SETTINGS = {
     title: 'Recruitment Admin IRIS',
     description: 'Tertarik berkontribusi mengelola fanbase? Kami membuka rekrutmen pengurus untuk berbagai divisi internal.',
     status: 'open',
+    available_positions: [
+      'Data Archiver',
+      'Keanggotaan dan Lapangan',
+      'Video Editor',
+      'Media Sosial',
+      'Design Grafis',
+      'Illustrator',
+      'E-Sport Management',
+      'Merchandise'
+    ],
     updated_at: new Date().toISOString(),
   },
   volunteer: {
@@ -23,6 +33,12 @@ const DEFAULT_SETTINGS = {
     title: 'Open Volunteer Event & Kegiatan',
     description: 'Mari berpartisipasi sebagai relawan dalam kegiatan kebersamaan, event perayaan, dan aksi sosial IRIS.',
     status: 'open',
+    available_divisions: [
+      'Divisi Acara',
+      'Divisi Konsumsi',
+      'Divisi Sarana & Prasarana',
+      'Divisi Dokumentasi & Media'
+    ],
     updated_at: new Date().toISOString(),
   },
 };

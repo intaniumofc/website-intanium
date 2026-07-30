@@ -27,6 +27,44 @@ export default function JoinUsPage() {
 
   const formRef = useRef(null);
 
+  // Real-time Validation Helpers
+  const getAgeError = (val) => {
+    if (!val) return '';
+    const num = Number(val);
+    if (isNaN(num) || !Number.isInteger(num) || num < 12 || num > 80) {
+      return 'Usia harus berupa angka antara 12 - 80 tahun';
+    }
+    return '';
+  };
+
+  const getWAError = (val) => {
+    if (!val) return '';
+    const clean = val.trim().replace(/[\s-]/g, '');
+    if (!/^(08|62|\+62)\d{8,13}$/.test(clean)) {
+      return 'Nomor WA tidak valid (contoh: 081234567890 / 6281234567890)';
+    }
+    return '';
+  };
+
+  const getLineIdError = (val) => {
+    if (!val) return '';
+    if (/\s/.test(val.trim())) {
+      return 'ID Line tidak boleh mengandung spasi';
+    }
+    if (val.trim().length < 2) {
+      return 'ID Line minimal 2 karakter';
+    }
+    return '';
+  };
+
+  const getXAccountError = (val) => {
+    if (!val) return '';
+    if (/\s/.test(val.trim())) {
+      return 'Username X/Twitter tidak boleh mengandung spasi';
+    }
+    return '';
+  };
+
   const handleSelectTab = (tabKey) => {
     setActiveTab(tabKey);
     setIsSubmitted(false);
@@ -109,6 +147,10 @@ export default function JoinUsPage() {
 
   const handleMemberSubmit = async (e) => {
     e.preventDefault();
+    if (getAgeError(memberForm.age) || getLineIdError(memberForm.line_id) || getXAccountError(memberForm.x_account)) {
+      alert('Mohon periksa kembali input form Anda. Terdapat data yang belum sesuai format.');
+      return;
+    }
     setIsSubmitting(true);
     try {
       await joinService.submitJoinApplication({
@@ -139,6 +181,10 @@ export default function JoinUsPage() {
 
   const handleAdminSubmit = async (e) => {
     e.preventDefault();
+    if (getAgeError(adminForm.age) || getLineIdError(adminForm.line_id) || getXAccountError(adminForm.x_account)) {
+      alert('Mohon periksa kembali input form Anda. Terdapat data yang belum sesuai format.');
+      return;
+    }
     setIsSubmitting(true);
     try {
       await joinService.submitJoinApplication({
@@ -168,6 +214,10 @@ export default function JoinUsPage() {
   const handleVolunteerSubmit = async (e) => {
     e.preventDefault();
     if (!volunteerForm.agree_all) return;
+    if (getWAError(volunteerForm.whatsapp_number) || getLineIdError(volunteerForm.line_id) || getXAccountError(volunteerForm.x_account)) {
+      alert('Mohon periksa kembali input form Anda. Terdapat data yang belum sesuai format.');
+      return;
+    }
     setIsSubmitting(true);
     try {
       await joinService.submitJoinApplication({
@@ -464,13 +514,22 @@ export default function JoinUsPage() {
                         Usia <span className="text-red-500 ml-0.5">*</span>
                       </label>
                       <input
-                        type="text"
+                        type="number"
+                        min="12"
+                        max="80"
                         required
-                        placeholder="Contoh: 20 Tahun"
+                        placeholder="Contoh: 20"
                         value={memberForm.age}
                         onChange={(e) => setMemberForm(prev => ({ ...prev, age: e.target.value }))}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:bg-white focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] focus:outline-none transition-all placeholder:text-slate-400"
+                        className={`w-full bg-slate-50 border rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:bg-white focus:ring-1 focus:outline-none transition-all placeholder:text-slate-400 ${
+                          getAgeError(memberForm.age) ? 'border-red-400 focus:ring-red-400 focus:border-red-400' : 'border-slate-200 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]'
+                        }`}
                       />
+                      {getAgeError(memberForm.age) && (
+                        <p className="text-[11px] font-bold text-red-500 mt-1 flex items-center gap-1">
+                          <Info className="h-3 w-3 shrink-0" /> {getAgeError(memberForm.age)}
+                        </p>
+                      )}
                     </div>
 
                     <div>
@@ -513,8 +572,15 @@ export default function JoinUsPage() {
                         placeholder="Pastikan fitur 'Tambah Teman via ID' aktif"
                         value={memberForm.line_id}
                         onChange={(e) => setMemberForm(prev => ({ ...prev, line_id: e.target.value }))}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:bg-white focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] focus:outline-none transition-all placeholder:text-slate-400"
+                        className={`w-full bg-slate-50 border rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:bg-white focus:ring-1 focus:outline-none transition-all placeholder:text-slate-400 ${
+                          getLineIdError(memberForm.line_id) ? 'border-red-400 focus:ring-red-400 focus:border-red-400' : 'border-slate-200 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]'
+                        }`}
                       />
+                      {getLineIdError(memberForm.line_id) && (
+                        <p className="text-[11px] font-bold text-red-500 mt-1 flex items-center gap-1">
+                          <Info className="h-3 w-3 shrink-0" /> {getLineIdError(memberForm.line_id)}
+                        </p>
+                      )}
                     </div>
 
                     <div>
@@ -543,8 +609,15 @@ export default function JoinUsPage() {
                         placeholder="@username (pastikan tidak diprivate)"
                         value={memberForm.x_account}
                         onChange={(e) => setMemberForm(prev => ({ ...prev, x_account: e.target.value }))}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:bg-white focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] focus:outline-none transition-all placeholder:text-slate-400"
+                        className={`w-full bg-slate-50 border rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:bg-white focus:ring-1 focus:outline-none transition-all placeholder:text-slate-400 ${
+                          getXAccountError(memberForm.x_account) ? 'border-red-400 focus:ring-red-400 focus:border-red-400' : 'border-slate-200 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]'
+                        }`}
                       />
+                      {getXAccountError(memberForm.x_account) && (
+                        <p className="text-[11px] font-bold text-red-500 mt-1 flex items-center gap-1">
+                          <Info className="h-3 w-3 shrink-0" /> {getXAccountError(memberForm.x_account)}
+                        </p>
+                      )}
                     </div>
 
                     <div>
@@ -690,8 +763,15 @@ export default function JoinUsPage() {
                         placeholder="ID Line aktif"
                         value={adminForm.line_id}
                         onChange={(e) => setAdminForm(prev => ({ ...prev, line_id: e.target.value }))}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:bg-white focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] focus:outline-none transition-all placeholder:text-slate-400"
+                        className={`w-full bg-slate-50 border rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:bg-white focus:ring-1 focus:outline-none transition-all placeholder:text-slate-400 ${
+                          getLineIdError(adminForm.line_id) ? 'border-red-400 focus:ring-red-400 focus:border-red-400' : 'border-slate-200 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]'
+                        }`}
                       />
+                      {getLineIdError(adminForm.line_id) && (
+                        <p className="text-[11px] font-bold text-red-500 mt-1 flex items-center gap-1">
+                          <Info className="h-3 w-3 shrink-0" /> {getLineIdError(adminForm.line_id)}
+                        </p>
+                      )}
                     </div>
 
                     <div>
@@ -718,8 +798,15 @@ export default function JoinUsPage() {
                         placeholder="@username X"
                         value={adminForm.x_account}
                         onChange={(e) => setAdminForm(prev => ({ ...prev, x_account: e.target.value }))}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:bg-white focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] focus:outline-none transition-all placeholder:text-slate-400"
+                        className={`w-full bg-slate-50 border rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:bg-white focus:ring-1 focus:outline-none transition-all placeholder:text-slate-400 ${
+                          getXAccountError(adminForm.x_account) ? 'border-red-400 focus:ring-red-400 focus:border-red-400' : 'border-slate-200 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]'
+                        }`}
                       />
+                      {getXAccountError(adminForm.x_account) && (
+                        <p className="text-[11px] font-bold text-red-500 mt-1 flex items-center gap-1">
+                          <Info className="h-3 w-3 shrink-0" /> {getXAccountError(adminForm.x_account)}
+                        </p>
+                      )}
                     </div>
                   </div>
 
@@ -743,13 +830,22 @@ export default function JoinUsPage() {
                         Usia <span className="text-red-500 ml-0.5">*</span>
                       </label>
                       <input
-                        type="text"
+                        type="number"
+                        min="12"
+                        max="80"
                         required
-                        placeholder="Usia Anda"
+                        placeholder="Contoh: 20"
                         value={adminForm.age}
                         onChange={(e) => setAdminForm(prev => ({ ...prev, age: e.target.value }))}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:bg-white focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] focus:outline-none transition-all placeholder:text-slate-400"
+                        className={`w-full bg-slate-50 border rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:bg-white focus:ring-1 focus:outline-none transition-all placeholder:text-slate-400 ${
+                          getAgeError(adminForm.age) ? 'border-red-400 focus:ring-red-400 focus:border-red-400' : 'border-slate-200 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]'
+                        }`}
                       />
+                      {getAgeError(adminForm.age) && (
+                        <p className="text-[11px] font-bold text-red-500 mt-1 flex items-center gap-1">
+                          <Info className="h-3 w-3 shrink-0" /> {getAgeError(adminForm.age)}
+                        </p>
+                      )}
                     </div>
                   </div>
 
@@ -762,14 +858,21 @@ export default function JoinUsPage() {
                       onChange={(e) => setAdminForm(prev => ({ ...prev, position: e.target.value }))}
                       className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:bg-white focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] focus:outline-none transition-all"
                     >
-                      <option value="Data Archiver">1. Data Archiver (Merekap data & aktivitas Intan)</option>
-                      <option value="Keanggotaan dan Lapangan">2. Keanggotaan dan Lapangan (Database & event)</option>
-                      <option value="Video Editor">3. Video Editor (Konten video & tren)</option>
-                      <option value="Media Sosial">4. Media Sosial (Copywriting & publikasi sosmed)</option>
-                      <option value="Design Grafis">5. Design Grafis (Edit poster, meme, visual)</option>
-                      <option value="Illustrator">6. Illustrator (Drawing fanart & artwork)</option>
-                      <option value="E-Sport Management">7. E-Sport Management (Manajemen divisi E-Sport)</option>
-                      <option value="Merchandise">8. Merchandise (Konsep, riset vendor, produksi & sales)</option>
+                      {(settings?.admin?.available_positions || [
+                        'Data Archiver',
+                        'Keanggotaan dan Lapangan',
+                        'Video Editor',
+                        'Media Sosial',
+                        'Design Grafis',
+                        'Illustrator',
+                        'E-Sport Management',
+                        'Merchandise'
+                      ]).map((pos, idx) => (
+                        <option key={pos} value={pos}>
+                          {idx + 1}. {pos}
+                        </option>
+                      ))}
+                      <option value="Lainnya">Lainnya (Sebutkan di Alasan)</option>
                     </select>
                   </div>
 
@@ -954,8 +1057,15 @@ export default function JoinUsPage() {
                         placeholder="ID Line aktif"
                         value={volunteerForm.line_id}
                         onChange={(e) => setVolunteerForm(prev => ({ ...prev, line_id: e.target.value }))}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:bg-white focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] focus:outline-none transition-all placeholder:text-slate-400"
+                        className={`w-full bg-slate-50 border rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:bg-white focus:ring-1 focus:outline-none transition-all placeholder:text-slate-400 ${
+                          getLineIdError(volunteerForm.line_id) ? 'border-red-400 focus:ring-red-400 focus:border-red-400' : 'border-slate-200 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]'
+                        }`}
                       />
+                      {getLineIdError(volunteerForm.line_id) && (
+                        <p className="text-[11px] font-bold text-red-500 mt-1 flex items-center gap-1">
+                          <Info className="h-3 w-3 shrink-0" /> {getLineIdError(volunteerForm.line_id)}
+                        </p>
+                      )}
                     </div>
                   </div>
 
@@ -965,13 +1075,20 @@ export default function JoinUsPage() {
                         No WhatsApp <span className="text-red-500 ml-0.5">*</span>
                       </label>
                       <input
-                        type="text"
+                        type="tel"
                         required
-                        placeholder="08123456789"
+                        placeholder="Contoh: 081234567890"
                         value={volunteerForm.whatsapp_number}
                         onChange={(e) => setVolunteerForm(prev => ({ ...prev, whatsapp_number: e.target.value }))}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:bg-white focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] focus:outline-none transition-all placeholder:text-slate-400"
+                        className={`w-full bg-slate-50 border rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:bg-white focus:ring-1 focus:outline-none transition-all placeholder:text-slate-400 ${
+                          getWAError(volunteerForm.whatsapp_number) ? 'border-red-400 focus:ring-red-400 focus:border-red-400' : 'border-slate-200 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]'
+                        }`}
                       />
+                      {getWAError(volunteerForm.whatsapp_number) && (
+                        <p className="text-[11px] font-bold text-red-500 mt-1 flex items-center gap-1">
+                          <Info className="h-3 w-3 shrink-0" /> {getWAError(volunteerForm.whatsapp_number)}
+                        </p>
+                      )}
                     </div>
 
                     <div>
@@ -984,8 +1101,15 @@ export default function JoinUsPage() {
                         placeholder="@username X"
                         value={volunteerForm.x_account}
                         onChange={(e) => setVolunteerForm(prev => ({ ...prev, x_account: e.target.value }))}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:bg-white focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] focus:outline-none transition-all placeholder:text-slate-400"
+                        className={`w-full bg-slate-50 border rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:bg-white focus:ring-1 focus:outline-none transition-all placeholder:text-slate-400 ${
+                          getXAccountError(volunteerForm.x_account) ? 'border-red-400 focus:ring-red-400 focus:border-red-400' : 'border-slate-200 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]'
+                        }`}
                       />
+                      {getXAccountError(volunteerForm.x_account) && (
+                        <p className="text-[11px] font-bold text-red-500 mt-1 flex items-center gap-1">
+                          <Info className="h-3 w-3 shrink-0" /> {getXAccountError(volunteerForm.x_account)}
+                        </p>
+                      )}
                     </div>
                   </div>
 
@@ -998,9 +1122,17 @@ export default function JoinUsPage() {
                       onChange={(e) => setVolunteerForm(prev => ({ ...prev, division: e.target.value }))}
                       className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-800 focus:bg-white focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] focus:outline-none transition-all"
                     >
-                      <option value="Divisi Acara">Divisi Acara (Rangkaian acara, rundown, games, ice breaking)</option>
-                      <option value="Divisi Konsumsi">Divisi Konsumsi (Kebutuhan & porsi konsumsi acara)</option>
-                      <option value="Divisi Sarana & Prasarana">Divisi Sarana & Prasarana (Logistik, barang games, koordinasi venue)</option>
+                      {(settings?.volunteer?.available_divisions || [
+                        'Divisi Acara',
+                        'Divisi Konsumsi',
+                        'Divisi Sarana & Prasarana',
+                        'Divisi Dokumentasi & Media'
+                      ]).map((div, idx) => (
+                        <option key={div} value={div}>
+                          {idx + 1}. {div}
+                        </option>
+                      ))}
+                      <option value="Lainnya">Lainnya (Sebutkan di Motivasi)</option>
                     </select>
                   </div>
 
