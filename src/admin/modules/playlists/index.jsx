@@ -913,7 +913,7 @@ export default function AdminPlaylists() {
                   {selectedCoverFile ? selectedCoverFile.name : 'Pilih Berkas Gambar'}
                 </span>
                 <span className="text-[9px] text-[var(--text-muted)] mt-0.5">
-                  Otomatis dikonversi ke format WebP (.webp)
+                  Otomatis dioptimalkan untuk tampilan web
                 </span>
               </div>
             </div>
@@ -926,10 +926,10 @@ export default function AdminPlaylists() {
                 <Loader className="h-4 w-4 animate-spin text-blue-600" />
                 <span>
                   {isAudioConverting
-                    ? 'Mengodekan & mengompres berkas audio (LameJS)…'
+                    ? 'Memproses dan mengompres berkas lagu…'
                     : isImageConverting
-                    ? 'Mengonversi gambar sampul ke WebP…'
-                    : `Mengunggah berkas ke Cloudflare R2 (${uploadProgress}%)...`}
+                    ? 'Mengoptimalkan gambar sampul…'
+                    : `Mengunggah berkas (${uploadProgress}%)...`}
                 </span>
               </div>
               {isFileUploading && (

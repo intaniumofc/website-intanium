@@ -1041,12 +1041,12 @@ export default function AboutIntanPage() {
                 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight font-heading mb-3"
               >
                 <motion.span
-                  className="inline-block bg-[linear-gradient(110deg,#FF5FB2,28%,#C96EFF,40%,#72C4FF,50%,#FFD66D,58%,#FF5FB2,70%,#FF5FB2)] bg-size-[240%_100%] bg-clip-text text-transparent select-none drop-shadow-[0_3px_12px_rgba(255,95,178,0.22)]"
+                  className="inline-block bg-[linear-gradient(110deg,#EC4899_0%,#A855F7_35%,#F59E0B_70%,#EC4899_100%)] bg-size-[200%_100%] bg-clip-text text-transparent select-none drop-shadow-[0_4px_16px_rgba(236,72,153,0.18)]"
                   initial={{ backgroundPosition: '200% 0' }}
                   animate={{ backgroundPosition: '-200% 0' }}
                   transition={{
                     repeat: Infinity,
-                    duration: 3.2,
+                    duration: 10,
                     ease: 'linear',
                   }}
                 >

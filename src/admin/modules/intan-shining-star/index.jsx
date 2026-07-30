@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import {
+  Camera,
   Edit,
   Image as ImageIcon,
   Loader2,
@@ -10,6 +11,7 @@ import {
   Sparkles,
   Trash2,
   Upload,
+  X,
 } from 'lucide-react';
 import Button from '../../../components/common/Button';
 import Card from '../../../components/common/Card';
@@ -30,6 +32,7 @@ const EMPTY_FORM = {
   category: 'Milestone',
   description: '',
   image: '',
+  polaroidImage: '',
   isMajor: false,
   showInAchievement: true,
   showInTimeline: true,
@@ -63,6 +66,8 @@ export default function AdminIntanShiningStar() {
   const [formData, setFormData] = useState(EMPTY_FORM);
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState('');
+  const [selectedPolaroidFile, setSelectedPolaroidFile] = useState(null);
+  const [polaroidPreview, setPolaroidPreview] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState({ isOpen: false, id: null });
 
@@ -92,7 +97,8 @@ export default function AdminIntanShiningStar() {
     const matchesFilter =
       filter === 'all' ||
       (filter === 'achievement' && item.showInAchievement) ||
-      (filter === 'timeline' && item.showInTimeline);
+      (filter === 'timeline' && item.showInTimeline) ||
+      (filter === 'polaroid' && item.polaroidImage);
     return matchesSearch && matchesFilter;
   }), [filter, items, searchQuery]);
 
@@ -102,6 +108,8 @@ export default function AdminIntanShiningStar() {
     setFormData(EMPTY_FORM);
     setSelectedFile(null);
     setPreview('');
+    setSelectedPolaroidFile(null);
+    setPolaroidPreview('');
     setIsModalOpen(true);
   };
 
@@ -111,6 +119,8 @@ export default function AdminIntanShiningStar() {
     setFormData({ ...EMPTY_FORM, ...item });
     setSelectedFile(null);
     setPreview(item.image || '');
+    setSelectedPolaroidFile(null);
+    setPolaroidPreview(item.polaroidImage || '');
     setIsModalOpen(true);
   };
 
@@ -123,6 +133,17 @@ export default function AdminIntanShiningStar() {
     }
     setSelectedFile(file);
     setPreview(URL.createObjectURL(file));
+  };
+
+  const handlePolaroidFileChange = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      notify.warning('Berkas tidak valid', 'Pilih berkas gambar untuk polaroid.');
+      return;
+    }
+    setSelectedPolaroidFile(file);
+    setPolaroidPreview(URL.createObjectURL(file));
   };
 
   const updateField = (name, value) => {
@@ -147,7 +168,12 @@ export default function AdminIntanShiningStar() {
         imageUrl = await uploadFile(selectedFile, 'assets', 'intan-shining-star');
       }
 
-      const payload = { ...formData, image: imageUrl };
+      let polaroidUrl = formData.polaroidImage;
+      if (selectedPolaroidFile) {
+        polaroidUrl = await uploadFile(selectedPolaroidFile, 'assets', 'intan-shining-star/polaroid');
+      }
+
+      const payload = { ...formData, image: imageUrl, polaroidImage: polaroidUrl };
       const result = modalMode === 'add'
         ? await achievementService.createAchievement(payload)
         : await achievementService.updateAchievement(editingId, payload);
@@ -189,7 +215,7 @@ export default function AdminIntanShiningStar() {
             <Sparkles className="h-5.5 w-5.5 text-[var(--color-primary)]" /> #IntanShiningStar
           </h1>
           <p className="mt-1 text-xs text-[var(--text-secondary)]">
-            Kelola kumpulan achievement dan timeline perjalanan Intan dari satu tempat.
+            Kelola kumpulan achievement, timeline perjalanan, dan foto polaroid dari satu tempat.
           </p>
         </div>
         <div className="flex gap-2">
@@ -199,11 +225,12 @@ export default function AdminIntanShiningStar() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {[
           ['Total Data', items.length],
           ['Tampil Achievement', items.filter((item) => item.showInAchievement).length],
           ['Tampil Timeline', items.filter((item) => item.showInTimeline).length],
+          ['Ada Polaroid', items.filter((item) => item.polaroidImage).length],
         ].map(([label, value]) => (
           <Card key={label} hoverEffect={false} className="rounded-2xl border border-[var(--border-color)] bg-white p-4">
             <p className="text-[10px] font-black uppercase tracking-wider text-[var(--text-muted)]">{label}</p>
@@ -215,13 +242,14 @@ export default function AdminIntanShiningStar() {
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div className="flex w-full items-center gap-2 rounded-xl border border-[var(--border-color)] bg-white px-3 py-2 shadow-sm md:w-80">
           <Search className="h-4 w-4 text-[var(--text-muted)]" />
-          <input autoComplete="off" /* autocomplete="off" */ name="searchQuery" value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Cari achievement…" className="min-w-0 flex-1 bg-transparent text-sm focus:outline-none focus:ring-0 outline-none" />
+          <input autoComplete="off" name="searchQuery" value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Cari achievement…" className="min-w-0 flex-1 bg-transparent text-sm focus:outline-none focus:ring-0 outline-none" />
         </div>
         <div className="flex flex-wrap gap-1.5">
           {[
             ['all', 'Semua'],
             ['achievement', 'Achievement'],
             ['timeline', 'Timeline'],
+            ['polaroid', 'Polaroid'],
           ].map(([value, label]) => (
             <button
               key={value}
@@ -251,7 +279,7 @@ export default function AdminIntanShiningStar() {
                     <th className="px-5 py-4">Achievement</th>
                     <th className="px-5 py-4">Tanggal</th>
                     <th className="px-5 py-4">Tampil</th>
-                    <th className="px-5 py-4">Status</th>
+                    <th className="px-5 py-4">Status &amp; Polaroid</th>
                     <th className="px-5 py-4 text-right">Aksi</th>
                   </tr>
                 </thead>
@@ -283,6 +311,13 @@ export default function AdminIntanShiningStar() {
                       <td className="px-5 py-4">
                         <div className="flex flex-wrap gap-1">
                           {item.isMajor && <span className="rounded-full bg-amber-50 px-2 py-1 text-[9px] font-black text-amber-700">Major</span>}
+                          {item.polaroidImage ? (
+                            <span className="rounded-full bg-teal-50 px-2 py-1 text-[9px] font-black text-teal-700 flex items-center gap-1">
+                              <Camera className="h-3 w-3" /> Ada Polaroid
+                            </span>
+                          ) : (
+                            <span className="rounded-full bg-slate-100 px-2 py-1 text-[9px] font-medium text-slate-500">Tanpa Polaroid</span>
+                          )}
                         </div>
                       </td>
                       <td className="px-5 py-4 text-right">
@@ -326,6 +361,7 @@ export default function AdminIntanShiningStar() {
                     {item.showInAchievement && <span className="rounded-full bg-pink-50 px-2 py-0.5 text-[9px] font-black text-pink-700">Achievement</span>}
                     {item.showInTimeline && <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[9px] font-black text-indigo-700">Timeline</span>}
                     {item.isMajor && <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[9px] font-black text-amber-700">Major</span>}
+                    {item.polaroidImage && <span className="rounded-full bg-teal-50 px-2 py-0.5 text-[9px] font-black text-teal-700 flex items-center gap-1"><Camera className="h-2.5 w-2.5" /> Polaroid</span>}
                   </div>
                   
                   <div className="flex justify-between items-center mt-1 border-t border-[var(--border-color)] pt-3">
@@ -359,8 +395,8 @@ export default function AdminIntanShiningStar() {
           <div className="grid gap-4 md:grid-cols-2">
             {modalMode === 'add' && (
               <label className="flex flex-col gap-1.5">
-                <span className="text-xs font-bold uppercase text-[var(--text-secondary)]">ID / Slug (Opsional)</span>
-                <input autoComplete="off" /* autocomplete="off" */ name="id" value={formData.id} onChange={(event) => updateField('id', event.target.value)} placeholder="first-theater-show" className={inputClass} />
+                <span className="text-xs font-bold uppercase text-[var(--text-secondary)]">ID Khusus (Opsional)</span>
+                <input autoComplete="off" name="id" value={formData.id} onChange={(event) => updateField('id', event.target.value)} placeholder="contoh: first-theater-show" className={inputClass} />
               </label>
             )}
             <label className="flex flex-col gap-1.5">
@@ -373,47 +409,120 @@ export default function AdminIntanShiningStar() {
 
           <label className="flex flex-col gap-1.5">
             <span className="text-xs font-bold uppercase text-[var(--text-secondary)]">Judul</span>
-            <input autoComplete="off" /* autocomplete="off" */ name="title" value={formData.title} onChange={(event) => updateField('title', event.target.value)} className={inputClass} required />
+            <input autoComplete="off" name="title" value={formData.title} onChange={(event) => updateField('title', event.target.value)} className={inputClass} required />
           </label>
 
           <label className="flex flex-col gap-1.5">
             <span className="text-xs font-bold uppercase text-[var(--text-secondary)]">Tanggal</span>
-            <input autoComplete="off" /* autocomplete="off" */ name="sortDate" type="date" value={formData.sortDate} onChange={(event) => updateField('sortDate', event.target.value)} className={inputClass} required />
+            <input autoComplete="off" name="sortDate" type="date" value={formData.sortDate} onChange={(event) => updateField('sortDate', event.target.value)} className={inputClass} required />
           </label>
 
           <label className="flex flex-col gap-1.5">
             <span className="text-xs font-bold uppercase text-[var(--text-secondary)]">Deskripsi</span>
-            <textarea rows="4" value={formData.description} onChange={(event) => updateField('description', event.target.value)} className={`${inputClass} resize-none`} required />
+            <textarea rows="3" value={formData.description} onChange={(event) => updateField('description', event.target.value)} className={`${inputClass} resize-none`} required />
           </label>
 
+          {/* Main Card Image */}
           <div className="grid gap-4 md:grid-cols-[1fr_.8fr]">
             <div className="space-y-3">
               <label className="flex flex-col gap-1.5">
-                <span className="text-xs font-bold uppercase text-[var(--text-secondary)]">URL Gambar (Opsional)</span>
-                <input autoComplete="off" /* autocomplete="off" */ name="image || ''" value={formData.image || ''} onChange={(event) => updateField('image', event.target.value)} className={inputClass} />
+                <span className="text-xs font-bold uppercase text-[var(--text-secondary)]">URL Gambar Utama (Opsional)</span>
+                <input autoComplete="off" name="image" value={formData.image || ''} onChange={(event) => updateField('image', event.target.value)} className={inputClass} />
               </label>
-              <div className="relative flex min-h-28 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[var(--border-color)] bg-[var(--bg-primary)] p-5 text-center hover:border-[var(--color-primary)]">
+              <div className="relative flex min-h-24 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[var(--border-color)] bg-[var(--bg-primary)] p-4 text-center hover:border-[var(--color-primary)]">
                 <input name="image_file" type="file" accept="image/*" onChange={handleFileChange} className="absolute inset-0 h-full w-full cursor-pointer opacity-0" disabled={isSubmitting || isUploading} />
-                {isUploading ? <Loader2 className="h-7 w-7 animate-spin text-[var(--color-primary)]" /> : <Upload className="h-7 w-7 text-[var(--color-primary)]" />}
-                <strong className="mt-2 text-xs">{selectedFile?.name || 'Pilih gambar achievement'}</strong>
-                <span className="mt-1 text-[10px] text-[var(--text-muted)]">Otomatis resize dan dikonversi menjadi WebP.</span>
+                {isUploading ? <Loader2 className="h-6 w-6 animate-spin text-[var(--color-primary)]" /> : <Upload className="h-6 w-6 text-[var(--color-primary)]" />}
+                <strong className="mt-1.5 text-xs">{selectedFile?.name || 'Pilih Gambar Utama'}</strong>
+                <span className="mt-0.5 text-[10px] text-[var(--text-muted)]">Pilih foto dari galeri Anda.</span>
               </div>
-              {isUploading && (
-                <div className="h-1.5 overflow-hidden rounded-full bg-indigo-100">
-                  <div className="h-full bg-[var(--color-primary)] transition-colors" style={{ width: `${progress}%` }} />
-                </div>
-              )}
             </div>
             <div className="overflow-hidden rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)]">
               {preview || formData.image ? (
-                <img width={400} height={208} src={(preview || formData.image)?.src || (preview || formData.image)} alt="Preview achievement" className="h-full min-h-52 w-full object-cover" />
+                <img width={400} height={208} src={(preview || formData.image)?.src || (preview || formData.image)} alt="Preview achievement" className="h-full min-h-40 w-full object-cover" />
               ) : (
-                <div className="flex min-h-52 flex-col items-center justify-center text-[var(--text-muted)]">
-                  <ImageIcon className="h-7 w-7" /><span className="mt-2 text-xs">Preview gambar</span>
+                <div className="flex min-h-40 flex-col items-center justify-center text-[var(--text-muted)]">
+                  <ImageIcon className="h-6 w-6" /><span className="mt-1 text-xs">Preview gambar utama</span>
                 </div>
               )}
             </div>
           </div>
+
+          {/* Polaroid Image Section */}
+          <div className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-primary)]/50 p-4 space-y-3">
+            <div className="flex items-center gap-2">
+              <Camera className="h-4 w-4 text-[var(--color-primary)]" />
+              <span className="text-xs font-bold uppercase text-[var(--text-primary)]">Foto Polaroid (Samping Journey)</span>
+            </div>
+            
+            <div className="grid gap-4 md:grid-cols-[1fr_.8fr]">
+              <div className="space-y-3">
+                <label className="flex flex-col gap-1.5">
+                  <span className="text-xs font-semibold text-[var(--text-secondary)]">URL Polaroid (Opsional)</span>
+                  <input
+                    autoComplete="off"
+                    name="polaroidImage"
+                    value={formData.polaroidImage || ''}
+                    onChange={(event) => updateField('polaroidImage', event.target.value)}
+                    placeholder="https://..."
+                    className={inputClass}
+                  />
+                </label>
+                
+                <div className="relative flex min-h-24 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[var(--border-color)] bg-white p-4 text-center hover:border-[var(--color-primary)] shadow-sm">
+                  <input
+                    name="polaroid_file"
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePolaroidFileChange}
+                    className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                    disabled={isSubmitting || isUploading}
+                  />
+                  {isUploading ? <Loader2 className="h-6 w-6 animate-spin text-[var(--color-primary)]" /> : <Upload className="h-6 w-6 text-[var(--color-primary)]" />}
+                  <strong className="mt-1.5 text-xs text-[var(--text-primary)]">{selectedPolaroidFile?.name || 'Pilih / Unggah Foto Polaroid'}</strong>
+                  <span className="mt-0.5 text-[10px] text-[var(--text-muted)]">Pilih foto dari komputer/HP untuk dijadikan Polaroid.</span>
+                </div>
+              </div>
+              
+              <div className="flex flex-col items-center justify-center rounded-2xl border border-[var(--border-color)] bg-white p-3 shadow-sm">
+                {polaroidPreview || formData.polaroidImage ? (
+                  <div className="relative w-32 bg-white p-2.5 pb-4 rounded-md shadow-md border border-slate-200 text-center">
+                    <div className="h-32 w-full overflow-hidden bg-slate-100 rounded-sm">
+                      <img
+                        src={(polaroidPreview || formData.polaroidImage)?.src || (polaroidPreview || formData.polaroidImage)}
+                        alt="Preview Polaroid"
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    <div className="mt-1.5 text-[9px] font-black tracking-wider text-slate-400 uppercase">Polaroid</div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedPolaroidFile(null);
+                        setPolaroidPreview('');
+                        updateField('polaroidImage', '');
+                      }}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-md hover:bg-red-600 transition-colors"
+                      title="Hapus Polaroid"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center text-[var(--text-muted)] p-4 text-center">
+                    <Camera className="h-7 w-7 mb-1.5 opacity-50" />
+                    <span className="text-xs font-semibold">Belum ada polaroid</span>
+                    <span className="text-[10px] text-[var(--text-muted)]">Akan menampilkan gambar default jika kosong</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {isUploading && (
+            <div className="h-1.5 overflow-hidden rounded-full bg-indigo-100">
+              <div className="h-full bg-[var(--color-primary)] transition-colors" style={{ width: `${progress}%` }} />
+            </div>
+          )}
 
           <div className="grid gap-3 md:grid-cols-2">
             <ToggleField checked={formData.showInAchievement} onChange={(value) => updateField('showInAchievement', value)} label="Tampil di Kumpulan Achievement" description="Menampilkan card di section kumpulan pencapaian." />

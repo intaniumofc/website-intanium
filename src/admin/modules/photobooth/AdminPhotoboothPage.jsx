@@ -232,7 +232,7 @@ export default function AdminPhotoboothPage() {
     setSettings(updatedSettings);
     setIsUploadingFrame(false);
     setIsModalOpen(false);
-    notify.success('Template Bingkai Ditambahkan', `Bingkai "${frameName}" berhasil diunggah ke R2 (bucket: frame-pb) & disimpan.`);
+    notify.success('Template Bingkai Ditambahkan', `Bingkai "${frameName}" berhasil diunggah & disimpan.`);
   };
 
   // Delete custom frame
@@ -492,7 +492,7 @@ export default function AdminPhotoboothPage() {
               Batal
             </Button>
             <Button type="submit" variant="primary" size="sm" disabled={isAnalyzing || isUploadingFrame || !pngDataUrl}>
-              {isUploadingFrame ? 'Mengunggah ke R2...' : 'Simpan Template Bingkai'}
+              {isUploadingFrame ? 'Mengunggah...' : 'Simpan Template Bingkai'}
             </Button>
           </div>
         </form>

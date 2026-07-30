@@ -107,7 +107,7 @@ export function useJourneyAnimation({
         transformOrigin: '50% 100%',
       });
 
-      const charSize = 96;
+      const charSize = tier.charSize ?? 96;
 
       const cam = { scale: tier.camScale ?? 1.05 };
       let lastActive = -1;
@@ -134,12 +134,8 @@ export function useJourneyAnimation({
         const dy = ahead.y - behind.y;
         const angle = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
 
-        const faceSetter = immediate ? gsap.set : gsap.to;
-        faceSetter(charFace, {
+        gsap.set(charFace, {
           rotationZ: angle,
-          duration: immediate ? 0 : 0.25,
-          ease: 'power1.out',
-          overwrite: 'auto',
         });
 
         // Zoom: push in near a destination, pull out while travelling.
@@ -174,7 +170,7 @@ export function useJourneyAnimation({
           pin: stageRef.current,
           start: 'top top',
           end: 'bottom bottom',
-          scrub: 1,
+          scrub: tierKey === 'mobile' ? 0.2 : 1,
           invalidateOnRefresh: true,
         },
       });
@@ -295,7 +291,35 @@ export function useJourneyAnimation({
       // Initial placement so nothing pops on first paint.
       place(TRAVEL_START, true);
 
+      // Force immediate and delayed ScrollTrigger refreshes to prevent early trigger
+      // caused by comic/flipbook section layout expansion above journey section
+      ScrollTrigger.refresh();
+
+      const refreshTimers = [
+        setTimeout(() => ScrollTrigger.refresh(), 150),
+        setTimeout(() => ScrollTrigger.refresh(), 500),
+        setTimeout(() => ScrollTrigger.refresh(), 1200),
+      ];
+
+      const handleRefresh = () => ScrollTrigger.refresh();
+      window.addEventListener('load', handleRefresh);
+      window.addEventListener('resize', handleRefresh);
+
+      // Observe parent layout shifts (e.g. comic images loading above)
+      let resizeObserver;
+      const parentEl = sectionRef.current?.closest('.shining-page') || document.body;
+      if (typeof ResizeObserver !== 'undefined' && parentEl) {
+        resizeObserver = new ResizeObserver(() => {
+          ScrollTrigger.refresh();
+        });
+        resizeObserver.observe(parentEl);
+      }
+
       return () => {
+        refreshTimers.forEach(clearTimeout);
+        window.removeEventListener('load', handleRefresh);
+        window.removeEventListener('resize', handleRefresh);
+        if (resizeObserver) resizeObserver.disconnect();
         bob.kill();
         breathe.kill();
       };

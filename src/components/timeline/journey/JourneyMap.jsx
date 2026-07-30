@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useRef, useState, useEffect, useMemo, useCallback, useLayoutEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 import { X, ChevronLeft, ChevronRight, Calendar, Sparkles, Tag } from 'lucide-react';
 import { useJourneyLayout } from './useJourneyLayout';
@@ -39,6 +40,23 @@ export default function JourneyMap({ achievements = [] }) {
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectedMilestoneIndex, setSelectedMilestoneIndex] = useState(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (selectedMilestoneIndex !== null) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [selectedMilestoneIndex]);
 
   // Keyboard ESC listener to close modal
   useEffect(() => {
@@ -257,6 +275,7 @@ export default function JourneyMap({ achievements = [] }) {
                     side={polaroidSide}
                     rotation={polaroidSide === 'left' ? -6 : 6}
                     imgSrc={n.achievement.polaroidImage?.src || n.achievement.polaroidImage || null}
+                    title={n.achievement.title}
                   />
                 </div>
               );
@@ -268,141 +287,160 @@ export default function JourneyMap({ achievements = [] }) {
         </div>
       </section>
 
-      {/* Milestone Detail Glassmorphic Modal (Styled matching Homepage News Modal) */}
-      {selectedMilestoneIndex !== null && nodes[selectedMilestoneIndex]?.achievement && (
-        <div
-          className="fixed inset-0 z-[99999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200"
-          onClick={() => setSelectedMilestoneIndex(null)}
-        >
+      {/* Milestone Detail Glassmorphic Modal (Styled matching Homepage News Modal via Portal) */}
+      {(() => {
+        if (selectedMilestoneIndex === null || !nodes[selectedMilestoneIndex]?.achievement) return null;
+        const node = nodes[selectedMilestoneIndex];
+        const achievement = node.achievement;
+        const imgUrl = achievement.image?.src || achievement.image;
+
+        const modalContent = (
           <div
-            className="relative z-[99999] flex flex-col w-full max-w-3xl max-h-[85vh] overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xl my-auto"
-            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-0 z-[99999] bg-black/75 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 md:p-6 overflow-hidden animate-in fade-in duration-200"
+            onClick={() => setSelectedMilestoneIndex(null)}
           >
-            {/* Floating close button */}
-            <button
-              type="button"
-              onClick={() => setSelectedMilestoneIndex(null)}
-              className="absolute top-3.5 right-3.5 sm:top-4 sm:right-4 w-9 h-9 bg-black/60 hover:bg-black/85 text-white border border-white/20 rounded-full flex items-center justify-center z-50 cursor-pointer shadow-lg transition-transform hover:scale-105 active:scale-95"
-              aria-label="Tutup detail"
-            >
-              <X className="w-4 h-4 stroke-[2.5]" />
-            </button>
-
             <div
-              className="custom-scrollbar flex h-full flex-col overflow-y-auto overscroll-contain min-w-0"
-              data-lenis-prevent
+              className="relative z-[99999] flex flex-col w-full max-w-3xl max-h-[85vh] overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xl my-auto"
+              onClick={(e) => e.stopPropagation()}
             >
-              {/* Photo Banner Header if image exists */}
-              {(nodes[selectedMilestoneIndex].achievement.image?.src || nodes[selectedMilestoneIndex].achievement.image) && (
-                <div className="relative h-48 sm:h-56 md:h-64 w-full flex-shrink-0 bg-black/10 overflow-hidden">
-                  <img
-                    src={nodes[selectedMilestoneIndex].achievement.image?.src || nodes[selectedMilestoneIndex].achievement.image}
-                    alt={nodes[selectedMilestoneIndex].achievement.title}
-                    className="w-full h-full object-cover object-top"
-                  />
-                  {/* Top Vignette for close button visibility */}
-                  <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/70 to-transparent z-10" />
+              {/* Floating close button */}
+              <button
+                type="button"
+                onClick={() => setSelectedMilestoneIndex(null)}
+                className="absolute top-3.5 right-3.5 sm:top-4 sm:right-4 w-9 h-9 bg-black/60 hover:bg-black/85 text-white border border-white/20 rounded-full flex items-center justify-center z-50 cursor-pointer shadow-lg transition-transform hover:scale-105 active:scale-95"
+                aria-label="Tutup detail"
+              >
+                <X className="w-4 h-4 stroke-[2.5]" />
+              </button>
 
-                  {/* Bottom Shadow Gradient Overlay */}
-                  <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10" />
+              <div
+                className="custom-scrollbar flex h-full flex-col overflow-y-auto overscroll-contain min-w-0"
+                data-lenis-prevent
+              >
+                {/* Hero banner inside modal matching News Modal (Full Image Uncropped) */}
+                {imgUrl && (
+                  <div className="relative w-full flex-shrink-0 bg-slate-950 flex items-center justify-center min-h-[240px] max-h-[460px] sm:max-h-[520px] overflow-hidden">
+                    {/* Blurred ambient background image */}
+                    <img
+                      src={imgUrl}
+                      alt=""
+                      aria-hidden="true"
+                      className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-110 pointer-events-none"
+                    />
 
-                  {/* Category Badge & Meta Overlay */}
-                  <div className="absolute bottom-4 left-5 sm:left-6 text-white z-20 space-y-1.5 max-w-[calc(100%-3rem)]">
-                    <span className="inline-block px-2.5 py-0.5 text-[9px] sm:text-[10px] uppercase font-black tracking-widest border rounded-md shadow-sm bg-pink-100 text-pink-800 border-pink-300">
-                      {nodes[selectedMilestoneIndex].achievement.category || 'Milestone'}
-                    </span>
-                    {nodes[selectedMilestoneIndex].achievement.date && (
-                      <div className="flex items-center gap-2 text-[11px] sm:text-xs text-white/90 font-medium">
-                        <Calendar className="w-3.5 h-3.5 text-white/80" />
-                        <span>{nodes[selectedMilestoneIndex].achievement.date}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
+                    {/* Main Full Image (Uncropped) */}
+                    <img
+                      src={imgUrl}
+                      alt={achievement.title}
+                      className="relative z-10 w-full h-auto max-h-[460px] sm:max-h-[520px] object-contain mx-auto"
+                    />
 
-              {/* Body Content */}
-              <div className="flex-grow bg-gradient-to-b from-[var(--color-surface)] to-[var(--color-pink-tint-8)] px-5 py-6 sm:px-8 sm:py-8 md:px-10 md:py-9 min-w-0">
-                <div className="mx-auto max-w-3xl space-y-5 w-full min-w-0">
-                  {/* If no image banner, render Category & Date inline here */}
-                  {!(nodes[selectedMilestoneIndex].achievement.image?.src || nodes[selectedMilestoneIndex].achievement.image) && (
-                    <div className="flex items-center gap-2">
+                    {/* Top Vignette for close button visibility */}
+                    <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/80 to-transparent z-20 pointer-events-none" />
+
+                    {/* Bottom Shadow Gradient Overlay */}
+                    <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/90 via-black/50 to-transparent z-20 pointer-events-none" />
+
+                    {/* Category Badge & Meta Overlay */}
+                    <div className="absolute bottom-4 left-5 sm:left-6 text-white z-30 space-y-1.5 max-w-[calc(100%-3rem)]">
                       <span className="inline-block px-2.5 py-0.5 text-[9px] sm:text-[10px] uppercase font-black tracking-widest border rounded-md shadow-sm bg-pink-100 text-pink-800 border-pink-300">
-                        {nodes[selectedMilestoneIndex].achievement.category || 'Milestone'}
+                        {achievement.category || 'Milestone'}
                       </span>
-                      {nodes[selectedMilestoneIndex].achievement.date && (
-                        <div className="flex items-center gap-1.5 text-xs text-[var(--color-text-secondary)] font-semibold">
-                          <Calendar className="w-3.5 h-3.5 text-[var(--color-pink)]" />
-                          <span>{nodes[selectedMilestoneIndex].achievement.date}</span>
+                      {achievement.date && (
+                        <div className="flex items-center gap-2 text-[11px] sm:text-xs text-white/90 font-medium">
+                          <Calendar className="w-3.5 h-3.5 text-white/80" />
+                          <span>{achievement.date}</span>
                         </div>
                       )}
                     </div>
-                  )}
-
-                  <h1 className="text-xl sm:text-2xl md:text-3xl font-black leading-tight text-[var(--color-heading)] tracking-tight flex items-center gap-2">
-                    <Sparkles className="w-6 h-6 text-amber-500 shrink-0" />
-                    {nodes[selectedMilestoneIndex].achievement.title}
-                  </h1>
-
-                  <div className="flex items-center justify-between text-xs text-[var(--color-text-secondary)] pb-4 border-b border-[var(--color-border)]">
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold text-[var(--color-heading)]">#IntanShiningStar</span>
-                    </div>
-                    <div className="flex items-center gap-1 font-bold text-[var(--color-pink)]">
-                      <span>Milestone #{selectedMilestoneIndex + 1}</span>
-                    </div>
                   </div>
+                )}
 
-                  <div className="max-w-none space-y-4 text-sm leading-relaxed text-[var(--color-body)] md:text-base md:leading-8 whitespace-pre-line min-w-0">
-                    <p>{nodes[selectedMilestoneIndex].achievement.description || nodes[selectedMilestoneIndex].achievement.details || 'Tidak ada deskripsi tambahan.'}</p>
-
-                    {nodes[selectedMilestoneIndex].achievement.details &&
-                     nodes[selectedMilestoneIndex].achievement.details !== nodes[selectedMilestoneIndex].achievement.description && (
-                      <div className="p-4 rounded-xl bg-[var(--color-pink-tint-25)] border border-[var(--color-pink-tint-50)] text-xs sm:text-sm text-[var(--color-heading)] space-y-1 mt-4">
-                        <span className="font-extrabold block text-[var(--color-pink)] uppercase tracking-wider text-[11px]">Catatan Tambahan:</span>
-                        <p className="leading-relaxed whitespace-pre-line">{nodes[selectedMilestoneIndex].achievement.details}</p>
+                {/* Body Content */}
+                <div className="flex-grow bg-gradient-to-b from-[var(--color-surface)] to-[var(--color-pink-tint-8)] px-5 py-6 sm:px-8 sm:py-8 md:px-10 md:py-9 min-w-0">
+                  <div className="mx-auto max-w-3xl space-y-5 w-full min-w-0">
+                    {/* If no image banner, render Category & Date inline here */}
+                    {!imgUrl && (
+                      <div className="flex items-center gap-2">
+                        <span className="inline-block px-2.5 py-0.5 text-[9px] sm:text-[10px] uppercase font-black tracking-widest border rounded-md shadow-sm bg-pink-100 text-pink-800 border-pink-300">
+                          {achievement.category || 'Milestone'}
+                        </span>
+                        {achievement.date && (
+                          <div className="flex items-center gap-1.5 text-xs text-[var(--color-text-secondary)] font-semibold">
+                            <Calendar className="w-3.5 h-3.5 text-[var(--color-pink)]" />
+                            <span>{achievement.date}</span>
+                          </div>
+                        )}
                       </div>
                     )}
+
+                    <h1 className="text-xl sm:text-2xl md:text-3xl font-black leading-tight text-[var(--color-heading)] tracking-tight flex items-center gap-2">
+                      <Sparkles className="w-6 h-6 text-amber-500 shrink-0" />
+                      {achievement.title}
+                    </h1>
+
+                    <div className="flex items-center justify-between text-xs text-[var(--color-text-secondary)] pb-4 border-b border-[var(--color-border)]">
+                      <div className="flex items-center gap-1 font-bold text-[var(--color-pink)] ml-auto">
+                        <span>Milestone #{selectedMilestoneIndex + 1}</span>
+                      </div>
+                    </div>
+
+                    <div className="max-w-none space-y-4 text-sm leading-relaxed text-[var(--color-body)] md:text-base md:leading-8 whitespace-pre-line min-w-0">
+                      <p>{achievement.description || achievement.details || 'Tidak ada deskripsi tambahan.'}</p>
+
+                      {achievement.details &&
+                        achievement.details !== achievement.description && (
+                          <div className="p-4 rounded-xl bg-[var(--color-pink-tint-25)] border border-[var(--color-pink-tint-50)] text-xs sm:text-sm text-[var(--color-heading)] space-y-1 mt-4">
+                            <span className="font-extrabold block text-[var(--color-pink)] uppercase tracking-wider text-[11px]">Catatan Tambahan:</span>
+                            <p className="leading-relaxed whitespace-pre-line">{achievement.details}</p>
+                          </div>
+                        )}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Sticky Footer Bar */}
-              <div className="sticky bottom-0 px-6 py-3.5 bg-[var(--color-surface)] border-t border-[var(--color-border)] flex items-center justify-between gap-3 shrink-0 z-20">
-                <button
-                  type="button"
-                  disabled={selectedMilestoneIndex <= 0}
-                  onClick={() => {
-                    const newIdx = selectedMilestoneIndex - 1;
-                    jumpToIndex(newIdx);
-                    setSelectedMilestoneIndex(newIdx);
-                  }}
-                  className="px-4 py-2 text-xs font-bold rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-heading)] hover:bg-[var(--color-neutral-secondary)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer flex items-center gap-1.5"
-                >
-                  <ChevronLeft className="w-4 h-4" /> Sebelum
-                </button>
+                {/* Sticky Footer Bar */}
+                <div className="sticky bottom-0 px-6 py-3.5 bg-[var(--color-surface)] border-t border-[var(--color-border)] flex items-center justify-between gap-3 shrink-0 z-20">
+                  <button
+                    type="button"
+                    disabled={selectedMilestoneIndex <= 0}
+                    onClick={() => {
+                      const newIdx = selectedMilestoneIndex - 1;
+                      jumpToIndex(newIdx);
+                      setSelectedMilestoneIndex(newIdx);
+                    }}
+                    className="px-4 py-2 text-xs font-bold rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-heading)] hover:bg-[var(--color-neutral-secondary)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer flex items-center gap-1.5"
+                  >
+                    <ChevronLeft className="w-4 h-4" /> Sebelum
+                  </button>
 
-                <span className="text-xs font-black text-[var(--color-text-secondary)]">
-                  {selectedMilestoneIndex + 1} / {N}
-                </span>
+                  <span className="text-xs font-black text-[var(--color-text-secondary)]">
+                    {selectedMilestoneIndex + 1} / {N}
+                  </span>
 
-                <button
-                  type="button"
-                  disabled={selectedMilestoneIndex >= N - 1}
-                  onClick={() => {
-                    const newIdx = selectedMilestoneIndex + 1;
-                    jumpToIndex(newIdx);
-                    setSelectedMilestoneIndex(newIdx);
-                  }}
-                  className="px-4 py-2 text-xs font-extrabold text-white rounded-xl bg-[var(--color-pink)] hover:bg-[var(--color-iris-pink-dark)] disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
-                >
-                  Sesudah <ChevronRight className="w-4 h-4" />
-                </button>
+                  <button
+                    type="button"
+                    disabled={selectedMilestoneIndex >= N - 1}
+                    onClick={() => {
+                      const newIdx = selectedMilestoneIndex + 1;
+                      jumpToIndex(newIdx);
+                      setSelectedMilestoneIndex(newIdx);
+                    }}
+                    className="px-4 py-2 text-xs font-extrabold text-white rounded-xl bg-[var(--color-pink)] hover:bg-[var(--color-iris-pink-dark)] disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
+                  >
+                    Sesudah <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+
+        if (mounted && typeof document !== 'undefined') {
+          return createPortal(modalContent, document.body);
+        }
+        return null;
+      })()}
     </>
   );
 }

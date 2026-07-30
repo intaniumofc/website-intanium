@@ -22,10 +22,19 @@ export function usePreloadImages(urls) {
 
     setReady(false);
     let remaining = list.length;
+    let fallbackTimeout;
+
     const settle = () => {
       remaining -= 1;
-      if (remaining <= 0 && !cancelled) setReady(true);
+      if (remaining <= 0 && !cancelled) {
+        if (fallbackTimeout) clearTimeout(fallbackTimeout);
+        setReady(true);
+      }
     };
+
+    fallbackTimeout = setTimeout(() => {
+      if (!cancelled) setReady(true);
+    }, 2000);
 
     list.forEach((src) => {
       const img = new window.Image();
@@ -36,6 +45,7 @@ export function usePreloadImages(urls) {
 
     return () => {
       cancelled = true;
+      if (fallbackTimeout) clearTimeout(fallbackTimeout);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);

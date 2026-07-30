@@ -275,10 +275,10 @@ export default function MerchandisePage() {
               </motion.div>
             ) : null}
 
-            <Link href={ROUTES.PAYMENT_CONFIRM} className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 rounded-lg">
-              <Button variant="primary" size="md" className="flex items-center gap-2 shadow-md font-bold px-6">
+            <Link href={ROUTES.PAYMENT_CONFIRM} className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 rounded-full">
+              <button className="px-6 py-2.5 bg-iris-gradient text-white font-extrabold text-xs uppercase tracking-widest rounded-full shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer flex items-center gap-2">
                 <Search className="h-4 w-4" /> Cek Pesanan
-              </Button>
+              </button>
             </Link>
           </div>
         </motion.section>

@@ -82,7 +82,11 @@ export default function JourneyButterflies({ reducedMotion = false }) {
     let w = (canvas.width = canvas.offsetWidth);
     let h = (canvas.height = canvas.offsetHeight);
 
-    const particles = Array.from({ length: PARTICLE_COUNT }).map(() => ({
+    const isMobile = window.innerWidth < 768;
+    const particleCount = isMobile ? 12 : PARTICLE_COUNT;
+    const butterflyCount = isMobile ? 2 : BUTTERFLY_COUNT;
+
+    const particles = Array.from({ length: particleCount }).map(() => ({
       x: rand(0, w),
       y: rand(0, h),
       r: rand(0.5, 1.6),
@@ -92,7 +96,7 @@ export default function JourneyButterflies({ reducedMotion = false }) {
       color: PARTICLE_COLORS[Math.floor(rand(0, PARTICLE_COLORS.length))],
     }));
 
-    const butterflies = Array.from({ length: BUTTERFLY_COUNT }).map(() => ({
+    const butterflies = Array.from({ length: butterflyCount }).map(() => ({
       x: rand(0, w),
       y: rand(0, h),
       angle: rand(0, Math.PI * 2),
@@ -109,8 +113,10 @@ export default function JourneyButterflies({ reducedMotion = false }) {
       ctx.rotate(b.angle);
       ctx.globalAlpha = 0.75;
       ctx.fillStyle = b.color;
-      ctx.shadowColor = b.color;
-      ctx.shadowBlur = 10;
+      if (!isMobile) {
+        ctx.shadowColor = b.color;
+        ctx.shadowBlur = 10;
+      }
 
       // Left wing
       ctx.beginPath();

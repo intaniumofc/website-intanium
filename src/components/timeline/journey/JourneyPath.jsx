@@ -53,17 +53,6 @@ const JourneyPath = forwardRef(function JourneyPath(
         style={{ filter: 'drop-shadow(0 0 8px rgba(109,92,255,0.55))' }}
       />
 
-      {/* Travelling highlight */}
-      <path
-        ref={highlightRef}
-        d={d}
-        stroke="#fffdf0"
-        strokeWidth={hlW}
-        strokeLinecap="round"
-        filter="url(#journey-path-glow)"
-        style={{ opacity: 0.9 }}
-      />
-
       {/* Start Circle Cap */}
       {startPt && (
         <g className="journey-path-cap journey-path-cap-start">

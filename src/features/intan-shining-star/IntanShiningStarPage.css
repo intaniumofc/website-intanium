@@ -116,13 +116,13 @@
 
 /* ---------- Comic Section ---------- */
 .shining-comic-section {
-  background: linear-gradient(180deg, rgba(248, 250, 252, 0.6) 0%, rgba(245, 243, 255, 0.8) 50%, rgba(253, 242, 248, 0.9) 100%);
-  min-height: calc(100vh - 5rem);
+  background: linear-gradient(180deg, #fdfbfe 0%, #f7f4fd 50%, #fcf7fb 100%);
+  min-height: auto;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  padding: 1rem 1.5rem 3rem;
+  padding: 2.5rem 1.5rem 4rem;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -179,37 +179,27 @@
 .shining-comic-header {
   position: relative;
   z-index: 1;
-  margin-bottom: 2.5rem;
-}
-
-.shining-comic-eyebrow {
-  display: inline-block;
-  font-size: .72rem;
-  font-weight: 900;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: var(--color-secondary, #7c3aed);
-  background: rgba(124, 58, 237, 0.1);
-  border: 1px solid rgba(124, 58, 237, 0.2);
-  padding: .28rem .8rem;
-  border-radius: 999px;
+  margin-bottom: 2rem;
 }
 
 .shining-comic-title {
-  font-size: clamp(2rem, 4.5vw, 3.2rem);
+  font-size: clamp(2.5rem, 5.5vw, 3.8rem);
   font-weight: 900;
   line-height: 1.1;
-  letter-spacing: -.03em;
-  color: var(--color-primary, #1c0f84);
-  margin-top: .85rem;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, #ff498b 0%, #ff6da0 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-top: 0;
 }
 
 .shining-comic-desc {
-  font-size: .9rem;
+  font-size: 1.05rem;
   font-weight: 500;
-  color: #4b5563;
-  margin-top: .6rem;
-  line-height: 1.6;
+  color: #525866;
+  margin-top: 0.7rem;
+  line-height: 1.5;
 }
 
 #journey-start {
@@ -289,6 +279,81 @@
   border-radius: 10px;
 }
 
+/* ---------- 3D Page Flip Transition for Direct Page Jumps ---------- */
+@keyframes comic-3d-flip-forward {
+  0% {
+    transform: perspective(1200px) rotateY(0deg) scale(1);
+    opacity: 1;
+    filter: brightness(1);
+  }
+
+  45% {
+    transform: perspective(1200px) rotateY(-85deg) scale(0.92);
+    opacity: 0.7;
+    filter: brightness(0.65) drop-shadow(-20px 10px 30px rgba(0, 0, 0, 0.7));
+  }
+
+  55% {
+    transform: perspective(1200px) rotateY(85deg) scale(0.92);
+    opacity: 0.7;
+    filter: brightness(0.65) drop-shadow(20px 10px 30px rgba(0, 0, 0, 0.7));
+  }
+
+  100% {
+    transform: perspective(1200px) rotateY(0deg) scale(1);
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+@keyframes comic-3d-flip-backward {
+  0% {
+    transform: perspective(1200px) rotateY(0deg) scale(1);
+    opacity: 1;
+    filter: brightness(1);
+  }
+
+  45% {
+    transform: perspective(1200px) rotateY(85deg) scale(0.92);
+    opacity: 0.7;
+    filter: brightness(0.65) drop-shadow(20px 10px 30px rgba(0, 0, 0, 0.7));
+  }
+
+  55% {
+    transform: perspective(1200px) rotateY(-85deg) scale(0.92);
+    opacity: 0.7;
+    filter: brightness(0.65) drop-shadow(-20px 10px 30px rgba(0, 0, 0, 0.7));
+  }
+
+  100% {
+    transform: perspective(1200px) rotateY(0deg) scale(1);
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+.comic-3d-flipping-forward {
+  animation: comic-3d-flip-forward 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  will-change: transform, opacity, filter;
+}
+
+.comic-3d-flipping-backward {
+  animation: comic-3d-flip-backward 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  will-change: transform, opacity, filter;
+}
+
+/* Clean Transparent Background for Flipbook Container */
+.comic-html-flipbook,
+.comic-html-flipbook-single,
+.comic-standalone-stage .stf__parent,
+.comic-standalone-stage .stf__block,
+.comic-fullscreen-modal .stf__parent,
+.comic-fullscreen-modal .stf__block {
+  background: transparent !important;
+}
+
+
+
 .comic-flipbook-loading {
   display: flex;
   align-items: center;
@@ -355,9 +420,10 @@
 .comic-flipbook-cover {
   position: relative;
   width: 280px;
+  margin: 0 auto;
   transform-style: preserve-3d;
   transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-  transform-origin: left center;
+  transform-origin: center center;
 }
 
 .comic-flipbook-cover .comic-flipbook-page {
@@ -373,7 +439,8 @@
 .comic-flipbook-cover .comic-flipbook-page img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain !important;
+  object-position: center !important;
   display: block;
 }
 
@@ -570,10 +637,22 @@
   box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.4);
 }
 
+/* Center book crease / spine shadow for 2-page spread */
+.stpageflip--left .comic-page-flip-item {
+  box-shadow: inset -18px 0 24px -12px rgba(0, 0, 0, 0.75), inset 0 0 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+.stpageflip--right .comic-page-flip-item {
+  box-shadow: inset 18px 0 24px -12px rgba(0, 0, 0, 0.75), inset 0 0 20px rgba(0, 0, 0, 0.3) !important;
+}
+
 .comic-page-flip-item img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain !important;
+  object-position: center !important;
   display: block;
   user-select: none;
   -webkit-user-drag: none;

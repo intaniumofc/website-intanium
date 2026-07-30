@@ -305,7 +305,7 @@ export default function AdminSchedule() {
             size="sm"
             className="flex items-center gap-1.5 shadow-sm text-xs cursor-pointer border-[var(--border-color)] bg-white hover:bg-gray-50 text-[var(--text-primary)]"
             onClick={handleOpenBookmarklet}
-            title="Impor jadwal langsung dari browser Anda (lolos proteksi Cloudflare)"
+            title="Impor jadwal otomatis langsung dari browser Anda"
           >
             <Bookmark className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400" /> Impor via Bookmarklet
           </Button>
@@ -711,9 +711,8 @@ export default function AdminSchedule() {
       >
         <div className="space-y-4 text-sm text-[var(--text-primary)]">
           <div className="rounded-xl bg-[var(--bg-primary)] border border-[var(--border-color)] p-3 text-xs leading-relaxed text-[var(--text-secondary)]">
-            Server kami diblokir Cloudflare saat mengambil data dari jkt48.com. Cara ini memakai
-            <span className="font-bold text-[var(--text-primary)]"> browser Anda sendiri</span> (yang sudah lolos verifikasi) untuk menarik jadwal langsung dari jkt48.com,
-            memfilter jadwal Intan, lalu mengirimnya balik ke panel admin. <span className="font-bold text-[var(--text-primary)]">Tanpa API pihak ketiga.</span>
+            Fitur ini menggunakan <span className="font-bold text-[var(--text-primary)]">browser Anda sendiri</span> untuk mengambil jadwal resmi dari jkt48.com,
+            memfilter jadwal Intan secara otomatis, lalu menyimpannya langsung ke panel admin.
           </div>
 
           {isBookmarkletLoading ? (
@@ -724,8 +723,8 @@ export default function AdminSchedule() {
                 <p className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)] mb-2">Langkah-langkah</p>
                 <ol className="list-decimal list-inside space-y-1.5 text-xs text-[var(--text-secondary)]">
                   <li>Tampilkan bilah bookmark browser (Ctrl+Shift+B).</li>
-                  <li><span className="font-bold text-[var(--text-primary)]">Seret tombol biru di bawah</span> ke bilah bookmark (atau salin dan buat bookmark manual dengan URL tersebut).</li>
-                  <li>Buka <span className="font-mono">jkt48.com</span> di tab baru dan selesaikan verifikasi Cloudflare bila diminta.</li>
+                  <li><span className="font-bold text-[var(--text-primary)]">Seret tombol biru di bawah</span> ke bilah bookmark (atau salin dan buat bookmark manual).</li>
+                  <li>Buka <span className="font-mono">jkt48.com</span> di tab baru.</li>
                   <li>Klik bookmark tadi. Tunggu notifikasi &quot;Selesai ✓&quot; muncul di pojok kanan bawah.</li>
                   <li>Kembali ke sini &amp; muat ulang. Jadwal baru masuk sebagai <span className="font-bold text-[var(--text-primary)]">draft</span> — tinggal publish.</li>
                 </ol>

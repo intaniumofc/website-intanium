@@ -199,18 +199,16 @@ export default function Navbar({ isHome = false }) {
   ];
 
   return (
-    <nav className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
-      isTransparent
+    <nav className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${isTransparent
         ? 'h-20 md:h-24 bg-gradient-to-b from-black/40 via-black/15 to-transparent border-transparent shadow-none'
         : scrolled
-        ? 'h-16 md:h-20 bg-white/95 backdrop-blur-md border-b border-[var(--color-border)] shadow-md'
-        : 'h-20 md:h-24 bg-white border-b border-[var(--color-border)] shadow-sm'
-    }`}>
+          ? 'h-16 md:h-20 bg-white/95 backdrop-blur-md border-b border-[var(--color-border)] shadow-md'
+          : 'h-20 md:h-24 bg-white border-b border-[var(--color-border)] shadow-sm'
+      }`}>
       <div className="relative flex items-center h-full">
         {/* Panel melengkung bermotif: logo + nama + tagline */}
-        <div className={`relative h-full flex items-center pl-5 sm:pl-8 pr-3 sm:pr-5 transition-colors duration-300 ${
-          isTransparent ? 'bg-transparent' : 'bg-[var(--color-pink-dark)]'
-        }`}>
+        <div className={`relative h-full flex items-center pl-5 sm:pl-8 pr-3 sm:pr-5 transition-colors duration-300 ${isTransparent ? 'bg-transparent' : 'bg-[var(--color-pink-dark)]'
+          }`}>
           <Link href={ROUTES.HOME || '/'} className="flex items-center gap-2.5 sm:gap-3 group z-10">
             <Image
               src={logoNobg}
@@ -232,9 +230,8 @@ export default function Navbar({ isHome = false }) {
 
           {/* Motif Kurva Transisi Ganda dari logo ke area kanan */}
           <svg
-            className={`absolute left-full top-0 h-full w-12 sm:w-20 pointer-events-none transition-opacity duration-300 z-10 ${
-              isTransparent ? 'opacity-0' : 'opacity-100'
-            }`}
+            className={`absolute left-full top-0 h-full w-12 sm:w-20 pointer-events-none transition-opacity duration-300 z-10 ${isTransparent ? 'opacity-0' : 'opacity-100'
+              }`}
             viewBox="0 0 80 100"
             preserveAspectRatio="none"
           >
@@ -268,11 +265,10 @@ export default function Navbar({ isHome = false }) {
                     ? undefined
                     : { backgroundImage: 'var(--gradient-cta, linear-gradient(135deg, var(--color-pink, #ec4899), var(--color-pink-dark, #be185d)))' }
                 }
-                className={`group flex items-center gap-2.5 pl-5 pr-1.5 py-1.5 rounded-full whitespace-nowrap text-white font-bold text-sm transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer ${
-                  isTransparent
+                className={`group flex items-center gap-2.5 pl-5 pr-1.5 py-1.5 rounded-full whitespace-nowrap text-white font-bold text-sm transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer ${isTransparent
                     ? 'bg-white/15 hover:bg-white/25 border border-white/30 backdrop-blur-md shadow-sm'
                     : 'shadow-[var(--shadow-pink-glow)] hover:shadow-[var(--shadow-pink-glow-hover)]'
-                }`}
+                  }`}
               >
                 <span>Join Us</span>
                 <span className="flex items-center justify-center h-8 w-8 rounded-full bg-white/20 group-hover:bg-white/30 transition-colors shrink-0">
@@ -286,11 +282,10 @@ export default function Navbar({ isHome = false }) {
           <div className="flex lg:hidden items-center ml-auto">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className={`p-2 w-11 h-11 flex items-center justify-center rounded-lg focus:outline-none cursor-pointer transition-colors ${
-                isTransparent
+              className={`p-2 w-11 h-11 flex items-center justify-center rounded-lg focus:outline-none cursor-pointer transition-colors ${isTransparent
                   ? 'hover:bg-white/10 text-white'
                   : 'hover:bg-[var(--color-pink-tint-8)] text-[var(--color-heading)]'
-              }`}
+                }`}
               aria-expanded={isOpen}
               aria-label="Toggle navigation menu"
             >
@@ -460,8 +455,8 @@ function DropdownNavigation({ navItems, pathname, isTransparent }) {
             ? "text-white font-extrabold drop-shadow-xs"
             : "text-white/90 hover:text-white font-semibold drop-shadow-xs"
           : active
-          ? "text-[var(--color-pink)] font-bold"
-          : "text-[var(--color-heading)] hover:text-[var(--color-pink)] font-semibold";
+            ? "text-[var(--color-pink)] font-bold"
+            : "text-[var(--color-heading)] hover:text-[var(--color-pink)] font-semibold";
 
         const hoverBg = isTransparent
           ? "bg-white/20 border border-white/30 backdrop-blur-xs"
@@ -500,9 +495,8 @@ function DropdownNavigation({ navItems, pathname, isTransparent }) {
               >
                 <span className="relative z-10">{navItem.label}</span>
                 <CaretDown
-                  className={`h-3.5 w-3.5 shrink-0 relative z-10 transition-transform duration-300 ${
-                    openMenu === navItem.label ? "rotate-180" : ""
-                  }`}
+                  className={`h-3.5 w-3.5 shrink-0 relative z-10 transition-transform duration-300 ${openMenu === navItem.label ? "rotate-180" : ""
+                    }`}
                 />
                 {isHovered && (
                   <motion.div

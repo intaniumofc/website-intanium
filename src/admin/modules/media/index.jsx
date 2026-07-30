@@ -74,7 +74,7 @@ export default function AdminMediaManager() {
         const remaining = items.filter((item) => !data.deleted.includes(item.key));
         setItems(remaining);
         setSelectedKeys(new Set());
-        notify.success('File dihapus', `${data.deletedCount} file berhasil dihapus dari R2.`);
+        notify.success('File dihapus', `${data.deletedCount} file berhasil dihapus.`);
       } else {
         notify.error('Gagal menghapus file', data.error);
       }
@@ -149,7 +149,7 @@ export default function AdminMediaManager() {
             <HardDrive className="h-5.5 w-5.5 text-[var(--color-primary)] shrink-0" /> Media Manager
           </h1>
           <p className="text-xs text-[var(--text-secondary)] mt-1">
-            Kelola file yang tersimpan di Cloudflare R2 — {items.length} objek, {formatBytes(totalSize)}
+            Kelola penyimpanan berkas media — {items.length} berkas, {formatBytes(totalSize)}
           </p>
         </div>
         {selectedKeys.size > 0 && (
@@ -272,8 +272,8 @@ export default function AdminMediaManager() {
         onClose={() => setConfirmDelete({ isOpen: false, targetKeys: [] })}
         onConfirm={confirmDeleteAction}
         type="danger"
-        title="Hapus File dari R2?"
-        message={`${confirmDelete.targetKeys.length} file akan dihapus permanen dari Cloudflare R2. Tindakan ini tidak dapat dikembalikan.`}
+        title="Hapus File?"
+        message={`${confirmDelete.targetKeys.length} file akan dihapus permanen. Tindakan ini tidak dapat dikembalikan.`}
         confirmLabel="Hapus Permanen"
       />
     </div>

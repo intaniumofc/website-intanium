@@ -244,12 +244,7 @@ function OshiPatronCard() {
       <div className="absolute -bottom-20 -right-20 w-44 h-44 rounded-full bg-purple-300/25 blur-3xl pointer-events-none" />
 
       <div className="relative z-10 flex flex-col items-center gap-3">
-        {/* Crown Badge */}
-        <div className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-amber-500/15 border border-amber-400/40 rounded-full text-[10px] font-black uppercase tracking-widest text-amber-700 shadow-2xs">
-          <Sparkles className="w-3.5 h-3.5 fill-amber-500 text-amber-500 animate-pulse" />
-          <span>Oshi & Inspirasi Utama</span>
-          <Crown className="w-3.5 h-3.5 text-amber-600" />
-        </div>
+
 
         {/* Nur Intan Photo */}
         <div className="relative mt-1">
@@ -514,7 +509,14 @@ export default function IrisStructureSection() {
                 
                 <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-[var(--color-primary)] leading-tight">
                   Struktur Pengurus <br />
-                  <span className="text-5xl sm:text-6xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-primary)] via-purple-600 to-indigo-600 inline-block mt-1">
+                  <span
+                    className="text-5xl sm:text-6xl tracking-widest inline-block mt-1 font-black select-none transition-all duration-300 hover:scale-105"
+                    style={{
+                      WebkitTextStroke: '2.5px var(--color-primary)',
+                      color: 'transparent',
+                      filter: 'drop-shadow(0 4px 12px rgba(109, 92, 255, 0.18))'
+                    }}
+                  >
                     IRIS
                   </span>
                 </h2>
