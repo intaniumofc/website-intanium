@@ -107,7 +107,7 @@ export function useJourneyAnimation({
         transformOrigin: '50% 100%',
       });
 
-      const charSize = 96;
+      const charSize = tier.charSize ?? 96;
 
       const cam = { scale: tier.camScale ?? 1.05 };
       let lastActive = -1;
@@ -134,12 +134,8 @@ export function useJourneyAnimation({
         const dy = ahead.y - behind.y;
         const angle = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
 
-        const faceSetter = immediate ? gsap.set : gsap.to;
-        faceSetter(charFace, {
+        gsap.set(charFace, {
           rotationZ: angle,
-          duration: immediate ? 0 : 0.25,
-          ease: 'power1.out',
-          overwrite: 'auto',
         });
 
         // Zoom: push in near a destination, pull out while travelling.
@@ -174,7 +170,7 @@ export function useJourneyAnimation({
           pin: stageRef.current,
           start: 'top top',
           end: 'bottom bottom',
-          scrub: 1,
+          scrub: tierKey === 'mobile' ? 0.2 : 1,
           invalidateOnRefresh: true,
         },
       });

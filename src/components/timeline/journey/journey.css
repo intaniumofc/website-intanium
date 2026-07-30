@@ -603,9 +603,9 @@
 }
 
 .journey-butterfly-img {
-  width: 480%;
-  height: 480%;
-  max-width: none;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
   object-fit: contain;
   filter: drop-shadow(0 8px 24px rgba(236, 72, 153, 0.55)) drop-shadow(0 0 28px rgba(251, 191, 36, 0.75));
   animation: butterfly-wing-flap 0.35s ease-in-out infinite alternate;
@@ -953,5 +953,36 @@
 
   .journey-wheel-label {
     font-size: 0.5rem;
+  }
+}
+
+/* Mobile GPU performance optimizations for 60fps smooth scrolling */
+@media (max-width: 767px) {
+  .journey-world {
+    will-change: transform;
+    transform-style: flat !important;
+  }
+
+  .journey-character-glow {
+    filter: none !important;
+    box-shadow: 0 0 24px rgba(251, 191, 36, 0.4);
+    animation: none !important;
+  }
+
+  .journey-butterfly-img {
+    filter: drop-shadow(0 4px 10px rgba(236, 72, 153, 0.35)) !important;
+  }
+
+  .journey-blob {
+    filter: blur(36px) !important;
+  }
+
+  .journey-card {
+    backdrop-filter: none !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+  }
+
+  .dark .journey-card {
+    background: rgba(18, 14, 46, 0.95) !important;
   }
 }

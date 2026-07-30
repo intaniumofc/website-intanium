@@ -1,4 +1,5 @@
 import { supabase } from '../../lib/supabaseClient';
+import { proxyR2Url } from '../../lib/helpers';
 import intanProfile from '../../assets/images/Nur_Intan.webp';
 import intanPoster from '../../assets/images/intan-02.webp';
 import intanFour from '../../assets/images/intan-04.webp';
@@ -71,7 +72,8 @@ const mapAchievement = (item) => ({
   title: item.title,
   category: item.category,
   description: item.description,
-  image: item.image_url,
+  image: item.image_url ? proxyR2Url(item.image_url) : null,
+  polaroidImage: item.polaroid_url ? proxyR2Url(item.polaroid_url) : null,
   isMajor: item.is_major,
   showInAchievement: item.show_in_achievement,
   showInTimeline: item.show_in_timeline,
@@ -85,6 +87,7 @@ const toPayload = (item) => ({
   category: item.category,
   description: item.description?.trim(),
   image_url: item.image?.trim() || null,
+  polaroid_url: item.polaroidImage?.trim() || null,
   is_major: Boolean(item.isMajor),
   show_in_achievement: Boolean(item.showInAchievement),
   show_in_timeline: Boolean(item.showInTimeline),

@@ -32,7 +32,7 @@
   --color-iris-purple-dark: #7C3ACD;
 
   /* ---------- IRIS Gradients ---------- */
-  --background-image-iris-gradient: linear-gradient(90deg, #FF5FB2 0%, #C96EFF 35%, #72C4FF 70%, #FFD66D 100%);
+  --background-image-iris-gradient: linear-gradient(120deg, #FF5FB2 0%, #FFA66E 100%);
   --background-image-iris-cta: linear-gradient(120deg, #FF5FB2 0%, #FFA66E 100%);
   --background-image-iris-pink-purple: linear-gradient(90deg, #FF5FB2, #A855F7);
   --background-image-iris-purple-blue: linear-gradient(90deg, #A855F7, #72C4FF);

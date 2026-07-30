@@ -224,7 +224,7 @@ export default function Navbar({ isHome = false }) {
               <span className="block text-lg sm:text-2xl font-black tracking-tight text-white select-none">
                 IRIS
               </span>
-              <span className="hidden sm:block text-[11px] font-medium text-white/70 tracking-wide">
+              <span className="hidden sm:block text-[11px] font-bold text-white tracking-wide drop-shadow-[0_1px_2px_rgba(0,0,0,0.15)]">
                 Fanbase Nur Intan
               </span>
             </div>
@@ -266,7 +266,7 @@ export default function Navbar({ isHome = false }) {
                 style={
                   isTransparent
                     ? undefined
-                    : { backgroundImage: 'var(--gradient-cta, linear-gradient(135deg, var(--color-pink, #ec4899), var(--color-pink-dark, #be185d)))' }
+                    : { backgroundImage: 'var(--gradient-cta, linear-gradient(120deg, #FF5FB2 0%, #FFA66E 100%))' }
                 }
                 className={`group flex items-center gap-2.5 pl-5 pr-1.5 py-1.5 rounded-full whitespace-nowrap text-white font-bold text-sm transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer ${
                   isTransparent

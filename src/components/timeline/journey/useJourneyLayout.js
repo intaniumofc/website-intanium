@@ -7,7 +7,7 @@ export const TIMELINE_SCALE = 0.88;
 const JOURNEY_TIERS_BASE = {
   desktop: { r: 260, runW: 720, cardW: 300, cardH: 300, gap: 30, padTop: 210, camScale: 0.62, camZoom: 0.05, camRot: 0.4, charSize: 126, nodeSize: 22, nodeMajor: 30, stroke: 8 },
   tablet: { r: 215, runW: 520, cardW: 270, cardH: 280, gap: 26, padTop: 180, camScale: 0.62, camZoom: 0.04, camRot: 0.35, charSize: 108, nodeSize: 20, nodeMajor: 27, stroke: 7 },
-  mobile: { r: 180, runW: 280, cardW: 230, cardH: 250, gap: 20, padTop: 150, camScale: 0.68, camZoom: 0.03, camRot: 0.3, charSize: 92, nodeSize: 18, nodeMajor: 24, stroke: 6 },
+  mobile: { r: 180, runW: 280, cardW: 230, cardH: 250, gap: 20, padTop: 150, camScale: 0.68, camZoom: 0, camRot: 0, charSize: 92, nodeSize: 18, nodeMajor: 24, stroke: 6 },
 };
 
 const SCALED_FIELDS = ['r', 'runW', 'cardW', 'cardH', 'gap', 'padTop', 'charSize', 'nodeSize', 'nodeMajor', 'stroke'];

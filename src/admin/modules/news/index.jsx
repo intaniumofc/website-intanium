@@ -104,7 +104,7 @@ export default function AdminNews() {
     if (!file) return;
     setSelectedFile(file);
     try {
-      notify.info('Mengunggah…', 'Sedang memproses dan mengunggah gambar banner ke Cloudflare R2…');
+      notify.info('Mengunggah…', 'Sedang memproses dan mengunggah gambar banner…');
       const publicUrl = await uploadFile(file, 'assets', 'news');
       setFormData(prev => ({ ...prev, image_url: publicUrl }));
       notify.success('Berhasil', 'Gambar banner berhasil diunggah.');
@@ -405,7 +405,7 @@ export default function AdminNews() {
                     const file = newFiles[0];
                     setSelectedFile(file);
                     try {
-                      notify.info('Mengunggah…', 'Sedang memproses dan mengunggah gambar banner ke Cloudflare R2…');
+                      notify.info('Mengunggah…', 'Sedang memproses dan mengunggah gambar banner…');
                       const publicUrl = await uploadFile(file, 'assets', 'news');
                       setFormData(prev => ({ ...prev, image_url: publicUrl }));
                       notify.success('Berhasil', 'Gambar banner berhasil diunggah.');

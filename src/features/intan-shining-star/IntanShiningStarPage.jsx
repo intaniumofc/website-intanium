@@ -45,7 +45,6 @@ export default function IntanShiningStarPage() {
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
         >
-          <span className="shining-comic-eyebrow">#IntanShiningStar</span>
           <h1 className="shining-comic-title">Arsip Cahaya Intan</h1>
           <p className="shining-comic-desc">
             Buka komik perjalanan karir Intan di JKT48.

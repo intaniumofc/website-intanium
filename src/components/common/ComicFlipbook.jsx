@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useId, useCallback, useRef, forwardRef, useSyncExternalStore } from 'react';
+import { createPortal } from 'react-dom';
 import HTMLFlipBook from 'react-pageflip';
 import {
   ChevronLeft,
@@ -162,6 +163,12 @@ export default function ComicFlipbook() {
     };
   }, []);
 
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Lock body scroll & listen ESC key in fullscreen mode
   useEffect(() => {
     if (isFullscreen) {
@@ -230,6 +237,173 @@ export default function ComicFlipbook() {
     return `Halaman ${currentPageIndex} dari ${pages.length - 1}`;
   };
 
+  const renderFullscreenModal = () => {
+    if (!isFullscreen) return null;
+
+    const modalContent = (
+      <div className="comic-fullscreen-modal fixed inset-0 z-[99999] bg-slate-950/95 backdrop-blur-xl flex flex-col justify-between p-3 sm:p-4 text-white animate-in fade-in duration-300 h-screen max-h-screen overflow-hidden">
+        {/* Modal Header */}
+        <div className="flex items-center justify-between w-full max-w-7xl mx-auto pb-2.5 border-b border-white/20 shrink-0">
+          <div className="flex items-center gap-2">
+            <span className="inline-block px-2.5 py-0.5 text-[9px] sm:text-[10px] uppercase font-black tracking-widest border rounded-md shadow-sm bg-pink-100 text-pink-800 border-pink-300">
+              Arsip Komik
+            </span>
+            <span className="font-black text-xs sm:text-sm md:text-base text-white tracking-tight flex items-center gap-1.5">
+              <BookOpen className="h-4 w-4 text-pink-400" />
+              Arsip Komik Digital
+            </span>
+          </div>
+          <div className="flex items-center gap-3 sm:gap-4">
+            <span className="text-xs font-bold text-white/90 bg-black/60 px-3 py-1 rounded-md border border-white/20">
+              {getPageIndicatorText()}
+            </span>
+            <button
+              type="button"
+              onClick={() => setIsFullscreen(false)}
+              className="w-9 h-9 bg-black/60 hover:bg-black/85 text-white border border-white/20 rounded-full flex items-center justify-center cursor-pointer shadow-lg transition-transform hover:scale-105 active:scale-95"
+              title="Tutup (ESC)"
+              aria-label="Tutup layar penuh"
+            >
+              <X className="w-4 h-4 stroke-[2.5]" />
+            </button>
+          </div>
+        </div>
+
+        {/* Modal Main Stage */}
+        <div className="flex-1 flex items-center justify-center relative my-1 overflow-hidden w-full min-h-0">
+          {/* Prev Nav Button */}
+          <button
+            type="button"
+            className="absolute left-2 sm:left-6 z-30 p-2.5 sm:p-3.5 rounded-full bg-black/70 hover:bg-black/90 text-white backdrop-blur-md border border-white/20 transition-all shadow-xl disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer"
+            onClick={handlePrev}
+            disabled={currentPageIndex === 0}
+            title="Halaman Sebelumnya"
+            aria-label="Halaman sebelumnya"
+          >
+            <ChevronLeft className="h-5 w-5 sm:h-7 sm:w-7" />
+          </button>
+
+          {/* Fullscreen HTMLFlipBook - Centered Single Page View */}
+          <div className="comic-fullscreen-pages-frame flex-1 flex items-center justify-center overflow-hidden relative w-full h-full my-auto py-1">
+            <div className="relative flex items-center justify-center h-full max-h-[calc(100vh-180px)] aspect-[3/4] mx-auto">
+              <HTMLFlipBook
+                ref={fullscreenFlipBookRef}
+                width={440}
+                height={620}
+                size="stretch"
+                minWidth={240}
+                maxWidth={500}
+                minHeight={340}
+                maxHeight={680}
+                showCover={false}
+                drawShadow={true}
+                maxShadowOpacity={0.3}
+                flippingTime={500}
+                usePortrait={true}
+                startPage={currentPageIndex}
+                clickEventForward={true}
+                useMouseEvents={true}
+                swipeDistance={30}
+                showPageCorners={true}
+                className="comic-html-flipbook-single mx-auto shadow-2xl rounded-xl h-full"
+                onFlip={(e) => {
+                  setCurrentPageIndex(e.data);
+                }}
+              >
+                {pages.map((p, idx) => (
+                  <ComicFlipPage
+                    key={p.id || idx}
+                    page={p}
+                    pageNum={idx === 0 ? 'Cover' : idx}
+                    totalPages={pages.length - 1}
+                    isCoverPage={idx === 0}
+                  />
+                ))}
+              </HTMLFlipBook>
+            </div>
+          </div>
+
+          {/* Next Nav Button */}
+          <button
+            type="button"
+            className="absolute right-2 sm:right-6 z-30 p-2.5 sm:p-3.5 rounded-full bg-black/70 hover:bg-black/90 text-white backdrop-blur-md border border-white/20 transition-all shadow-xl disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer"
+            onClick={handleNext}
+            disabled={currentPageIndex >= pages.length - 1}
+            title="Halaman Berikutnya"
+            aria-label="Halaman berikutnya"
+          >
+            <ChevronRight className="h-5 w-5 sm:h-7 sm:w-7" />
+          </button>
+        </div>
+
+        {/* Modal Bottom Footer & Thumbnail List Page Strip */}
+        <div className="w-full max-w-6xl mx-auto space-y-2 pt-2 border-t border-white/20 shrink-0">
+          {/* Control Buttons Bar */}
+          <div className="flex items-center justify-between px-2">
+            <button
+              type="button"
+              onClick={handleReset}
+              disabled={currentPageIndex === 0}
+              className="px-3.5 py-1.5 text-xs font-bold rounded-xl border border-white/20 bg-black/50 hover:bg-black/80 text-white flex items-center gap-2 transition-all disabled:opacity-30 cursor-pointer"
+            >
+              <RotateCcw className="h-3.5 w-3.5" />
+              <span>Ke Sampul</span>
+            </button>
+
+            <span className="hidden sm:inline-block text-xs text-white/80 font-medium">
+              Tarik sudut halaman atau gunakan tombol panah untuk membaca
+            </span>
+
+            <button
+              type="button"
+              onClick={() => setIsFullscreen(false)}
+              className="px-3.5 py-1.5 text-xs font-extrabold text-white rounded-xl bg-[var(--color-pink)] hover:bg-[var(--color-iris-pink-dark)] flex items-center gap-1.5 transition-all shadow-md cursor-pointer"
+            >
+              <Minimize2 className="h-3.5 w-3.5" />
+              <span>Keluar Fullscreen</span>
+            </button>
+          </div>
+
+          {/* Page List / Thumbnail Strip */}
+          <div className="comic-thumbnail-strip flex items-center justify-start sm:justify-center gap-2 overflow-x-auto py-1 px-1 scrollbar-none">
+            {pages.map((p, idx) => (
+              <button
+                key={p.id || idx}
+                onClick={() => handleJumpToPage(idx)}
+                className={`comic-thumbnail-item group relative rounded-lg overflow-hidden border-2 transition-all shrink-0 cursor-pointer ${
+                  currentPageIndex === idx
+                    ? 'border-pink-400 scale-105 shadow-md shadow-pink-500/40 ring-2 ring-pink-400/50'
+                    : 'border-white/20 opacity-60 hover:opacity-100 hover:border-white/50'
+                }`}
+                title={idx === 0 ? 'Ke Sampul' : `Halaman ${idx}`}
+              >
+                {p.imageUrl || idx === 0 ? (
+                  <img
+                    src={p.imageUrl || '/cover.jpeg'}
+                    alt={`Halaman ${idx}`}
+                    className="w-9 h-12 sm:w-11 sm:h-14 object-cover"
+                  />
+                ) : (
+                  <div className="w-9 h-12 sm:w-11 sm:h-14 bg-slate-800 flex items-center justify-center text-[10px] font-bold text-slate-300">
+                    {idx === 0 ? 'Cover' : idx}
+                  </div>
+                )}
+                <div className="absolute bottom-0 inset-x-0 bg-black/75 text-[9px] font-bold text-center py-0.5 text-pink-200">
+                  {idx === 0 ? 'Cover' : idx}
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+
+    if (mounted && typeof document !== 'undefined') {
+      return createPortal(modalContent, document.body);
+    }
+    return null;
+  };
+
   return (
     <>
       {/* Stand-Alone Inline Comic View (No Card Container) */}
@@ -286,164 +460,8 @@ export default function ComicFlipbook() {
         </div>
       </div>
 
-      {/* Fullscreen Modal View (Styled matching Homepage News Modal) */}
-      {isFullscreen && (
-        <div className="comic-fullscreen-modal fixed inset-0 z-[99999] bg-black/60 backdrop-blur-sm flex flex-col justify-between p-3 sm:p-5 text-white animate-in fade-in duration-300">
-          {/* Modal Header */}
-          <div className="flex items-center justify-between w-full max-w-7xl mx-auto pb-3 border-b border-white/20 shrink-0">
-            <div className="flex items-center gap-2">
-              <span className="inline-block px-2.5 py-0.5 text-[9px] sm:text-[10px] uppercase font-black tracking-widest border rounded-md shadow-sm bg-pink-100 text-pink-800 border-pink-300">
-                Arsip Komik
-              </span>
-              <span className="font-black text-sm sm:text-base text-white tracking-tight flex items-center gap-1.5">
-                <BookOpen className="h-4 h-4 text-pink-400" />
-                #IntanShiningStar — Arsip Komik Digital
-              </span>
-            </div>
-            <div className="flex items-center gap-3 sm:gap-4">
-              <span className="text-xs font-bold text-white/90 bg-black/50 px-3 py-1 rounded-md border border-white/20">
-                {getPageIndicatorText()}
-              </span>
-              <button
-                type="button"
-                onClick={() => setIsFullscreen(false)}
-                className="w-9 h-9 bg-black/60 hover:bg-black/85 text-white border border-white/20 rounded-full flex items-center justify-center cursor-pointer shadow-lg transition-transform hover:scale-105 active:scale-95"
-                title="Tutup (ESC)"
-                aria-label="Tutup layar penuh"
-              >
-                <X className="w-4 h-4 stroke-[2.5]" />
-              </button>
-            </div>
-          </div>
-
-          {/* Modal Main Stage */}
-          <div className="flex-1 flex items-center justify-center relative my-2 overflow-hidden w-full">
-            {/* Prev Nav Button */}
-            <button
-              type="button"
-              className="absolute left-2 sm:left-6 z-30 p-3 sm:p-4 rounded-full bg-black/60 hover:bg-black/85 text-white backdrop-blur-md border border-white/20 transition-all shadow-xl disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer"
-              onClick={handlePrev}
-              disabled={currentPageIndex === 0}
-              title="Halaman Sebelumnya"
-              aria-label="Halaman sebelumnya"
-            >
-              <ChevronLeft className="h-6 w-6 sm:h-8 sm:w-8" />
-            </button>
-
-            {/* Fullscreen HTMLFlipBook - Fixed Single Page Centered View (Strict 1 Page on Desktop & Mobile) */}
-            <div className="comic-fullscreen-pages-frame flex-1 flex items-center justify-center overflow-hidden relative w-full my-auto py-1">
-              <div className="relative flex items-center justify-center max-h-[calc(100vh-170px)] aspect-[3/4] mx-auto">
-                <HTMLFlipBook
-                  ref={fullscreenFlipBookRef}
-                  width={480}
-                  height={680}
-                  size="fixed"
-                  minWidth={280}
-                  maxWidth={520}
-                  minHeight={400}
-                  maxHeight={780}
-                  showCover={false}
-                  drawShadow={true}
-                  maxShadowOpacity={0.3}
-                  flippingTime={500}
-                  usePortrait={true}
-                  startPage={currentPageIndex}
-                  clickEventForward={true}
-                  useMouseEvents={true}
-                  swipeDistance={30}
-                  showPageCorners={true}
-                  className="comic-html-flipbook-single mx-auto shadow-2xl rounded-xl"
-                  onFlip={(e) => {
-                    setCurrentPageIndex(e.data);
-                  }}
-                >
-                  {pages.map((p, idx) => (
-                    <ComicFlipPage
-                      key={p.id || idx}
-                      page={p}
-                      pageNum={idx === 0 ? 'Cover' : idx}
-                      totalPages={pages.length - 1}
-                      isCoverPage={idx === 0}
-                    />
-                  ))}
-                </HTMLFlipBook>
-              </div>
-            </div>
-
-            {/* Next Nav Button */}
-            <button
-              type="button"
-              className="absolute right-2 sm:right-6 z-30 p-3 sm:p-4 rounded-full bg-black/60 hover:bg-black/85 text-white backdrop-blur-md border border-white/20 transition-all shadow-xl disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer"
-              onClick={handleNext}
-              disabled={currentPageIndex >= pages.length - 1}
-              title="Halaman Berikutnya"
-              aria-label="Halaman berikutnya"
-            >
-              <ChevronRight className="h-6 w-6 sm:h-7 sm:w-7" />
-            </button>
-          </div>
-
-          {/* Modal Bottom Footer & Thumbnail List Page Strip */}
-          <div className="w-full max-w-6xl mx-auto space-y-3 pt-3 border-t border-white/20 shrink-0">
-            {/* Control Buttons Bar */}
-            <div className="flex items-center justify-between px-2">
-              <button
-                type="button"
-                onClick={handleReset}
-                disabled={currentPageIndex === 0}
-                className="px-4 py-2 text-xs font-bold rounded-xl border border-white/20 bg-black/50 hover:bg-black/80 text-white flex items-center gap-2 transition-all disabled:opacity-30 cursor-pointer"
-              >
-                <RotateCcw className="h-3.5 w-3.5" />
-                <span>Ke Sampul</span>
-              </button>
-
-              <span className="hidden sm:inline-block text-xs text-white/80 font-medium">
-                Tarik sudut halaman atau gunakan tombol panah untuk membaca
-              </span>
-
-              <button
-                type="button"
-                onClick={() => setIsFullscreen(false)}
-                className="px-4 py-2 text-xs font-extrabold text-white rounded-xl bg-[var(--color-pink)] hover:bg-[var(--color-iris-pink-dark)] flex items-center gap-1.5 transition-all shadow-md cursor-pointer"
-              >
-                <Minimize2 className="h-3.5 w-3.5" />
-                <span>Keluar Fullscreen</span>
-              </button>
-            </div>
-
-            {/* Page List / Thumbnail Strip */}
-            <div className="comic-thumbnail-strip flex items-center justify-start sm:justify-center gap-2.5 overflow-x-auto py-2 px-1 scrollbar-none">
-              {pages.map((p, idx) => (
-                <button
-                  key={p.id || idx}
-                  onClick={() => handleJumpToPage(idx)}
-                  className={`comic-thumbnail-item group relative rounded-lg overflow-hidden border-2 transition-all shrink-0 cursor-pointer ${
-                    currentPageIndex === idx
-                      ? 'border-pink-400 scale-105 shadow-md shadow-pink-500/40 ring-2 ring-pink-400/50'
-                      : 'border-white/20 opacity-60 hover:opacity-100 hover:border-white/50'
-                  }`}
-                  title={idx === 0 ? 'Ke Sampul' : `Halaman ${idx}`}
-                >
-                  {p.imageUrl || idx === 0 ? (
-                    <img
-                      src={p.imageUrl || '/cover.jpeg'}
-                      alt={`Halaman ${idx}`}
-                      className="w-10 h-14 sm:w-12 sm:h-16 object-cover"
-                    />
-                  ) : (
-                    <div className="w-10 h-14 sm:w-12 sm:h-16 bg-slate-800 flex items-center justify-center text-[10px] font-bold text-slate-300">
-                      {idx === 0 ? 'Cover' : idx}
-                    </div>
-                  )}
-                  <div className="absolute bottom-0 inset-x-0 bg-black/75 text-[9px] font-bold text-center py-0.5 text-pink-200">
-                    {idx === 0 ? 'Cover' : idx}
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Fullscreen Modal View via Portal */}
+      {renderFullscreenModal()}
     </>
   );
 }

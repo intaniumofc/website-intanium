@@ -2,7 +2,7 @@
 
 import { memo } from 'react';
 
-function JourneyPolaroid({ x, y, side, rotation = 0, imgSrc = null }) {
+function JourneyPolaroid({ x, y, side, rotation = 0, imgSrc = null, title = '' }) {
   return (
     <div
       className={`journey-polaroid anchor-${side}`}
@@ -15,7 +15,7 @@ function JourneyPolaroid({ x, y, side, rotation = 0, imgSrc = null }) {
       <div className="journey-polaroid-inner">
         <div className="journey-polaroid-frame">
           {imgSrc ? (
-            <img src={imgSrc} alt="" loading="lazy" draggable="false" />
+            <img src={imgSrc} alt={title || 'Polaroid Intan'} loading="lazy" draggable="false" />
           ) : (
             <div className="journey-polaroid-placeholder">
               <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
