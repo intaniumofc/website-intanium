@@ -65,10 +65,23 @@ export default function MerchCheckoutPage() {
 
   const handleCheckoutSubmit = async (checkoutData) => {
     try {
+      // Fresh preorder window check before submitting (final check is server-side)
+      const availability = await merchandiseService.checkPreorderAvailability(product.id);
+      if (!availability.available) {
+        alert(availability.reason || 'Preorder tidak tersedia saat ini.');
+        return;
+      }
+
       const order = await merchandiseService.createOrder({
         ...checkoutData,
         selectedSize,
+        productName: product.name,
       });
+
+      if (!order.success) {
+        alert(order.error || 'Gagal membuat pesanan. Silakan coba lagi.');
+        return;
+      }
 
       // WhatsApp Redirect logic
       const waNumber = ADMIN_WHATSAPP_NUMBER || '6281386701549';

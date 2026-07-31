@@ -9,7 +9,45 @@ import Button from '../../components/common/Button';
 import Loading from '../../components/common/Loading';
 import { formatCurrency, getOptimizedImageUrl } from '../../lib/helpers';
 import { ROUTES } from '../../lib/constants';
-import { ShieldCheck, Truck, Clock } from 'lucide-react';
+import { ShieldCheck, Truck, Clock, CalendarDays, Factory } from 'lucide-react';
+
+const PRODUCTION_STAGE_LABELS = {
+  design: 'Desain',
+  sampling: 'Sampling',
+  mass_production: 'Produksi Massal',
+  qc: 'Quality Control',
+  warehousing: 'Pergudangan',
+  shipping_prep: 'Persiapan Pengiriman',
+};
+
+// Segmented live countdown (Hari / Jam / Menit / Detik)
+function CountdownSegments({ ms, accentClass = 'text-slate-800' }) {
+  if (ms == null || ms <= 0) return null;
+  const totalSec = Math.floor(ms / 1000);
+  const segments = [
+    { value: Math.floor(totalSec / 86400), label: 'Hari' },
+    { value: Math.floor((totalSec % 86400) / 3600), label: 'Jam' },
+    { value: Math.floor((totalSec % 3600) / 60), label: 'Menit' },
+    { value: totalSec % 60, label: 'Detik' },
+  ];
+  return (
+    <div className="flex items-center gap-1.5 sm:gap-2">
+      {segments.map((seg) => (
+        <div
+          key={seg.label}
+          className="flex min-w-[52px] flex-col items-center rounded-xl border border-white/80 bg-white/85 px-2 py-2 shadow-xs backdrop-blur-sm"
+        >
+          <span className={`text-base sm:text-lg font-black tabular-nums leading-none ${accentClass}`}>
+            {String(seg.value).padStart(2, '0')}
+          </span>
+          <span className="mt-1 text-[8px] font-extrabold uppercase tracking-wider text-slate-400">
+            {seg.label}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default function MerchDetailPage() {
   const { id } = useParams();
@@ -21,6 +59,12 @@ export default function MerchDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState('');
   const [activeImgIndex, setActiveImgIndex] = useState(0);
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -70,6 +114,22 @@ export default function MerchDetailPage() {
   }
 
   const isAvailable = product.is_available ?? product.isAvailable ?? true;
+
+  // Preorder state computation
+  const isPreorder = product.is_preorder ?? false;
+  const startMs = product.preorder_start ? new Date(product.preorder_start).getTime() : null;
+  const endMs = product.preorder_end ? new Date(product.preorder_end).getTime() : null;
+
+  let preorderPhase = 'regular';
+  if (isPreorder) {
+    if (product.preorder_closed) preorderPhase = 'closed';
+    else if (startMs && now < startMs) preorderPhase = 'upcoming';
+    else if (endMs && now > endMs) preorderPhase = 'closed';
+    else preorderPhase = 'open';
+  }
+
+  const canOrder = isAvailable && preorderPhase !== 'upcoming' && preorderPhase !== 'closed';
+  const productionStageLabel = product.production_stage ? PRODUCTION_STAGE_LABELS[product.production_stage] || product.production_stage : null;
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto py-4">
@@ -145,6 +205,83 @@ export default function MerchDetailPage() {
               </div>
             </div>
 
+            {/* Preorder Status Banner */}
+            {isPreorder && preorderPhase === 'open' && (
+              <div className="rounded-2xl border border-[var(--color-mint)]/25 bg-[var(--color-mint-tint-15)] p-4 sm:p-5 space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="relative flex h-2 w-2">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--color-iris-mint-dark)] opacity-60" />
+                      <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--color-iris-mint-dark)]" />
+                    </span>
+                    <span className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-[var(--color-iris-mint-dark)]">
+                      Preorder Dibuka
+                    </span>
+                  </div>
+                  <span className="rounded-full border border-[var(--color-mint)]/30 bg-white/80 px-2.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wide text-[var(--color-iris-mint-dark)]">
+                    Batch {product.preorder_round || 1}
+                  </span>
+                </div>
+                {endMs ? (
+                  <div className="space-y-1.5">
+                    <p className="text-[9px] font-extrabold uppercase tracking-wider text-slate-400">Ditutup dalam</p>
+                    <CountdownSegments ms={endMs - now} accentClass="text-[var(--color-iris-mint-dark)]" />
+                  </div>
+                ) : (
+                  <p className="text-xs font-bold text-slate-700">Preorder sedang dibuka — pesan sekarang!</p>
+                )}
+              </div>
+            )}
+            {isPreorder && preorderPhase === 'upcoming' && (
+              <div className="rounded-2xl border border-[var(--color-blue)]/25 bg-[var(--color-blue-tint-15)] p-4 sm:p-5 space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-[var(--color-iris-blue-dark)] shrink-0" />
+                    <span className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-[var(--color-iris-blue-dark)]">
+                      Segera Dibuka
+                    </span>
+                  </div>
+                  <span className="rounded-full border border-[var(--color-blue)]/30 bg-white/80 px-2.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wide text-[var(--color-iris-blue-dark)]">
+                    Batch {product.preorder_round || 1}
+                  </span>
+                </div>
+                <div className="space-y-1.5">
+                  <p className="text-[9px] font-extrabold uppercase tracking-wider text-slate-400">Dibuka dalam</p>
+                  {startMs - now > 0 ? (
+                    <CountdownSegments ms={startMs - now} accentClass="text-[var(--color-iris-blue-dark)]" />
+                  ) : (
+                    <p className="text-xs font-bold text-slate-700">beberapa saat lagi…</p>
+                  )}
+                </div>
+              </div>
+            )}
+            {isPreorder && preorderPhase === 'closed' && (
+              <div className="rounded-2xl border border-[var(--color-peach)]/30 bg-[var(--color-peach-tint-15)] p-4 sm:p-5">
+                <div className="flex items-center gap-4">
+                  <img
+                    src="/closedshop.svg"
+                    alt="Preorder ditutup"
+                    className="h-14 w-14 sm:h-16 sm:w-16 shrink-0 drop-shadow-sm select-none"
+                  />
+                  <div className="min-w-0 space-y-1.5">
+                    <span className="block text-[10px] font-extrabold uppercase tracking-[0.14em] text-[var(--color-iris-peach-dark)]">
+                      Preorder Ditutup · Batch {product.preorder_round || 1}
+                    </span>
+                    <p className="text-xs font-bold text-slate-700 leading-relaxed">
+                      {productionStageLabel
+                        ? 'Pesanan batch ini sedang kami proses. Terima kasih sudah ikut preorder!'
+                        : 'Preorder batch ini sudah ditutup. Pantau terus untuk batch selanjutnya!'}
+                    </p>
+                    {productionStageLabel && (
+                      <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-purple)]/25 bg-[var(--color-purple-tint-12)] px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-wide text-[var(--color-iris-purple-dark)]">
+                        <Factory className="h-3 w-3" /> Tahap: {productionStageLabel}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="border-t border-b border-[var(--border-color)]/60 py-4.5 space-y-2">
               <h4 className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">
                 Deskripsi Produk
@@ -183,7 +320,7 @@ export default function MerchDetailPage() {
             )}
 
             {/* Quantity Selector */}
-            {isAvailable && (
+            {canOrder && (
               <div>
                 <label className="block text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2.5">
                   Jumlah Belanja:
@@ -212,8 +349,14 @@ export default function MerchDetailPage() {
             )}
 
             {/* CTA Pre-Order Actions */}
-            <div className="pt-2 flex flex-col gap-4">
-              {isAvailable ? (
+            <div className="pt-2 flex flex-col gap-3">
+              {product.estimated_delivery && (
+                <div className="flex items-center gap-2 text-[10px] font-bold text-[var(--text-secondary)]">
+                  <CalendarDays className="h-3.5 w-3.5 text-[var(--color-primary)] shrink-0" />
+                  <span>Estimasi pengiriman: <span className="text-slate-800">{product.estimated_delivery}</span></span>
+                </div>
+              )}
+              {canOrder ? (
                 <Button
                   variant="glow"
                   className="w-full py-3.5 rounded-xl font-bold tracking-wider text-xs"
@@ -223,7 +366,11 @@ export default function MerchDetailPage() {
                 </Button>
               ) : (
                 <Button variant="outline" className="w-full py-3.5 rounded-xl font-bold text-xs uppercase cursor-not-allowed" disabled={true}>
-                  Habis Terjual
+                  {!isAvailable
+                    ? 'Habis Terjual'
+                    : preorderPhase === 'upcoming'
+                      ? 'Preorder Belum Dibuka'
+                      : 'Preorder Telah Ditutup'}
                 </Button>
               )}
             </div>
