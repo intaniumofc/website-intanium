@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Button from '../common/Button';
 import Card from '../common/Card';
 import { formatCurrency, isValidEmail, getOptimizedImageUrl } from '../../lib/helpers';
-import { MapPin, Truck, ExternalLink, Info, ArrowLeft, Copy, Check } from 'lucide-react';
+import { MapPin, Truck, ExternalLink, Info, ArrowLeft, Copy, Check, Loader2 } from 'lucide-react';
 import qrisImage from '../../assets/images/qris-iris.webp';
 import { merchandiseService } from '../../services/public/merchandiseService';
 
@@ -13,6 +13,7 @@ export default function CheckoutForm({
   quantity,
   onQuantityChange,
   onSubmit,
+  isSubmitting = false,
 }) {
   const [formData, setFormData] = useState({
     name: '',
@@ -137,6 +138,7 @@ export default function CheckoutForm({
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
     if (handleValidation()) {
       onSubmit({
         ...formData,
@@ -667,8 +669,16 @@ export default function CheckoutForm({
                 type="submit"
                 variant="glow"
                 className="w-full font-bold py-3 text-xs"
+                disabled={isSubmitting}
               >
-                Kirim Pesanan & Konfirmasi WA
+                {isSubmitting ? (
+                  <span className="inline-flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Memproses...
+                  </span>
+                ) : (
+                  'Kirim Pesanan & Konfirmasi WA'
+                )}
               </Button>
               <button
                 type="button"

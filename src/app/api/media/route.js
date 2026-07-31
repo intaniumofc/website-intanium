@@ -1,5 +1,53 @@
 import { NextResponse } from 'next/server';
 
+const MAX_RETRIES = 2;
+const INITIAL_BACKOFF_MS = 500;
+const FETCH_TIMEOUT_MS = 15_000; // 15 seconds — generous for local dev
+
+/**
+ * Fetch with retry for transient network errors (ETIMEDOUT, ECONNRESET, etc.)
+ */
+async function fetchWithRetry(url, options = {}, retries = MAX_RETRIES) {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+
+    try {
+      const res = await fetch(url, {
+        ...options,
+        signal: controller.signal,
+        headers: {
+          'User-Agent': 'IntaniumWebsite/1.0',
+          ...(options.headers || {}),
+        },
+      });
+      clearTimeout(timeoutId);
+      return res;
+    } catch (error) {
+      clearTimeout(timeoutId);
+
+      const isRetryable =
+        error?.cause?.code === 'ETIMEDOUT' ||
+        error?.cause?.code === 'ECONNRESET' ||
+        error?.cause?.code === 'ECONNREFUSED' ||
+        error?.cause?.code === 'UND_ERR_CONNECT_TIMEOUT' ||
+        (error.name === 'TypeError' && error.message === 'fetch failed');
+
+      if (isRetryable && attempt < retries) {
+        const backoff = INITIAL_BACKOFF_MS * Math.pow(2, attempt);
+        console.warn(
+          `[media-proxy] Retry ${attempt + 1}/${retries} for ${url} after ${backoff}ms (${error?.cause?.code || error.message})`
+        );
+        await new Promise((r) => setTimeout(r, backoff));
+        continue;
+      }
+
+      // Not retryable or exhausted retries — rethrow
+      throw error;
+    }
+  }
+}
+
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const mediaUrl = searchParams.get('url');
@@ -29,13 +77,8 @@ export async function GET(request) {
     return new Response('Forbidden: Only R2 domains can be proxied', { status: 403 });
   }
 
-  const controller = new AbortController();
-  // 3.5 seconds fail-fast timeout
-  const timeoutId = setTimeout(() => controller.abort(), 3500);
-
   try {
-    const res = await fetch(mediaUrl, { signal: controller.signal });
-    clearTimeout(timeoutId);
+    const res = await fetchWithRetry(mediaUrl);
 
     if (!res.ok) {
       return new Response(`Failed to fetch media: ${res.statusText}`, { status: res.status });
@@ -51,18 +94,16 @@ export async function GET(request) {
     if (contentLength) headers.set('content-length', contentLength);
     
     // Set a long-term cache for images
-    headers.set('cache-control', cacheControl || 'public, max-age=31536000, immutable');
+    headers.set('cache-control', cacheControl || 'public, s-maxage=30, stale-while-revalidate=60');
 
     return new Response(res.body, {
       status: 200,
       headers,
     });
   } catch (error) {
-    clearTimeout(timeoutId);
     const isTimeout = error.name === 'AbortError';
-    console.error(`Error proxying media (timeout=${isTimeout}):`, error);
+    console.error(`[media-proxy] Failed after retries (timeout=${isTimeout}):`, error?.cause?.code || error.message);
     
-    // Return 404 on timeout/network failure to let client handle image fallback
     return new Response(isTimeout ? 'Request timed out' : 'Internal Server Error', { 
       status: isTimeout ? 504 : 500 
     });

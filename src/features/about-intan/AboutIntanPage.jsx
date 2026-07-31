@@ -1181,8 +1181,12 @@ export default function AboutIntanPage() {
               description="Rangkuman kontribusi panggung dan statistik keaktifan Nur Intan selama berkarir di JKT48."
             />
             {/* Stats Counter Grid with flexible grid adjustment based on item count */}
-            <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${Math.min(bio.stats.length, 4)} gap-8 justify-center`}>
-              {bio.stats.map((stat, index) => {
+            {(() => {
+              const gridColsMap = { 1: 'lg:grid-cols-1', 2: 'lg:grid-cols-2', 3: 'lg:grid-cols-3', 4: 'lg:grid-cols-4' };
+              const gridColsClass = gridColsMap[Math.min(bio.stats.length, 4)];
+              return (
+                <div className={`grid grid-cols-1 sm:grid-cols-2 ${gridColsClass} gap-8 justify-center`}>
+                  {bio.stats.map((stat, index) => {
                 const IconComp = statIcons[stat.label] || Award;
                 return (
                   <StatCounter
@@ -1195,7 +1199,9 @@ export default function AboutIntanPage() {
                   />
                 );
               })}
-            </div>
+                </div>
+              );
+            })()}
           </motion.section>
 
           {/* ================= 4. GALERI KONTEN & YOUTUBE ================= */}

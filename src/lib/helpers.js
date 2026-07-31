@@ -17,18 +17,6 @@ export const formatCurrency = (value) => {
 };
 
 /**
- * Truncate a text string to a specific length and append an ellipsis.
- * @param {string} text 
- * @param {number} limit 
- * @returns {string}
- */
-export const truncateText = (text, limit = 100) => {
-  if (!text) return '';
-  if (text.length <= limit) return text;
-  return text.slice(0, limit) + '...';
-};
-
-/**
  * Generate a random UUID-like string for local keys or mock IDs.
  * @returns {string}
  */
@@ -44,20 +32,6 @@ export const generateId = () => {
 export const isValidEmail = (email) => {
   const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   return re.test(String(email).toLowerCase());
-};
-
-/**
- * Helper to upload or simulate mock upload of standard media files.
- * @param {File} file 
- * @returns {Promise<string>} Uploaded file url path
- */
-export const getBase64 = (file) => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = error => reject(error);
-  });
 };
 
 /**

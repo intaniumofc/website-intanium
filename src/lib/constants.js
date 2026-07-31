@@ -1,6 +1,4 @@
 // Application-wide constant configurations
-export const SITE_NAME = 'IRIS';
-export const SITE_TAGLINE = 'The Official Portal for IRIS Community & Intan';
 export const ADMIN_WHATSAPP_NUMBER = '6281386701549';
 
 export const ROUTES = {

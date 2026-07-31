@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertTriangle, Trash2, HelpCircle } from 'lucide-react';
 
@@ -16,16 +16,69 @@ export default function ConfirmDialog({
   type = 'danger', // 'danger' | 'warning' | 'info'
 }) {
   const handleCancel = onCancel || onClose;
-  // Prevent scrolling behind the active modal
+  const dialogRef = useRef(null);
+  const previousFocusRef = useRef(null);
+  const titleId = React.useId();
+
+  // Focus trap and Escape key handling
+  const handleKeyDown = useCallback((e) => {
+    if (e.key === 'Escape') {
+      handleCancel();
+      return;
+    }
+
+    if (e.key !== 'Tab') return;
+
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const focusableSelectors = 'button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    const focusableElements = dialog.querySelectorAll(focusableSelectors);
+    if (focusableElements.length === 0) return;
+
+    const firstEl = focusableElements[0];
+    const lastEl = focusableElements[focusableElements.length - 1];
+
+    if (e.shiftKey) {
+      if (document.activeElement === firstEl) {
+        e.preventDefault();
+        lastEl.focus();
+      }
+    } else {
+      if (document.activeElement === lastEl) {
+        e.preventDefault();
+        firstEl.focus();
+      }
+    }
+  }, [handleCancel]);
+
+  // Prevent scrolling behind the active modal, manage focus
   useEffect(() => {
     if (isOpen) {
+      previousFocusRef.current = document.activeElement;
       document.body.style.overflow = 'hidden';
+      // Focus the cancel button on mount
+      requestAnimationFrame(() => {
+        const dialog = dialogRef.current;
+        if (dialog) {
+          const firstButton = dialog.querySelector('button');
+          if (firstButton) firstButton.focus();
+        }
+      });
     } else {
       document.body.style.overflow = '';
     }
     return () => {
       document.body.style.overflow = '';
     };
+  }, [isOpen]);
+
+  // Return focus on close
+  useEffect(() => {
+    if (!isOpen && previousFocusRef.current) {
+      previousFocusRef.current.focus();
+      previousFocusRef.current = null;
+    }
   }, [isOpen]);
 
   const getTheme = () => {
@@ -70,6 +123,11 @@ export default function ConfirmDialog({
 
           {/* Dialog Container */}
           <motion.div
+            ref={dialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={titleId}
+            onKeyDown={handleKeyDown}
             initial={{ opacity: 0, scale: 0.95, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 8 }}
@@ -84,7 +142,7 @@ export default function ConfirmDialog({
 
               {/* Texts */}
               <div className="space-y-1">
-                <h3 className="text-base font-extrabold text-slate-800 leading-tight">
+                <h3 id={titleId} className="text-base font-extrabold text-slate-800 leading-tight">
                   {title}
                 </h3>
                 <p className="text-xs text-slate-500 leading-relaxed max-w-xs">

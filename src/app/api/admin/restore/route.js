@@ -99,7 +99,7 @@ export async function POST(request) {
   } catch (err) {
     console.error('API admin restore POST error:', err);
     return NextResponse.json(
-      { success: false, error: err instanceof Error ? err.message : 'Internal server error' },
+      { success: false, error: 'Terjadi kesalahan internal server' },
       { status: 500 }
     );
   }

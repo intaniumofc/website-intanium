@@ -156,6 +156,7 @@ export default function HomeGallerySection() {
                     alt={photos[activePhotoIdx].title}
                     fill
                     sizes="(max-width: 1200px) 100vw, 1200px"
+                    quality={80}
                     className="object-contain rounded-2xl block"
                     unoptimized={Boolean(
                       typeof photos[activePhotoIdx]?.url === 'string' &&

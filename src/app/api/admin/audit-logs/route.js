@@ -20,13 +20,13 @@ export async function GET(request) {
 
     if (error) {
       console.error('Error fetching admin activity logs:', error);
-      return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+      return NextResponse.json({ success: false, error: 'Terjadi kesalahan internal server' }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, logs });
   } catch (err) {
     console.error('API admin audit-logs GET error:', err);
-    return NextResponse.json({ success: false, error: err instanceof Error ? err.message : 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Terjadi kesalahan internal server' }, { status: 500 });
   }
 }
 
@@ -58,7 +58,7 @@ export async function DELETE(request) {
 
       if (error) {
         console.error('Error clearing audit logs:', error);
-        return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+        return NextResponse.json({ success: false, error: 'Terjadi kesalahan internal server' }, { status: 500 });
       }
 
       // Re-insert activity logging for the clear action
@@ -82,13 +82,13 @@ export async function DELETE(request) {
 
       if (error) {
         console.error(`Error deleting audit log ${logId}:`, error);
-        return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+        return NextResponse.json({ success: false, error: 'Terjadi kesalahan internal server' }, { status: 500 });
       }
 
       return NextResponse.json({ success: true, deletedId: logId });
     }
   } catch (err) {
     console.error('API admin audit-logs DELETE error:', err);
-    return NextResponse.json({ success: false, error: err instanceof Error ? err.message : 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Terjadi kesalahan internal server' }, { status: 500 });
   }
 }

@@ -9,7 +9,8 @@ export async function POST(request) {
 
   try {
     const body = await request.json();
-    const { fileName, fileType, bucketName = 'assets', folderPath = 'media' } = body;
+    const { fileType, bucketName = 'assets', folderPath = 'media' } = body;
+    const fileName = (body.fileName || '').replace(/\.\./g, '').replace(/[\/\\]/g, '');
 
     if (!fileName || !fileType) {
       return NextResponse.json({ error: 'fileName and fileType are required' }, { status: 400 });

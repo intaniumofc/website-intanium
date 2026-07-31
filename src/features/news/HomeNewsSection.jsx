@@ -392,6 +392,7 @@ export default function HomeNewsSection({ articles = [] }) {
                       alt={article.title}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      quality={80}
                       className="object-cover object-center transition-transform duration-500 hover:scale-105"
                       unoptimized={Boolean(
                         typeof article.image === 'string' &&

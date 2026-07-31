@@ -23,6 +23,7 @@ export default function MerchCheckoutPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [quantity, setQuantity] = useState(initialQty > 0 ? initialQty : 1);
   const [selectedSize, setSelectedSize] = useState(initialSize);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -64,11 +65,14 @@ export default function MerchCheckoutPage() {
   }
 
   const handleCheckoutSubmit = async (checkoutData) => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       // Fresh preorder window check before submitting (final check is server-side)
       const availability = await merchandiseService.checkPreorderAvailability(product.id);
       if (!availability.available) {
         alert(availability.reason || 'Preorder tidak tersedia saat ini.');
+        setIsSubmitting(false);
         return;
       }
 
@@ -80,6 +84,7 @@ export default function MerchCheckoutPage() {
 
       if (!order.success) {
         alert(order.error || 'Gagal membuat pesanan. Silakan coba lagi.');
+        setIsSubmitting(false);
         return;
       }
 
@@ -128,6 +133,7 @@ Mohon diproses pesanannya. Terima kasih! 🙏`;
       router.push(`/merchandise/payment-confirm?invoice=${invoiceNum}`);
     } catch (error) {
       console.error('Checkout error:', error);
+      setIsSubmitting(false);
       alert(error.message || 'Gagal membuat pesanan. Silakan coba lagi.');
     }
   };
@@ -165,6 +171,7 @@ Mohon diproses pesanannya. Terima kasih! 🙏`;
           quantity={quantity}
           onQuantityChange={setQuantity}
           onSubmit={handleCheckoutSubmit}
+          isSubmitting={isSubmitting}
         />
       </div>
     </div>
