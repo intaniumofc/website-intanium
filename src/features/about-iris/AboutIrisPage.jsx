@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import logoNobg from '../../assets/logos/logo-nobg.webp';
 import IrisStructureSection from './IrisStructureSection';
+import GemintangSection from './GemintangSection';
 import AboutSection3 from './AboutSection';
 import { PhotoGallery } from './PhotoGallery';
 import IrisPhilosophySection from './IrisPhilosophySection';
@@ -466,6 +467,9 @@ export default function AboutIrisPage() {
 
         {/* ================= FILOSOFI NAMA IRIS ================= */}
         <IrisPhilosophySection />
+
+        {/* ================= TAGLINE #GEMINTANG ================= */}
+        <GemintangSection />
 
         {/* ================= FILOSOFI LOGO ================= */}
         <motion.section
