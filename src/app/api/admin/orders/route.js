@@ -41,9 +41,8 @@ export async function GET(request) {
       ]);
 
       if (ordersErr || productsErr) {
-        const msg = (ordersErr || productsErr).message;
-        console.error('Error building batch summary:', msg);
-        return NextResponse.json({ success: false, error: msg }, { status: 500 });
+        console.error('Error building batch summary:', (ordersErr || productsErr).message);
+        return NextResponse.json({ success: false, error: 'Terjadi kesalahan internal server' }, { status: 500 });
       }
 
       const productMap = new Map(
@@ -93,7 +92,9 @@ export async function GET(request) {
         }
       }
 
-      return NextResponse.json({ success: true, summary: Array.from(summaryMap.values()) });
+      return NextResponse.json({ success: true, summary: Array.from(summaryMap.values()) }, {
+        headers: { 'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60' }
+      });
     }
 
     if (orderId) {
@@ -106,7 +107,7 @@ export async function GET(request) {
 
       if (error) {
         console.error(`Error fetching order detail for ${orderId}:`, error);
-        return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+        return NextResponse.json({ success: false, error: 'Terjadi kesalahan internal server' }, { status: 500 });
       }
 
       let product = null;
@@ -194,7 +195,9 @@ export async function GET(request) {
         auditLogs
       };
 
-      return NextResponse.json({ success: true, ...result });
+      return NextResponse.json({ success: true, ...result }, {
+        headers: { 'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60' }
+      });
     }
 
     const { data: orders, error } = await supabase
@@ -204,7 +207,7 @@ export async function GET(request) {
 
     if (error) {
       console.error('Error fetching orders:', error);
-      return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+      return NextResponse.json({ success: false, error: 'Terjadi kesalahan internal server' }, { status: 500 });
     }
 
     // Join product preorder/production info in memory for list view
@@ -249,10 +252,12 @@ export async function GET(request) {
       });
     });
 
-    return NextResponse.json({ success: true, orders: mapped });
+    return NextResponse.json({ success: true, orders: mapped }, {
+      headers: { 'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60' }
+    });
   } catch (err) {
     console.error('API admin orders GET error:', err);
-    return NextResponse.json({ success: false, error: err instanceof Error ? err.message : 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Terjadi kesalahan internal server' }, { status: 500 });
   }
 }
 
@@ -288,7 +293,7 @@ export async function PUT(request) {
 
       if (stageErr) {
         console.error('Error updating production stage:', stageErr);
-        return NextResponse.json({ success: false, error: stageErr.message }, { status: 500 });
+        return NextResponse.json({ success: false, error: 'Terjadi kesalahan internal server' }, { status: 500 });
       }
 
       await supabase.from('admin_activity_logs').insert([
@@ -402,7 +407,7 @@ export async function PUT(request) {
 
       if (paymentErr) {
         console.error('Error updating payment verification:', paymentErr);
-        return NextResponse.json({ success: false, error: paymentErr.message }, { status: 500 });
+        return NextResponse.json({ success: false, error: 'Terjadi kesalahan internal server' }, { status: 500 });
       }
 
       const prevStatus = currentOrderData.status || 'pending_review';
@@ -480,7 +485,7 @@ export async function PUT(request) {
 
     if (updateErr) {
       console.error('Error updating order:', updateErr);
-      return NextResponse.json({ success: false, error: updateErr.message }, { status: 500 });
+      return NextResponse.json({ success: false, error: 'Terjadi kesalahan internal server' }, { status: 500 });
     }
 
     // 3. Write admin activity log
@@ -515,7 +520,7 @@ export async function PUT(request) {
     return NextResponse.json({ success: true, order: mapped });
   } catch (err) {
     console.error('API admin orders PUT error:', err);
-    return NextResponse.json({ success: false, error: err instanceof Error ? err.message : 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Terjadi kesalahan internal server' }, { status: 500 });
   }
 }
 
@@ -550,7 +555,7 @@ export async function DELETE(request) {
 
     if (error) {
       console.error('Error deleting order:', error);
-      return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+      return NextResponse.json({ success: false, error: 'Terjadi kesalahan internal server' }, { status: 500 });
     }
 
     // Log the deletion activity
@@ -565,6 +570,6 @@ export async function DELETE(request) {
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error('API admin orders DELETE error:', err);
-    return NextResponse.json({ success: false, error: err instanceof Error ? err.message : 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Terjadi kesalahan internal server' }, { status: 500 });
   }
 }

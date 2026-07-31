@@ -16,7 +16,7 @@ export async function GET(request) {
   } catch (err) {
     console.error('Error in GET /api/admin/schedule/bookmarklet:', err);
     return NextResponse.json(
-      { success: false, error: err instanceof Error ? err.message : 'Internal error' },
+      { success: false, error: 'Terjadi kesalahan internal server' },
       { status: 500 }
     );
   }

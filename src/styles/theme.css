@@ -140,66 +140,8 @@
 }
 
 /* UTILITY CLASSES */
-.bg-pink-tint {
-  background-color: var(--color-pink-tint-12);
-}
-
-.bg-purple-tint {
-  background-color: var(--color-purple-tint-12);
-}
-
-.bg-blue-tint {
-  background-color: var(--color-blue-tint-12);
-}
-
-.bg-peach-tint {
-  background-color: var(--color-peach-tint-12);
-}
-
-.bg-yellow-tint {
-  background-color: var(--color-yellow-tint-12);
-}
-
-.bg-mint-tint {
-  background-color: var(--color-mint-tint-12);
-}
-
-.bg-gradient-primary {
-  background: var(--gradient-primary);
-}
-
 .bg-gradient-cta {
   background: var(--gradient-cta);
-}
-
-.bg-gradient-pink-purple {
-  background: var(--gradient-pink-purple);
-}
-
-.bg-gradient-purple-blue {
-  background: var(--gradient-purple-blue);
-}
-
-.bg-gradient-blue-mint {
-  background: var(--gradient-blue-mint);
-}
-
-.bg-gradient-peach-yellow {
-  background: var(--gradient-peach-yellow);
-}
-
-.aurora-bg {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background:
-    radial-gradient(circle at 20% 20%, var(--color-pink), transparent 40%),
-    radial-gradient(circle at 80% 30%, var(--color-purple), transparent 45%),
-    radial-gradient(circle at 50% 80%, var(--color-blue), transparent 45%),
-    radial-gradient(circle at 90% 90%, var(--color-yellow), transparent 40%);
-  filter: blur(100px);
-  opacity: 0.15;
-  pointer-events: none;
 }
 
 *:focus-visible {

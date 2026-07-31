@@ -100,6 +100,6 @@ export async function POST(request) {
     }, { origin });
   } catch (err) {
     console.error('Error in POST /api/admin/schedule/import:', err);
-    return json({ success: false, error: err instanceof Error ? err.message : 'Internal error' }, { status: 500, origin });
+    return json({ success: false, error: 'Terjadi kesalahan internal server' }, { status: 500, origin });
   }
 }

@@ -49,6 +49,7 @@ export async function GET(request) {
       { success: true, tables: Object.keys(result), totalRows, data: result },
       {
         headers: {
+          'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60',
           'Content-Disposition': 'attachment; filename="iris-backup.json"',
           'Content-Type': 'application/json',
         },
@@ -56,6 +57,6 @@ export async function GET(request) {
     );
   } catch (err) {
     console.error('Export error:', err);
-    return NextResponse.json({ success: false, error: err instanceof Error ? err.message : 'Export error' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Terjadi kesalahan internal server' }, { status: 500 });
   }
 }

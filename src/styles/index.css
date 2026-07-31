@@ -56,16 +56,6 @@
   --color-input: #E8EAF2;
   --color-ring: #FF5FB2;
 
-  /* Legacy IRIS aliases — pointing to spec values */
-  --color-IRIS-bg: #FFFFFF;
-  --color-IRIS-blue: #72C4FF;
-  --color-IRIS-mint: #75E9C6;
-  --color-IRIS-pink: #FF5FB2;
-  --color-IRIS-accent: #FF5FB2;
-  --color-IRIS-accent-2: #75E9C6;
-  --color-IRIS-text: #222222;
-  --color-IRIS-muted: #8B94A7;
-
   --animate-flash: flash 0.25s ease-out forwards;
   --animate-pulse-slow: pulse-slow 1.5s ease-in-out infinite;
 
@@ -114,12 +104,6 @@
     }
   }
 
-  .page-container {
-    max-width: var(--container-max);
-    margin-inline: auto;
-    padding-inline: var(--section-padding-x);
-  }
-
   html,
   body {
     overflow-x: hidden;
@@ -158,37 +142,6 @@
   box-shadow: var(--shadow-sm);
 }
 
-/* Floating Card Base Rule */
-.iris-card {
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  box-shadow: var(--shadow-card-floating);
-  border-radius: var(--radius-md);
-  transition: transform 250ms ease-out, box-shadow 250ms ease-out, border-color 250ms ease-out;
-}
-
-.iris-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-md);
-  border-color: rgba(255, 95, 178, 0.2);
-}
-
-.bg-aurora {
-  display: none;
-}
-
-/* Links Hover Rule: Gradient Underline */
-.iris-link {
-  color: var(--text-heading);
-  position: relative;
-  text-decoration: none;
-  transition: color 250ms ease-out;
-}
-
-.iris-link:hover {
-  color: var(--iris-pink);
-}
-
 /* Custom Scrollbars */
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
@@ -215,41 +168,4 @@
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
-}
-
-/* Modal Content area styling */
-.modal-body {
-  color: var(--text-heading) !important;
-}
-
-.modal-body label {
-  font-size: 0.75rem !important;
-  font-weight: 700 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.05em !important;
-  color: var(--text-heading) !important;
-  margin-bottom: 0.45rem !important;
-  display: block !important;
-}
-
-.modal-body input,
-.modal-body select,
-.modal-body textarea {
-  width: 100% !important;
-  padding: 0.625rem 1rem !important;
-  background-color: var(--bg-surface) !important;
-  border: 1px solid var(--border-color) !important;
-  color: var(--text-heading) !important;
-  border-radius: var(--radius-sm) !important;
-  outline: none !important;
-  font-size: 0.875rem !important;
-  box-shadow: var(--shadow-xs) !important;
-  transition: var(--transition-fast) !important;
-}
-
-.modal-body input:focus,
-.modal-body select:focus,
-.modal-body textarea:focus {
-  border-color: var(--iris-pink) !important;
-  box-shadow: 0 0 0 3px rgba(255, 95, 178, 0.15) !important;
 }

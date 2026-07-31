@@ -45,7 +45,7 @@ const AVAILABLE_PERMISSIONS = [
   { id: 'playlists', label: 'Denger Intan (Playlists)' },
   { id: 'gallery', label: 'Galeri Album' },
   { id: 'mading', label: 'Moderasi Mading' },
-  { id: 'hashtags', name: 'Kelola Tagar' },
+  { id: 'hashtags', label: 'Kelola Tagar' },
   { id: 'games', label: 'Kelola Game' },
   { id: 'esport', label: 'Kelola Esport' },
   { id: 'keanggotaan', label: 'Kelola Keanggotaan' },

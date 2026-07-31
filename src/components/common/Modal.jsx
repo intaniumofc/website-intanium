@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import { X } from 'lucide-react';
 
 /**
  * Reusable modal overlay component with solid container and clean design.
+ * Includes ARIA attributes, focus trap, and Escape key handling.
  */
 export default function Modal({
   isOpen,
@@ -14,16 +15,70 @@ export default function Modal({
   size = 'md', // sm | md | lg | xl | 2xl | 3xl
   className = '',
 }) {
-  // Lock body scroll when modal is active
+  const modalRef = useRef(null);
+  const previousFocusRef = useRef(null);
+  const titleId = React.useId();
+
+  // Focus trap and Escape key handling
+  const handleKeyDown = useCallback((e) => {
+    if (e.key === 'Escape') {
+      onClose();
+      return;
+    }
+
+    if (e.key !== 'Tab') return;
+
+    const modal = modalRef.current;
+    if (!modal) return;
+
+    const focusableSelectors = 'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    const focusableElements = modal.querySelectorAll(focusableSelectors);
+    if (focusableElements.length === 0) return;
+
+    const firstEl = focusableElements[0];
+    const lastEl = focusableElements[focusableElements.length - 1];
+
+    if (e.shiftKey) {
+      if (document.activeElement === firstEl) {
+        e.preventDefault();
+        lastEl.focus();
+      }
+    } else {
+      if (document.activeElement === lastEl) {
+        e.preventDefault();
+        firstEl.focus();
+      }
+    }
+  }, [onClose]);
+
+  // Lock body scroll, manage focus trap, and return focus on close
   useEffect(() => {
     if (isOpen) {
+      previousFocusRef.current = document.activeElement;
       document.body.style.overflow = 'hidden';
+      // Focus the first focusable element in the modal after mount
+      requestAnimationFrame(() => {
+        const modal = modalRef.current;
+        if (modal) {
+          const focusableSelectors = 'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+          const firstFocusable = modal.querySelector(focusableSelectors);
+          if (firstFocusable) firstFocusable.focus();
+        }
+      });
     } else {
       document.body.style.overflow = '';
     }
     return () => {
       document.body.style.overflow = '';
     };
+  }, [isOpen]);
+
+  // Return focus on close
+  useEffect(() => {
+    if (!isOpen && previousFocusRef.current) {
+      previousFocusRef.current.focus();
+      previousFocusRef.current = null;
+    }
   }, [isOpen]);
 
   if (!isOpen) return null;
@@ -57,11 +112,16 @@ export default function Modal({
       >
         {/* Modal Container */}
         <div
+          ref={modalRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={title ? titleId : undefined}
+          onKeyDown={handleKeyDown}
           className={`relative w-full max-h-[90vh] flex flex-col cursor-default rounded-3xl shadow-2xl border border-[var(--border-color)] bg-white animate-modal-scale-in ${sizeClasses[size]} ${className}`}
         >
           {/* Header */}
           <div className="flex-none flex items-center justify-between px-6 py-4 border-b border-[var(--border-color)] bg-white rounded-t-3xl z-10">
-            <h3 className="text-lg font-extrabold text-[var(--color-primary)]">
+            <h3 id={titleId} className="text-lg font-extrabold text-[var(--color-primary)]">
               {title}
             </h3>
             <button

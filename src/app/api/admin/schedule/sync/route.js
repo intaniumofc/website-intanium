@@ -82,7 +82,7 @@ export async function GET(request) {
   } catch (err) {
     console.error('[schedule-sync] Cron sync error:', err);
     return NextResponse.json(
-      { success: false, error: err instanceof Error ? err.message : 'Sync error' },
+      { success: false, error: 'Terjadi kesalahan internal server' },
       { status: 500 }
     );
   }
@@ -109,7 +109,7 @@ export async function POST(request) {
   } catch (err) {
     console.error('[schedule-sync] Manual sync error:', err);
     return NextResponse.json(
-      { success: false, error: err instanceof Error ? err.message : 'Sync error' },
+      { success: false, error: 'Terjadi kesalahan internal server' },
       { status: 500 }
     );
   }

@@ -19,6 +19,7 @@ export default async function sitemap() {
     '/photobooth',
     '/recaps',
     '/shining-star',
+    '/join',
   ];
 
   const currentDate = new Date().toISOString();

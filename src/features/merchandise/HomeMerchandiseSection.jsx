@@ -96,6 +96,7 @@ const ProductCard = ({ product }) => {
                 alt={index === 0 ? product.name : `${product.name} preview ${index + 1}`}
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                quality={80}
                 className={`object-cover transition-all duration-700 ease-in-out group-hover:scale-105 ${
                   index === imgIndex ? 'opacity-100' : 'opacity-0'
                 }`}

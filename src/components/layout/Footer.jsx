@@ -103,14 +103,14 @@ export default function Footer({
                       <a
                         href={link.href}
                         {...(link.href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                        className="transition-colors duration-200 hover:text-white inline-block py-0.5"
+                        className="transition-colors duration-200 hover:text-white inline-block py-2"
                       >
                         {link.name}
                       </a>
                     ) : (
                       <Link
                         href={link.href}
-                        className="transition-colors duration-200 hover:text-white inline-block py-0.5"
+                        className="transition-colors duration-200 hover:text-white inline-block py-2"
                       >
                         {link.name}
                       </Link>
@@ -138,7 +138,7 @@ export default function Footer({
                   title={social.label}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex size-9 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white shadow-xs transition-all duration-200 hover:-translate-y-1 hover:bg-white hover:text-[var(--color-pink-dark)]"
+                  className="flex size-11 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white shadow-xs transition-all duration-200 hover:-translate-y-1 hover:bg-white hover:text-[var(--color-pink-dark)]"
                 >
                   {typeof social.icon === "function" ? (
                     <social.icon className="size-4" />

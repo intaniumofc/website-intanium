@@ -52,11 +52,13 @@ export async function GET(request) {
       count: items.length,
       isTruncated: response.IsTruncated,
       prefix,
+    }, {
+      headers: { 'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60' }
     });
   } catch (err) {
     console.error('Media Manager GET error:', err);
     return NextResponse.json(
-      { success: false, error: err instanceof Error ? err.message : 'Internal error' },
+      { success: false, error: 'Terjadi kesalahan internal server' },
       { status: 500 }
     );
   }
@@ -99,7 +101,7 @@ export async function DELETE(request) {
   } catch (err) {
     console.error('Media Manager DELETE error:', err);
     return NextResponse.json(
-      { success: false, error: err instanceof Error ? err.message : 'Internal error' },
+      { success: false, error: 'Terjadi kesalahan internal server' },
       { status: 500 }
     );
   }
