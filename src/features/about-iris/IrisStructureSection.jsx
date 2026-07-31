@@ -374,27 +374,45 @@ function TopVerticalConnector() {
   );
 }
 
-// Garis penghubung dari General Coordinator turun ke grid Operational & Media Creative Coordinator
+// Garis penghubung responsive dari General Coordinator ke 2 Coordinator bawahnya (Operational & Media Creative)
 function Connector() {
   return (
-    <div className="w-full select-none pointer-events-none">
-      {/* Mobile Connector (Straight vertical line) */}
-      <div className="relative mx-auto block h-12 w-full md:hidden">
-        <div className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-[linear-gradient(to_bottom,rgba(167,139,250,0.55),rgba(124,58,237,0.12))]" />
+    <div className="w-full select-none pointer-events-none my-2">
+      {/* 1. Mobile Connector (< 768px): Straight vertical line */}
+      <div className="relative mx-auto block h-10 w-full md:hidden">
+        <div className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-[linear-gradient(to_bottom,rgba(167,139,250,0.6),rgba(124,58,237,0.15))]" />
         <div className="connector-dot absolute left-1/2 bottom-0 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-[var(--color-secondary)] shadow-[0_0_10px_rgba(167,139,250,0.6)]" />
       </div>
 
-      {/* Tablet / Desktop Connector (Curved SVG centered) */}
-      <div className="relative mx-auto hidden md:block h-16 w-full max-w-4xl">
+      {/* 2. Tablet Connector (768px - 1023px): Curved SVG starting at 50% (General Coordinator centered) */}
+      <div className="relative mx-auto hidden md:block lg:hidden h-16 w-full">
+        <svg className="w-full h-full overflow-visible" viewBox="0 0 100 64" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="lineGradTab" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="rgba(167, 139, 250, 0.85)" />
+              <stop offset="100%" stopColor="rgba(124, 58, 237, 0.3)" />
+            </linearGradient>
+          </defs>
+          <path className="connector-path" d="M 50 0 C 50 32, 25 32, 25 64" fill="none" stroke="url(#lineGradTab)" strokeWidth="2" strokeLinecap="round" />
+          <path className="connector-path" d="M 50 0 C 50 32, 75 32, 75 64" fill="none" stroke="url(#lineGradTab)" strokeWidth="2" strokeLinecap="round" />
+        </svg>
+        <div className="connector-dot absolute left-1/4 bottom-0 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-[var(--color-secondary)] shadow-[0_0_12px_rgba(167,139,250,0.9)]" />
+        <div className="connector-dot absolute right-1/4 bottom-0 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-[var(--color-secondary)] shadow-[0_0_12px_rgba(167,139,250,0.9)]" />
+      </div>
+
+      {/* 3. Desktop Connector (>= 1024px): Curved SVG starting at 70.83% (General Coordinator in 7-col right stack) */}
+      <div className="relative mx-auto hidden lg:block h-16 w-full">
         <svg className="w-full h-full overflow-visible" viewBox="0 0 100 64" preserveAspectRatio="none">
           <defs>
             <linearGradient id="lineGradDesk" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="rgba(167, 139, 250, 0.75)" />
-              <stop offset="100%" stopColor="rgba(124, 58, 237, 0.25)" />
+              <stop offset="0%" stopColor="rgba(167, 139, 250, 0.85)" />
+              <stop offset="100%" stopColor="rgba(124, 58, 237, 0.3)" />
             </linearGradient>
           </defs>
-          <path className="connector-path" d="M 50 0 C 50 32, 25 32, 25 64" fill="none" stroke="url(#lineGradDesk)" strokeWidth="1.5" strokeLinecap="round" />
-          <path className="connector-path" d="M 50 0 C 50 32, 75 32, 75 64" fill="none" stroke="url(#lineGradDesk)" strokeWidth="1.5" strokeLinecap="round" />
+          {/* Line 1: From bottom of General Coordinator (X=70.83%) curving to Operational Coordinator (X=25%) */}
+          <path className="connector-path" d="M 70.83 0 C 70.83 32, 25 32, 25 64" fill="none" stroke="url(#lineGradDesk)" strokeWidth="2" strokeLinecap="round" />
+          {/* Line 2: From bottom of General Coordinator (X=70.83%) curving to Media & Creative Coordinator (X=75%) */}
+          <path className="connector-path" d="M 70.83 0 C 70.83 32, 75 32, 75 64" fill="none" stroke="url(#lineGradDesk)" strokeWidth="2" strokeLinecap="round" />
         </svg>
         <div className="connector-dot absolute left-1/4 bottom-0 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-[var(--color-secondary)] shadow-[0_0_12px_rgba(167,139,250,0.9)]" />
         <div className="connector-dot absolute right-1/4 bottom-0 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-[var(--color-secondary)] shadow-[0_0_12px_rgba(167,139,250,0.9)]" />
@@ -498,7 +516,7 @@ export default function IrisStructureSection() {
             [ Memuat Struktur Organisasi... ]
           </div>
         ) : (
-          <div className="w-full space-y-10">
+          <div className="w-full space-y-8">
             {/* ROW 1: Title (left) & Right Stack (Nur Intan + General Coordinator) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center w-full">
               {/* Left Side: Title & Badge */}
@@ -545,7 +563,7 @@ export default function IrisStructureSection() {
               </div>
             </div>
 
-            {/* CONNECTOR LINE TO LOWER BRANCHES */}
+            {/* CONNECTOR LINE TO LOWER BRANCHES (Starts directly under General Coordinator Card) */}
             <Connector />
 
             {/* ROW 2: Operational & Media Creative Branches Side-by-Side */}
