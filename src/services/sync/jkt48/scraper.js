@@ -3,12 +3,16 @@ import {
   JKT48_SCHEDULE_LIST_URL,
   JKT48_FETCH_HEADERS,
   INTAN_ALIASES,
+  NUR_INTAN_MEMBER_ID,
+  DETAIL_BATCH_DELAY_MS,
   DEBUT_YEAR,
   DEBUT_MONTH,
   DEFAULT_MONTHS_FORWARD,
 } from './config.js';
 
 const REQUEST_TIMEOUT_MS = 12_000;
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function fetchWithTimeout(url, opts = {}) {
   const controller = new AbortController();
@@ -320,6 +324,8 @@ export function filterIntan(detail, item = {}) {
     if (!m) return false;
     if (typeof m === 'string') return isIntanInText(m);
     if (typeof m === 'object') {
+      // Deteksi paling andal: member_id resmi Nur Intan (182)
+      if (Number(m.member_id) === NUR_INTAN_MEMBER_ID) return true;
       const nameStr = m.name || m.nickname || m.fullname || m.member_name || m.label || '';
       if (isIntanInText(nameStr)) return true;
     }
@@ -434,6 +440,11 @@ async function processItems(items, { onlyIntan }) {
       if (res.failed) failed.push(res.failed);
       cacheEntries.push(res.cacheEntry);
     });
+
+    // Jeda antar batch: perlakukan API jkt48.com dengan sopan agar tidak diblokir.
+    if (i + BATCH_SIZE < items.length) {
+      await sleep(DETAIL_BATCH_DELAY_MS);
+    }
   }
 
   return { matched, skipped, failed, cacheEntries };

@@ -513,8 +513,8 @@ export default function GamesPage() {
                 </h3>
 
                 {/* Custom High-Tech Switch Tabs */}
-                <div className="flex items-center gap-3 bg-[#F5F7FB] p-1 border border-[#E7EAF2] rounded-xl text-xs font-bold w-max">
-                  <div className="flex rounded-lg overflow-hidden border border-[#E7EAF2]">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3 bg-[#F5F7FB] p-1 border border-[#E7EAF2] rounded-xl text-xs font-bold w-full sm:w-max max-w-full">
+                  <div className="flex w-full sm:w-auto rounded-lg overflow-hidden border border-[#E7EAF2]">
                     {activeGames.map((g) => {
                       const modeKey = g.id === 'menangkap-kecoa' ? 'classic' : g.id;
                       const isSelected = leaderboardGame === modeKey;
@@ -522,7 +522,7 @@ export default function GamesPage() {
                         <button
                           key={g.id}
                           onClick={() => setLeaderboardGame(modeKey)}
-                          className={`px-3 py-1.5 transition-colors cursor-pointer ${
+                          className={`flex-1 sm:flex-none px-3 py-1.5 whitespace-nowrap text-center transition-colors cursor-pointer ${
                             isSelected
                               ? 'bg-[#FF5FB2] text-white'
                               : 'text-[var(--color-body)] hover:bg-[#FF5FB2]/10'
@@ -534,16 +534,16 @@ export default function GamesPage() {
                     })}
                   </div>
 
-                  <div className="flex rounded-lg overflow-hidden border border-[#E7EAF2]">
+                  <div className="flex w-full sm:w-auto rounded-lg overflow-hidden border border-[#E7EAF2]">
                     <button
                       onClick={() => setLeaderboardTab('weekly')}
-                      className={`px-3 py-1.5 transition-colors cursor-pointer ${leaderboardTab === 'weekly' ? 'bg-[#FF5FB2] text-white' : 'text-[#60697A] hover:bg-[#FF5FB2]/10'}`}
+                      className={`flex-1 sm:flex-none px-3 py-1.5 whitespace-nowrap text-center transition-colors cursor-pointer ${leaderboardTab === 'weekly' ? 'bg-[#FF5FB2] text-white' : 'text-[#60697A] hover:bg-[#FF5FB2]/10'}`}
                     >
                       Mingguan
                     </button>
                     <button
                       onClick={() => setLeaderboardTab('all-time')}
-                      className={`px-3 py-1.5 transition-colors cursor-pointer ${leaderboardTab === 'all-time' ? 'bg-[#FF5FB2] text-white' : 'text-[#60697A] hover:bg-[#FF5FB2]/10'}`}
+                      className={`flex-1 sm:flex-none px-3 py-1.5 whitespace-nowrap text-center transition-colors cursor-pointer ${leaderboardTab === 'all-time' ? 'bg-[#FF5FB2] text-white' : 'text-[#60697A] hover:bg-[#FF5FB2]/10'}`}
                     >
                       Abadi
                     </button>

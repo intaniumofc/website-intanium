@@ -247,11 +247,11 @@ export default function CinematicHeroSection() {
                 </p>
                 <div className="flex justify-between sm:justify-start gap-4 sm:gap-8 border-t border-white/20 pt-4 sm:pt-6">
                   <div className="text-center sm:text-left">
-                    <span className="block text-2xl sm:text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-purple-200 to-purple-500 font-playfair">2+</span>
+                    <span className="block text-2xl sm:text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-purple-200 to-purple-500 font-playfair">1+</span>
                     <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.1em] sm:tracking-[0.2em] text-white/60 font-bold mt-1 sm:mt-2 block">Years<br className="sm:hidden"/> Active</span>
                   </div>
                   <div className="text-center sm:text-left">
-                    <span className="block text-2xl sm:text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-cyan-200 to-cyan-500 font-playfair">200+</span>
+                    <span className="block text-2xl sm:text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-cyan-200 to-cyan-500 font-playfair">100+</span>
                     <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.1em] sm:tracking-[0.2em] text-white/60 font-bold mt-1 sm:mt-2 block">Members</span>
                   </div>
                   <div className="text-center sm:text-left">

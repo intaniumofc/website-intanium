@@ -7,6 +7,13 @@ export const JKT48_BASE_URL = 'https://jkt48.com';
 export const JKT48_SCHEDULE_LIST_URL = `${JKT48_API_BASE}/schedule/list?lang=id`;
 export const INTAN_ALIASES = ['nur intan', 'intan', 'gen 13', 'generasi 13', 'gen-13'];
 
+// ID member resmi Nur Intan di API jkt48.com. Dipakai sebagai deteksi utama
+// (lebih andal daripada pencocokan nama yang bisa berubah format).
+export const NUR_INTAN_MEMBER_ID = 182;
+
+// Jeda antar batch fetch detail agar sopan ke API pihak ketiga (hindari blokir).
+export const DETAIL_BATCH_DELAY_MS = 500;
+
 // Default "Sync Penuh" range: from Intan's debut (Gen 13, Dec 2024) forward to
 // a couple of months ahead of the current month. Overridable per-request.
 export const DEBUT_YEAR = 2024;

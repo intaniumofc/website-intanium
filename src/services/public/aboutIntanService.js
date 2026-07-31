@@ -197,11 +197,13 @@ export const aboutIntanService = {
   createSetlist: async (setlistData) => {
     const id = setlistData.id || `setlist-${Date.now()}`;
     const { unitSongs, ...rest } = setlistData;
+    const showCount = Number(rest.show_count) || 0;
     const payload = {
       id,
       name: rest.name,
       period: rest.period,
-      shows: rest.shows,
+      shows: rest.shows || (showCount ? `${showCount}+ Shows` : ''),
+      show_count: showCount,
       theme: rest.theme,
       image_url: rest.image_url,
       status: rest.status,
@@ -228,9 +230,10 @@ export const aboutIntanService = {
 
   updateSetlist: async (id, setlistData) => {
     const { unitSongs, ...rest } = setlistData;
+    const showCount = Number(rest.show_count) || 0;
     const { data, error } = await supabase
       .from('intan_setlists')
-      .update({ name: rest.name, period: rest.period, shows: rest.shows, theme: rest.theme, image_url: rest.image_url, status: rest.status, note: rest.note, sort_order: rest.sort_order })
+      .update({ name: rest.name, period: rest.period, shows: rest.shows || (showCount ? `${showCount}+ Shows` : ''), show_count: showCount, theme: rest.theme, image_url: rest.image_url, status: rest.status, note: rest.note, sort_order: rest.sort_order })
       .eq('id', id).select().single();
     if (error) return { success: false, error: error.message };
 

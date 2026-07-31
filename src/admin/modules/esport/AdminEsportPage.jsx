@@ -15,7 +15,8 @@ import {
   Sparkles,
   Link2,
   Gamepad2,
-  Eye
+  Eye,
+  Power
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMediaUpload, useImageUpload } from '../../../hooks/useMediaUpload';
@@ -276,6 +277,21 @@ export default function AdminEsportPage() {
     }
   };
 
+  // Toggle status aktif/nonaktif (hiatus) divisi
+  const handleToggleActive = async (div) => {
+    const nextActive = div.is_active === false;
+    const res = await esportService.setDivisionActive(div.id, nextActive);
+    if (res && res.success === false) {
+      notify.error('Gagal mengubah status', res.error || 'Terjadi kesalahan');
+    } else {
+      notify.success(
+        nextActive ? 'Divisi diaktifkan' : 'Divisi dinonaktifkan',
+        `Divisi "${div.name}" sekarang ${nextActive ? 'aktif' : 'nonaktif (hiatus)'} di web publik.`
+      );
+      fetchData();
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -355,7 +371,9 @@ export default function AdminEsportPage() {
                 animate="visible"
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
               >
-                {divisions.map((div) => (
+                {divisions.map((div) => {
+                  const isDivActive = div.is_active !== false;
+                  return (
                   <motion.div
                     key={div.id}
                     variants={itemVariants}
@@ -365,7 +383,7 @@ export default function AdminEsportPage() {
                       {/* Wallpaper Card Header Banner */}
                       <div className="relative h-36 bg-slate-900 overflow-hidden">
                         {div.wallpaper ? (
-                          <img src={(div.wallpaper)?.src || (div.wallpaper)} alt={div.name} className="w-full h-full object-cover" />
+                          <img src={(div.wallpaper)?.src || (div.wallpaper)} alt={div.name} className={`w-full h-full object-cover ${isDivActive ? '' : 'grayscale opacity-50'}`} />
                         ) : (
                           <div className="w-full h-full bg-gradient-to-br from-[var(--color-pink)]/40 to-[#1a0e8a]/20 flex items-center justify-center">
                             <span className="text-white/40 text-xs font-semibold">Belum Ada Wallpaper</span>
@@ -374,27 +392,48 @@ export default function AdminEsportPage() {
                         <span className="absolute top-3 right-3 text-[10px] font-black uppercase tracking-wider text-slate-500 bg-white/90 backdrop-blur-sm px-2 py-0.5 rounded shadow-sm border border-slate-100">
                           {div.id}
                         </span>
+                        <span className={`absolute top-3 left-3 text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded shadow-sm border ${
+                          isDivActive
+                            ? 'bg-emerald-50/95 text-emerald-600 border-emerald-200'
+                            : 'bg-slate-100/95 text-slate-500 border-slate-200'
+                        }`}>
+                          {isDivActive ? 'Aktif' : 'Nonaktif'}
+                        </span>
                       </div>
                       <div className="p-5">
                         <h3 className="text-lg font-black text-slate-800">{div.name}</h3>
                       </div>
                     </div>
-                    <div className="px-5 pb-5 flex justify-between items-center">
+                    <div className="px-5 pb-5 flex justify-between items-center gap-2">
                       <button
                         onClick={() => handleDelete('division', div.id, div.name)}
                         className="flex items-center gap-1.5 px-3 py-2 bg-red-50 text-red-600 rounded-xl text-xs font-bold hover:bg-red-100 transition-colors cursor-pointer"
                       >
                         <Trash2 className="w-3.5 h-3.5" /> Hapus
                       </button>
-                      <button
-                        onClick={() => handleOpenModal('division', 'edit', div)}
-                        className="flex items-center gap-1.5 px-3 py-2 bg-blue-50 text-blue-600 rounded-xl text-xs font-bold hover:bg-blue-100 transition-colors cursor-pointer"
-                      >
-                        <Edit className="w-3.5 h-3.5" /> Edit Divisi
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleToggleActive(div)}
+                          title={isDivActive ? 'Nonaktifkan divisi (hiatus)' : 'Aktifkan kembali divisi'}
+                          className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
+                            isDivActive
+                              ? 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                              : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'
+                          }`}
+                        >
+                          <Power className="w-3.5 h-3.5" /> {isDivActive ? 'Nonaktifkan' : 'Aktifkan'}
+                        </button>
+                        <button
+                          onClick={() => handleOpenModal('division', 'edit', div)}
+                          className="flex items-center gap-1.5 px-3 py-2 bg-blue-50 text-blue-600 rounded-xl text-xs font-bold hover:bg-blue-100 transition-colors cursor-pointer"
+                        >
+                          <Edit className="w-3.5 h-3.5" /> Edit Divisi
+                        </button>
+                      </div>
                     </div>
                   </motion.div>
-                ))}
+                  );
+                })}
               </motion.div>
             )}
 

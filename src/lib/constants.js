@@ -25,11 +25,12 @@ export const ROUTES = {
   GAME_MENANGKAP_KECOA_RESULT: '/games/menangkap-kecoa/result/:scoreId',
   ESPORT: '/esport',
   PHOTOBOOTH: '/photobooth',
-  JOIN_US: '/join-us',
+  JOIN_US: '/join',
   // Admin Routes
   ADMIN_LOGIN: '/admin/login',
   ADMIN_DASHBOARD: '/admin/dashboard',
   ADMIN_ABOUT_INTAN: '/admin/about-intan',
+  ADMIN_INTAN_INSIGHTS: '/admin/intan-insights',
   ADMIN_SHINING_STAR: '/admin/intan-shining-star',
   ADMIN_COMIC_PAGES: '/admin/comic-pages',
   ADMIN_MERCHANDISE: '/admin/merchandise',
