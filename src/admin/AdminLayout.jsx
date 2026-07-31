@@ -81,26 +81,38 @@ export default function AdminLayout({ children }) {
   };
 
   const getRequiredPermission = (href) => {
-    if (href === ROUTES.ADMIN_DASHBOARD) return 'dashboard';
-    if (href === ROUTES.ADMIN_MERCHANDISE) return 'merchandise';
-    if (href === ROUTES.ADMIN_CATEGORIES) return 'categories';
-    if (href === ROUTES.ADMIN_ORDERS) return 'orders';
-    if (href.startsWith(ROUTES.ADMIN_ABOUT_INTAN)) return 'about-intan';
-    if (href === ROUTES.ADMIN_INTAN_INSIGHTS) return 'about-intan';
-    if (href === ROUTES.ADMIN_SHINING_STAR) return 'shining-star';
-    if (href === ROUTES.ADMIN_COMIC_PAGES) return 'shining-star';
-    if (href === ROUTES.ADMIN_SCHEDULE) return 'schedule';
-    if (href === ROUTES.ADMIN_RECAPS) return 'recaps';
-    if (href === ROUTES.ADMIN_NEWS) return 'news';
-    if (href === ROUTES.ADMIN_PLAYLISTS) return 'playlists';
-    if (href === ROUTES.ADMIN_GALLERY) return 'gallery';
-    if (href === ROUTES.ADMIN_MADING) return 'mading';
-    if (href === ROUTES.ADMIN_HASHTAGS) return 'hashtags';
-    if (href === ROUTES.ADMIN_GAMES) return 'games';
-    if (href === ROUTES.ADMIN_ESPORT) return 'esport';
-    if (href === ROUTES.ADMIN_MEMBERSHIP) return '';
-    if (href === ROUTES.ADMIN_PHOTOBOOTH) return '';
+    if (!href) return '';
+    const cleanHref = href.split('?')[0];
+    if (cleanHref === ROUTES.ADMIN_DASHBOARD) return 'dashboard';
+    if (cleanHref === ROUTES.ADMIN_MERCHANDISE) return 'merchandise';
+    if (cleanHref === ROUTES.ADMIN_CATEGORIES) return 'categories';
+    if (cleanHref === ROUTES.ADMIN_ORDERS) return 'orders';
+    if (cleanHref.startsWith(ROUTES.ADMIN_ABOUT_INTAN)) return 'about-intan';
+    if (cleanHref === ROUTES.ADMIN_INTAN_INSIGHTS) return 'about-intan';
+    if (cleanHref === ROUTES.ADMIN_SHINING_STAR) return 'shining-star';
+    if (cleanHref === ROUTES.ADMIN_COMIC_PAGES) return 'shining-star';
+    if (cleanHref === ROUTES.ADMIN_SCHEDULE) return 'schedule';
+    if (cleanHref === ROUTES.ADMIN_RECAPS) return 'recaps';
+    if (cleanHref === ROUTES.ADMIN_NEWS) return 'news';
+    if (cleanHref === ROUTES.ADMIN_PLAYLISTS) return 'playlists';
+    if (cleanHref === ROUTES.ADMIN_GALLERY) return 'gallery';
+    if (cleanHref === ROUTES.ADMIN_MADING) return 'mading';
+    if (cleanHref === ROUTES.ADMIN_HASHTAGS) return 'hashtags';
+    if (cleanHref === ROUTES.ADMIN_GAMES) return 'games';
+    if (cleanHref === ROUTES.ADMIN_ESPORT) return 'esport';
+    if (cleanHref === ROUTES.ADMIN_MEMBERSHIP) return 'keanggotaan';
+    if (cleanHref === ROUTES.ADMIN_JOIN_US) return 'join-us';
+    if (cleanHref === ROUTES.ADMIN_PHOTOBOOTH) return 'photobooth';
+    if (cleanHref === ROUTES.ADMIN_MEDIA_MANAGER) return 'media';
+    if (cleanHref === ROUTES.ADMIN_AUDIT_LOGS) return 'audit-logs';
     return '';
+  };
+
+  const hasAccessToHref = (href) => {
+    if (userRole === 'super_admin') return true;
+    const req = getRequiredPermission(href);
+    if (!req) return true;
+    return permissions.includes(req);
   };
 
   const handleLinkClick = (e, href) => {
@@ -218,8 +230,21 @@ export default function AdminLayout({ children }) {
     { id: 'audit-logs', name: 'Log Aktivitas', href: ROUTES.ADMIN_AUDIT_LOGS, icon: Shield },
   ];
 
+  // Filter links based on user permissions
+  const visibleLinks = adminLinks
+    .map((link) => {
+      if (link.subLinks) {
+        const allowedSubLinks = link.subLinks.filter((sub) => hasAccessToHref(sub.href));
+        if (allowedSubLinks.length === 0) return null;
+        return { ...link, subLinks: allowedSubLinks };
+      }
+      if (!hasAccessToHref(link.href)) return null;
+      return link;
+    })
+    .filter(Boolean);
+
   // Filter links based on sidebar search input
-  const filteredLinks = adminLinks.filter(link => {
+  const filteredLinks = visibleLinks.filter(link => {
     if (link.name.toLowerCase().includes(searchQuery.toLowerCase())) return true;
     if (link.subLinks && link.subLinks.some(sub => sub.name.toLowerCase().includes(searchQuery.toLowerCase()))) return true;
     return false;
