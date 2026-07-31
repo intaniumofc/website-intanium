@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useId, useCallback, useRef, forwardRef, useSyncExternalStore } from 'react';
+import { useState, useEffect, useId, useCallback, useMemo, useRef, forwardRef, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
 import HTMLFlipBook from 'react-pageflip';
 import {
@@ -226,27 +226,12 @@ export default function ComicFlipbook() {
     if (index === currentPageIndex) return;
 
     const targetRef = isFullscreen ? fullscreenFlipBookRef : flipBookRef;
-    const diff = Math.abs(index - currentPageIndex);
+    setCurrentPageIndex(index);
 
-    if (diff === 1) {
-      setCurrentPageIndex(index);
-      if (index > currentPageIndex) {
-        targetRef.current?.pageFlip()?.flipNext();
-      } else {
-        targetRef.current?.pageFlip()?.flipPrev();
-      }
-    } else {
-      const animClass = index > currentPageIndex ? 'comic-3d-flipping-forward' : 'comic-3d-flipping-backward';
-      setFlipping3DClass(animClass);
-
-      setTimeout(() => {
-        setCurrentPageIndex(index);
-        targetRef.current?.pageFlip()?.turnToPage(index);
-      }, 200);
-
-      setTimeout(() => {
-        setFlipping3DClass('');
-      }, 450);
+    try {
+      targetRef.current?.pageFlip()?.turnToPage(index);
+    } catch (err) {
+      console.warn('pageFlip turnToPage exception:', err);
     }
   }, [isFullscreen, currentPageIndex]);
 
@@ -260,6 +245,36 @@ export default function ComicFlipbook() {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  const chapters = useMemo(() => {
+    if (!pages || !pages.length) return [];
+    const map = new Map();
+    pages.forEach((p, idx) => {
+      const chNum = Number(p.chapterNumber) || 1;
+      const chTitle = p.chapterTitle ? `: ${p.chapterTitle}` : '';
+      const key = `ch-${chNum}`;
+      if (!map.has(key)) {
+        map.set(key, {
+          chapterNumber: chNum,
+          chapterTitle: p.chapterTitle || `Chapter ${chNum}`,
+          firstPageIndex: idx,
+          label: `Chapter ${chNum}${chTitle}`,
+        });
+      }
+    });
+    return Array.from(map.values()).sort((a, b) => a.chapterNumber - b.chapterNumber);
+  }, [pages]);
+
+  const currentChapter = useMemo(() => {
+    if (!chapters.length) return null;
+    let active = chapters[0];
+    for (const ch of chapters) {
+      if (currentPageIndex >= ch.firstPageIndex) {
+        active = ch;
+      }
+    }
+    return active;
+  }, [chapters, currentPageIndex]);
 
   if (loading || !isClient) {
     return (
@@ -293,18 +308,40 @@ export default function ComicFlipbook() {
     const modalContent = (
       <div className="comic-fullscreen-modal fixed inset-0 z-[99999] bg-slate-950/95 backdrop-blur-xl flex flex-col justify-between p-3 sm:p-4 text-white animate-in fade-in duration-300 h-screen max-h-screen overflow-hidden">
         {/* Modal Header */}
-        <div className="flex items-center justify-between w-full max-w-7xl mx-auto pb-2.5 border-b border-white/20 shrink-0">
-          <div className="flex items-center gap-2">
-            <span className="inline-block px-2.5 py-0.5 text-[9px] sm:text-[10px] uppercase font-black tracking-widest border rounded-md shadow-sm bg-pink-100 text-pink-800 border-pink-300">
+        <div className="flex items-center justify-between w-full max-w-7xl mx-auto pb-2.5 border-b border-white/20 shrink-0 gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="inline-block px-2.5 py-0.5 text-[9px] sm:text-[10px] uppercase font-black tracking-widest border rounded-md shadow-sm bg-pink-100 text-pink-800 border-pink-300 shrink-0">
               Arsip Komik
             </span>
-            <span className="font-black text-xs sm:text-sm md:text-base text-white tracking-tight flex items-center gap-1.5">
-              <BookOpen className="h-4 w-4 text-pink-400" />
-              Arsip Komik Digital
+            <span className="font-black text-xs sm:text-sm md:text-base text-white tracking-tight flex items-center gap-1.5 truncate">
+              <BookOpen className="h-4 w-4 text-pink-400 shrink-0" />
+              <span className="truncate">Arsip Komik Digital</span>
             </span>
           </div>
-          <div className="flex items-center gap-3 sm:gap-4">
-            <span className="text-xs font-bold text-white/90 bg-black/60 px-3 py-1 rounded-md border border-white/20">
+
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            {/* Chapter Selection Dropdown */}
+            {chapters.length > 0 && (
+              <div className="flex items-center gap-1.5 bg-black/60 px-2.5 py-1 rounded-md border border-white/20">
+                <span className="text-[10px] font-bold text-pink-300 uppercase tracking-wider hidden sm:inline">Chapter:</span>
+                <select
+                  value={currentChapter?.chapterNumber || 1}
+                  onChange={(e) => {
+                    const targetCh = chapters.find(c => c.chapterNumber === Number(e.target.value));
+                    if (targetCh) handleJumpToPage(targetCh.firstPageIndex);
+                  }}
+                  className="bg-transparent text-xs font-bold text-white outline-none cursor-pointer"
+                >
+                  {chapters.map((ch) => (
+                    <option key={ch.chapterNumber} value={ch.chapterNumber} className="bg-slate-900 text-white">
+                      {ch.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            <span className="text-xs font-bold text-white/90 bg-black/60 px-3 py-1 rounded-md border border-white/20 hidden xs:inline-block">
               {getPageIndicatorText()}
             </span>
             <button
@@ -333,29 +370,29 @@ export default function ComicFlipbook() {
             <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
           </button>
 
-          {/* Fullscreen HTMLFlipBook - Centered View (Responsive Single Cover / Double Spread) */}
+          {/* Fullscreen HTMLFlipBook - Centered Single-Page Height-Fit View */}
           <div className={`comic-fullscreen-pages-frame flex-1 flex items-center justify-center overflow-hidden relative w-full h-full my-auto py-1 ${flipping3DClass}`}>
-            <div className={`relative flex items-center justify-center h-full max-h-[calc(100vh-135px)] ${isMobile ? 'w-full max-w-[420px]' : 'w-full max-w-[960px]'} mx-auto`}>
+            <div className="relative flex items-center justify-center h-full max-h-[calc(100vh-135px)] w-full max-w-[560px] mx-auto">
               <HTMLFlipBook
                 ref={fullscreenFlipBookRef}
-                width={isMobile ? 340 : 410}
-                height={isMobile ? 500 : 570}
-                size="stretch"
-                minWidth={isMobile ? 220 : 270}
-                maxWidth={isMobile ? 440 : 500}
-                minHeight={isMobile ? 320 : 380}
-                maxHeight={isMobile ? 680 : 720}
-                showCover={true}
+                width={460}
+                height={660}
+                size="fixed"
+                minWidth={280}
+                maxWidth={540}
+                minHeight={400}
+                maxHeight={780}
+                showCover={false}
                 drawShadow={true}
-                maxShadowOpacity={0.4}
+                maxShadowOpacity={0.3}
                 flippingTime={500}
-                usePortrait={isMobile}
+                usePortrait={true}
                 startPage={currentPageIndex}
                 clickEventForward={true}
                 useMouseEvents={true}
                 swipeDistance={30}
                 showPageCorners={true}
-                className="comic-html-flipbook-single mx-auto shadow-2xl rounded-xl h-full"
+                className="comic-html-flipbook-single mx-auto shadow-2xl rounded-xl"
                 onFlip={(e) => {
                   setCurrentPageIndex(e.data);
                 }}

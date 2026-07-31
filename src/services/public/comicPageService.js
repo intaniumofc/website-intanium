@@ -21,6 +21,8 @@ export const comicPageService = {
         pageNumber: p.page_number,
         imageUrl: proxyR2Url(p.image_url),
         caption: p.caption || '',
+        chapterNumber: p.chapter_number || 1,
+        chapterTitle: p.chapter_title || '',
         createdAt: p.created_at,
         updatedAt: p.updated_at,
       }));
@@ -36,31 +38,55 @@ export const comicPageService = {
       .from('intan_shining_star_comic_pages')
       .insert([{
         id,
-        page_number: page.pageNumber,
+        page_number: Number(page.pageNumber),
         image_url: page.imageUrl?.trim() || null,
         caption: page.caption?.trim() || '',
+        chapter_number: Number(page.chapterNumber || 1),
+        chapter_title: page.chapterTitle?.trim() || '',
       }])
       .select()
       .single();
 
     if (error) return { success: false, error: error.message };
-    return { success: true, data: { id: data.id, pageNumber: data.page_number, imageUrl: proxyR2Url(data.image_url), caption: data.caption } };
+    return {
+      success: true,
+      data: {
+        id: data.id,
+        pageNumber: data.page_number,
+        imageUrl: proxyR2Url(data.image_url),
+        caption: data.caption,
+        chapterNumber: data.chapter_number || 1,
+        chapterTitle: data.chapter_title || '',
+      },
+    };
   },
 
   updatePage: async (id, page) => {
     const { data, error } = await supabase
       .from('intan_shining_star_comic_pages')
       .update({
-        page_number: page.pageNumber,
+        page_number: Number(page.pageNumber),
         image_url: page.imageUrl?.trim() || null,
         caption: page.caption?.trim() || '',
+        chapter_number: Number(page.chapterNumber || 1),
+        chapter_title: page.chapterTitle?.trim() || '',
       })
       .eq('id', id)
       .select()
       .single();
 
     if (error) return { success: false, error: error.message };
-    return { success: true, data: { id: data.id, pageNumber: data.page_number, imageUrl: proxyR2Url(data.image_url), caption: data.caption } };
+    return {
+      success: true,
+      data: {
+        id: data.id,
+        pageNumber: data.page_number,
+        imageUrl: proxyR2Url(data.image_url),
+        caption: data.caption,
+        chapterNumber: data.chapter_number || 1,
+        chapterTitle: data.chapter_title || '',
+      },
+    };
   },
 
   deletePage: async (id) => {
@@ -71,5 +97,41 @@ export const comicPageService = {
 
     if (error) return { success: false, error: error.message };
     return { success: true };
+  },
+
+  reorderPages: async (orderedItems) => {
+    try {
+      const updates = orderedItems.map((item, index) => ({
+        id: item.id,
+        page_number: index + 1,
+        image_url: item.imageUrl || null,
+        caption: item.caption || '',
+        chapter_number: Number(item.chapterNumber || 1),
+        chapter_title: item.chapterTitle || '',
+      }));
+
+      const { error } = await supabase
+        .from('intan_shining_star_comic_pages')
+        .upsert(updates);
+
+      if (error) return { success: false, error: error.message };
+      return { success: true };
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  },
+
+  syncChapterTitle: async (chapterNumber, chapterTitle) => {
+    try {
+      const { error } = await supabase
+        .from('intan_shining_star_comic_pages')
+        .update({ chapter_title: chapterTitle || '' })
+        .eq('chapter_number', Number(chapterNumber));
+
+      if (error) return { success: false, error: error.message };
+      return { success: true };
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
   },
 };
