@@ -162,4 +162,24 @@ export const scheduleService = {
       return { success: false, error: err instanceof Error ? err.message : 'Unknown error' };
     }
   },
+
+  // Sync otomatis sisi server: fetch jadwal jkt48.com, deteksi Nur Intan,
+  // simpan sebagai draft. fullRange=true untuk sync penuh dari debut.
+  syncFromJKT48: async ({ fullRange = false } = {}) => {
+    try {
+      const res = await fetch('/api/admin/schedule/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fullRange }),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok || !body.success) {
+        return { success: false, error: body.error || `HTTP ${res.status}` };
+      }
+      return { success: true, data: body };
+    } catch (err) {
+      console.error('Error calling /api/admin/schedule/sync:', err);
+      return { success: false, error: err instanceof Error ? err.message : 'Unknown error' };
+    }
+  },
 };

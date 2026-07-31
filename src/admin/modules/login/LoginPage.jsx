@@ -300,7 +300,12 @@ export default function LoginPage() {
     });
 
     if (authError) {
-      setError(authError.message || "Email atau password salah.");
+      // Pesan khas untuk kredensial salah, sisanya tampilkan apa adanya
+      setError(
+        authError.message === 'Invalid login credentials'
+          ? 'lu salah login akun njirr, cek dulu ada yang typo ga, chat atip/uyab biar dicek'
+          : authError.message || 'Email atau password salah.'
+      );
       setIsLoading(false);
     } else if (data.session) {
       localStorage.setItem("isAdminAuthenticated", "true");

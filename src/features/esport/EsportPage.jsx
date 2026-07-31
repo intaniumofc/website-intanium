@@ -71,6 +71,7 @@ export default function EsportPage() {
       tagline: dbDiv.tagline,
       logo: dbDiv.logo,
       bannerGradient: dbDiv.banner_gradient,
+      isActive: dbDiv.is_active !== false,
       roster: dbRosters
         .filter(r => r.division_id === dbDiv.id)
         .map(r => ({
@@ -100,6 +101,8 @@ export default function EsportPage() {
   }, {});
 
   const handleFlipToggle = (key) => {
+    // Divisi nonaktif (hiatus) tidak bisa dibuka
+    if (esportData[key] && !esportData[key].isActive) return;
     setFlippedCard((prev) => (prev === key ? null : key));
   };
 
@@ -233,6 +236,7 @@ export default function EsportPage() {
                 divIcon={data.logo}
                 wallpaper={data.wallpaper}
                 data={data}
+                isActive={data.isActive}
                 isFlipped={isFlipped}
                 onToggle={() => handleFlipToggle(key)}
                 memberCount={memberCount}
@@ -422,16 +426,22 @@ export default function EsportPage() {
                       <p className="font-extrabold text-[10px] text-[var(--color-primary)] uppercase tracking-wider">
                         {ach.divisionName}
                       </p>
-                      <button
-                        onClick={() => {
-                          setFlippedCard(ach.divisionKey);
-                          document.getElementById('divisions-grid')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        }}
-                        className="text-[10px] font-black uppercase tracking-widest text-[var(--color-primary)] flex items-center gap-1 hover:text-[var(--color-primary-hover)] transition-colors cursor-pointer group"
-                      >
-                        Lihat Roster
-                        <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-                      </button>
+                      {esportData[ach.divisionKey]?.isActive ? (
+                        <button
+                          onClick={() => {
+                            setFlippedCard(ach.divisionKey);
+                            document.getElementById('divisions-grid')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                          }}
+                          className="text-[10px] font-black uppercase tracking-widest text-[var(--color-primary)] flex items-center gap-1 hover:text-[var(--color-primary-hover)] transition-colors cursor-pointer group"
+                        >
+                          Lihat Roster
+                          <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                        </button>
+                      ) : (
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 cursor-not-allowed">
+                          Sedang Nonaktif
+                        </span>
+                      )}
                     </div>
                   </div>
                 </motion.div>
@@ -450,11 +460,13 @@ function DivisionFlipCard({
   divIcon,
   wallpaper,
   data,
+  isActive = true,
   isFlipped,
   onToggle,
   memberCount
 }) {
   const handleKeyPress = (e) => {
+    if (!isActive) return;
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       onToggle();
@@ -463,18 +475,23 @@ function DivisionFlipCard({
 
   return (
     <div
-      className="w-full h-[380px] perspective-1000 select-none group"
+      className={`w-full h-[380px] perspective-1000 select-none group ${isActive ? '' : 'cursor-not-allowed'}`}
       role="button"
-      tabIndex={0}
+      tabIndex={isActive ? 0 : -1}
+      aria-disabled={!isActive}
       aria-expanded={isFlipped}
-      aria-label={`Divisi ${divLabel}, klik untuk melihat roster`}
-      onClick={onToggle}
+      aria-label={isActive ? `Divisi ${divLabel}, klik untuk melihat roster` : `Divisi ${divLabel} sedang nonaktif`}
+      onClick={isActive ? onToggle : undefined}
       onKeyDown={handleKeyPress}
     >
       <motion.div
         animate={{ rotateY: isFlipped ? 180 : 0 }}
         transition={{ duration: 0.6, ease: [0.2, 0.8, 0.2, 1] }}
-        className="relative w-full h-full transform-style-3d border border-[var(--border-color)] rounded-2xl cursor-pointer shadow-sm hover:shadow-md hover:border-[var(--color-primary)]/30 transition-shadow duration-300 focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:outline-none"
+        className={`relative w-full h-full transform-style-3d border rounded-2xl shadow-sm transition-shadow duration-300 focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:outline-none ${
+          isActive
+            ? 'border-[var(--border-color)] cursor-pointer hover:shadow-md hover:border-[var(--color-primary)]/30'
+            : 'border-slate-200 cursor-not-allowed'
+        }`}
       >
         {/* ================= FRONT SIDE ================= */}
         <div className="absolute inset-0 w-full h-full backface-hidden rounded-2xl overflow-hidden p-6 flex flex-col justify-between">
@@ -483,12 +500,18 @@ function DivisionFlipCard({
             <img
               src={(wallpaper)?.src || (wallpaper)}
               alt={divLabel}
-              className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+              className={`w-full h-full object-cover transition-transform duration-700 ease-out ${
+                isActive ? 'group-hover:scale-110' : 'grayscale opacity-70'
+              }`}
               width="260"
               height="380"
               loading="lazy"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-slate-900/30" />
+            <div className={`absolute inset-0 bg-gradient-to-t ${
+              isActive
+                ? 'from-slate-950 via-slate-900/60 to-slate-900/30'
+                : 'from-slate-950/95 via-slate-900/80 to-slate-900/60'
+            }`} />
           </div>
 
           {/* Top Info */}
@@ -498,17 +521,34 @@ function DivisionFlipCard({
             </span>
           </div>
 
+          {/* Nonaktif Center Badge */}
+          {!isActive && (
+            <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
+              <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-slate-800/80 backdrop-blur-sm border border-white/15 text-slate-200 text-[10px] font-black uppercase tracking-widest shadow-lg">
+                Sedang Nonaktif
+              </span>
+            </div>
+          )}
+
           {/* Bottom Content Group (Title directly above CTA) */}
           <div className="relative z-10 space-y-3">
-            <h3 className="text-2xl font-black text-white tracking-tight drop-shadow-md">
+            <h3 className={`text-2xl font-black tracking-tight drop-shadow-md ${isActive ? 'text-white' : 'text-slate-300'}`}>
               {divLabel}
             </h3>
-            <div className="flex items-center justify-between border-t border-white/20 pt-3 text-white hover:text-indigo-200 transition-colors">
-              <span className="text-[10px] font-extrabold uppercase tracking-wider drop-shadow-sm">
-                Lihat Roster Lengkap
-              </span>
-              <ChevronRight className="h-4 w-4 drop-shadow-sm" />
-            </div>
+            {isActive ? (
+              <div className="flex items-center justify-between border-t border-white/20 pt-3 text-white hover:text-indigo-200 transition-colors">
+                <span className="text-[10px] font-extrabold uppercase tracking-wider drop-shadow-sm">
+                  Lihat Roster Lengkap
+                </span>
+                <ChevronRight className="h-4 w-4 drop-shadow-sm" />
+              </div>
+            ) : (
+              <div className="flex items-center justify-between border-t border-white/10 pt-3 text-slate-400">
+                <span className="text-[10px] font-extrabold uppercase tracking-wider drop-shadow-sm">
+                  Divisi sedang hiatus
+                </span>
+              </div>
+            )}
           </div>
         </div>
 

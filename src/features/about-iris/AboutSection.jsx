@@ -177,12 +177,12 @@ export default function AboutSection3() {
               className="flex gap-4"
             >
               <div className="flex items-center gap-2 mb-2 sm:text-base text-xs">
-                <span className="text-(--color-secondary) font-black">2+ Years</span>
+                <span className="text-(--color-secondary) font-black">1+ Years</span>
                 <span className="text-(--text-secondary) font-semibold">Active Support</span>
                 <span className="text-gray-300">|</span>
               </div>
               <div className="flex items-center gap-2 mb-2 sm:text-base text-xs">
-                <span className="text-(--color-secondary) font-black">200+</span>
+                <span className="text-(--color-secondary) font-black">100+</span>
                 <span className="text-(--text-secondary) font-semibold">Active Members</span>
               </div>
             </TimelineContent>

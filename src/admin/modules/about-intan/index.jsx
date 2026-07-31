@@ -247,7 +247,7 @@ function SetlistsTab() {
   const [modalMode, setModalMode] = useState('add');
   const [editingId, setEditingId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({ name: '', period: '', shows: '', theme: '', image_url: '', status: 'Aktif', note: '', sort_order: 0, unitSongsText: '' });
+  const [formData, setFormData] = useState({ name: '', period: '', shows: '', show_count: 0, theme: '', image_url: '', status: 'Aktif', note: '', sort_order: 0, unitSongsText: '' });
   const [confirmDelete, setConfirmDelete] = useState({ isOpen: false, id: null });
 
   const fetchData = async () => { setIsLoading(true); setItems(await aboutIntanService.getSetlists()); setIsLoading(false); };
@@ -264,13 +264,13 @@ function SetlistsTab() {
 
   const handleAdd = () => {
     setModalMode('add'); setEditingId(null);
-    setFormData({ name: '', period: '', shows: '', theme: '', image_url: '', status: 'Aktif', note: '', sort_order: items.length + 1, unitSongsText: '' });
+    setFormData({ name: '', period: '', shows: '', show_count: 0, theme: '', image_url: '', status: 'Aktif', note: '', sort_order: items.length + 1, unitSongsText: '' });
     setIsModalOpen(true);
   };
   const handleEdit = (item) => {
     setModalMode('edit'); setEditingId(item.id);
     const songs = (item.unitSongs || []).map(s => s.song_name).join('\n');
-    setFormData({ name: item.name, period: item.period, shows: item.shows || '', theme: item.theme || '', image_url: item.image_url || '', status: item.status || 'Aktif', note: item.note || '', sort_order: item.sort_order || 0, unitSongsText: songs });
+    setFormData({ name: item.name, period: item.period, shows: item.shows || '', show_count: item.show_count || 0, theme: item.theme || '', image_url: item.image_url || '', status: item.status || 'Aktif', note: item.note || '', sort_order: item.sort_order || 0, unitSongsText: songs });
     setIsModalOpen(true);
   };
 
@@ -324,7 +324,7 @@ function SetlistsTab() {
         columns={[
           { key: 'name', header: 'Nama Setlist', render: (item) => <span className="font-bold text-(--text-primary)">{item.name}</span> },
           { key: 'period', header: 'Periode' },
-          { key: 'shows', header: 'Total Show' },
+          { key: 'shows', header: 'Total Show', render: (item) => <span className="tabular-nums">{item.shows || (item.show_count ? `${item.show_count}+ Shows` : '-')}</span> },
           { key: 'theme', header: 'Tema', render: (item) => <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-(--color-primary-light) text-(--color-primary)">{item.theme}</span> },
           { key: 'unitSongs', header: 'Unit Songs', render: (item) => <span className="text-xs text-(--text-muted)">{(item.unitSongs || []).length} lagu</span> },
         ]}
@@ -346,11 +346,19 @@ function SetlistsTab() {
               <input autoComplete="off" /* autocomplete="off" */ name="period" type="text" value={formData.period} onChange={e => setFormData(p => ({ ...p, period: e.target.value }))} placeholder="Contoh: Desember 2024 - Sekarang" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" required />
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="font-bold text-xs uppercase tracking-wider text-(--text-secondary)">Total Show</label>
-              <input autoComplete="off" /* autocomplete="off" */ name="shows" type="text" value={formData.shows} onChange={e => setFormData(p => ({ ...p, shows: e.target.value }))} placeholder="45+ Shows" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" />
+              <label className="font-bold text-xs uppercase tracking-wider text-(--text-secondary)">Jumlah Show (angka)</label>
+              <input autoComplete="off" name="show_count" type="number" min="0" value={formData.show_count} onChange={e => setFormData(p => ({ ...p, show_count: Number(e.target.value) }))} placeholder="45" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" />
+              <p className="text-[10px] text-(--text-muted)">Dipakai untuk chart di dashboard Intan Insights.</p>
             </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="font-bold text-xs uppercase tracking-wider text-(--text-secondary)">Teks Total Show</label>
+              <input autoComplete="off" /* autocomplete="off" */ name="shows" type="text" value={formData.shows} onChange={e => setFormData(p => ({ ...p, shows: e.target.value }))} placeholder={formData.show_count ? `${formData.show_count}+ Shows` : '45+ Shows'} className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" />
+              <p className="text-[10px] text-(--text-muted)">Kosongkan agar otomatis jadi “{formData.show_count || 'n'}+ Shows”.</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-(--text-secondary)">Tema CSS</label>
               <input autoComplete="off" /* autocomplete="off" */ name="theme" type="text" value={formData.theme} onChange={e => setFormData(p => ({ ...p, theme: e.target.value }))} placeholder="aitakatta, pajama, kirakira" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" />

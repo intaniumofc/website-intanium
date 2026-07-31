@@ -41,6 +41,20 @@ export const esportService = {
     return { success: true, data };
   },
 
+  setDivisionActive: async (id, isActive) => {
+    const { data, error } = await supabase
+      .from('esport_divisions')
+      .update({ is_active: isActive })
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) {
+      console.error('Error toggling division status:', error);
+      return { success: false, error: error.message };
+    }
+    return { success: true, data };
+  },
+
   deleteDivision: async (id) => {
     const { error } = await supabase
       .from('esport_divisions')

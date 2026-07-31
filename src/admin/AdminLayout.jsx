@@ -56,7 +56,7 @@ export default function AdminLayout({ children }) {
 
   // Dropdown menus states
   const isPathMerch = pathname.startsWith('/admin/merchandise') || pathname.startsWith('/admin/orders') || pathname.startsWith('/admin/categories');
-  const isPathProfile = pathname.startsWith('/admin/about-intan') || pathname.startsWith('/admin/schedule') || pathname.startsWith('/admin/intan-shining-star') || pathname.startsWith('/admin/comic-pages');
+  const isPathProfile = pathname.startsWith('/admin/about-intan') || pathname.startsWith('/admin/intan-insights') || pathname.startsWith('/admin/schedule') || pathname.startsWith('/admin/intan-shining-star') || pathname.startsWith('/admin/comic-pages');
 
   const [openDropdowns, setOpenDropdowns] = useState({
     merchandise_group: isPathMerch,
@@ -68,7 +68,7 @@ export default function AdminLayout({ children }) {
     if (pathname.startsWith('/admin/merchandise') || pathname.includes('/admin/merchandise')) {
       setOpenDropdowns(prev => ({ ...prev, merchandise_group: true }));
     }
-    if (pathname.startsWith('/admin/about-intan') || pathname.startsWith('/admin/schedule') || pathname.startsWith('/admin/intan-shining-star') || pathname.startsWith('/admin/comic-pages')) {
+    if (pathname.startsWith('/admin/about-intan') || pathname.startsWith('/admin/intan-insights') || pathname.startsWith('/admin/schedule') || pathname.startsWith('/admin/intan-shining-star') || pathname.startsWith('/admin/comic-pages')) {
       setOpenDropdowns(prev => ({ ...prev, 'about-intan_group': true }));
     }
   }, [pathname]);
@@ -86,6 +86,7 @@ export default function AdminLayout({ children }) {
     if (href === ROUTES.ADMIN_CATEGORIES) return 'categories';
     if (href === ROUTES.ADMIN_ORDERS) return 'orders';
     if (href.startsWith(ROUTES.ADMIN_ABOUT_INTAN)) return 'about-intan';
+    if (href === ROUTES.ADMIN_INTAN_INSIGHTS) return 'about-intan';
     if (href === ROUTES.ADMIN_SHINING_STAR) return 'shining-star';
     if (href === ROUTES.ADMIN_COMIC_PAGES) return 'shining-star';
     if (href === ROUTES.ADMIN_SCHEDULE) return 'schedule';
@@ -192,6 +193,7 @@ export default function AdminLayout({ children }) {
       name: 'Profil Intan',
       icon: User,
       subLinks: [
+        { name: 'Intan Insights', href: ROUTES.ADMIN_INTAN_INSIGHTS },
         { name: 'Statistik', href: `${ROUTES.ADMIN_ABOUT_INTAN}?tab=stats` },
         { name: 'Setlist & Unit Songs', href: `${ROUTES.ADMIN_ABOUT_INTAN}?tab=setlists` },
         { name: 'Video Highlights', href: `${ROUTES.ADMIN_ABOUT_INTAN}?tab=videos` },

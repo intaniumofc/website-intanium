@@ -20,6 +20,10 @@ export default function AdminSchedule() {
 
   const [isPublishingAll, setIsPublishingAll] = useState(false);
 
+  // Sync otomatis sisi server (cron endpoint yang sama, dipicu manual oleh admin)
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [lastSync, setLastSync] = useState(null); // { syncedAt, matched, upserted }
+
   // Bookmarklet 1-klik (fetch data via browser admin, lolos Cloudflare)
   const [isBookmarkletOpen, setIsBookmarkletOpen] = useState(false);
   const [isBookmarkletLoading, setIsBookmarkletLoading] = useState(false);
@@ -105,6 +109,36 @@ export default function AdminSchedule() {
     } else {
       notify.error('Gagal membersihkan draft', res.error);
     }
+  };
+
+  // Sinkron jadwal Nur Intan langsung dari server (tanpa bookmarklet).
+  const handleSyncNow = async () => {
+    setIsSyncing(true);
+    const res = await scheduleService.syncFromJKT48();
+    setIsSyncing(false);
+
+    if (!res.success) {
+      notify.error('Gagal sinkron JKT48', res.error);
+      return;
+    }
+
+    const { summary, warning, syncedAt } = res.data;
+    setLastSync({ syncedAt, matched: summary.matched, upserted: summary.upserted });
+
+    if (warning) {
+      notify.warning('Sync selesai dengan catatan', warning);
+    } else if (summary.upserted > 0) {
+      notify.success(
+        'Sinkron JKT48 Berhasil',
+        `${summary.upserted} jadwal Nur Intan tersimpan sebagai draft (dari ${summary.total} jadwal dicek).`
+      );
+    } else {
+      notify.info(
+        'Sinkron Selesai',
+        `Tidak ada jadwal baru Nur Intan. ${summary.total} jadwal dicek, ${summary.fromCache} dari cache.`
+      );
+    }
+    fetchData();
   };
 
   // Buka modal bookmarklet: ambil token dari server lalu bangun URL javascript:.
@@ -299,6 +333,20 @@ export default function AdminSchedule() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          {/* Sinkron otomatis dari server */}
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-1.5 shadow-sm text-xs cursor-pointer border-[var(--border-color)] bg-white hover:bg-gray-50 text-[var(--text-primary)]"
+            onClick={handleSyncNow}
+            isLoading={isSyncing}
+            title={lastSync
+              ? `Sync terakhir: ${new Date(lastSync.syncedAt).toLocaleString('id-ID')} — ${lastSync.upserted} jadwal tersimpan`
+              : 'Ambil jadwal Nur Intan terbaru dari jkt48.com (bulan ini + 2 bulan ke depan)'}
+          >
+            <RefreshCw className={`h-3.5 w-3.5 text-[var(--color-primary)] ${isSyncing ? 'animate-spin' : ''}`} /> Sinkron JKT48
+          </Button>
+
           {/* Impor via Bookmarklet */}
           <Button
             variant="outline"
