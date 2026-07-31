@@ -246,7 +246,6 @@ export default function AdminJoinUsPage() {
       await joinService.updateJoinSettings(type, currentSetting);
       await logAdminActivity(`Memperbarui pengaturan form join us (${type})`);
       notify.success('Pengaturan Disimpan', `Pengaturan form ${type} berhasil disimpan.`);
-      fetchData();
     } catch (err) {
       notify.error('Gagal Menyimpan Pengaturan', err.message);
     } finally {
