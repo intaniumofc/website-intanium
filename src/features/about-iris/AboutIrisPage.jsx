@@ -468,6 +468,9 @@ export default function AboutIrisPage() {
         {/* ================= FILOSOFI NAMA IRIS ================= */}
         <IrisPhilosophySection />
 
+        {/* ================= TAGLINE #GEMINTANG ================= */}
+        <GemintangSection />
+
         {/* ================= FILOSOFI LOGO ================= */}
         <motion.section
           id="filosofi-logo"
@@ -782,9 +785,6 @@ export default function AboutIrisPage() {
             </div>
           </div>
         </motion.section>
-
-        {/* Section Tagline #GEMINTANG */}
-        <GemintangSection />
 
         <IrisStructureSection />
 
