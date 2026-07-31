@@ -67,9 +67,13 @@ export default function HomeHashtagsSection() {
     if (isLoading) return;
     gsap.registerPlugin(ScrollTrigger);
 
+    const row1El = row1Ref.current;
+    const row2El = row2Ref.current;
+    if (!row1El || !row2El) return;
+
     let ctx = gsap.context(() => {
       // Row 1 loops to the left
-      const tween1 = gsap.to(row1Ref.current, {
+      const tween1 = gsap.to(row1El, {
         xPercent: -50,
         ease: 'none',
         duration: 25,
@@ -78,7 +82,7 @@ export default function HomeHashtagsSection() {
 
       // Row 2 loops to the right
       const tween2 = gsap.fromTo(
-        row2Ref.current,
+        row2El,
         { xPercent: -50 },
         { xPercent: 0, ease: 'none', duration: 28, repeat: -1 }
       );

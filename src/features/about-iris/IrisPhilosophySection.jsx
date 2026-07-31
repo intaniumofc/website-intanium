@@ -40,42 +40,53 @@ export default function IrisPhilosophySection() {
   const containerRef = useRef(null);
 
   useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const mythSection = container.querySelector('.myth-section');
+    const acronymColumns = container.querySelectorAll('.acronym-column');
+    const acronymContainer = container.querySelector('.acronym-container');
+
     let ctx = gsap.context(() => {
       // Fade in the myth section
-      gsap.fromTo(
-        '.myth-section',
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: '.myth-section',
-            start: 'top 85%',
-            toggleActions: 'play none none reverse',
-          },
-        }
-      );
+      if (mythSection) {
+        gsap.fromTo(
+          mythSection,
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: mythSection,
+              start: 'top 85%',
+              toggleActions: 'play none none reverse',
+            },
+          }
+        );
+      }
 
       // Stagger fade-in the columns
-      gsap.fromTo(
-        '.acronym-column',
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          stagger: 0.12,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: '.acronym-container',
-            start: 'top 85%',
-            toggleActions: 'play none none reverse',
-          },
-        }
-      );
-    }, containerRef);
+      if (acronymColumns.length && acronymContainer) {
+        gsap.fromTo(
+          acronymColumns,
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            stagger: 0.12,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: acronymContainer,
+              start: 'top 85%',
+              toggleActions: 'play none none reverse',
+            },
+          }
+        );
+      }
+    }, container);
 
     return () => ctx.revert();
   }, []);

@@ -372,16 +372,16 @@ export default function ComicFlipbook() {
 
           {/* Fullscreen HTMLFlipBook - Centered Single-Page Height-Fit View */}
           <div className={`comic-fullscreen-pages-frame flex-1 flex items-center justify-center overflow-hidden relative w-full h-full my-auto py-1 ${flipping3DClass}`}>
-            <div className="relative flex items-center justify-center h-full max-h-[calc(100vh-135px)] w-full max-w-[560px] mx-auto">
+            <div className="comic-fullscreen-book-container relative flex items-center justify-center h-full w-full mx-auto">
               <HTMLFlipBook
                 ref={fullscreenFlipBookRef}
                 width={460}
                 height={660}
-                size="fixed"
-                minWidth={280}
-                maxWidth={540}
-                minHeight={400}
-                maxHeight={780}
+                size="stretch"
+                minWidth={240}
+                maxWidth={700}
+                minHeight={340}
+                maxHeight={900}
                 showCover={false}
                 drawShadow={true}
                 maxShadowOpacity={0.3}

@@ -464,33 +464,43 @@ export default function IrisStructureSection() {
 
   useEffect(() => {
     if (isLoading) return;
+    const container = containerRef.current;
+    if (!container) return;
 
     let ctx = gsap.context(() => {
-      // Set initial states
-      gsap.set('.connector-path', { strokeDasharray: 200, strokeDashoffset: 200 });
-      gsap.set('.connector-dot', { scale: 0, opacity: 0 });
-      gsap.set('.structure-title', { opacity: 0, y: 30 });
-      gsap.set('.oshi-card-wrapper', { opacity: 0, y: 30, scale: 0.98 });
-      gsap.set('.general-card-wrapper', { opacity: 0, y: 30, scale: 0.98 });
-      gsap.set('.lower-branch-card', { opacity: 0, y: 40 });
+      // Query elements safely before animating
+      const connectorPaths = container.querySelectorAll('.connector-path');
+      const connectorDots = container.querySelectorAll('.connector-dot');
+      const structureTitle = container.querySelector('.structure-title');
+      const oshiCard = container.querySelector('.oshi-card-wrapper');
+      const generalCard = container.querySelector('.general-card-wrapper');
+      const lowerBranchCards = container.querySelectorAll('.lower-branch-card');
+
+      // Set initial states (only if elements exist)
+      if (connectorPaths.length) gsap.set(connectorPaths, { strokeDasharray: 200, strokeDashoffset: 200 });
+      if (connectorDots.length) gsap.set(connectorDots, { scale: 0, opacity: 0 });
+      if (structureTitle) gsap.set(structureTitle, { opacity: 0, y: 30 });
+      if (oshiCard) gsap.set(oshiCard, { opacity: 0, y: 30, scale: 0.98 });
+      if (generalCard) gsap.set(generalCard, { opacity: 0, y: 30, scale: 0.98 });
+      if (lowerBranchCards.length) gsap.set(lowerBranchCards, { opacity: 0, y: 40 });
 
       // Create GSAP ScrollTrigger timeline
       const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: containerRef.current,
+          trigger: container,
           start: 'top 75%',
           toggleActions: 'play none none reverse',
         }
       });
 
-      tl.to('.structure-title', { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' })
-        .to('.oshi-card-wrapper', { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: 'power2.out' }, '-=0.4')
-        .to('.general-card-wrapper', { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: 'power2.out' }, '-=0.3')
-        .to('.connector-path', { strokeDashoffset: 0, duration: 0.8, ease: 'power1.inOut' }, '-=0.2')
-        .to('.connector-dot', { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(1.8)' }, '-=0.2')
-        .to('.lower-branch-card', { opacity: 1, y: 0, duration: 0.6, stagger: 0.15, ease: 'power2.out' }, '-=0.2');
+      if (structureTitle) tl.to(structureTitle, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' });
+      if (oshiCard) tl.to(oshiCard, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: 'power2.out' }, '-=0.4');
+      if (generalCard) tl.to(generalCard, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: 'power2.out' }, '-=0.3');
+      if (connectorPaths.length) tl.to(connectorPaths, { strokeDashoffset: 0, duration: 0.8, ease: 'power1.inOut' }, '-=0.2');
+      if (connectorDots.length) tl.to(connectorDots, { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(1.8)' }, '-=0.2');
+      if (lowerBranchCards.length) tl.to(lowerBranchCards, { opacity: 1, y: 0, duration: 0.6, stagger: 0.15, ease: 'power2.out' }, '-=0.2');
 
-    }, containerRef);
+    }, container);
 
     return () => ctx.revert();
   }, [isLoading]);

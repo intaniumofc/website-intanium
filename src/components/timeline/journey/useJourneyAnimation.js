@@ -86,7 +86,7 @@ export function useJourneyAnimation({
       // --- Path draw + travelling highlight setup ---
       gsap.set(pathEl, { strokeDasharray: pathLength, strokeDashoffset: pathLength });
       const HL = 70; // highlight dash length
-      gsap.set(highlightEl, { strokeDasharray: `${HL} ${pathLength}`, strokeDashoffset: 0 });
+      if (highlightEl) gsap.set(highlightEl, { strokeDasharray: `${HL} ${pathLength}`, strokeDashoffset: 0 });
 
       // --- Idle character life (independent of scroll) --------------------
       // Small 4px float + gentle breathing scale + micro-sway. She always
@@ -193,7 +193,7 @@ export function useJourneyAnimation({
             place(prog, false);
 
             gsap.set(pathEl, { strokeDashoffset: pathLength * (1 - prog) });
-            gsap.set(highlightEl, { strokeDashoffset: -(prog * pathLength) + HL });
+            if (highlightEl) gsap.set(highlightEl, { strokeDashoffset: -(prog * pathLength) + HL });
 
             let active = 0;
             for (let i = 0; i < nodeProgress.length; i++) {
@@ -226,15 +226,23 @@ export function useJourneyAnimation({
           1,
           (nodeProgress[i] - TRAVEL_START) / TRAVEL_SPAN - 0.02
         );
-        // node glows + gold ring expands
-        tl.fromTo(
-          `.jnode-${i}`,
-          { scale: 0.2, autoAlpha: 0, xPercent: -50, yPercent: -50 },
-          { scale: 1, autoAlpha: 1, xPercent: -50, yPercent: -50, ease: 'back.out(1.7)', duration: 0.04 },
-          at
-        );
-        // connector stem draws from the node toward the card
+
+        // Query elements safely before animating
+        const nodeEl = stageEl.querySelector(`.jnode-${i}`);
         const stemEl = stageEl.querySelector(`.jstem-${i}`);
+        const cardEl = stageEl.querySelector(`.jcard-${i}`);
+        const polaroidEl = stageEl.querySelector(`.jpolaroid-${i}`);
+
+        // node glows + gold ring expands
+        if (nodeEl) {
+          tl.fromTo(
+            nodeEl,
+            { scale: 0.2, autoAlpha: 0, xPercent: -50, yPercent: -50 },
+            { scale: 1, autoAlpha: 1, xPercent: -50, yPercent: -50, ease: 'back.out(1.7)', duration: 0.04 },
+            at
+          );
+        }
+        // connector stem draws from the node toward the card
         if (stemEl) {
           const stemLen = stemEl.getTotalLength();
           tl.fromTo(
@@ -245,47 +253,63 @@ export function useJourneyAnimation({
           );
         }
         // card container fades + rises up into place (Node -> Card read)
-        tl.fromTo(
-          `.jcard-${i}`,
-          { autoAlpha: 0, y: 26, scale: 0.9, xPercent: -50, yPercent: -50 },
-          { autoAlpha: 1, y: 0, scale: 1, xPercent: -50, yPercent: -50, ease: 'back.out(1.3)', duration: 0.05 },
-          at + 0.01
-        );
-        // printed photo scales down into frame
-        tl.fromTo(
-          `.jcard-${i} .journey-card-photo img`,
-          { scale: 1.18 },
-          { scale: 1, ease: 'power2.out', duration: 0.06 },
-          at + 0.014
-        );
-        // title slides in
-        tl.fromTo(
-          `.jcard-${i} .journey-card-title`,
-          { x: -14, autoAlpha: 0 },
-          { x: 0, autoAlpha: 1, ease: 'power2.out', duration: 0.04 },
-          at + 0.024
-        );
-        // description fades in
-        tl.fromTo(
-          `.jcard-${i} .journey-card-desc`,
-          { autoAlpha: 0 },
-          { autoAlpha: 1, ease: 'none', duration: 0.04 },
-          at + 0.032
-        );
-        // category badge pops
-        tl.fromTo(
-          `.jcard-${i} .journey-card-badge`,
-          { scale: 0, autoAlpha: 0 },
-          { scale: 1, autoAlpha: 1, ease: 'back.out(2)', duration: 0.035 },
-          at + 0.038
-        );
+        if (cardEl) {
+          tl.fromTo(
+            cardEl,
+            { autoAlpha: 0, y: 26, scale: 0.9, xPercent: -50, yPercent: -50 },
+            { autoAlpha: 1, y: 0, scale: 1, xPercent: -50, yPercent: -50, ease: 'back.out(1.3)', duration: 0.05 },
+            at + 0.01
+          );
+          // printed photo scales down into frame
+          const photoImg = cardEl.querySelector('.journey-card-photo img');
+          if (photoImg) {
+            tl.fromTo(
+              photoImg,
+              { scale: 1.18 },
+              { scale: 1, ease: 'power2.out', duration: 0.06 },
+              at + 0.014
+            );
+          }
+          // title slides in
+          const titleEl = cardEl.querySelector('.journey-card-title');
+          if (titleEl) {
+            tl.fromTo(
+              titleEl,
+              { x: -14, autoAlpha: 0 },
+              { x: 0, autoAlpha: 1, ease: 'power2.out', duration: 0.04 },
+              at + 0.024
+            );
+          }
+          // description fades in
+          const descEl = cardEl.querySelector('.journey-card-desc');
+          if (descEl) {
+            tl.fromTo(
+              descEl,
+              { autoAlpha: 0 },
+              { autoAlpha: 1, ease: 'none', duration: 0.04 },
+              at + 0.032
+            );
+          }
+          // category badge pops
+          const badgeEl = cardEl.querySelector('.journey-card-badge');
+          if (badgeEl) {
+            tl.fromTo(
+              badgeEl,
+              { scale: 0, autoAlpha: 0 },
+              { scale: 1, autoAlpha: 1, ease: 'back.out(2)', duration: 0.035 },
+              at + 0.038
+            );
+          }
+        }
         // polaroid fades in first — before node, stem, and card
-        tl.fromTo(
-          `.jpolaroid-${i}`,
-          { autoAlpha: 0, scale: 0.7 },
-          { autoAlpha: 1, scale: 1, ease: 'power2.out', duration: 0.04 },
-          at - 0.005
-        );
+        if (polaroidEl) {
+          tl.fromTo(
+            polaroidEl,
+            { autoAlpha: 0, scale: 0.7 },
+            { autoAlpha: 1, scale: 1, ease: 'power2.out', duration: 0.04 },
+            at - 0.005
+          );
+        }
       });
 
       // Initial placement so nothing pops on first paint.
