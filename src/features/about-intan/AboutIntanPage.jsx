@@ -117,7 +117,7 @@ function ProfileFactItem({ fact, delay = 0 }) {
   );
 }
 
-// Premium StatCounter Component with spring counting and interactive icon/line hover
+// Premium StatCounter Component with spring counting and clean typography
 function StatCounter({ icon: IconComp, value, label, description, delay = 0 }) {
   const [count, setCount] = useState(0);
   const elementRef = useRef(null);
@@ -126,7 +126,6 @@ function StatCounter({ icon: IconComp, value, label, description, delay = 0 }) {
 
   useEffect(() => {
     if (isInView && !hasAnimated) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setHasAnimated(true);
       const endNum = parseInt(value.replace(/\D/g, '')) || 0;
       let startTime = null;
@@ -154,24 +153,28 @@ function StatCounter({ icon: IconComp, value, label, description, delay = 0 }) {
   return (
     <motion.div
       ref={elementRef}
-      className="bg-(--bg-card) border border-(--border-color) p-6 rounded-3xl flex flex-col items-center text-center group hover:bg-white hover:border-(--color-primary)/20 transition-all duration-300 shadow-(--box-shadow-sm) relative"
+      className="bg-[var(--bg-card)] border border-[var(--border-color)] p-6 sm:p-7 rounded-3xl flex flex-col items-center text-center group hover:bg-white hover:border-[var(--color-primary)]/20 transition-all duration-300 shadow-[var(--box-shadow-sm)] hover:shadow-xl relative"
       variants={fadeUp}
       transition={{ delay }}
       whileHover={{ y: -6, transition: { duration: 0.2 } }}
     >
       <motion.div
-        className="w-14 h-14 rounded-2xl bg-(--color-primary-light) flex items-center justify-center mb-4 text-(--color-primary) group-hover:bg-(--color-primary) group-hover:text-white transition-colors duration-300"
+        className="w-14 h-14 rounded-2xl bg-[var(--color-primary-light)] flex items-center justify-center mb-4 text-[var(--color-primary)] group-hover:bg-[var(--color-primary)] group-hover:text-white transition-colors duration-300 shadow-xs"
         whileHover={{ rotate: 360, transition: { duration: 0.8 } }}
       >
         <IconComp className="w-6 h-6" />
       </motion.div>
-      <div className="text-3.5xl font-black text-(--color-primary) flex items-center justify-center font-heading tracking-tight leading-none">
-        <span>{count}</span>
-        <span className="text-(--color-secondary) font-sans text-xl ml-0.5">{suffix}</span>
+      <div className="flex items-baseline justify-center font-black text-[var(--color-primary)] font-heading tracking-tight leading-none">
+        <span className="text-3xl sm:text-4xl lg:text-5xl font-black">{count}</span>
+        {suffix && (
+          <span className="text-base sm:text-lg lg:text-xl font-bold text-[var(--color-secondary)] ml-1 self-baseline">
+            {suffix}
+          </span>
+        )}
       </div>
-      <h4 className="text-sm font-bold text-(--text-primary) mt-3 line-clamp-1">{label}</h4>
-      <p className="text-xs text-(--text-muted) mt-1.5 leading-relaxed line-clamp-2 max-w-50">{description}</p>
-      <motion.div className="w-8 h-0.5 bg-(--color-secondary) mt-4 group-hover:w-16 transition-all duration-300" />
+      <h4 className="text-sm sm:text-base font-extrabold text-[var(--text-primary)] mt-3 tracking-tight line-clamp-1">{label}</h4>
+      <p className="text-xs text-[var(--text-muted)] mt-1.5 leading-relaxed line-clamp-2 max-w-xs">{description}</p>
+      <motion.div className="w-8 h-0.5 bg-[var(--color-secondary)] mt-4 group-hover:w-16 transition-all duration-300 rounded-full" />
     </motion.div>
   );
 }
