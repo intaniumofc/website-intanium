@@ -2,11 +2,13 @@
 
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { orderService } from '../../../services/admin/orderService';
+import { notificationService } from '../../../services/public/notificationService';
 import { formatCurrency } from '../../../lib/helpers';
 import { 
   Search, Trash2, Eye, FileText, X, ChevronLeft, ChevronRight, 
   Download, RefreshCw, Check, Clock, AlertTriangle, AlertCircle,
-  MoreVertical, ClipboardCheck, ArrowLeft, ExternalLink, Package, Truck, Info
+  MoreVertical, ClipboardCheck, ArrowLeft, ExternalLink, Package, Truck, Info,
+  Factory, CheckCircle2, XCircle, Layers
 } from 'lucide-react';
 import { StatusBadge } from '../../../components/ui/status-badge';
 import ConfirmDialog from '../../../components/common/ConfirmDialog';
@@ -34,6 +36,22 @@ const bulkStatusOptions = [
 
 const ORDER_PAGE_SIZE = 12;
 const HIGH_TOTAL_THRESHOLD = 1000000;
+
+const PRODUCTION_STAGES = [
+  { value: 'design', label: 'Desain' },
+  { value: 'sampling', label: 'Sampling' },
+  { value: 'mass_production', label: 'Produksi Massal' },
+  { value: 'qc', label: 'Quality Control' },
+  { value: 'warehousing', label: 'Pergudangan' },
+  { value: 'shipping_prep', label: 'Persiapan Kirim' },
+];
+const PRODUCTION_STAGE_LABELS = Object.fromEntries(PRODUCTION_STAGES.map((s) => [s.value, s.label]));
+
+const PAYMENT_STATUS_STYLES = {
+  pending: 'border-amber-200 bg-amber-50 text-amber-700',
+  verified: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+  rejected: 'border-rose-200 bg-rose-50 text-rose-600',
+};
 
 const STATUS_STYLES = {
   pending_review: {
@@ -120,6 +138,7 @@ export default function AdminOrdersPage() {
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [minimumTotal, setMinimumTotal] = useState('');
+  const [preorderFilter, setPreorderFilter] = useState('all');
 
   // Bulk operation states
   const [selectedOrderIds, setSelectedOrderIds] = useState([]);
@@ -134,6 +153,12 @@ export default function AdminOrdersPage() {
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
 
+  // View mode & preorder batch summary states
+  const [viewMode, setViewMode] = useState('orders');
+  const [batchSummary, setBatchSummary] = useState([]);
+  const [batchLoading, setBatchLoading] = useState(false);
+  const [batchError, setBatchError] = useState('');
+
   // Detail drawer states
   const [detailOpen, setDetailOpen] = useState(false);
   const [detailLoading, setDetailLoading] = useState(false);
@@ -145,6 +170,10 @@ export default function AdminOrdersPage() {
   const [markShipped, setMarkShipped] = useState(true);
   const [correctedShippingCost, setCorrectedShippingCost] = useState('');
   const [shippingCostSaving, setShippingCostSaving] = useState(false);
+  const [verifySaving, setVerifySaving] = useState(false);
+  const [stageValue, setStageValue] = useState('');
+  const [stageNotes, setStageNotes] = useState('');
+  const [stageSaving, setStageSaving] = useState(false);
 
   // Unified confirm dialog state
   const [confirmState, setConfirmState] = useState({
@@ -178,9 +207,26 @@ export default function AdminOrdersPage() {
     void fetchOrders();
   }, []);
 
+  async function fetchBatchSummary() {
+    setBatchLoading(true);
+    setBatchError('');
+    try {
+      const data = await orderService.getBatchSummary();
+      setBatchSummary(data);
+    } catch (err) {
+      setBatchError(err instanceof Error ? err.message : 'Gagal memuat ringkasan batch preorder');
+    } finally {
+      setBatchLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (viewMode === 'batch') void fetchBatchSummary();
+  }, [viewMode]);
+
   useEffect(() => {
     setCurrentPage(1);
-  }, [query, statusFilter, dateFrom, dateTo, minimumTotal]);
+  }, [query, statusFilter, dateFrom, dateTo, minimumTotal, preorderFilter]);
 
   const periodOrders = useMemo(() => {
     return orders.filter((order) => {
@@ -204,16 +250,19 @@ export default function AdminOrdersPage() {
     return periodOrders.filter((order) => {
       const matchesQuery =
         !normalizedQuery ||
-        [order.order_number, order.shipping_name, order.shipping_phone]
+        [order.order_number, order.shipping_name, order.shipping_phone, order.product_name]
           .join(' ')
           .toLowerCase()
           .includes(normalizedQuery);
 
       const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
       const matchesMinTotal = minTotalNumber === null || Number(order.total_amount) >= minTotalNumber;
-      return matchesQuery && matchesStatus && matchesMinTotal;
+      const matchesPreorder =
+        preorderFilter === 'all' ||
+        (preorderFilter === 'preorder' ? Boolean(order.is_preorder) : !order.is_preorder);
+      return matchesQuery && matchesStatus && matchesMinTotal && matchesPreorder;
     });
-  }, [minimumTotal, periodOrders, query, statusFilter]);
+  }, [minimumTotal, periodOrders, preorderFilter, query, statusFilter]);
 
   const sortedFilteredOrders = useMemo(
     () =>
@@ -380,6 +429,8 @@ export default function AdminOrdersPage() {
       setTrackingUrl(detail.order.tracking_url ?? '');
       setMarkShipped(detail.order.status === 'paid');
       setCorrectedShippingCost(detail.order.shipping_cost?.toString() ?? '0');
+      setStageValue(detail.product?.production_stage ?? '');
+      setStageNotes(detail.product?.production_notes ?? '');
     } catch (err) {
       setDetailError(err instanceof Error ? err.message : 'Gagal memuat detail order');
     } finally {
@@ -443,6 +494,65 @@ export default function AdminOrdersPage() {
     }
   }
 
+  function handleVerifyPayment(decision) {
+    if (!detailData?.payment) return;
+    setConfirmState({
+      isOpen: true,
+      title: decision === 'verified' ? 'Verifikasi Pembayaran?' : 'Tolak Bukti Pembayaran?',
+      message:
+        decision === 'verified'
+          ? `Bukti pembayaran order ${detailData.order.order_number} akan diverifikasi dan status order otomatis menjadi PAID.`
+          : `Bukti pembayaran order ${detailData.order.order_number} akan ditolak. Pembeli harus mengunggah ulang bukti transfer.`,
+      type: decision === 'verified' ? 'warning' : 'danger',
+      confirmText: decision === 'verified' ? 'Ya, Verifikasi' : 'Ya, Tolak',
+      actionType: 'verifyPayment',
+      payload: { orderId: detailData.order.id, paymentId: detailData.payment.id, decision },
+    });
+  }
+
+  async function executeVerifyPayment({ orderId, paymentId, decision }) {
+    setVerifySaving(true);
+    setError('');
+    setFeedback('');
+    try {
+      const updated = await orderService.verifyPayment(orderId, paymentId, decision, statusAuditNote);
+      setOrders((current) =>
+        current.map((order) => (order.id === updated.id ? { ...order, ...updated } : order)),
+      );
+      const label = decision === 'verified' ? 'diverifikasi' : 'ditolak';
+      setFeedback(`Bukti pembayaran order ${updated.order_number} berhasil ${label}.`);
+      notify.success('Verifikasi pembayaran', `Bukti pembayaran order ${updated.order_number} ${label}.`);
+      await handleOpenDetail(orderId);
+      setStatusAuditNote('');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Gagal memverifikasi pembayaran.';
+      setError(message);
+      notify.error('Gagal verifikasi pembayaran', message);
+    } finally {
+      setVerifySaving(false);
+    }
+  }
+
+  async function handleSaveProductionStage() {
+    if (!detailData?.product) return;
+    setStageSaving(true);
+    try {
+      const product = await orderService.updateProductionStage(
+        detailData.product.id,
+        stageValue || null,
+        stageNotes.trim() || null,
+      );
+      notify.success('Tahap produksi diperbarui', `Tahap produksi "${product.name}" berhasil disimpan.`);
+      await handleOpenDetail(detailData.order.id);
+      void fetchOrders();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Gagal memperbarui tahap produksi.';
+      notify.error('Gagal memperbarui produksi', message);
+    } finally {
+      setStageSaving(false);
+    }
+  }
+
   function handleDeleteOrder(order) {
     setConfirmState({
       isOpen: true,
@@ -490,6 +600,9 @@ export default function AdminOrdersPage() {
         break;
       case 'deleteOrder':
         executeDeleteOrder(payload.order);
+        break;
+      case 'verifyPayment':
+        void executeVerifyPayment(payload);
         break;
       default:
         break;
@@ -606,6 +719,7 @@ export default function AdminOrdersPage() {
     setDateFrom('');
     setDateTo('');
     setMinimumTotal('');
+    setPreorderFilter('all');
   }
 
   return (
@@ -622,6 +736,28 @@ export default function AdminOrdersPage() {
           </h1>
         </div>
         <div className="flex items-center gap-2 overflow-x-auto admin-scrollbar pb-1 sm:pb-0 w-full sm:w-auto shrink-0">
+          <div className="inline-flex rounded-xl border border-slate-200 bg-white p-0.5 shadow-sm shrink-0">
+            <button
+              type="button"
+              onClick={() => setViewMode('orders')}
+              className={`inline-flex items-center gap-1.5 rounded-[10px] px-3.5 py-1.5 text-xs font-bold transition cursor-pointer whitespace-nowrap ${
+                viewMode === 'orders' ? 'bg-[var(--color-primary)] text-white shadow-xs' : 'text-slate-500 hover:text-slate-800'
+              }`}
+            >
+              <Package className="h-3.5 w-3.5 shrink-0" />
+              Daftar Order
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('batch')}
+              className={`inline-flex items-center gap-1.5 rounded-[10px] px-3.5 py-1.5 text-xs font-bold transition cursor-pointer whitespace-nowrap ${
+                viewMode === 'batch' ? 'bg-[var(--color-primary)] text-white shadow-xs' : 'text-slate-500 hover:text-slate-800'
+              }`}
+            >
+              <Layers className="h-3.5 w-3.5 shrink-0" />
+              Batch Preorder
+            </button>
+          </div>
           <button
             type="button"
             onClick={exportFilteredOrdersToPdf}
@@ -640,6 +776,15 @@ export default function AdminOrdersPage() {
         </div>
       </div>
 
+      {viewMode === 'batch' ? (
+        <BatchSummaryView
+          summary={batchSummary}
+          loading={batchLoading}
+          error={batchError}
+          onRetry={() => void fetchBatchSummary()}
+        />
+      ) : (
+        <>
       {/* ── Inline stats ── */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-white border border-[var(--border-color)] rounded-2xl p-4 text-center shadow-xs">
@@ -686,6 +831,17 @@ export default function AdminOrdersPage() {
           ))}
         </select>
 
+        {/* Preorder Filter */}
+        <select
+          value={preorderFilter}
+          onChange={(e) => setPreorderFilter(e.target.value)}
+          className="rounded-xl border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-bold text-slate-700 cursor-pointer focus:outline-none focus:border-[var(--color-primary)]"
+        >
+          <option value="all">Semua Tipe</option>
+          <option value="preorder">Hanya Preorder</option>
+          <option value="regular">Non-Preorder</option>
+        </select>
+
         {/* Date From */}
         <input autoComplete="off" /* autocomplete="off" */ name="dateFrom" type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} max={dateTo || undefined} className="rounded-xl border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-bold text-slate-700 focus:outline-none focus:border-[var(--color-primary)]" />
         <span className="text-xs text-slate-400 font-bold">–</span>
@@ -696,7 +852,7 @@ export default function AdminOrdersPage() {
         <input autoComplete="off" /* autocomplete="off" */ name="minimumTotal" type="number" min="0" placeholder="Min nominal…" value={minimumTotal} onChange={(e) => setMinimumTotal(e.target.value)} className="w-32 rounded-xl border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 placeholder-slate-400 focus:outline-none focus:border-[var(--color-primary)]" />
 
         {/* Reset Filter Button */}
-        {(query || statusFilter !== 'all' || dateFrom || dateTo || minimumTotal) ? (
+        {(query || statusFilter !== 'all' || dateFrom || dateTo || minimumTotal || preorderFilter !== 'all') ? (
           <button
             type="button"
             onClick={resetFilters}
@@ -832,6 +988,13 @@ export default function AdminOrdersPage() {
                         <p className="mt-0.5 text-[9px] font-bold text-slate-400">
                           Upd: {formatDateTime(order.updated_at)}
                         </p>
+                        {order.is_preorder ? (
+                          <span className="mt-1 inline-flex items-center gap-1 rounded-full border border-purple-200 bg-purple-50 px-2 py-0.5 text-[9px] font-extrabold text-purple-700">
+                            <Factory className="h-2.5 w-2.5 shrink-0" />
+                            PO Batch {order.preorder_round || 1}
+                            {order.production_stage ? ` · ${PRODUCTION_STAGE_LABELS[order.production_stage] || order.production_stage}` : ''}
+                          </span>
+                        ) : null}
                       </td>
                       <td className="px-4 py-4">
                         <p className="font-bold text-slate-800">{order.shipping_name}</p>
@@ -917,8 +1080,16 @@ export default function AdminOrdersPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 min-w-0">
                       <input name="file_input" type="checkbox" checked={selectedOrderIds.includes(order.id)} onChange={() => toggleSelectOne(order.id)} className="rounded border-slate-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)]/20 cursor-pointer shrink-0" />
-                      <div className="font-mono text-xs font-bold text-slate-800 truncate">
-                        {order.order_number}
+                      <div className="min-w-0">
+                        <div className="font-mono text-xs font-bold text-slate-800 truncate">
+                          {order.order_number}
+                        </div>
+                        {order.is_preorder ? (
+                          <span className="mt-0.5 inline-flex items-center gap-1 rounded-full border border-purple-200 bg-purple-50 px-2 py-0.5 text-[9px] font-extrabold text-purple-700">
+                            <Factory className="h-2.5 w-2.5 shrink-0" />
+                            PO Batch {order.preorder_round || 1}
+                          </span>
+                        ) : null}
                       </div>
                     </div>
                     <OrderRowMenu
@@ -1016,6 +1187,8 @@ export default function AdminOrdersPage() {
           </div>
         </div>
       ) : null}
+        </>
+      )}
 
       {/* ── Detail Drawer ── */}
       {detailOpen ? (
@@ -1066,8 +1239,34 @@ export default function AdminOrdersPage() {
                   <div className="bg-white border border-slate-200/80 rounded-2xl p-4 flex items-center justify-between">
                     <div>
                       <span className="text-[9px] font-bold text-slate-400 block uppercase">Status Saat Ini</span>
-                      <div className="mt-1.5">
+                      <div className="mt-1.5 flex items-center gap-2">
                         <StatusBadge status={detailData.order.status} />
+                        {detailData.order.shipping_phone && detailData.order.shipping_phone !== '-' ? (
+                          <a
+                            href={
+                              detailData.order.status === 'shipped'
+                                ? notificationService.buildNotificationLink(detailData.order.shipping_phone, 'shipping_update', {
+                                    invoiceNumber: detailData.order.order_number,
+                                    trackingNumber: detailData.order.tracking_number,
+                                    trackingUrl: detailData.order.tracking_url,
+                                  })
+                                : detailData.order.status === 'paid'
+                                ? notificationService.buildNotificationLink(detailData.order.shipping_phone, 'payment_verified', {
+                                    invoiceNumber: detailData.order.order_number,
+                                  })
+                                : notificationService.buildNotificationLink(detailData.order.shipping_phone, 'status_changed', {
+                                    invoiceNumber: detailData.order.order_number,
+                                    status: detailData.order.status,
+                                  })
+                            }
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[9px] font-extrabold text-emerald-700 hover:bg-emerald-100 transition"
+                          >
+                            <ExternalLink className="h-2.5 w-2.5 shrink-0" />
+                            Kirim Notif WA
+                          </a>
+                        ) : null}
                       </div>
                     </div>
                     
@@ -1183,6 +1382,156 @@ export default function AdminOrdersPage() {
                       </div>
                     </div>
                   </DetailSection>
+
+                  {/* Verifikasi Bukti Pembayaran */}
+                  <DetailSection title="Verifikasi Bukti Pembayaran">
+                    {detailData.payment ? (
+                      <div className="space-y-3">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <span
+                            className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-extrabold uppercase ${
+                              PAYMENT_STATUS_STYLES[detailData.payment.status] || PAYMENT_STATUS_STYLES.pending
+                            }`}
+                          >
+                            {detailData.payment.status === 'verified' ? (
+                              <CheckCircle2 className="h-3 w-3 shrink-0" />
+                            ) : detailData.payment.status === 'rejected' ? (
+                              <XCircle className="h-3 w-3 shrink-0" />
+                            ) : (
+                              <Clock className="h-3 w-3 shrink-0" />
+                            )}
+                            {detailData.payment.status === 'verified'
+                              ? 'Terverifikasi'
+                              : detailData.payment.status === 'rejected'
+                              ? 'Ditolak'
+                              : 'Menunggu Verifikasi'}
+                          </span>
+                          <span className="text-[10px] font-bold text-slate-400">
+                            Dikirim: {formatDateTime(detailData.payment.created_at)}
+                          </span>
+                        </div>
+
+                        {detailData.payment.confirm_data?.senderName ? (
+                          <p className="text-[11px] font-semibold text-slate-600">
+                            Nama pengirim transfer:{' '}
+                            <span className="font-bold text-slate-800">{detailData.payment.confirm_data.senderName}</span>
+                          </p>
+                        ) : null}
+
+                        {detailData.payment.proof_image_url ? (
+                          <a
+                            href={detailData.payment.proof_image_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block w-fit"
+                          >
+                            <img
+                              src={detailData.payment.proof_image_url}
+                              alt="Bukti transfer"
+                              className="max-h-56 rounded-xl border border-slate-200 object-contain hover:opacity-90 transition"
+                            />
+                            <span className="mt-1 inline-flex items-center gap-1 text-[10px] font-bold text-blue-600">
+                              <ExternalLink className="h-3 w-3 shrink-0" /> Buka gambar penuh
+                            </span>
+                          </a>
+                        ) : (
+                          <p className="text-[11px] italic text-slate-400">
+                            Tidak ada lampiran gambar bukti transfer (konfirmasi legacy via WhatsApp).
+                          </p>
+                        )}
+
+                        {detailData.payment.status === 'pending' ? (
+                          <div className="flex items-center gap-2 pt-2 border-t border-slate-100">
+                            <button
+                              type="button"
+                              onClick={() => handleVerifyPayment('verified')}
+                              disabled={verifySaving}
+                              className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 px-4 py-2 text-xs font-bold text-white transition disabled:opacity-50 cursor-pointer shadow-xs"
+                            >
+                              <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+                              {verifySaving ? 'Memproses…' : 'Verifikasi & Tandai Paid'}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleVerifyPayment('rejected')}
+                              disabled={verifySaving}
+                              className="inline-flex items-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 px-4 py-2 text-xs font-bold text-rose-600 transition disabled:opacity-50 cursor-pointer"
+                            >
+                              <XCircle className="h-3.5 w-3.5 shrink-0" />
+                              Tolak Bukti
+                            </button>
+                          </div>
+                        ) : (
+                          <p className="text-[10px] font-bold text-slate-400 pt-2 border-t border-slate-100">
+                            {detailData.payment.status === 'verified' ? 'Diverifikasi' : 'Ditolak'} oleh{' '}
+                            <span className="text-slate-600">{detailData.payment.verified_by || 'Admin'}</span>
+                            {detailData.payment.verified_at ? ` · ${formatDateTime(detailData.payment.verified_at)}` : ''}
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-center py-4 bg-slate-50 rounded-xl border border-slate-200/50">
+                        <Info className="h-5 w-5 text-slate-300 mx-auto" />
+                        <p className="text-[10px] font-bold text-slate-400 mt-2 leading-relaxed">
+                          Pembeli belum mengunggah bukti pembayaran untuk invoice ini.
+                        </p>
+                      </div>
+                    )}
+                  </DetailSection>
+
+                  {/* Tahap Produksi Preorder */}
+                  {detailData.product?.is_preorder ? (
+                    <DetailSection title={`Tahap Produksi Preorder · Batch ${detailData.product.preorder_round || 1}`}>
+                      <div className="space-y-3">
+                        <p className="text-[11px] text-slate-500 leading-relaxed">
+                          Perubahan tahap produksi berlaku untuk produk{' '}
+                          <span className="font-bold text-slate-700">{detailData.product.name}</span> dan akan terlihat
+                          oleh semua pembeli batch ini di halaman lacak pesanan.
+                        </p>
+                        <div className="grid gap-3 sm:grid-cols-2">
+                          <label className="space-y-1 block">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                              Tahap Produksi
+                            </span>
+                            <select
+                              value={stageValue}
+                              onChange={(e) => setStageValue(e.target.value)}
+                              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold focus:border-[var(--color-primary)] focus:outline-none cursor-pointer"
+                            >
+                              <option value="">Belum Dimulai</option>
+                              {PRODUCTION_STAGES.map((stage) => (
+                                <option key={stage.value} value={stage.value}>
+                                  {stage.label}
+                                </option>
+                              ))}
+                            </select>
+                          </label>
+                          <label className="space-y-1 block">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                              Catatan Produksi (Opsional)
+                            </span>
+                            <input autoComplete="off" name="stageNotes" value={stageNotes} onChange={(e) => setStageNotes(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold focus:border-[var(--color-primary)] focus:outline-none" placeholder="Contoh: QC selesai 80%…" />
+                          </label>
+                        </div>
+                        <div className="flex items-center justify-between gap-3 pt-2 border-t border-slate-100">
+                          <div className="text-[10px] font-bold text-slate-400 flex items-center gap-1">
+                            <Factory className="h-4 w-4 text-slate-300 shrink-0" />
+                            {detailData.product.estimated_delivery
+                              ? `Estimasi kirim: ${detailData.product.estimated_delivery}`
+                              : 'Estimasi pengiriman belum diisi'}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => void handleSaveProductionStage()}
+                            disabled={stageSaving}
+                            className="rounded-xl bg-[var(--color-primary)] hover:bg-indigo-900 px-4 py-2 text-xs font-bold text-white transition disabled:opacity-50 cursor-pointer shadow-xs"
+                          >
+                            {stageSaving ? 'Menyimpan…' : 'Simpan Tahap Produksi'}
+                          </button>
+                        </div>
+                      </div>
+                    </DetailSection>
+                  ) : null}
 
                   {/* Items list */}
                   <DetailSection title={`Daftar Belanja (${detailData.items.length})`}>
@@ -1306,6 +1655,191 @@ export default function AdminOrdersPage() {
 }
 
 // ─────────────────────────── Subcomponents ───────────────────────────
+
+function BatchSummaryView({ summary, loading, error, onRetry }) {
+  if (loading) {
+    return <AdminListSkeleton rows={5} />;
+  }
+
+  if (error) {
+    return (
+      <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-800 space-y-3">
+        <p className="font-bold flex items-center gap-2">
+          <AlertCircle className="h-5 w-5 text-amber-600" />
+          {error}
+        </p>
+        <button
+          type="button"
+          onClick={onRetry}
+          className="rounded-xl border border-amber-300 bg-white px-4 py-2 text-xs font-bold text-amber-800 hover:bg-amber-100 transition cursor-pointer shadow-xs"
+        >
+          Coba Lagi
+        </button>
+      </div>
+    );
+  }
+
+  if (summary.length === 0) {
+    return (
+      <div className="rounded-3xl border border-dashed border-slate-200 bg-white px-6 py-16 text-center">
+        <Layers className="h-8 w-8 text-slate-300 mx-auto" />
+        <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-slate-400 mt-3">
+          Belum Ada Batch Preorder
+        </p>
+        <h2 className="mt-1 text-sm font-bold text-slate-600">
+          Aktifkan mode preorder pada produk merchandise untuk melihat ringkasan batch di sini.
+        </h2>
+      </div>
+    );
+  }
+
+  const totals = summary.reduce(
+    (acc, row) => ({
+      orders: acc.orders + row.totalOrders,
+      paid: acc.paid + row.paidRevenue,
+      outstanding: acc.outstanding + row.outstandingRevenue,
+    }),
+    { orders: 0, paid: 0, outstanding: 0 },
+  );
+
+  // Demand aggregation per category (for production planning)
+  const categoryDemand = Object.values(
+    summary.reduce((acc, row) => {
+      const cat = row.category || 'Lainnya';
+      if (!acc[cat]) acc[cat] = { category: cat, quantity: 0, revenue: 0 };
+      acc[cat].quantity += row.totalQuantity;
+      acc[cat].revenue += row.paidRevenue + row.outstandingRevenue;
+      return acc;
+    }, {}),
+  ).sort((a, b) => b.quantity - a.quantity);
+  const maxCategoryQty = Math.max(1, ...categoryDemand.map((c) => c.quantity));
+
+  return (
+    <div className="space-y-4">
+      {/* Aggregate stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bg-white border border-[var(--border-color)] rounded-2xl p-4 text-center shadow-xs">
+          <span className="text-[10px] font-bold text-slate-400 block uppercase">Batch Aktif</span>
+          <span className="text-xl font-black text-slate-800 mt-1 block tabular-nums">{summary.length}</span>
+        </div>
+        <div className="bg-white border border-[var(--border-color)] rounded-2xl p-4 text-center shadow-xs">
+          <span className="text-[10px] font-bold text-[var(--color-primary)] block uppercase">Total Order Preorder</span>
+          <span className="text-xl font-black text-[var(--color-primary)] mt-1 block tabular-nums">{totals.orders}</span>
+        </div>
+        <div className="bg-white border border-[var(--border-color)] rounded-2xl p-4 text-center shadow-xs">
+          <span className="text-[10px] font-bold text-emerald-500 block uppercase">Revenue Terbayar</span>
+          <span className="text-xl font-black text-emerald-600 mt-1 block tabular-nums">{formatCurrency(totals.paid)}</span>
+        </div>
+        <div className="bg-white border border-[var(--border-color)] rounded-2xl p-4 text-center shadow-xs">
+          <span className="text-[10px] font-bold text-amber-500 block uppercase">Outstanding Payment</span>
+          <span className={`text-xl font-black mt-1 block tabular-nums ${totals.outstanding > 0 ? 'text-amber-600' : 'text-slate-400'}`}>
+            {formatCurrency(totals.outstanding)}
+          </span>
+        </div>
+      </div>
+
+      {/* Demand by category */}
+      {categoryDemand.length > 0 ? (
+        <div className="bg-white border border-[var(--border-color)]/60 rounded-3xl p-5 shadow-sm">
+          <h3 className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-primary)]">
+            Demand per Kategori
+          </h3>
+          <div className="mt-4 space-y-3">
+            {categoryDemand.map((cat) => (
+              <div key={cat.category}>
+                <div className="flex items-center justify-between text-[10px] font-bold text-slate-500 mb-1">
+                  <span className="text-slate-700">{cat.category}</span>
+                  <span className="tabular-nums">{cat.quantity} pcs · {formatCurrency(cat.revenue)}</span>
+                </div>
+                <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
+                  <div
+                    className="h-full bg-iris-gradient rounded-full transition-all"
+                    style={{ width: `${Math.round((cat.quantity / maxCategoryQty) * 100)}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      {/* Batch cards */}
+      <div className="grid gap-4 lg:grid-cols-2">
+        {summary.map((row) => {
+          const now = Date.now();
+          const endMs = row.preorderEnd ? new Date(row.preorderEnd).getTime() : null;
+          const startMs = row.preorderStart ? new Date(row.preorderStart).getTime() : null;
+          const isClosed = row.preorderClosed || (endMs && endMs < now);
+          const isUpcoming = !row.preorderClosed && startMs && startMs > now;
+
+          return (
+            <div key={row.productId} className="bg-white border border-[var(--border-color)]/60 rounded-3xl p-5 shadow-sm space-y-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="text-[9px] font-bold uppercase tracking-wider text-[var(--color-primary)]">
+                    Batch {row.preorderRound} · {row.category || 'Merchandise'}
+                  </p>
+                  <h3 className="mt-0.5 text-sm font-extrabold text-slate-800 truncate">{row.productName}</h3>
+                </div>
+                <span
+                  className={`shrink-0 inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[9px] font-extrabold uppercase ${
+                    isClosed
+                      ? 'border-rose-200 bg-rose-50 text-rose-600'
+                      : isUpcoming
+                      ? 'border-blue-200 bg-blue-50 text-blue-700'
+                      : 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                  }`}
+                >
+                  {isClosed ? 'Ditutup' : isUpcoming ? 'Segera Dibuka' : 'Berjalan'}
+                </span>
+              </div>
+
+              <dl className="grid grid-cols-2 gap-3 text-xs">
+                <div>
+                  <dt className="text-[9px] font-bold uppercase tracking-wider text-slate-400">Total Order</dt>
+                  <dd className="mt-0.5 font-black text-slate-800 tabular-nums">{row.totalOrders} order · {row.totalQuantity} pcs</dd>
+                </div>
+                <div>
+                  <dt className="text-[9px] font-bold uppercase tracking-wider text-slate-400">Order Dibatalkan</dt>
+                  <dd className="mt-0.5 font-black text-slate-800 tabular-nums">{row.cancelledOrders}</dd>
+                </div>
+                <div>
+                  <dt className="text-[9px] font-bold uppercase tracking-wider text-slate-400">Revenue Terbayar</dt>
+                  <dd className="mt-0.5 font-black text-emerald-600 tabular-nums">{formatCurrency(row.paidRevenue)}</dd>
+                </div>
+                <div>
+                  <dt className="text-[9px] font-bold uppercase tracking-wider text-slate-400">Outstanding</dt>
+                  <dd className={`mt-0.5 font-black tabular-nums ${row.outstandingRevenue > 0 ? 'text-amber-600' : 'text-slate-400'}`}>
+                    {formatCurrency(row.outstandingRevenue)}
+                  </dd>
+                </div>
+              </dl>
+
+              <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-slate-100 text-[10px] font-bold text-slate-500">
+                <span className="inline-flex items-center gap-1 rounded-full border border-purple-200 bg-purple-50 px-2 py-0.5 text-purple-700">
+                  <Factory className="h-2.5 w-2.5 shrink-0" />
+                  {row.productionStage ? (PRODUCTION_STAGE_LABELS[row.productionStage] || row.productionStage) : 'Produksi Belum Dimulai'}
+                </span>
+                {row.preorderEnd ? (
+                  <span className="inline-flex items-center gap-1">
+                    <Clock className="h-3 w-3 text-slate-300 shrink-0" />
+                    Berakhir: {formatDateTime(row.preorderEnd)}
+                  </span>
+                ) : null}
+                {row.estimatedDelivery ? (
+                  <span className="inline-flex items-center gap-1">
+                    <Truck className="h-3 w-3 text-slate-300 shrink-0" />
+                    Estimasi kirim: {row.estimatedDelivery}
+                  </span>
+                ) : null}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 function OrderRowMenu({ onDetail, onDelete, isSaving, isDeleting }) {
   const [open, setOpen] = useState(false);

@@ -60,23 +60,70 @@ export const merchandiseService = {
     return data;
   },
 
-  createOrder: async (orderData) => {
-    const invoiceNumber = `INV-${Math.floor(100000 + Math.random() * 900000)}`;
-    const { data, error } = await supabase
-      .from('orders')
-      .insert([{ invoice_number: invoiceNumber, order_data: orderData }])
-      .select()
-      .single();
-      
-    if (error) {
-      console.error('Error creating order:', error);
-      return { success: false, error: error.message };
+  // Compute the preorder phase of a product: 'regular' | 'upcoming' | 'open' | 'closed'
+  getPreorderStatus: (product) => {
+    if (!product?.is_preorder) return { phase: 'regular' };
+
+    const now = Date.now();
+    const startMs = product.preorder_start ? new Date(product.preorder_start).getTime() : null;
+    const endMs = product.preorder_end ? new Date(product.preorder_end).getTime() : null;
+
+    // Manual close switch from admin wins over schedule
+    if (product.preorder_closed) return { phase: 'closed' };
+    if (startMs && startMs > now) return { phase: 'upcoming' };
+    if (endMs && endMs < now) return { phase: 'closed' };
+    return { phase: 'open' };
+  },
+
+  // Fresh availability check against the DB before checkout submission.
+  // Final enforcement stays server-side (/api/orders).
+  checkPreorderAvailability: async (productId) => {
+    const { data: product, error } = await supabase
+      .from('merchandise')
+      .select('id, is_available, is_preorder, preorder_closed, preorder_start, preorder_end')
+      .eq('id', productId)
+      .maybeSingle();
+
+    if (error || !product) {
+      return { available: false, reason: 'Produk tidak ditemukan.' };
     }
-    return {
-      success: true,
-      invoiceNumber: data.invoice_number,
-      ...orderData
-    };
+    if (!product.is_available) {
+      return { available: false, reason: 'Produk sedang tidak tersedia.' };
+    }
+
+    const { phase } = merchandiseService.getPreorderStatus(product);
+    if (phase === 'upcoming') {
+      return { available: false, reason: 'Preorder untuk produk ini belum dibuka.' };
+    }
+    if (phase === 'closed') {
+      return { available: false, reason: 'Preorder untuk produk ini telah ditutup.' };
+    }
+    return { available: true, reason: null };
+  },
+
+  createOrder: async (orderData) => {
+    try {
+      // Invoice number is generated server-side (INV-YYYYMMDD-XXXX)
+      // with availability validation & uniqueness guarantee
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderData }),
+      });
+      const data = await res.json();
+
+      if (!data.success) {
+        return { success: false, error: data.error || 'Gagal membuat pesanan.' };
+      }
+      return {
+        success: true,
+        invoiceNumber: data.invoiceNumber,
+        ...orderData
+      };
+    } catch (error) {
+      console.error('Error creating order:', error);
+      return { success: false, error: 'Gagal terhubung ke server. Coba lagi.' };
+    }
   },
 
   confirmPayment: async (confirmData) => {
@@ -107,6 +154,65 @@ export const merchandiseService = {
       return false;
     }
     return data && data.length > 0;
+  },
+
+  // Latest payment record (proof + verification status) for an invoice
+  getPaymentByInvoice: async (invoiceNumber) => {
+    const { data, error } = await supabase
+      .from('payments')
+      .select('*')
+      .eq('invoice_number', invoiceNumber)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (error) {
+      console.error(`Error fetching payment by invoice ${invoiceNumber}:`, error);
+      return null;
+    }
+    if (data) return data;
+
+    // Legacy rows only store the invoice inside confirm_data JSONB
+    const { data: legacy, error: legacyError } = await supabase
+      .from('payments')
+      .select('*')
+      .contains('confirm_data', { invoiceNumber })
+      .limit(1)
+      .maybeSingle();
+
+    if (legacyError) {
+      console.error(`Error fetching legacy payment for ${invoiceNumber}:`, legacyError);
+      return null;
+    }
+    return legacy;
+  },
+
+  // Upload payment proof record (image already uploaded via /api/upload)
+  submitPaymentProof: async ({ invoiceNumber, proofUrl, senderName, senderBank }) => {
+    const confirmData = {
+      invoiceNumber,
+      senderName: senderName || '',
+      senderBank: senderBank || '',
+      submittedAt: new Date().toISOString(),
+    };
+
+    const { error } = await supabase
+      .from('payments')
+      .insert([{
+        confirm_data: confirmData,
+        invoice_number: invoiceNumber,
+        proof_image_url: proofUrl,
+        status: 'pending',
+      }]);
+
+    if (error) {
+      console.error('Error submitting payment proof:', error);
+      return { success: false, error: error.message };
+    }
+    return {
+      success: true,
+      message: 'Bukti pembayaran berhasil dikirim. Kami akan memverifikasi maksimal 1x24 jam.'
+    };
   },
 
   createProduct: async (productData) => {

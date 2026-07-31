@@ -54,4 +54,33 @@ export const orderService = {
     if (!data.success) throw new Error(data.error || 'Gagal menghapus pesanan');
     return { success: true };
   },
+
+  verifyPayment: async (orderId, paymentId, decision, note) => {
+    const res = await fetch('/api/admin/orders', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'verifyPayment', orderId, paymentId, decision, note }),
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || 'Gagal memverifikasi pembayaran');
+    return data.order;
+  },
+
+  updateProductionStage: async (productId, productionStage, productionNotes) => {
+    const res = await fetch('/api/admin/orders', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'updateProductionStage', productId, productionStage, productionNotes }),
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || 'Gagal memperbarui tahap produksi');
+    return data.product;
+  },
+
+  getBatchSummary: async () => {
+    const res = await fetch('/api/admin/orders?view=batch_summary');
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || 'Gagal mengambil ringkasan batch preorder');
+    return data.summary;
+  },
 };

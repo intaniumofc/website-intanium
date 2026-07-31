@@ -15,10 +15,24 @@ import { Search } from 'lucide-react';
 
 const SORT_OPTIONS = [
   { label: 'Terbaru', value: 'newest' },
+  { label: 'Preorder: Segera Berakhir', value: 'ending_soon' },
   { label: 'Harga: Rendah ke Tinggi', value: 'price_asc' },
   { label: 'Harga: Tinggi ke Rendah', value: 'price_desc' },
   { label: 'Nama: A-Z', value: 'name_asc' },
 ];
+
+// Preorder phase resolver: regular | upcoming | open | closed
+function getPreorderPhase(product) {
+  if (!product?.is_preorder) return 'regular';
+  // Manual close switch from admin wins over schedule
+  if (product.preorder_closed) return 'closed';
+  const now = Date.now();
+  const startMs = product.preorder_start ? new Date(product.preorder_start).getTime() : null;
+  const endMs = product.preorder_end ? new Date(product.preorder_end).getTime() : null;
+  if (startMs && now < startMs) return 'upcoming';
+  if (endMs && now > endMs) return 'closed';
+  return 'open';
+}
 
 const ITEMS_PER_PAGE = 12;
 
@@ -172,8 +186,8 @@ export default function MerchandisePage() {
     }
 
     if (newOnly) {
-      // Show merch-1, merch-2, merch-3 as new arrivals
-      result = result.filter(p => p.id === 'merch-1' || p.id === 'merch-2' || p.id === 'merch-3');
+      // Show products flagged as new arrivals from database
+      result = result.filter(p => p.is_new);
     }
 
     return result;
@@ -193,6 +207,15 @@ export default function MerchandisePage() {
 
     if (sortValue === 'name_asc') {
       return nextProducts.sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    if (sortValue === 'ending_soon') {
+      // Open preorders with nearest closing date first, everything else after
+      return nextProducts.sort((a, b) => {
+        const aEnd = getPreorderPhase(a) === 'open' && a.preorder_end ? new Date(a.preorder_end).getTime() : Infinity;
+        const bEnd = getPreorderPhase(b) === 'open' && b.preorder_end ? new Date(b.preorder_end).getTime() : Infinity;
+        return aEnd - bEnd;
+      });
     }
 
     return nextProducts; // newest / default
@@ -661,6 +684,7 @@ function FilterSection({ title, expanded, onToggle, children }) {
 
 function ProductCard({ product }) {
   const isAvailable = product.is_available ?? product.isAvailable ?? true;
+  const preorderPhase = getPreorderPhase(product);
 
   const images = useMemo(() => {
     const rawUrls = product.image_urls ?? product.imageUrls ?? [];
@@ -698,19 +722,36 @@ function ProductCard({ product }) {
       className="group text-center [backface-visibility:hidden] h-full flex flex-col bg-white border border-[var(--border-color)] rounded-[1.75rem] p-3.5 shadow-sm hover:shadow-md transition-all relative"
     >
       <Link href={`/merchandise/${product.id}`} className="block relative w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 rounded-2xl">
-        {/* Out of Stock Label */}
-        {!isAvailable ? (
-          <span className="absolute top-2.5 left-2.5 z-30 px-2 py-0.5 rounded bg-black/60 backdrop-blur-sm text-[8px] uppercase tracking-widest font-black text-white border border-white/10 select-none pointer-events-none">
-            HABIS
-          </span>
-        ) : (
-          /* Green NEW badge like the screenshot */
-          product.id === 'merch-1' && (
-            <span className="absolute top-2.5 left-2.5 z-30 px-2 py-0.5 rounded bg-[var(--color-mint)]/15 text-[9px] uppercase tracking-wide font-black text-[var(--color-mint-dark)] border border-[var(--color-mint)]/25 select-none pointer-events-none">
-              NEW
+        {/* Status badges */}
+        <div className="absolute top-2.5 left-2.5 z-30 flex flex-col items-start gap-1.5 select-none pointer-events-none">
+          {!isAvailable ? (
+            <span className="rounded-full bg-slate-900/70 backdrop-blur-sm px-2.5 py-1 text-[8px] uppercase tracking-[0.16em] font-black text-white border border-white/10 shadow-md">
+              Habis
             </span>
-          )
-        )}
+          ) : (
+            <>
+              {product.is_new && (
+                <span className="rounded-full bg-white/90 backdrop-blur-sm px-2.5 py-1 text-[8px] uppercase tracking-[0.16em] font-black text-[var(--color-iris-mint-dark)] border border-[var(--color-mint)]/40 shadow-sm">
+                  New
+                </span>
+              )}
+              {preorderPhase === 'open' && (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--color-primary)]/95 backdrop-blur-sm px-2.5 py-1 text-[8px] uppercase tracking-[0.16em] font-black text-white shadow-md">
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-70" />
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-white" />
+                  </span>
+                  PO Dibuka
+                </span>
+              )}
+              {preorderPhase === 'upcoming' && (
+                <span className="rounded-full bg-white/90 backdrop-blur-sm px-2.5 py-1 text-[8px] uppercase tracking-[0.16em] font-black text-[var(--color-iris-blue-dark)] border border-[var(--color-blue)]/35 shadow-sm">
+                  Segera Dibuka
+                </span>
+              )}
+            </>
+          )}
+        </div>
 
         <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-[var(--color-bg-secondary)] transition duration-300 w-full">
           {images.length > 0 ? (
@@ -730,7 +771,20 @@ function ProductCard({ product }) {
             </div>
           )}
 
-          {isAvailable && (
+          {/* Closed preorder overlay */}
+          {isAvailable && preorderPhase === 'closed' && (
+            <div className="pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center gap-2.5 bg-gradient-to-t from-slate-900/75 via-slate-900/45 to-slate-900/25 backdrop-blur-[3px]">
+              <img src="/closedshop.svg" alt="" className="h-16 w-16 drop-shadow-xl sm:h-20 sm:w-20" />
+              <span className="rounded-full bg-white/95 px-3.5 py-1.5 text-[9px] font-black uppercase tracking-[0.18em] text-slate-800 shadow-lg">
+                Preorder Ditutup
+              </span>
+              <span className="text-[8px] font-bold uppercase tracking-[0.2em] text-white/75">
+                Batch {product.preorder_round || 1} · Nantikan batch berikutnya
+              </span>
+            </div>
+          )}
+
+          {isAvailable && preorderPhase !== 'closed' && preorderPhase !== 'upcoming' && (
             <div className="pointer-events-none absolute inset-x-0 bottom-4 flex justify-center z-20">
               <span className="btn-slide inline-flex translate-y-3 items-center gap-2 rounded-full bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] px-5 py-2.5 text-[9px] font-extrabold uppercase tracking-wider text-white opacity-0 shadow-lg transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 select-none">
                 Pre-Order Sekarang

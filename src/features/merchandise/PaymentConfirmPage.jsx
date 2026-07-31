@@ -4,24 +4,34 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { merchandiseService } from '../../services/public/merchandiseService';
+import { useMediaUpload } from '../../hooks/useMediaUpload';
 import Card from '../../components/common/Card';
 import { formatCurrency } from '../../lib/helpers';
 import { ROUTES, ADMIN_WHATSAPP_NUMBER } from '../../lib/constants';
 import { 
   Search, ArrowLeft, Clock, 
   Check, ShieldAlert, Truck, Copy, 
-  ExternalLink
+  ExternalLink, UploadCloud, CheckCircle2, XCircle, CalendarDays, Factory
 } from 'lucide-react';
 import qrisImage from '../../assets/images/qris-iris.webp';
 import { StatusBadge } from '../../components/ui/status-badge';
 import { OrderStatus } from '../../components/ui/order-status-tracker';
+
+const PRODUCTION_STAGES = [
+  { value: 'design', label: 'Desain' },
+  { value: 'sampling', label: 'Sampling' },
+  { value: 'mass_production', label: 'Produksi Massal' },
+  { value: 'qc', label: 'Quality Control' },
+  { value: 'warehousing', label: 'Pergudangan' },
+  { value: 'shipping_prep', label: 'Persiapan Kirim' },
+];
 
 export default function PaymentConfirmPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const navigate = (path) => router.push(path);
 
-  const invoiceParam = searchParams.get('inv') || '';
+  const invoiceParam = searchParams.get('inv') || searchParams.get('invoice') || '';
   const amountParam = searchParams.get('total') || '';
 
   const [copied, setCopied] = useState(false);
@@ -57,6 +67,15 @@ export default function PaymentConfirmPage() {
   const [isPaymentSubmitted, setIsPaymentSubmitted] = useState(false);
   const [lookupInvoiceInput, setLookupInvoiceInput] = useState('');
 
+  // Payment proof upload states
+  const [paymentRecord, setPaymentRecord] = useState(null);
+  const { uploadFile, isUploading } = useMediaUpload();
+  const [proofFile, setProofFile] = useState(null);
+  const [proofPreview, setProofPreview] = useState('');
+  const [proofSenderName, setProofSenderName] = useState('');
+  const [isSubmittingProof, setIsSubmittingProof] = useState(false);
+  const [proofError, setProofError] = useState('');
+
   // Fetch order details
   useEffect(() => {
     let active = true;
@@ -67,6 +86,7 @@ export default function PaymentConfirmPage() {
           setOrderDetail(null);
           setOrderedProduct(null);
           setIsPaymentSubmitted(false);
+          setPaymentRecord(null);
         }
       });
       return;
@@ -90,13 +110,17 @@ export default function PaymentConfirmPage() {
             if (active) setOrderedProduct(productData);
           }
           
-          // Check if payment receipt is submitted
-          const isSubmitted = await merchandiseService.checkPaymentSubmitted(invoiceParam);
-          if (active) setIsPaymentSubmitted(isSubmitted);
+          // Check if payment receipt is submitted (with proof & verification status)
+          const payment = await merchandiseService.getPaymentByInvoice(invoiceParam);
+          if (active) {
+            setPaymentRecord(payment);
+            setIsPaymentSubmitted(Boolean(payment));
+          }
         } else {
           setOrderDetail(null);
           setOrderedProduct(null);
           setIsPaymentSubmitted(false);
+          setPaymentRecord(null);
         }
         setLoadingOrder(false);
       } catch (err) {
@@ -171,6 +195,48 @@ export default function PaymentConfirmPage() {
       navigator.clipboard.writeText(orderDetail.invoice_number);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const handleProofFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      setProofError('File harus berupa gambar (JPG/PNG/WebP).');
+      return;
+    }
+    setProofError('');
+    setProofFile(file);
+    setProofPreview(URL.createObjectURL(file));
+  };
+
+  const handleProofSubmit = async (e) => {
+    e.preventDefault();
+    if (!proofFile) {
+      setProofError('Pilih file bukti transfer terlebih dahulu.');
+      return;
+    }
+    setIsSubmittingProof(true);
+    setProofError('');
+    try {
+      const publicUrl = await uploadFile(proofFile, 'assets', 'payment-proofs');
+      const res = await merchandiseService.submitPaymentProof({
+        invoiceNumber: orderDetail.invoice_number,
+        proofUrl: publicUrl,
+        senderName: proofSenderName.trim(),
+      });
+      if (!res.success) throw new Error(res.error || 'Gagal mengirim bukti pembayaran.');
+      const record = await merchandiseService.getPaymentByInvoice(orderDetail.invoice_number);
+      setPaymentRecord(record);
+      setIsPaymentSubmitted(true);
+      setProofFile(null);
+      setProofPreview('');
+      setProofSenderName('');
+    } catch (err) {
+      console.error('Proof upload error:', err);
+      setProofError(err.message || 'Gagal mengunggah bukti pembayaran. Coba lagi.');
+    } finally {
+      setIsSubmittingProof(false);
     }
   };
 
@@ -414,10 +480,10 @@ export default function PaymentConfirmPage() {
     if (orderStatus === 'waiting_payment') {
       return isPaymentSubmitted 
         ? "Proses verifikasi bukti transfer biasanya memakan waktu maksimal 1x24 jam."
-        : "Silakan transfer tepat senilai tagihan untuk menjamin slot pre-order Anda.";
+        : "Silakan transfer tepat senilai tagihan untuk mengamankan pesanan pre-order Anda.";
     }
     if (orderStatus === 'paid') {
-      return "Pembayaran telah kami terima. Slot pre-order Anda telah aman.";
+      return "Pembayaran telah kami terima. Pesanan pre-order Anda telah aman.";
     }
     if (orderStatus === 'processing') {
       return "Barang sedang dipersiapkan. Status pengiriman/pickup akan di-update setelah siap.";
@@ -656,6 +722,174 @@ export default function PaymentConfirmPage() {
           onTrackOrder={buttonConfig.action}
         />
       </motion.div>
+
+      {/* ── Payment Proof Upload / Status ── */}
+      {(orderStatus === 'waiting_payment' || paymentRecord) && orderStatus !== 'cancelled' && (
+        <motion.div
+          variants={{ hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } } }}
+        >
+          <Card hoverEffect={false} className="border border-[var(--border-color)] bg-[var(--color-surface)] rounded-3xl p-6 shadow-xs space-y-4">
+            <h3 className="text-xs font-black text-[var(--color-heading)] uppercase tracking-wider border-b border-[var(--color-border)] pb-3 flex items-center gap-2">
+              <span className="w-1.5 h-3.5 bg-[var(--color-primary)] rounded-full"></span>
+              Bukti Pembayaran
+            </h3>
+
+            {paymentRecord && paymentRecord.status !== 'rejected' ? (
+              <div className="space-y-4">
+                {paymentRecord.status === 'verified' ? (
+                  <div className="rounded-2xl border border-[var(--color-mint)]/25 bg-[var(--color-mint-tint-15)] px-4 py-3 flex items-start gap-2.5">
+                    <CheckCircle2 className="h-4.5 w-4.5 text-[var(--color-iris-mint-dark)] shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-xs font-extrabold text-[var(--color-iris-mint-dark)]">Pembayaran Terverifikasi</p>
+                      <p className="text-[10px] font-semibold text-slate-600 mt-0.5">Bukti transfer Anda sudah diverifikasi oleh admin. Pesanan preorder Anda aman!</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="rounded-2xl border border-[var(--color-peach)]/30 bg-[var(--color-peach-tint-15)] px-4 py-3 flex items-start gap-2.5">
+                    <Clock className="h-4.5 w-4.5 text-[var(--color-iris-peach-dark)] shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-xs font-extrabold text-[var(--color-iris-peach-dark)]">Menunggu Verifikasi Admin</p>
+                      <p className="text-[10px] font-semibold text-slate-600 mt-0.5">Bukti transfer sudah kami terima. Verifikasi biasanya maksimal 1x24 jam.</p>
+                    </div>
+                  </div>
+                )}
+                {paymentRecord.proof_image_url && (
+                  <a href={paymentRecord.proof_image_url} target="_blank" rel="noopener noreferrer" className="block w-32">
+                    <img
+                      src={paymentRecord.proof_image_url}
+                      alt="Bukti pembayaran"
+                      className="w-32 h-40 object-cover rounded-xl border border-[var(--border-color)] shadow-xs hover:opacity-90 transition"
+                    />
+                  </a>
+                )}
+              </div>
+            ) : orderStatus === 'waiting_payment' ? (
+              <form onSubmit={handleProofSubmit} className="space-y-4">
+                {paymentRecord?.status === 'rejected' && (
+                  <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 flex items-start gap-2.5">
+                    <XCircle className="h-4.5 w-4.5 text-rose-500 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-xs font-extrabold text-rose-600">Bukti Pembayaran Ditolak</p>
+                      <p className="text-[10px] font-semibold text-slate-600 mt-0.5">Bukti transfer sebelumnya tidak valid. Silakan unggah ulang bukti yang benar.</p>
+                    </div>
+                  </div>
+                )}
+
+                <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+                  Unggah foto/tangkapan layar bukti transfer Anda di sini agar admin dapat memverifikasi pembayaran lebih cepat.
+                </p>
+
+                <label className="block cursor-pointer">
+                  <input type="file" accept="image/*" onChange={handleProofFileChange} className="hidden" />
+                  {proofPreview ? (
+                    <div className="relative w-40">
+                      <img src={proofPreview} alt="Preview bukti transfer" className="w-40 h-52 object-cover rounded-2xl border border-[var(--border-color)] shadow-xs" />
+                      <span className="absolute bottom-2 left-1/2 -translate-x-1/2 px-2.5 py-1 rounded-full bg-black/60 text-white text-[9px] font-bold whitespace-nowrap">Ganti Gambar</span>
+                    </div>
+                  ) : (
+                    <div className="border-2 border-dashed border-[var(--border-color)] rounded-2xl px-6 py-8 flex flex-col items-center justify-center gap-2 hover:border-[var(--color-primary)] hover:bg-[var(--color-primary-light)]/30 transition">
+                      <UploadCloud className="h-7 w-7 text-[var(--color-primary)]" />
+                      <span className="text-xs font-bold text-slate-700">Klik untuk pilih foto bukti transfer</span>
+                      <span className="text-[10px] text-[var(--text-muted)] font-semibold">JPG, PNG, atau WebP • otomatis dikompresi</span>
+                    </div>
+                  )}
+                </label>
+
+                <div>
+                  <label className="block text-[10px] font-extrabold uppercase tracking-wider text-[var(--color-text-secondary)] mb-1.5">
+                    Nama Pengirim Transfer (Opsional)
+                  </label>
+                  <input
+                    type="text"
+                    value={proofSenderName}
+                    onChange={(e) => setProofSenderName(e.target.value)}
+                    placeholder="Nama pemilik rekening pengirim…"
+                    className="w-full sm:max-w-sm bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl px-4 py-2.5 text-xs font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] transition"
+                  />
+                </div>
+
+                {proofError && (
+                  <p className="text-[10px] font-bold text-rose-600 flex items-center gap-1.5">
+                    <ShieldAlert className="h-3.5 w-3.5 shrink-0" /> {proofError}
+                  </p>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={isSubmittingProof || isUploading || !proofFile}
+                  className="px-6 py-2.5 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-bold rounded-xl shadow-md cursor-pointer transition active:scale-95 inline-flex items-center gap-2"
+                >
+                  <UploadCloud className="h-4 w-4" />
+                  {isSubmittingProof || isUploading ? 'Mengunggah…' : 'Kirim Bukti Pembayaran'}
+                </button>
+              </form>
+            ) : null}
+          </Card>
+        </motion.div>
+      )}
+
+      {/* ── Production Stage Tracker (preorder) ── */}
+      {orderedProduct?.is_preorder && orderedProduct?.production_stage && ['paid', 'processing'].includes(orderStatus) && (() => {
+        const currentStageIdx = PRODUCTION_STAGES.findIndex(s => s.value === orderedProduct.production_stage);
+        return (
+          <motion.div
+            variants={{ hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } } }}
+          >
+            <Card hoverEffect={false} className="border border-[var(--border-color)] bg-[var(--color-surface)] rounded-3xl p-6 shadow-xs space-y-5">
+              <h3 className="text-xs font-black text-[var(--color-heading)] uppercase tracking-wider border-b border-[var(--color-border)] pb-3 flex items-center gap-2">
+                <span className="w-1.5 h-3.5 bg-[var(--color-primary)] rounded-full"></span>
+                <Factory className="h-3.5 w-3.5 text-[var(--color-iris-purple-dark)]" />
+                Progres Produksi Preorder • Batch {orderedProduct.preorder_round || 1}
+              </h3>
+
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                {PRODUCTION_STAGES.map((stage, idx) => {
+                  const isDone = idx < currentStageIdx;
+                  const isCurrent = idx === currentStageIdx;
+                  return (
+                    <div key={stage.value} className="flex flex-col items-center gap-1.5 text-center">
+                      <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black border-2 transition ${
+                        isDone
+                          ? 'bg-[var(--color-mint-tint-15)] border-[var(--color-mint)]/40 text-[var(--color-iris-mint-dark)]'
+                          : isCurrent
+                            ? 'bg-[var(--color-purple-tint-12)] border-[var(--color-iris-purple-dark)]/40 text-[var(--color-iris-purple-dark)] animate-pulse'
+                            : 'bg-slate-50 border-slate-200 text-slate-300'
+                      }`}>
+                        {isDone ? <Check className="h-3.5 w-3.5" /> : idx + 1}
+                      </div>
+                      <span className={`text-[8px] font-extrabold uppercase tracking-wide leading-tight ${
+                        isCurrent ? 'text-[var(--color-iris-purple-dark)]' : isDone ? 'text-slate-600' : 'text-slate-400'
+                      }`}>
+                        {stage.label}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-iris-gradient transition-all duration-700"
+                  style={{ width: `${Math.round(((currentStageIdx + 1) / PRODUCTION_STAGES.length) * 100)}%` }}
+                />
+              </div>
+
+              {orderedProduct.production_notes && (
+                <p className="text-xs text-[var(--text-secondary)] leading-relaxed bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl px-4 py-3">
+                  <span className="font-extrabold text-slate-700">Catatan Admin:</span> {orderedProduct.production_notes}
+                </p>
+              )}
+
+              {orderedProduct.estimated_delivery && (
+                <div className="flex items-center gap-2 text-[10px] font-bold text-[var(--text-secondary)]">
+                  <CalendarDays className="h-3.5 w-3.5 text-[var(--color-primary)] shrink-0" />
+                  <span>Estimasi pengiriman: <span className="text-slate-800">{orderedProduct.estimated_delivery}</span></span>
+                </div>
+              )}
+            </Card>
+          </motion.div>
+        );
+      })()}
     </motion.div>
   );
 }

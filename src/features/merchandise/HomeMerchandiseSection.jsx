@@ -80,7 +80,7 @@ const ProductCard = ({ product }) => {
             </span>
           ) : (
             /* Green NEW badge like the screenshot */
-            product.id === 'merch-1' && (
+            product.is_new && (
               <span className="absolute top-6 left-6 z-30 px-2 py-0.5 rounded bg-[var(--color-mint)]/15 text-[9px] uppercase tracking-wide font-black text-[var(--color-mint-dark)] border border-[var(--color-mint)]/25 select-none pointer-events-none">
                 NEW
               </span>

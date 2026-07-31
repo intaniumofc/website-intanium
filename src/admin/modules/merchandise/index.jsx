@@ -22,6 +22,70 @@ const SORT_OPTIONS = [
   { label: 'Nama: A-Z', value: 'name_asc' }
 ];
 
+const PRODUCTION_STAGE_OPTIONS = [
+  { value: 'design', label: 'Desain' },
+  { value: 'sampling', label: 'Sampling' },
+  { value: 'mass_production', label: 'Produksi Massal' },
+  { value: 'qc', label: 'Quality Control' },
+  { value: 'warehousing', label: 'Pergudangan' },
+  { value: 'shipping_prep', label: 'Persiapan Pengiriman' },
+];
+
+const PREORDER_FILTER_OPTIONS = [
+  { value: 'all', label: 'Semua Tipe Preorder' },
+  { value: 'open', label: 'Preorder Dibuka' },
+  { value: 'upcoming', label: 'Segera Dibuka' },
+  { value: 'closed', label: 'Preorder Ditutup' },
+  { value: 'production', label: 'Dalam Produksi' },
+  { value: 'regular', label: 'Non-Preorder' },
+];
+
+const PREORDER_STATE_BADGES = {
+  open: { label: 'Preorder Open', className: 'bg-[var(--color-mint-tint-15)] text-[var(--color-iris-mint-dark)]' },
+  upcoming: { label: 'Segera Dibuka', className: 'bg-[var(--color-blue-tint-15)] text-[var(--color-iris-blue-dark)]' },
+  closed: { label: 'Preorder Ditutup', className: 'bg-[var(--color-peach-tint-15)] text-[var(--color-iris-peach-dark)]' },
+  production: { label: 'Dalam Produksi', className: 'bg-[var(--color-purple-tint-12)] text-[var(--color-iris-purple-dark)]' },
+  regular: { label: 'Non-Preorder', className: 'bg-slate-100 text-slate-500' },
+};
+
+function getPreorderState(item) {
+  if (!item.is_preorder) return 'regular';
+  // Manual close switch from admin wins over schedule
+  if (item.preorder_closed) {
+    return item.production_stage ? 'production' : 'closed';
+  }
+  const now = Date.now();
+  if (item.preorder_start && new Date(item.preorder_start).getTime() > now) return 'upcoming';
+  const closedByDate = item.preorder_end && new Date(item.preorder_end).getTime() < now;
+  if (closedByDate) {
+    return item.production_stage ? 'production' : 'closed';
+  }
+  return 'open';
+}
+
+function getProductionStageLabel(stage) {
+  return PRODUCTION_STAGE_OPTIONS.find(opt => opt.value === stage)?.label || stage;
+}
+
+function formatCountdown(dateValue) {
+  const diff = new Date(dateValue).getTime() - Date.now();
+  if (diff <= 0) return null;
+  const days = Math.floor(diff / 86400000);
+  const hours = Math.floor((diff % 86400000) / 3600000);
+  const minutes = Math.floor((diff % 3600000) / 60000);
+  if (days > 0) return `${days} hari ${hours} jam`;
+  if (hours > 0) return `${hours} jam ${minutes} mnt`;
+  return `${minutes} menit`;
+}
+
+function toDatetimeLocalInput(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  const offsetMs = date.getTimezoneOffset() * 60000;
+  return new Date(date.getTime() - offsetMs).toISOString().slice(0, 16);
+}
+
 const initialForm = {
   name: '',
   price: '',
@@ -31,7 +95,16 @@ const initialForm = {
   image_url_2: '',
   image_url_3: '',
   is_available: true,
-  sizesInput: 'M, L, XL'
+  is_new: false,
+  sizesInput: 'M, L, XL',
+  is_preorder: true,
+  preorder_closed: false,
+  preorder_start: '',
+  preorder_end: '',
+  estimated_delivery: '',
+  production_stage: '',
+  production_notes: '',
+  preorder_round: '1'
 };
 
 export default function AdminMerchandise() {
@@ -44,6 +117,7 @@ export default function AdminMerchandise() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'active' | 'inactive'
+  const [preorderFilter, setPreorderFilter] = useState('all');
   const [sortValue, setSortValue] = useState('newest');
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -170,7 +244,16 @@ export default function AdminMerchandise() {
       image_url_2: urls[1] || '',
       image_url_3: urls[2] || '',
       is_available: product.is_available ?? true,
+      is_new: product.is_new ?? false,
       sizesInput: product.sizes ? product.sizes.join(', ') : 'M, L, XL',
+      is_preorder: product.is_preorder ?? true,
+      preorder_closed: product.preorder_closed ?? false,
+      preorder_start: toDatetimeLocalInput(product.preorder_start),
+      preorder_end: toDatetimeLocalInput(product.preorder_end),
+      estimated_delivery: product.estimated_delivery || '',
+      production_stage: product.production_stage || '',
+      production_notes: product.production_notes || '',
+      preorder_round: String(product.preorder_round ?? 1),
     });
     setActiveWorkspace('editor');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -259,10 +342,37 @@ export default function AdminMerchandise() {
     }
   };
 
+  const handleQuickTogglePreorder = async (product) => {
+    try {
+      const nextClosed = !product.preorder_closed;
+      const res = await merchandiseService.updateProduct(product.id, {
+        preorder_closed: nextClosed
+      });
+      if (res.success) {
+        setItems(current => current.map(item => item.id === product.id ? { ...item, preorder_closed: nextClosed } : item));
+        notify.success(
+          nextClosed ? 'Preorder ditutup' : 'Preorder dibuka',
+          `${product.name} sekarang ${nextClosed ? 'ditutup manual (tidak menerima pesanan)' : 'kembali mengikuti jadwal preorder'}.`
+        );
+      } else {
+        notify.error('Gagal mengubah status preorder', res.error);
+      }
+    } catch (err) {
+      console.error(err);
+      notify.error('Gagal mengubah status preorder', err.message);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.price) {
       notify.warning('Data belum lengkap', 'Nama dan harga produk harus diisi.');
+      return;
+    }
+
+    if (formData.is_preorder && formData.preorder_start && formData.preorder_end
+      && new Date(formData.preorder_end) <= new Date(formData.preorder_start)) {
+      notify.warning('Jadwal preorder tidak valid', 'Tanggal tutup preorder harus setelah tanggal buka.');
       return;
     }
 
@@ -288,7 +398,16 @@ export default function AdminMerchandise() {
       image_url: formData.image_url.trim() || compiledImageUrls[0] || 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600',
       image_urls: compiledImageUrls.length > 0 ? compiledImageUrls : ['https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600'],
       is_available: formData.is_available,
-      sizes: parsedSizes
+      is_new: formData.is_new,
+      sizes: parsedSizes,
+      is_preorder: formData.is_preorder,
+      preorder_closed: formData.is_preorder ? Boolean(formData.preorder_closed) : false,
+      preorder_start: formData.is_preorder && formData.preorder_start ? new Date(formData.preorder_start).toISOString() : null,
+      preorder_end: formData.is_preorder && formData.preorder_end ? new Date(formData.preorder_end).toISOString() : null,
+      estimated_delivery: formData.estimated_delivery.trim() || null,
+      production_stage: formData.production_stage || null,
+      production_notes: formData.production_notes.trim() || null,
+      preorder_round: parseInt(formData.preorder_round, 10) || 1
     };
 
     try {
@@ -323,7 +442,9 @@ export default function AdminMerchandise() {
     const total = items.length;
     const active = items.filter(item => item.is_available).length;
     const inactive = total - active;
-    return { total, active, inactive };
+    const preorderOpen = items.filter(item => getPreorderState(item) === 'open').length;
+    const inProduction = items.filter(item => getPreorderState(item) === 'production').length;
+    return { total, active, inactive, preorderOpen, inProduction };
   }, [items]);
 
   // Filters & Search logic
@@ -334,9 +455,10 @@ export default function AdminMerchandise() {
       const matchesCategory = selectedCategory === 'All' || item.category === selectedCategory;
       const matchesStatus = statusFilter === 'all' || 
                             (statusFilter === 'active' ? item.is_available : !item.is_available);
-      return matchesSearch && matchesCategory && matchesStatus;
+      const matchesPreorder = preorderFilter === 'all' || getPreorderState(item) === preorderFilter;
+      return matchesSearch && matchesCategory && matchesStatus && matchesPreorder;
     });
-  }, [items, searchQuery, selectedCategory, statusFilter]);
+  }, [items, searchQuery, selectedCategory, statusFilter, preorderFilter]);
 
   // Sort logic
   const sortedItems = useMemo(() => {
@@ -364,7 +486,7 @@ export default function AdminMerchandise() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedCategory, statusFilter, sortValue]);
+  }, [searchQuery, selectedCategory, statusFilter, preorderFilter, sortValue]);
 
   return (
     <div className="space-y-6 select-none">
@@ -442,7 +564,7 @@ export default function AdminMerchandise() {
       {activeWorkspace === 'inventory' && (
         <div className="space-y-6 animate-fade-in">
           {/* Summary Cards */}
-          <div className="grid grid-cols-3 gap-3 md:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
             <Card hoverEffect={false} padding="compact" className="border border-[var(--border-color)] bg-white text-center">
               <span className="text-[10px] font-bold text-slate-400 block uppercase">Total Produk</span>
               <span className="text-xl sm:text-2xl font-black text-slate-800 mt-1 block">{summary.total}</span>
@@ -452,8 +574,12 @@ export default function AdminMerchandise() {
               <span className="text-xl sm:text-2xl font-black text-emerald-600 mt-1 block">{summary.active}</span>
             </Card>
             <Card hoverEffect={false} padding="compact" className="border border-[var(--border-color)] bg-white text-center">
-              <span className="text-[10px] font-bold text-red-500 block uppercase">Habis</span>
-              <span className="text-xl sm:text-2xl font-black text-red-600 mt-1 block">{summary.inactive}</span>
+              <span className="text-[10px] font-bold text-[var(--color-iris-mint-dark)] block uppercase">Preorder Open</span>
+              <span className="text-xl sm:text-2xl font-black text-[var(--color-iris-mint-dark)] mt-1 block">{summary.preorderOpen}</span>
+            </Card>
+            <Card hoverEffect={false} padding="compact" className="border border-[var(--border-color)] bg-white text-center">
+              <span className="text-[10px] font-bold text-[var(--color-iris-purple-dark)] block uppercase">Dalam Produksi</span>
+              <span className="text-xl sm:text-2xl font-black text-[var(--color-iris-purple-dark)] mt-1 block">{summary.inProduction}</span>
             </Card>
           </div>
 
@@ -488,6 +614,17 @@ export default function AdminMerchandise() {
               <option value="inactive">Habis Terjual</option>
             </select>
 
+            {/* Preorder status Filter */}
+            <select
+              value={preorderFilter}
+              onChange={(e) => setPreorderFilter(e.target.value)}
+              className="appearance-none bg-white border border-[var(--border-color)] rounded-xl px-3.5 py-2 text-xs font-bold text-slate-700 cursor-pointer focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]/20"
+            >
+              {PREORDER_FILTER_OPTIONS.map(opt => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+
             {/* Sort Selector */}
             <select
               value={sortValue}
@@ -520,6 +657,7 @@ export default function AdminMerchandise() {
                         <th className="px-6 py-4">Kategori</th>
                         <th className="px-6 py-4">Harga</th>
                         <th className="px-6 py-4">Varian Size</th>
+                        <th className="px-6 py-4">Preorder</th>
                         <th className="px-6 py-4">Status</th>
                         <th className="px-6 py-4 text-right">Aksi</th>
                       </tr>
@@ -556,6 +694,48 @@ export default function AdminMerchandise() {
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
+                            {(() => {
+                              const state = getPreorderState(item);
+                              const badge = PREORDER_STATE_BADGES[state];
+                              const countdown = state === 'open' && item.preorder_end ? formatCountdown(item.preorder_end) : null;
+                              const opensIn = state === 'upcoming' && item.preorder_start ? formatCountdown(item.preorder_start) : null;
+                              return (
+                                <div className="space-y-1.5 min-w-[130px]">
+                                  <span className={`inline-flex items-center px-2 py-0.5 text-[9px] font-extrabold rounded-full ${badge.className}`}>
+                                    {state === 'production' ? getProductionStageLabel(item.production_stage) : badge.label}
+                                  </span>
+                                  {item.is_preorder && (
+                                    <button
+                                      onClick={() => handleQuickTogglePreorder(item)}
+                                      title={item.preorder_closed ? 'Buka kembali preorder produk ini' : 'Tutup preorder produk ini sekarang'}
+                                      className={`block text-[9px] font-extrabold px-2.5 py-0.5 rounded-full border transition cursor-pointer ${item.preorder_closed
+                                        ? 'text-emerald-700 bg-emerald-50 border-emerald-200 hover:bg-emerald-100'
+                                        : 'text-rose-700 bg-rose-50 border-rose-200 hover:bg-rose-100'
+                                      }`}
+                                    >
+                                      {item.preorder_closed ? 'Buka PO Lagi' : 'Tutup PO'}
+                                    </button>
+                                  )}
+                                  {item.is_preorder && state !== 'regular' && (
+                                    <span className="block text-[9px] font-bold text-slate-400">
+                                      Batch {item.preorder_round ?? 1}
+                                    </span>
+                                  )}
+                                  {countdown && (
+                                    <span className="flex items-center gap-1 text-[9px] font-bold text-[var(--color-iris-peach-dark)]">
+                                      <Clock className="h-3 w-3" /> Tutup {countdown} lagi
+                                    </span>
+                                  )}
+                                  {opensIn && (
+                                    <span className="flex items-center gap-1 text-[9px] font-bold text-[var(--color-iris-blue-dark)]">
+                                      <Clock className="h-3 w-3" /> Buka {opensIn} lagi
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            })()}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
                             <button
                               onClick={() => handleQuickToggleActive(item)}
                               className={`inline-flex items-center gap-1 text-[9px] font-extrabold px-2.5 py-0.5 rounded-full border transition cursor-pointer ${
@@ -589,7 +769,7 @@ export default function AdminMerchandise() {
                       ))}
                       {paginatedItems.length === 0 && (
                         <tr>
-                          <td colSpan="6" className="px-6 py-12 text-center text-slate-400 text-xs font-bold italic">
+                          <td colSpan="7" className="px-6 py-12 text-center text-slate-400 text-xs font-bold italic">
                             Belum ada merchandise yang sesuai dengan pencarian Anda.
                           </td>
                         </tr>
@@ -611,10 +791,19 @@ export default function AdminMerchandise() {
                         </div>
                       </div>
                       <div className="flex items-center justify-between gap-2 mt-1">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <span className="px-2 py-0.5 text-[10px] font-bold rounded-lg bg-[var(--color-primary-light)] text-[var(--color-primary)] border border-[var(--color-primary)]/10">
                             {item.category || 'Clothing'}
                           </span>
+                          {(() => {
+                            const state = getPreorderState(item);
+                            const badge = PREORDER_STATE_BADGES[state];
+                            return (
+                              <span className={`inline-flex items-center px-2 py-0.5 text-[9px] font-extrabold rounded-full ${badge.className}`}>
+                                {state === 'production' ? getProductionStageLabel(item.production_stage) : badge.label}
+                              </span>
+                            );
+                          })()}
                           <button
                             onClick={() => handleQuickToggleActive(item)}
                             className={`inline-flex items-center gap-1 text-[9px] font-extrabold px-2.5 py-0.5 rounded-full border transition cursor-pointer ${
@@ -625,6 +814,17 @@ export default function AdminMerchandise() {
                           >
                             {item.is_available ? '✓ Tersedia' : '✕ Habis'}
                           </button>
+                          {item.is_preorder && (
+                            <button
+                              onClick={() => handleQuickTogglePreorder(item)}
+                              className={`inline-flex items-center gap-1 text-[9px] font-extrabold px-2.5 py-0.5 rounded-full border transition cursor-pointer ${item.preorder_closed
+                                ? 'text-emerald-700 bg-emerald-50 border-emerald-200'
+                                : 'text-rose-700 bg-rose-50 border-rose-200'
+                              }`}
+                            >
+                              {item.preorder_closed ? 'Buka PO Lagi' : 'Tutup PO'}
+                            </button>
+                          )}
                         </div>
                         <div className="flex items-center gap-1.5 shrink-0">
                           <button 
@@ -643,6 +843,11 @@ export default function AdminMerchandise() {
                           </button>
                         </div>
                       </div>
+                      {item.is_preorder && (
+                        <span className="block text-[9px] font-bold text-slate-400 mt-1">
+                          Batch {item.preorder_round ?? 1}
+                        </span>
+                      )}
                       {item.sizes && item.sizes.length > 0 && (
                         <div className="flex flex-wrap gap-1.5 mt-1 border-t border-[var(--border-color)]/30 pt-3">
                           {item.sizes.map(sz => (
@@ -751,7 +956,7 @@ export default function AdminMerchandise() {
 
                   {/* Size Quick Add chips */}
                   <div className="flex flex-wrap gap-1.5 pt-1">
-                    {['S', 'M', 'L', 'XL', 'XXL', 'All Size'].map((sz) => (
+                    {['XS', 'S', 'M', 'L', 'XL', 'XXL', '>2XL'].map((sz) => (
                       <button
                         key={sz}
                         type="button"
@@ -772,6 +977,94 @@ export default function AdminMerchandise() {
                 </h3>
                 <textarea name="description" rows="5" placeholder="Detail deskripsi bahan, spesifikasi ukuran…" value={formData.description} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-primary)] font-semibold text-xs transition-colors resize-none" />
               </Card>
+
+              {/* Preorder Settings */}
+              <Card hoverEffect={false} className="border border-[var(--border-color)] bg-white space-y-4 rounded-3xl p-5 shadow-sm">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                  <h3 className="text-xs font-bold text-[var(--color-primary)] uppercase tracking-wider">
+                    Pengaturan Preorder
+                  </h3>
+                  {formData.is_preorder && (
+                    formData.preorder_closed ? (
+                      <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wide bg-[var(--color-peach-tint-15)] text-[var(--color-iris-peach-dark)]">
+                        PO Ditutup Manual
+                      </span>
+                    ) : (
+                      <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wide bg-[var(--color-mint-tint-15)] text-[var(--color-iris-mint-dark)]">
+                        Preorder Aktif
+                      </span>
+                    )
+                  )}
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <input type="checkbox" name="is_preorder" id="is_preorder" checked={formData.is_preorder} onChange={handleInputChange} className="w-4.5 h-4.5 rounded border-[var(--border-color)] text-[var(--color-primary)] focus:ring-[var(--color-primary)] cursor-pointer" />
+                  <label htmlFor="is_preorder" className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)] cursor-pointer select-none">
+                    Jual Sebagai Preorder
+                  </label>
+                </div>
+
+                {formData.is_preorder && (
+                  <div className="space-y-4 pt-1">
+                    <div className={`flex items-center justify-between gap-3 rounded-xl border p-3.5 transition-colors ${formData.preorder_closed
+                      ? 'border-[var(--color-peach)]/40 bg-[var(--color-peach-tint-15)]'
+                      : 'border-[var(--color-mint)]/30 bg-[var(--color-mint-tint-15)]'}`}
+                    >
+                      <div className="min-w-0">
+                        <p className={`text-[10px] font-extrabold uppercase tracking-wider ${formData.preorder_closed ? 'text-[var(--color-iris-peach-dark)]' : 'text-[var(--color-iris-mint-dark)]'}`}>
+                          {formData.preorder_closed ? 'Preorder Ditutup Manual' : 'Preorder Mengikuti Jadwal'}
+                        </p>
+                        <p className="text-[10px] text-slate-500 font-semibold mt-0.5">
+                          Aktifkan untuk menutup paksa PO tanpa mengubah jadwal.
+                        </p>
+                      </div>
+                      <input type="checkbox" name="preorder_closed" id="preorder_closed" checked={formData.preorder_closed} onChange={handleInputChange} className="w-4.5 h-4.5 shrink-0 rounded border-[var(--border-color)] text-[var(--color-primary)] focus:ring-[var(--color-primary)] cursor-pointer" />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Preorder Dibuka</label>
+                        <input autoComplete="off" type="datetime-local" name="preorder_start" value={formData.preorder_start} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-primary)] font-semibold text-xs transition-colors" />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Preorder Ditutup</label>
+                        <input autoComplete="off" type="datetime-local" name="preorder_end" value={formData.preorder_end} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-primary)] font-semibold text-xs transition-colors" />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Batch / Gelombang Ke-</label>
+                      <input autoComplete="off" type="number" min="1" name="preorder_round" value={formData.preorder_round} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-primary)] font-semibold text-xs transition-colors" />
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Estimasi Pengiriman</label>
+                      <input autoComplete="off" type="text" name="estimated_delivery" placeholder="Misal: Akhir September 2026" value={formData.estimated_delivery} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-primary)] font-semibold text-xs transition-colors" />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Tahap Produksi</label>
+                        <select
+                          name="production_stage"
+                          value={formData.production_stage}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl outline-none focus:border-[var(--color-primary)] font-bold text-xs cursor-pointer transition-colors"
+                        >
+                          <option value="">Belum Dimulai</option>
+                          {PRODUCTION_STAGE_OPTIONS.map(opt => (
+                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Catatan Produksi</label>
+                        <input autoComplete="off" type="text" name="production_notes" placeholder="Update singkat progres produksi…" value={formData.production_notes} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-primary)] font-semibold text-xs transition-colors" />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </Card>
             </div>
 
             {/* Right Column: Photo Uploads & Status */}
@@ -785,6 +1078,12 @@ export default function AdminMerchandise() {
                   <input type="checkbox" name="is_available" id="is_available" checked={formData.is_available} onChange={handleInputChange} className="w-4.5 h-4.5 rounded border-[var(--border-color)] text-[var(--color-primary)] focus:ring-[var(--color-primary)] cursor-pointer" />
                   <label htmlFor="is_available" className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)] cursor-pointer select-none">
                     Produk Aktif / Tersedia
+                  </label>
+                </div>
+                <div className="flex items-center gap-3">
+                  <input type="checkbox" name="is_new" id="is_new" checked={formData.is_new} onChange={handleInputChange} className="w-4.5 h-4.5 rounded border-[var(--border-color)] text-[var(--color-primary)] focus:ring-[var(--color-primary)] cursor-pointer" />
+                  <label htmlFor="is_new" className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)] cursor-pointer select-none">
+                    Tandai Produk Baru (Badge NEW)
                   </label>
                 </div>
               </Card>
