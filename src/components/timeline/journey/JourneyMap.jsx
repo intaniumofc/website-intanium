@@ -260,6 +260,9 @@ export default function JourneyMap({ achievements = [] }) {
             {nodes.map((n, i) => {
               const polaroidSide = n.side === 'left' ? 'left' : 'right';
               const polaroidX = polaroidSide === 'left' ? n.x - 150 : n.x + 150;
+              const imgSrc = n.achievement.polaroidImage?.src || n.achievement.polaroidImage || null;
+              if (!imgSrc) return null;
+
               return (
                 <div
                   key={`polaroid-${i}`}
@@ -274,7 +277,7 @@ export default function JourneyMap({ achievements = [] }) {
                     y={0}
                     side={polaroidSide}
                     rotation={polaroidSide === 'left' ? -6 : 6}
-                    imgSrc={n.achievement.polaroidImage?.src || n.achievement.polaroidImage || null}
+                    imgSrc={imgSrc}
                     title={n.achievement.title}
                   />
                 </div>
