@@ -29,6 +29,7 @@ bun.lockb
 docs/
 database/
 .claude/
+.qoder/
 
 # Next.js
 .next/
