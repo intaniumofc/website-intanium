@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   BookOpen,
   Edit,
+  GripVertical,
   Image as ImageIcon,
   Plus,
   Search,
@@ -23,6 +24,8 @@ const EMPTY_FORM = {
   pageNumber: '',
   imageUrl: '',
   caption: '',
+  chapterNumber: 1,
+  chapterTitle: '',
 };
 
 const inputClass =
@@ -42,6 +45,8 @@ export default function AdminComicPages() {
   const [preview, setPreview] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState({ isOpen: false, id: null });
+  const [draggedIndex, setDraggedIndex] = useState(null);
+  const [dragOverIndex, setDragOverIndex] = useState(null);
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -53,22 +58,86 @@ export default function AdminComicPages() {
     fetchData();
   }, []);
 
+  const handleDragStart = (e, index) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', index.toString());
+  };
+
+  const handleDragOver = (e, index) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === index) return;
+    setDragOverIndex(index);
+  };
+
+  const handleDrop = async (e, targetIndex) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === targetIndex) {
+      setDraggedIndex(null);
+      setDragOverIndex(null);
+      return;
+    }
+
+    const updatedList = [...items];
+    const [draggedItem] = updatedList.splice(draggedIndex, 1);
+    updatedList.splice(targetIndex, 0, draggedItem);
+
+    const reorderedWithPageNums = updatedList.map((item, idx) => ({
+      ...item,
+      pageNumber: idx + 1,
+    }));
+
+    setItems(reorderedWithPageNums);
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+
+    const result = await comicPageService.reorderPages(reorderedWithPageNums);
+    if (result.success) {
+      notify.success('Urutan Diperbarui', 'Nomor halaman komik berhasil disesuaikan.');
+    } else {
+      notify.error('Gagal menyimpan urutan', result.error);
+      await fetchData();
+    }
+  };
+
   const filteredItems = useMemo(
     () =>
       items.filter((item) => {
         const q = searchQuery.toLowerCase();
         return (
           String(item.pageNumber).includes(q) ||
-          (item.caption || '').toLowerCase().includes(q)
+          (item.caption || '').toLowerCase().includes(q) ||
+          (item.chapterTitle || '').toLowerCase().includes(q) ||
+          String(item.chapterNumber || '').includes(q)
         );
       }),
     [items, searchQuery]
   );
 
+  const existingChapters = useMemo(() => {
+    const map = new Map();
+    items.forEach((item) => {
+      const chNum = Number(item.chapterNumber) || 1;
+      if (!map.has(chNum)) {
+        map.set(chNum, item.chapterTitle || `Chapter ${chNum}`);
+      }
+    });
+    return Array.from(map.entries())
+      .map(([num, title]) => ({ chapterNumber: num, chapterTitle: title }))
+      .sort((a, b) => a.chapterNumber - b.chapterNumber);
+  }, [items]);
+
   const openAddModal = () => {
     setModalMode('add');
     setEditingId(null);
-    setFormData(EMPTY_FORM);
+    const nextChapter = existingChapters.length > 0 ? existingChapters[0] : { chapterNumber: 1, chapterTitle: 'Awal' };
+    const nextHighestPage = items.length > 0 ? Math.max(...items.map((i) => Number(i.pageNumber) || 0)) + 1 : 1;
+    setFormData({
+      ...EMPTY_FORM,
+      pageNumber: nextHighestPage,
+      chapterNumber: nextChapter.chapterNumber,
+      chapterTitle: nextChapter.chapterTitle,
+    });
     setSelectedFile(null);
     setPreview('');
     setIsModalOpen(true);
@@ -97,10 +166,48 @@ export default function AdminComicPages() {
   const updateField = (name, value) =>
     setFormData((c) => ({ ...c, [name]: value }));
 
+  const handleChapterSelectChange = (e) => {
+    const val = e.target.value;
+    if (val === 'NEW') {
+      const highestNum = existingChapters.length > 0
+        ? Math.max(...existingChapters.map((c) => c.chapterNumber)) + 1
+        : 1;
+      setFormData((c) => ({
+        ...c,
+        chapterNumber: highestNum,
+        chapterTitle: '',
+      }));
+    } else {
+      const chNum = parseInt(val, 10);
+      const found = existingChapters.find((c) => c.chapterNumber === chNum);
+      if (found) {
+        setFormData((c) => ({
+          ...c,
+          chapterNumber: found.chapterNumber,
+          chapterTitle: found.chapterTitle,
+        }));
+      }
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.pageNumber) {
+    const targetPageNum = Number(formData.pageNumber);
+
+    if (!targetPageNum) {
       notify.warning('Nomor halaman wajib diisi', '');
+      return;
+    }
+
+    const isDuplicate = items.some(
+      (item) => Number(item.pageNumber) === targetPageNum && item.id !== editingId
+    );
+
+    if (isDuplicate) {
+      notify.warning(
+        'Nomor Halaman Sudah Terdaftar',
+        `Halaman ${targetPageNum} sudah digunakan. Pilih nomor lain atau ubah urutan via Drag & Drop.`
+      );
       return;
     }
 
@@ -122,11 +229,16 @@ export default function AdminComicPages() {
         return;
       }
 
+      // Sync chapter title to all pages in this chapter
+      if (formData.chapterNumber) {
+        await comicPageService.syncChapterTitle(formData.chapterNumber, formData.chapterTitle);
+      }
+
       setIsModalOpen(false);
       await fetchData();
       notify.success(
         modalMode === 'add' ? 'Halaman ditambahkan' : 'Halaman diperbarui',
-        `Halaman ${formData.pageNumber} berhasil disimpan.`
+        `Halaman ${formData.pageNumber} berhasil disimpan (Chapter ${formData.chapterNumber}).`
       );
     } catch (err) {
       notify.error('Gagal memproses gambar', err.message);
@@ -187,46 +299,82 @@ export default function AdminComicPages() {
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 p-4">
-            {filteredItems.map((item) => (
-              <div
-                key={item.id}
-                className="group relative rounded-xl border border-[var(--border-color)] bg-[var(--bg-primary)] overflow-hidden"
-              >
-                <div className="aspect-[3/4] bg-gray-100 overflow-hidden">
-                  {item.imageUrl ? (
-                    <img
-                      src={item.imageUrl}
-                      alt={`Halaman ${item.pageNumber}`}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-[var(--text-muted)]">
-                      <ImageIcon className="h-8 w-8 opacity-30" />
+            {filteredItems.map((item, index) => {
+              const isDragging = draggedIndex === index;
+              const isOver = dragOverIndex === index;
+              return (
+                <div
+                  key={item.id}
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, index)}
+                  onDragOver={(e) => handleDragOver(e, index)}
+                  onDrop={(e) => handleDrop(e, index)}
+                  onDragEnd={() => {
+                    setDraggedIndex(null);
+                    setDragOverIndex(null);
+                  }}
+                  className={`group relative rounded-xl border bg-[var(--bg-primary)] overflow-hidden transition-all duration-200 cursor-grab active:cursor-grabbing ${
+                    isDragging
+                      ? 'opacity-40 scale-95 border-pink-400 border-dashed'
+                      : isOver
+                      ? 'border-pink-500 ring-2 ring-pink-400 scale-[1.02]'
+                      : 'border-[var(--border-color)] hover:border-pink-300'
+                  }`}
+                >
+                  {/* Drag Handle Overlay */}
+                  <div className="absolute top-2 left-2 z-10 p-1 rounded-md bg-black/60 text-white opacity-60 group-hover:opacity-100 backdrop-blur-sm transition-opacity">
+                    <GripVertical className="h-3.5 w-3.5" />
+                  </div>
+
+                  <div className="aspect-[3/4] bg-gray-100 overflow-hidden">
+                    {item.imageUrl ? (
+                      <img
+                        src={item.imageUrl}
+                        alt={`Halaman ${item.pageNumber}`}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                        draggable="false"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-[var(--text-muted)]">
+                        <ImageIcon className="h-8 w-8 opacity-30" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-2.5 flex flex-col gap-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-[var(--text-primary)]">
+                        Hal. {item.pageNumber}
+                      </span>
+                      <span className="px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wider rounded border border-pink-200 bg-pink-50 text-pink-700">
+                        Ch. {item.chapterNumber || 1}
+                      </span>
                     </div>
-                  )}
-                </div>
-                <div className="p-2.5 flex items-center justify-between">
-                  <span className="text-xs font-bold text-[var(--text-primary)]">
-                    Hal. {item.pageNumber}
-                  </span>
-                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button
-                      onClick={() => openEditModal(item)}
-                      className="p-1 rounded-lg hover:bg-[var(--color-primary)]/10 text-[var(--color-primary)]"
-                    >
-                      <Edit className="h-3.5 w-3.5" />
-                    </button>
-                    <button
-                      onClick={() => setConfirmDelete({ isOpen: true, id: item.id })}
-                      className="p-1 rounded-lg hover:bg-red-50 text-red-500"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
+                    {item.chapterTitle && (
+                      <span className="text-[10px] text-[var(--text-muted)] truncate">
+                        {item.chapterTitle}
+                      </span>
+                    )}
+                    <div className="flex gap-1 justify-end opacity-0 group-hover:opacity-100 transition-opacity mt-1">
+                      <button
+                        onClick={() => openEditModal(item)}
+                        className="p-1 rounded-lg hover:bg-[var(--color-primary)]/10 text-[var(--color-primary)] cursor-pointer"
+                        title="Edit Halaman"
+                      >
+                        <Edit className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        onClick={() => setConfirmDelete({ isOpen: true, id: item.id })}
+                        className="p-1 rounded-lg hover:bg-red-50 text-red-500 cursor-pointer"
+                        title="Hapus Halaman"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </Card>
@@ -240,17 +388,72 @@ export default function AdminComicPages() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-xs font-bold text-[var(--text-secondary)] mb-1">
-              Nomor Halaman *
+              Pilih Chapter Komik *
+            </label>
+            <select
+              value={
+                existingChapters.some((c) => c.chapterNumber === formData.chapterNumber)
+                  ? formData.chapterNumber
+                  : 'NEW'
+              }
+              onChange={handleChapterSelectChange}
+              className={inputClass}
+            >
+              {existingChapters.map((ch) => (
+                <option key={ch.chapterNumber} value={ch.chapterNumber}>
+                  Chapter {ch.chapterNumber}{ch.chapterTitle ? `: ${ch.chapterTitle}` : ''}
+                </option>
+              ))}
+              <option value="NEW">+ Tambah Chapter Baru...</option>
+            </select>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-bold text-[var(--text-secondary)] mb-1">
+                Nomor Halaman *
+              </label>
+              <input
+                type="number"
+                min="1"
+                value={formData.pageNumber}
+                onChange={(e) => updateField('pageNumber', parseInt(e.target.value, 10) || '')}
+                className={inputClass}
+                placeholder="1"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-[var(--text-secondary)] mb-1">
+                Nomor Chapter *
+              </label>
+              <input
+                type="number"
+                min="1"
+                value={formData.chapterNumber}
+                onChange={(e) => updateField('chapterNumber', parseInt(e.target.value, 10) || 1)}
+                className={inputClass}
+                placeholder="1"
+                required
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-[var(--text-secondary)] mb-1">
+              Judul Chapter (Auto-Sync ke semua halaman di Chapter {formData.chapterNumber})
             </label>
             <input
-              type="number"
-              min="1"
-              value={formData.pageNumber}
-              onChange={(e) => updateField('pageNumber', parseInt(e.target.value, 10) || '')}
+              type="text"
+              value={formData.chapterTitle}
+              onChange={(e) => updateField('chapterTitle', e.target.value)}
               className={inputClass}
-              placeholder="1"
-              required
+              placeholder="misal: Awal / Saatnya Beraksi"
             />
+            <p className="text-[10px] text-[var(--text-muted)] mt-1">
+              *Mengubah judul di sini akan otomatis memperbarui judul seluruh halaman dalam Chapter {formData.chapterNumber}.
+            </p>
           </div>
 
           <div>
