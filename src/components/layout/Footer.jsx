@@ -85,7 +85,7 @@ export default function Footer({
               </span>
             </Link>
 
-            <p className="text-xs leading-relaxed text-white/85">
+            <p className="text-xs leading-relaxed text-white font-medium">
               {description}
             </p>
           </div>
@@ -93,24 +93,24 @@ export default function Footer({
           {/* Columns 2 & 3: Quick Links & Sections */}
           {sections.map((section) => (
             <div key={section.title}>
-              <h3 className="mb-4 text-xs font-extrabold uppercase tracking-[0.18em] text-white border-b border-white/20 pb-2">
+              <h3 className="mb-4 text-xs font-black uppercase tracking-[0.18em] text-white border-b border-white/30 pb-2">
                 {section.title}
               </h3>
-              <ul className="space-y-2.5 text-xs font-medium text-white/85">
+              <ul className="space-y-2.5 text-xs font-semibold text-pink-100">
                 {section.links.map((link) => (
                   <li key={link.name}>
                     {link.href.startsWith('#') || link.href.startsWith('http') ? (
                       <a
                         href={link.href}
                         {...(link.href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                        className="transition-colors duration-200 hover:text-white inline-block py-2"
+                        className="transition-colors duration-200 text-pink-100 hover:text-white hover:underline underline-offset-4 inline-block py-1"
                       >
                         {link.name}
                       </a>
                     ) : (
                       <Link
                         href={link.href}
-                        className="transition-colors duration-200 hover:text-white inline-block py-2"
+                        className="transition-colors duration-200 text-pink-100 hover:text-white hover:underline underline-offset-4 inline-block py-1"
                       >
                         {link.name}
                       </Link>
@@ -123,10 +123,10 @@ export default function Footer({
 
           {/* Column 4: Social Media */}
           <div>
-            <h3 className="mb-4 text-xs font-extrabold uppercase tracking-[0.18em] text-white border-b border-white/20 pb-2">
+            <h3 className="mb-4 text-xs font-black uppercase tracking-[0.18em] text-white border-b border-white/30 pb-2">
               Ikuti Kami
             </h3>
-            <p className="text-xs text-white/85 mb-4 leading-relaxed">
+            <p className="text-xs text-white mb-4 leading-relaxed font-medium">
               Dapatkan info kegiatan, streaming, dan event terbaru Nur Intan di media sosial resmi.
             </p>
             <div className="flex flex-wrap gap-2.5 mb-6">
@@ -138,7 +138,7 @@ export default function Footer({
                   title={social.label}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex size-11 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white shadow-xs transition-all duration-200 hover:-translate-y-1 hover:bg-white hover:text-[var(--color-pink-dark)]"
+                  className="flex size-11 items-center justify-center rounded-full border border-white/40 bg-white/15 text-white shadow-xs transition-all duration-200 hover:-translate-y-1 hover:bg-white hover:text-[var(--color-pink-dark)]"
                 >
                   {typeof social.icon === "function" ? (
                     <social.icon className="size-4" />
@@ -151,14 +151,14 @@ export default function Footer({
         </div>
 
         {/* Bottom Copyright & Legal Bar */}
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/20 pt-8 text-center md:flex-row text-xs text-white/75 font-medium">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/30 pt-8 text-center md:flex-row text-xs text-pink-50 font-semibold">
           <p>{copyright}</p>
           <nav className="flex gap-4">
             {legalLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
-                className="transition-colors hover:text-white"
+                className="text-pink-100 transition-colors hover:text-white hover:underline underline-offset-4"
               >
                 {link.name}
               </a>

@@ -114,7 +114,7 @@ export default function Preloader() {
         tl.to(logoRef.current, {
           scale: 0.8,
           opacity: 0,
-          duration: 0.6,
+          duration: 0.25,
           ease: 'power3.inOut',
         }, 0);
       }
@@ -130,9 +130,9 @@ export default function Preloader() {
         tl.to(uiElements, {
           opacity: 0,
           y: -15,
-          duration: 0.4,
+          duration: 0.2,
           ease: 'power2.in',
-          stagger: 0.04,
+          stagger: 0.02,
         }, 0);
       }
 
@@ -140,17 +140,17 @@ export default function Preloader() {
       if (apertureRef.current) {
         tl.to(apertureRef.current, {
           scale: 50,
-          duration: 1.2,
+          duration: 0.4,
           ease: 'expo.out',
-        }, 0.3);
+        }, 0.1);
       }
 
       // Final fade out of entire container
       tl.to(container, {
         opacity: 0,
-        duration: 0.6,
+        duration: 0.25,
         ease: 'power2.out',
-      }, 0.6);
+      }, 0.25);
 
     }, container);
 

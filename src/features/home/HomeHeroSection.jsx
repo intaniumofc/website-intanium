@@ -8,6 +8,8 @@ import { ROUTES } from '../../lib/constants';
 import { ArrowDown, ArrowRight } from 'lucide-react';
 import { useLoading } from '../../components/loading/LoadingContext';
 
+import intanPoster from '../../assets/images/intan-01.webp';
+
 gsap.registerPlugin(ScrollTrigger);
 
 export default function HomeHeroSection() {
@@ -169,11 +171,12 @@ export default function HomeHeroSection() {
         <video
           ref={videoRef}
           src="/hero-intan-vidio.webm"
+          poster={intanPoster.src || intanPoster}
           autoPlay
           loop
           muted
           playsInline
-          preload="auto"
+          preload="metadata"
           aria-hidden="true"
           className="absolute inset-0 w-full h-full object-cover pointer-events-none"
         />
