@@ -24,11 +24,13 @@ import KenalanIntanCarousel from './KenalanIntanCarousel';
 import { LoadingProvider } from '../../components/loading/LoadingContext';
 import Preloader from '../../components/loading/Preloader';
 import { usePreloader } from '../../hooks/usePreloader';
-const HomeNewsSection = React.lazy(() => import('../news/HomeNewsSection'));
-const HomeMerchandiseSection = React.lazy(() => import('../merchandise/HomeMerchandiseSection'));
-const HomeGallerySection = React.lazy(() => import('../gallery/HomeGallerySection'));
-const HomeHashtagsSection = React.lazy(() => import('../hashtags/HomeHashtagsSection'));
-const MadingPreviewSection = React.lazy(() => import('../mading/MadingPreviewSection'));
+import dynamic from 'next/dynamic';
+
+const HomeNewsSection = dynamic(() => import('../news/HomeNewsSection'));
+const HomeMerchandiseSection = dynamic(() => import('../merchandise/HomeMerchandiseSection'));
+const HomeGallerySection = dynamic(() => import('../gallery/HomeGallerySection'));
+const HomeHashtagsSection = dynamic(() => import('../hashtags/HomeHashtagsSection'));
+const MadingPreviewSection = dynamic(() => import('../mading/MadingPreviewSection'));
 import intan1 from '../../assets/images/intan-01.webp';
 import intan2 from '../../assets/images/intan-02.webp';
 import intan3 from '../../assets/images/intan-03.webp';

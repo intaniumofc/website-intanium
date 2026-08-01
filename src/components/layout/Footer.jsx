@@ -55,10 +55,39 @@ export default function Footer({
   legalLinks = defaultLegalLinks,
 }) {
   return (
-    <footer className="relative mt-auto border-t border-[#ff4fbd] bg-[var(--color-pink-dark)] text-white transition-colors duration-300 select-none overflow-hidden shadow-md" role="contentinfo">
+    <footer className="relative mt-16 sm:mt-24 bg-white text-[var(--color-heading)] transition-colors duration-300 select-none" role="contentinfo">
+      {/* Top Organic Pink Wave Divider - Positioned above footer */}
+      <div className="absolute bottom-full inset-x-0 w-full overflow-hidden leading-none pointer-events-none translate-y-[1px]">
+        <svg
+          className="relative block w-full h-12 sm:h-16 md:h-24"
+          viewBox="0 0 1200 120"
+          preserveAspectRatio="none"
+        >
+          {/* Background Soft Pink Glow Wave */}
+          <path
+            d="M0,10 C180,85 360,10 540,55 C720,105 920,20 1200,65 L1200,120 L0,120 Z"
+            fill="var(--color-pink)"
+            opacity="0.25"
+          />
+          {/* Main Pink Wave Stroke */}
+          <path
+            d="M0,32 C200,92 450,22 700,72 C950,122 1100,32 1200,52"
+            fill="none"
+            stroke="var(--color-pink)"
+            strokeWidth="3.5"
+            strokeLinecap="round"
+          />
+          {/* Main White Body Fill */}
+          <path
+            d="M0,35 C200,95 450,25 700,75 C950,125 1100,35 1200,55 L1200,120 L0,120 Z"
+            fill="#FFFFFF"
+          />
+        </svg>
+      </div>
+
       {/* Soft ambient edge glow */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-[radial-gradient(circle,rgba(255,255,255,0.12)_0%,transparent_70%)] rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-[radial-gradient(circle,rgba(255,255,255,0.08)_0%,transparent_70%)] rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-12 right-0 w-96 h-96 bg-[radial-gradient(circle,rgba(255,95,178,0.06)_0%,transparent_70%)] rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-[radial-gradient(circle,rgba(168,85,247,0.05)_0%,transparent_70%)] rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
@@ -76,16 +105,16 @@ export default function Footer({
                   className="h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
                 />
               ) : (
-                <span className="flex size-9 items-center justify-center rounded-xl border border-white/30 bg-white/20 text-sm font-extrabold text-white shadow-xs">
+                <span className="flex size-9 items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-pink-tint-8)] text-sm font-extrabold text-[var(--color-pink)] shadow-xs">
                   I
                 </span>
               )}
-              <span className="text-2xl font-black tracking-tight text-white drop-shadow-sm">
+              <span className="text-2xl font-black tracking-tight text-[var(--color-heading)]">
                 IRIS
               </span>
             </Link>
 
-            <p className="text-xs leading-relaxed text-white font-medium">
+            <p className="text-xs leading-relaxed text-slate-600 font-medium">
               {description}
             </p>
           </div>
@@ -93,24 +122,24 @@ export default function Footer({
           {/* Columns 2 & 3: Quick Links & Sections */}
           {sections.map((section) => (
             <div key={section.title}>
-              <h3 className="mb-4 text-xs font-black uppercase tracking-[0.18em] text-white border-b border-white/30 pb-2">
+              <h3 className="mb-4 text-xs font-black uppercase tracking-[0.18em] text-[var(--color-pink-dark)] border-b border-slate-200 pb-2">
                 {section.title}
               </h3>
-              <ul className="space-y-2.5 text-xs font-semibold text-pink-100">
+              <ul className="space-y-2.5 text-xs font-semibold text-slate-700">
                 {section.links.map((link) => (
                   <li key={link.name}>
                     {link.href.startsWith('#') || link.href.startsWith('http') ? (
                       <a
                         href={link.href}
                         {...(link.href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                        className="transition-colors duration-200 text-pink-100 hover:text-white hover:underline underline-offset-4 inline-block py-1"
+                        className="transition-colors duration-200 text-slate-700 hover:text-[var(--color-pink-dark)] hover:underline underline-offset-4 inline-block py-1"
                       >
                         {link.name}
                       </a>
                     ) : (
                       <Link
                         href={link.href}
-                        className="transition-colors duration-200 text-pink-100 hover:text-white hover:underline underline-offset-4 inline-block py-1"
+                        className="transition-colors duration-200 text-slate-700 hover:text-[var(--color-pink-dark)] hover:underline underline-offset-4 inline-block py-1"
                       >
                         {link.name}
                       </Link>
@@ -123,10 +152,10 @@ export default function Footer({
 
           {/* Column 4: Social Media */}
           <div>
-            <h3 className="mb-4 text-xs font-black uppercase tracking-[0.18em] text-white border-b border-white/30 pb-2">
+            <h3 className="mb-4 text-xs font-black uppercase tracking-[0.18em] text-[var(--color-pink-dark)] border-b border-slate-200 pb-2">
               Ikuti Kami
             </h3>
-            <p className="text-xs text-white mb-4 leading-relaxed font-medium">
+            <p className="text-xs text-slate-600 mb-4 leading-relaxed font-medium">
               Dapatkan info kegiatan, streaming, dan event terbaru Nur Intan di media sosial resmi.
             </p>
             <div className="flex flex-wrap gap-2.5 mb-6">
@@ -138,7 +167,7 @@ export default function Footer({
                   title={social.label}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex size-11 items-center justify-center rounded-full border border-white/40 bg-white/15 text-white shadow-xs transition-all duration-200 hover:-translate-y-1 hover:bg-white hover:text-[var(--color-pink-dark)]"
+                  className="flex size-11 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-slate-700 shadow-xs transition-all duration-200 hover:-translate-y-1 hover:bg-[var(--color-pink)] hover:text-white hover:border-[var(--color-pink)]"
                 >
                   {typeof social.icon === "function" ? (
                     <social.icon className="size-4" />
@@ -151,14 +180,14 @@ export default function Footer({
         </div>
 
         {/* Bottom Copyright & Legal Bar */}
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/30 pt-8 text-center md:flex-row text-xs text-pink-50 font-semibold">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-slate-200 pt-8 text-center md:flex-row text-xs text-slate-500 font-semibold">
           <p>{copyright}</p>
           <nav className="flex gap-4">
             {legalLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
-                className="text-pink-100 transition-colors hover:text-white hover:underline underline-offset-4"
+                className="text-slate-700 transition-colors hover:text-[var(--color-pink-dark)] hover:underline underline-offset-4"
               >
                 {link.name}
               </a>
