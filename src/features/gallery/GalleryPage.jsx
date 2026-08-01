@@ -166,32 +166,36 @@ const ImageModal = ({ item, onClose }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/90 backdrop-blur-xl p-4 sm:p-6 select-none"
       onClick={onClose}
     >
       <motion.div
-        initial={{ scale: 0.9, y: 20 }}
+        initial={{ scale: 0.95, y: 20 }}
         animate={{ scale: 1, y: 0 }}
-        exit={{ scale: 0.9, y: 20 }}
-        className="relative w-full max-w-4xl p-4"
+        exit={{ scale: 0.95, y: 20 }}
+        className="relative w-full max-w-4xl max-h-[85vh] overflow-hidden rounded-3xl border border-white/15 bg-slate-900 shadow-[0_0_60px_rgba(255,95,178,0.2)] flex flex-col items-center justify-center"
         onClick={(e) => e.stopPropagation()}
       >
-        <img
-          src={(item.url)?.src || (item.url)}
-          alt={item.title}
-          className="h-auto max-h-[90vh] w-full rounded-2xl object-contain shadow-2xl border border-white/10 bg-slate-950"
-        />
-        <div className="absolute inset-x-4 bottom-4 bg-black/60 backdrop-blur-md p-4 rounded-xl text-white text-left select-none border border-white/5">
-          <h3 className="text-base font-extrabold">{item.title}</h3>
-          {item.desc && <p className="mt-1 text-xs text-white/70">{item.desc}</p>}
+        <div className="relative w-full flex justify-center items-center bg-black/60 min-h-[250px] max-h-[70vh] overflow-hidden p-2">
+          <img
+            src={(item.url)?.src || (item.url)}
+            alt={item.title}
+            className="max-h-[70vh] w-full object-contain rounded-2xl block mx-auto transition-transform duration-300"
+          />
+        </div>
+
+        <div className="w-full bg-slate-950/95 backdrop-blur-md p-4 sm:p-5 text-white text-left select-none border-t border-white/15">
+          <h3 className="text-base sm:text-lg font-extrabold text-white leading-snug">{item.title}</h3>
+          {item.desc && <p className="mt-1 text-xs sm:text-sm text-white/80 leading-relaxed">{item.desc}</p>}
         </div>
       </motion.div>
+
       <button
         onClick={onClose}
-        className="absolute right-4 top-4 text-white/80 transition-colors hover:text-white bg-white/10 hover:bg-white/20 p-2.5 rounded-full cursor-pointer shadow-md"
+        className="absolute top-4 right-4 sm:top-6 sm:right-6 z-[110] text-white hover:text-[#FF5FB2] bg-white/10 hover:bg-white/20 border border-white/20 p-3 rounded-full transition-all cursor-pointer shadow-2xl backdrop-blur-md hover:scale-110 active:scale-95"
         aria-label="Close image view"
       >
-        <X size={20} />
+        <X size={22} />
       </button>
     </motion.div>
   );

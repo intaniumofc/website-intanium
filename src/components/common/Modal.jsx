@@ -93,7 +93,7 @@ export default function Modal({
   };
 
   return (
-    <div className="relative z-50">
+    <div className="relative z-[100]">
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-slate-900/60 backdrop-blur-md transition-opacity duration-300"

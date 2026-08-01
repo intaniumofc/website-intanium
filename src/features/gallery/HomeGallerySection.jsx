@@ -117,12 +117,12 @@ export default function HomeGallerySection() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             onClick={closeLightbox}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 select-none"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/90 backdrop-blur-xl p-4 sm:p-6 md:p-10 select-none"
           >
             {/* Close Button in top right */}
             <button
               onClick={closeLightbox}
-              className="absolute top-4 right-4 z-50 text-white/70 hover:text-white bg-white/10 hover:bg-white/20 p-2.5 rounded-full transition-all cursor-pointer"
+              className="absolute top-4 right-4 sm:top-6 sm:right-6 z-[110] text-white hover:text-[#FF5FB2] bg-white/10 hover:bg-white/20 border border-white/20 p-3 rounded-full transition-all cursor-pointer shadow-2xl backdrop-blur-md hover:scale-110 active:scale-95"
               aria-label="Tutup"
             >
               <X className="w-6 h-6" />
@@ -130,13 +130,13 @@ export default function HomeGallerySection() {
 
             {/* Modal Image Wrapper with AnimatePresence for navigating */}
             <div
-              className="relative max-w-4xl max-h-[80vh] w-full flex items-center justify-center"
+              className="relative max-w-4xl max-h-[85vh] w-full flex items-center justify-center"
               onClick={(e) => e.stopPropagation()} // Prevent closing lightbox when clicking image
             >
               {/* Previous Button */}
               <button
                 onClick={prevPhoto}
-                className="absolute left-2 sm:-left-16 z-50 text-white/70 hover:text-white bg-white/10 hover:bg-white/20 p-3 rounded-full transition-all cursor-pointer"
+                className="absolute left-2 sm:-left-16 z-[110] text-white hover:text-[#FF5FB2] bg-white/10 hover:bg-white/20 border border-white/20 p-3.5 rounded-full transition-all cursor-pointer shadow-2xl backdrop-blur-md hover:scale-110 active:scale-95"
                 aria-label="Foto Sebelumnya"
               >
                 <ChevronLeft className="w-6 h-6 stroke-[2.5]" />
@@ -148,34 +148,27 @@ export default function HomeGallerySection() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.25 }}
-                className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl max-w-full"
+                className="relative w-full overflow-hidden rounded-3xl border border-white/15 bg-slate-900 shadow-[0_0_60px_rgba(255,95,178,0.2)] flex flex-col justify-center items-center"
               >
-                <div className="relative w-full h-[70vh]">
-                  <Image
+                <div className="relative w-full flex justify-center items-center bg-black/60 min-h-[300px] max-h-[68vh] overflow-hidden p-2">
+                  <img
                     src={(photos[activePhotoIdx].url)?.src || (photos[activePhotoIdx].url)}
                     alt={photos[activePhotoIdx].title}
-                    fill
-                    sizes="(max-width: 1200px) 100vw, 1200px"
-                    quality={80}
-                    className="object-contain rounded-2xl block"
-                    unoptimized={Boolean(
-                      typeof photos[activePhotoIdx]?.url === 'string' &&
-                      (photos[activePhotoIdx].url.startsWith('http') || photos[activePhotoIdx].url.includes('/api/') || photos[activePhotoIdx].url.includes('?'))
-                    )}
+                    className="max-h-[68vh] w-full object-contain rounded-2xl block mx-auto transition-transform duration-300"
                   />
                 </div>
 
                 {/* Meta details strip at bottom */}
-                <div className="absolute inset-x-0 bottom-0 bg-black/60 backdrop-blur-sm p-4 text-white flex justify-between items-center select-none">
-                  <div>
-                    <span className="text-[9px] uppercase font-black tracking-widest text-[var(--color-primary-light)]">
+                <div className="w-full bg-slate-950/95 backdrop-blur-md p-4 sm:p-5 text-white flex justify-between items-center select-none border-t border-white/15 gap-4">
+                  <div className="flex flex-col items-start gap-1">
+                    <span className="text-[11px] uppercase font-black tracking-widest text-[#FF5FB2] bg-[#FF5FB2]/15 border border-[#FF5FB2]/30 px-3 py-0.5 rounded-full inline-block">
                       {photos[activePhotoIdx].category || 'Showcase'}
                     </span>
-                    <h5 className="font-extrabold text-sm sm:text-base leading-tight mt-0.5">
+                    <h5 className="font-extrabold text-base sm:text-lg text-white leading-snug drop-shadow-sm">
                       {photos[activePhotoIdx].title}
                     </h5>
                   </div>
-                  <span className="text-xs text-white/75 bg-white/10 px-3 py-1 rounded-full font-bold">
+                  <span className="text-xs text-white bg-white/15 border border-white/20 px-3.5 py-1.5 rounded-full font-bold shrink-0 shadow-xs">
                     {activePhotoIdx + 1} / {photos.length}
                   </span>
                 </div>
@@ -184,7 +177,7 @@ export default function HomeGallerySection() {
               {/* Next Button */}
               <button
                 onClick={nextPhoto}
-                className="absolute right-2 sm:-right-16 z-50 text-white/70 hover:text-white bg-white/10 hover:bg-white/20 p-3 rounded-full transition-all cursor-pointer"
+                className="absolute right-2 sm:-right-16 z-[110] text-white hover:text-[#FF5FB2] bg-white/10 hover:bg-white/20 border border-white/20 p-3.5 rounded-full transition-all cursor-pointer shadow-2xl backdrop-blur-md hover:scale-110 active:scale-95"
                 aria-label="Foto Selanjutnya"
               >
                 <ChevronRight className="w-6 h-6 stroke-[2.5]" />

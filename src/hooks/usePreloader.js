@@ -55,35 +55,13 @@ export function usePreloader({ videoSrc, imageSources = [], onComplete }) {
       try {
         let currentProgress = 0;
 
-        // ── Phase 1: Video (0% → 70%) ──
+        // ── Phase 1: Video Check (0% → 70%) ── Fast non-blocking check
         if (videoSrc) {
           try {
-            const response = await fetch(videoSrc);
-            if (!response.ok) throw new Error('Video fetch failed');
-
-            const contentLength = response.headers.get('Content-Length');
-            const totalBytes = contentLength ? parseInt(contentLength, 10) : 0;
-
-            if (totalBytes > 0 && response.body) {
-              const reader = response.body.getReader();
-              let receivedBytes = 0;
-
-              while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-                receivedBytes += value.length;
-                currentProgress = (receivedBytes / totalBytes) * 70;
-                setProgress(currentProgress);
-              }
-            } else {
-              // Simulated progress fallback
-              for (let i = 1; i <= 7; i++) {
-                await new Promise((r) => setTimeout(r, 80));
-                setProgress(i * 10);
-              }
-            }
+            // Fast HEAD request to check availability without downloading 4.7MB in JS thread
+            await fetch(videoSrc, { method: 'HEAD' }).catch(() => {});
           } catch (err) {
-            console.warn('[Preloader] Video fetch warning, continuing:', err);
+            console.warn('[Preloader] Video check warning, continuing:', err);
           }
           setProgress(70);
           loadingRef.current.markVideoReady();
