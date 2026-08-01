@@ -23,6 +23,7 @@ import {
 
 import cockroachImage from './menangkap-kecoa/kecoa.webp';
 import tebakKataBg from '../../assets/images/intan-01.webp';
+import intan02 from '../../assets/images/intan-02.webp';
 
 const ICON_MAP = {
   Gamepad2,
@@ -32,6 +33,20 @@ const ICON_MAP = {
   Target,
   Trophy,
   Sparkles
+};
+
+const resolveGameBgImage = (game) => {
+  if (!game) return null;
+  const rawBg = game.bgImage || game.bg_image || game.imageUrl || game.image_url || game.coverUrl || game.cover_url;
+  if (!rawBg) return null;
+  if (typeof rawBg === 'object' && rawBg.src) return rawBg.src;
+  if (typeof rawBg === 'string') {
+    if (rawBg === 'cockroachBg') return cockroachImage?.src || cockroachImage;
+    if (rawBg === 'tebakKataBg') return tebakKataBg?.src || tebakKataBg;
+    if (rawBg === 'intanRunBg') return intan02?.src || intan02;
+    return rawBg;
+  }
+  return null;
 };
 
 const getThemeStyles = (themeName) => {
@@ -347,6 +362,18 @@ export default function GamesPage() {
               {/* Reflective Glare Overlay */}
               <div className="card-glare absolute inset-0 pointer-events-none z-30 transition-opacity duration-300 rounded-[2.5rem]" />
 
+              {/* Dynamic Background Image from Game Data */}
+              {resolveGameBgImage(featuredGame) && (
+                <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none rounded-[2.5rem]">
+                  <img
+                    src={resolveGameBgImage(featuredGame)}
+                    alt={featuredGame.title}
+                    className="w-full h-full object-cover object-center opacity-30 group-hover:opacity-45 group-hover:scale-105 transition-all duration-700 ease-out filter blur-[1px] group-hover:blur-0"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#1A0B2E] via-[#1A0B2E]/85 to-[#120722]/70" />
+                </div>
+              )}
+
               {/* Neon Grid Backplate */}
               <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
               <FloatingParticles count={15} color={heroTheme.particles} containerHeight={460} />
@@ -442,6 +469,19 @@ export default function GamesPage() {
               >
                 {/* Reflective Glare Overlay */}
                 <div className="card-glare absolute inset-0 pointer-events-none z-30 transition-opacity duration-300 rounded-[2.5rem]" />
+
+                {/* Dynamic Background Image from Game Data */}
+                {resolveGameBgImage(secGame) && (
+                  <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none rounded-[2.5rem]">
+                    <img
+                      src={resolveGameBgImage(secGame)}
+                      alt={secGame.title}
+                      className="w-full h-full object-cover object-center opacity-30 group-hover:opacity-45 group-hover:scale-105 transition-all duration-700 ease-out filter blur-[1px] group-hover:blur-0"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#10061E] via-[#10061E]/80 to-[#10061E]/40" />
+                  </div>
+                )}
+
                 <div className="absolute inset-0 bg-gradient-to-t from-[#10061E] via-transparent to-transparent z-0" />
                 <FloatingParticles count={8} color={secTheme.particles} containerHeight={460} />
 
