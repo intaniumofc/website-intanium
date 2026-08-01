@@ -22,7 +22,9 @@ import {
   Music,
   Droplet,
   Ruler,
-  Users
+  Users,
+  Compass,
+  Route
 } from 'lucide-react';
 import { aboutIntanService } from '../../services/public/aboutIntanService';
 import { scheduleService } from '../../services/public/scheduleService';
@@ -1154,14 +1156,22 @@ export default function AboutIntanPage() {
               </div>
             </motion.div>
 
-            {/* CTA Button placed prominently at section end */}
-            <motion.div variants={fadeUp} className="text-center pt-8">
+            {/* CTA Buttons Group placed prominently at section end */}
+            <motion.div variants={fadeUp} className="flex flex-wrap items-center justify-center gap-4 pt-8">
               <Link
                 href="/shining-star"
-                className="inline-flex items-center gap-2.5 px-8 py-4 rounded-2xl bg-(--color-primary) text-white hover:bg-(--color-accent) font-bold text-sm tracking-wide shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-(--color-primary) text-white hover:bg-(--color-accent) font-bold text-sm tracking-wide shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer"
               >
+                <Route className="w-5 h-5" />
                 Lihat Perjalanan Nur Intan
-                <PlayCircle className="w-5 h-5" />
+              </Link>
+
+              <Link
+                href="/peta-penampilan"
+                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-white border-2 border-(--color-primary) text-(--color-primary) hover:bg-(--color-primary-light) font-bold text-sm tracking-wide shadow-md hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+              >
+                <MapPin className="w-5 h-5 text-(--color-primary)" />
+                Peta Penampilan Nur Intan
               </Link>
             </motion.div>
           </motion.section>
@@ -1368,7 +1378,9 @@ export default function AboutIntanPage() {
             </motion.div>
           </motion.section>
 
-          {/* ================= 7. NEW SCHEDULE SECTION (PLACED AT THE END) ================= */}
+
+
+          {/* ================= 8. NEW SCHEDULE SECTION (PLACED AT THE END) ================= */}
           <ScheduleSection />
 
         </div>

@@ -9,6 +9,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   weight: ['400', '600', '700', '800'],
   variable: '--font-plus-jakarta',
   display: 'swap',
+  adjustFontFallback: false,
 });
 
 const inter = Inter({
@@ -16,6 +17,7 @@ const inter = Inter({
   weight: ['400', '600'],
   variable: '--font-inter',
   display: 'swap',
+  adjustFontFallback: false,
 });
 
 const playfairDisplay = Playfair_Display({
@@ -24,6 +26,7 @@ const playfairDisplay = Playfair_Display({
   style: ['normal'],
   variable: '--font-playfair',
   display: 'swap',
+  adjustFontFallback: false,
 });
 
 const cormorantGaramond = Cormorant_Garamond({
@@ -31,6 +34,7 @@ const cormorantGaramond = Cormorant_Garamond({
   weight: ['400', '600'],
   variable: '--font-cormorant',
   display: 'swap',
+  adjustFontFallback: false,
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -38,6 +42,7 @@ const jetbrainsMono = JetBrains_Mono({
   weight: ['400'],
   variable: '--font-jetbrains',
   display: 'swap',
+  adjustFontFallback: false,
 });
 
 const defaultSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://website-IRIS.vercel.app';

@@ -22,7 +22,8 @@ import {
   Trophy,
   ChevronDown as CaretDown,
   ArrowRight,
-  Camera
+  Camera,
+  MapPin
 } from "lucide-react";
 import logoNobg from '../../assets/logos/logo-nobg.webp';
 
@@ -105,6 +106,12 @@ export default function Navbar({ isHome = false }) {
               description: "Theater calendar, video calls, birthdays, and Nur Intan events",
               icon: Calendar,
               link: ROUTES.SCHEDULE,
+            },
+            {
+              label: "Peta Penampilan",
+              description: "Interactive map of Nur Intan show locations & events across Indonesia",
+              icon: MapPin,
+              link: ROUTES.PERFORMANCE_MAP,
             },
             {
               label: "News & Announcements",
