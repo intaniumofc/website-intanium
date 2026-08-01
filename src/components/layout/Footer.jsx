@@ -9,22 +9,22 @@ import { SOCIALS } from "../../lib/constants";
 
 const defaultSections = [
   {
-    title: "Jelajahi",
+    title: "Explore",
     links: [
-      { name: "Tentang Intan", href: "/about-intan" },
-      { name: "Lore IRIS", href: "/about-iris" },
+      { name: "About Intan", href: "/about-intan" },
+      { name: "IRIS Lore", href: "/about-iris" },
       { name: "#IntanShiningStar", href: "/shining-star" },
       { name: "#dengerINTAN", href: "/denger-intan" },
     ],
   },
   {
-    title: "Komunitas",
+    title: "Community",
     links: [
       { name: "Official Shop", href: "/merchandise" },
-      { name: "Karya Seni Fanart", href: "/fanart" },
-      { name: "Papan Mading", href: "/mading" },
-      { name: "Recap Aktivitas", href: "/recaps" },
-      { name: "Arena Game IRIS", href: "/games" },
+      { name: "Fanart Gallery", href: "/fanart" },
+      { name: "Bulletin Board", href: "/mading" },
+      { name: "Activity Recaps", href: "/recaps" },
+      { name: "IRIS Game Arena", href: "/games" },
     ],
   },
 ];
@@ -37,8 +37,8 @@ const defaultSocialLinks = [
 ];
 
 const defaultLegalLinks = [
-  { name: "Ketentuan Layanan", href: "#terms" },
-  { name: "Kebijakan Privasi", href: "#privacy" },
+  { name: "Terms of Service", href: "#terms" },
+  { name: "Privacy Policy", href: "#privacy" },
 ];
 
 export default function Footer({
@@ -49,7 +49,7 @@ export default function Footer({
     title: "IRIS",
   },
   sections = defaultSections,
-  description = "Portal resmi komunitas IRIS untuk fans Nur Intan JKT48. Di sini kamu bisa mengakses jadwal streaming, recap zine, mading interaktif, dan merchandise resmi.",
+  description = "Official portal of the IRIS community for Nur Intan JKT48 fans. Access streaming schedules, recap zines, interactive bulletin boards, and official merchandise.",
   socialLinks = defaultSocialLinks,
   copyright = `© ${new Date().getFullYear()} IRIS Official. All rights reserved.`,
   legalLinks = defaultLegalLinks,
@@ -105,7 +105,7 @@ export default function Footer({
                   className="h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
                 />
               ) : (
-                <span className="flex size-9 items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-pink-tint-8)] text-sm font-extrabold text-[var(--color-pink)] shadow-xs">
+                <span className="flex size-9 items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-pink-tint-8)] text-sm font-extrabold text-[#be185d] shadow-xs">
                   I
                 </span>
               )}
@@ -122,7 +122,7 @@ export default function Footer({
           {/* Columns 2 & 3: Quick Links & Sections */}
           {sections.map((section) => (
             <div key={section.title}>
-              <h3 className="mb-4 text-xs font-black uppercase tracking-[0.18em] text-[var(--color-pink-dark)] border-b border-slate-200 pb-2">
+              <h3 className="mb-4 text-xs font-black uppercase tracking-[0.18em] text-[#be185d] border-b border-slate-200 pb-2">
                 {section.title}
               </h3>
               <ul className="space-y-2.5 text-xs font-semibold text-slate-700">
@@ -132,14 +132,14 @@ export default function Footer({
                       <a
                         href={link.href}
                         {...(link.href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                        className="transition-colors duration-200 text-slate-700 hover:text-[var(--color-pink-dark)] hover:underline underline-offset-4 inline-block py-1"
+                        className="transition-colors duration-200 text-slate-700 hover:text-[#be185d] hover:underline underline-offset-4 inline-block py-1"
                       >
                         {link.name}
                       </a>
                     ) : (
                       <Link
                         href={link.href}
-                        className="transition-colors duration-200 text-slate-700 hover:text-[var(--color-pink-dark)] hover:underline underline-offset-4 inline-block py-1"
+                        className="transition-colors duration-200 text-slate-700 hover:text-[#be185d] hover:underline underline-offset-4 inline-block py-1"
                       >
                         {link.name}
                       </Link>
@@ -152,11 +152,11 @@ export default function Footer({
 
           {/* Column 4: Social Media */}
           <div>
-            <h3 className="mb-4 text-xs font-black uppercase tracking-[0.18em] text-[var(--color-pink-dark)] border-b border-slate-200 pb-2">
-              Ikuti Kami
+            <h3 className="mb-4 text-xs font-black uppercase tracking-[0.18em] text-[#be185d] border-b border-slate-200 pb-2">
+              Follow Us
             </h3>
             <p className="text-xs text-slate-600 mb-4 leading-relaxed font-medium">
-              Dapatkan info kegiatan, streaming, dan event terbaru Nur Intan di media sosial resmi.
+              Get the latest updates on activities, live streams, and official events of Nur Intan.
             </p>
             <div className="flex flex-wrap gap-2.5 mb-6">
               {socialLinks.map((social) => (
@@ -187,7 +187,7 @@ export default function Footer({
               <a
                 key={link.name}
                 href={link.href}
-                className="text-slate-700 transition-colors hover:text-[var(--color-pink-dark)] hover:underline underline-offset-4"
+                className="text-slate-700 transition-colors hover:text-[#be185d] hover:underline underline-offset-4"
               >
                 {link.name}
               </a>
