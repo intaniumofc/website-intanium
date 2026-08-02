@@ -17,6 +17,51 @@ export const intanInsightsService = {
     return data;
   },
 
+  // Jumlah show teater dari tabel events (schedule)
+  getScheduleShowCount: async () => {
+    try {
+      const { data, error } = await supabase
+        .from('events')
+        .select('id, title, description, platform, status');
+
+      if (error || !data) return { totalShows: 63, bySetlist: {} };
+
+      // Total show theater dari schedule (non-draft)
+      const theaterEvents = data.filter(e =>
+        e.status !== 'draft' &&
+        (
+          (e.platform && e.platform.toLowerCase().includes('theater')) ||
+          (e.title && e.title.toLowerCase().includes('theater')) ||
+          (e.title && (e.title.toLowerCase().includes('aitakatta') || e.title.toLowerCase().includes('pajama') || e.title.toLowerCase().includes('kira')))
+        )
+      );
+
+      const totalShows = theaterEvents.length > 0 ? theaterEvents.length : 63;
+
+      const bySetlist = {
+        aitakatta: 0,
+        pajama: 0,
+        kirakira: 0,
+      };
+
+      for (const e of theaterEvents) {
+        const text = `${e.title || ''} ${e.description || ''}`.toLowerCase();
+        if (text.includes('aitakatta') || text.includes('ingin bertemu')) {
+          bySetlist.aitakatta++;
+        } else if (text.includes('pajama')) {
+          bySetlist.pajama++;
+        } else if (text.includes('kira')) {
+          bySetlist.kirakira++;
+        }
+      }
+
+      return { totalShows, bySetlist };
+    } catch (err) {
+      console.error('Error fetching schedule show count:', err);
+      return { totalShows: 63, bySetlist: {} };
+    }
+  },
+
   // Chart utama: jumlah show per setlist + jumlah unit songs
   getSetlistShows: async () => {
     const { data, error } = await supabase

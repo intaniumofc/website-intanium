@@ -214,8 +214,12 @@ export default function HomeHeroSection() {
             <span className="inline-block overflow-hidden relative py-2 -mt-2 sm:-mt-4">
               <span
                 ref={titleLine2Ref}
-                className="block text-[clamp(2.2rem,6vw,4.5rem)] text-transparent will-change-transform"
-                style={{ WebkitTextStroke: '1.5px var(--color-yellow)', transformOrigin: 'left bottom' }}
+                className="block text-[clamp(2.2rem,6vw,4.5rem)] text-transparent font-black tracking-wider will-change-transform"
+                style={{
+                  WebkitTextStroke: '2.5px var(--color-yellow)',
+                  filter: 'drop-shadow(0 4px 16px rgba(253, 224, 71, 0.35)) drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5))',
+                  transformOrigin: 'left bottom'
+                }}
               >
                 #GEMINTANG
               </span>

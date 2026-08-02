@@ -26,7 +26,7 @@ const STATIC_BIO = {
 // FALLBACK DATA (jika Supabase gagal)
 // ==========================================
 const FALLBACK_STATS = [
-  { label: 'Total Show Teater', value: '128+ Show', icon: 'Theater', description: 'Jumlah penampilan resmi di Teater JKT48' },
+  { label: 'Total Show Teater', value: '63+ Show', icon: 'Theater', description: 'Jumlah penampilan resmi di Teater JKT48' },
   { label: 'Total Live Showroom', value: '256+ Live', icon: 'Radio', description: 'Siaran langsung menyapa penggemar secara interaktif' },
   { label: 'Partisipasi Setlist', value: '3 Setlist', icon: 'ListMusic', description: 'Setlist panggung teater yang aktif dikuasai' },
   { label: 'Total Event / Konser', value: '8+ Event', icon: 'Mic2', description: 'Penampilan di konser anniversary, regional tour, & festival' }
@@ -34,17 +34,17 @@ const FALLBACK_STATS = [
 
 const FALLBACK_SETLISTS = [
   {
-    id: 'setlist-1', name: 'Aitakatta', period: 'Desember 2024 - Sekarang', shows: '45+ Shows',
+    id: 'setlist-1', name: 'Aitakatta', period: 'Desember 2024 - Sekarang', shows: '32+ Shows',
     theme: 'aitakatta', image: '/setlistaitakatta.webp',
     unitSongs: ['Nageki no Figure (Boneka yang Menyedihkan)', 'Glass no I Love You (Kaca Berbentuk I Love You)', 'Senaka Kara Dakishimete (Dekap Aku dari Belakang)', 'Koi no Plan (Rencana Cinta)']
   },
   {
-    id: 'setlist-2', name: 'Pajama Drive', period: 'Desember 2024 - Sekarang', shows: '38+ Shows',
+    id: 'setlist-2', name: 'Pajama Drive', period: 'Desember 2024 - Sekarang', shows: '27+ Shows',
     theme: 'pajama', image: '/setlistpajamadrive.webp',
     unitSongs: ['Tenshi no Shippo (Ekor Malaikat)', 'Pajama Drive', 'Temodemo no Namida']
   },
   {
-    id: 'setlist-3', name: 'Kira-kira Girls', period: '2025 - Sekarang', shows: '12+ Shows',
+    id: 'setlist-3', name: 'Kira-kira Girls', period: '2025 - Sekarang', shows: '4+ Shows',
     theme: 'kirakira', image: '/setlistkirakiragirls.webp',
     unitSongs: ['Blue Rose', 'Kinjirareta Futari (Dua Orang yang Terlarang)', 'Faint']
   }
@@ -79,12 +79,22 @@ const FALLBACK_TRIVIA = [
 export const aboutIntanService = {
   getBio: async () => {
     // Fetch all dynamic data from Supabase in parallel
-    const [statsRes, setlistsRes, videosRes, triviaRes] = await Promise.all([
+    const [statsRes, setlistsRes, videosRes, triviaRes, eventsRes] = await Promise.all([
       supabase.from('intan_stats').select('*').order('sort_order'),
       supabase.from('intan_setlists').select('*, intan_unit_songs(*)').eq('status', 'Aktif').order('sort_order'),
       supabase.from('intan_videos').select('*').order('sort_order'),
       supabase.from('intan_trivia').select('*').order('sort_order'),
+      supabase.from('events').select('id, platform, status').neq('status', 'draft'),
     ]);
+
+    // Fetch events schedule to calculate exact theater show count per setlist
+    const eventsData = (!eventsRes.error && Array.isArray(eventsRes.data)) ? eventsRes.data : [];
+    const theaterEvents = eventsData.filter(e =>
+      (e.platform && e.platform.toLowerCase().includes('theater')) ||
+      (e.title && e.title.toLowerCase().includes('theater')) ||
+      (e.title && (e.title.toLowerCase().includes('aitakatta') || e.title.toLowerCase().includes('pajama') || e.title.toLowerCase().includes('kira')))
+    );
+    const scheduleShowCount = theaterEvents.length > 0 ? theaterEvents.length : 63;
 
     // Stats: map or fallback
     if (statsRes.error) console.error('Error fetching public intan_stats:', statsRes.error);
@@ -93,35 +103,52 @@ export const aboutIntanService = {
     if (triviaRes.error) console.error('Error fetching public intan_trivia:', triviaRes.error);
 
     const stats = statsRes.error
-      ? FALLBACK_STATS
-      : statsRes.data.map(s => ({ label: s.label, value: s.value, icon: s.icon, description: s.description }));
+      ? FALLBACK_STATS.map(s => s.label.includes('Teater') ? { ...s, value: `${scheduleShowCount}+ Show` } : s)
+      : statsRes.data.map(s => {
+          if (s.label && s.label.toLowerCase().includes('teater')) {
+            return { label: s.label, value: `${scheduleShowCount}+ Show`, icon: s.icon, description: s.description };
+          }
+          return { label: s.label, value: s.value, icon: s.icon, description: s.description };
+        });
 
-    // Setlists: map with unit songs, or fallback
-    const setlistsAndUnitSongs = setlistsRes.error
-      ? FALLBACK_SETLISTS
-      : setlistsRes.data.map(s => ({
-          id: s.id,
-          name: s.name,
-          period: s.period,
-          shows: s.shows,
-          theme: s.theme,
-          image: s.image_url,
-          unitSongs: (s.intan_unit_songs || [])
-            .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
-            .map(u => u.song_name)
-        }));
+    // Setlists: map with unit songs & dynamic schedule show count, or fallback
+    const rawSetlists = setlistsRes.error ? FALLBACK_SETLISTS : setlistsRes.data;
+    const setlistsAndUnitSongs = rawSetlists.map(s => {
+      const nameLower = (s.name || '').toLowerCase();
+      const matchedEvents = theaterEvents.filter(e => {
+        const text = `${e.title || ''} ${e.description || ''}`.toLowerCase();
+        if (nameLower.includes('aitakatta')) return text.includes('aitakatta') || text.includes('ingin bertemu');
+        if (nameLower.includes('pajama')) return text.includes('pajama');
+        if (nameLower.includes('kira')) return text.includes('kira');
+        return text.includes(nameLower);
+      });
+
+      const schedCount = matchedEvents.length;
+      const showsText = schedCount > 0 ? `${schedCount}+ Shows` : (s.shows || (s.show_count ? `${s.show_count}+ Shows` : '0 Shows'));
+
+      return {
+        id: s.id,
+        name: s.name,
+        period: s.period,
+        shows: showsText,
+        theme: s.theme,
+        image: s.image_url || s.image,
+        unitSongs: (s.intan_unit_songs || (Array.isArray(s.unitSongs) ? s.unitSongs : []))
+          .map(u => typeof u === 'string' ? u : u.song_name)
+      };
+    });
 
     // Videos: map with thumbnail auto-generation, or fallback
     const videos = videosRes.error
       ? FALLBACK_VIDEOS
       : videosRes.data.map(v => ({
-          id: v.id,
-          title: v.title,
-          youtubeId: v.youtube_id,
-          category: v.category,
-          duration: v.duration,
-          thumbnail: getYouTubeThumbnailUrl(v.youtube_id)
-        }));
+        id: v.id,
+        title: v.title,
+        youtubeId: v.youtube_id,
+        category: v.category,
+        duration: v.duration,
+        thumbnail: getYouTubeThumbnailUrl(v.youtube_id)
+      }));
 
     // Trivia: map or fallback
     const triviaDetails = triviaRes.error
@@ -183,15 +210,51 @@ export const aboutIntanService = {
   // SETLISTS CRUD
   // ==========================================
   getSetlists: async () => {
-    const { data, error } = await supabase
-      .from('intan_setlists')
-      .select('*, intan_unit_songs(*)')
-      .order('sort_order');
-    if (error) { console.error('Error fetching intan_setlists:', error); return []; }
-    return data.map(s => ({
-      ...s,
-      unitSongs: (s.intan_unit_songs || []).sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
-    }));
+    const [setlistsRes, eventsRes] = await Promise.all([
+      supabase
+        .from('intan_setlists')
+        .select('*, intan_unit_songs(*)')
+        .order('sort_order'),
+      supabase
+        .from('events')
+        .select('id, title, description, platform, status')
+        .neq('status', 'draft')
+    ]);
+
+    if (setlistsRes.error) {
+      console.error('Error fetching intan_setlists:', setlistsRes.error);
+      return [];
+    }
+
+    const eventsData = (!eventsRes.error && Array.isArray(eventsRes.data)) ? eventsRes.data : [];
+    const theaterEvents = eventsData.filter(e =>
+      (e.platform && e.platform.toLowerCase().includes('theater')) ||
+      (e.title && e.title.toLowerCase().includes('theater')) ||
+      (e.title && (e.title.toLowerCase().includes('aitakatta') || e.title.toLowerCase().includes('pajama') || e.title.toLowerCase().includes('kira')))
+    );
+
+    return setlistsRes.data.map(s => {
+      const nameLower = (s.name || '').toLowerCase();
+      const matchedEvents = theaterEvents.filter(e => {
+        const text = `${e.title || ''} ${e.description || ''}`.toLowerCase();
+        if (nameLower.includes('aitakatta')) return text.includes('aitakatta') || text.includes('ingin bertemu');
+        if (nameLower.includes('pajama')) return text.includes('pajama');
+        if (nameLower.includes('kira')) return text.includes('kira');
+        return text.includes(nameLower);
+      });
+
+      const schedCount = matchedEvents.length;
+      const finalCount = schedCount > 0 ? schedCount : (s.show_count || 0);
+      const finalShowsText = schedCount > 0 ? `${schedCount}+ Shows` : (s.shows || (finalCount ? `${finalCount}+ Shows` : '0 Shows'));
+
+      return {
+        ...s,
+        show_count: finalCount,
+        shows: finalShowsText,
+        scheduleSyncCount: schedCount,
+        unitSongs: (s.intan_unit_songs || []).sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
+      };
+    });
   },
 
   createSetlist: async (setlistData) => {

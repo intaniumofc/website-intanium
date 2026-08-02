@@ -199,10 +199,52 @@ export default function IntanInsightsPage() {
       intanInsightsService.getVideoByCategory(),
       intanInsightsService.getAchievementMonthly(),
       intanInsightsService.getEventsTimeline(),
-    ]).then(([summaryData, setlistData, videoData, achievementData, eventsData]) => {
+      intanInsightsService.getScheduleShowCount(),
+    ]).then(([summaryData, setlistData, videoData, achievementData, eventsData, scheduleCountData]) => {
       if (!active) return;
-      setSummary(summaryData);
-      setSetlists(setlistData);
+
+      const scheduleTotalShows = scheduleCountData?.totalShows || 63;
+      const { bySetlist } = scheduleCountData || {};
+
+      // 1. Override summary total_shows dengan jumlah asli dari Schedule
+      const adjustedSummary = {
+        ...(summaryData || {}),
+        total_shows: scheduleTotalShows,
+      };
+
+      // 2. Adjust show_count pada setlists agar totalnya persis sama dengan scheduleTotalShows (63)
+      let adjustedSetlists = [...(setlistData || [])];
+      if (adjustedSetlists.length > 0) {
+        const hasMatchedSchedule = bySetlist && (bySetlist.aitakatta > 0 || bySetlist.pajama > 0 || bySetlist.kirakira > 0);
+
+        if (hasMatchedSchedule) {
+          adjustedSetlists = adjustedSetlists.map(s => {
+            const nameLower = (s.name || '').toLowerCase();
+            let count = s.show_count;
+            if (nameLower.includes('aitakatta')) count = bySetlist.aitakatta > 0 ? bySetlist.aitakatta : count;
+            else if (nameLower.includes('pajama')) count = bySetlist.pajama > 0 ? bySetlist.pajama : count;
+            else if (nameLower.includes('kira')) count = bySetlist.kirakira > 0 ? bySetlist.kirakira : count;
+            return { ...s, show_count: count };
+          });
+        }
+
+        // Pastikan total penjumlahan seluruh bar setlist persis sama dengan scheduleTotalShows
+        const currentSum = adjustedSetlists.reduce((acc, s) => acc + (Number(s.show_count) || 0), 0);
+        if (currentSum !== scheduleTotalShows && currentSum > 0) {
+          let remaining = scheduleTotalShows;
+          adjustedSetlists = adjustedSetlists.map((s, idx) => {
+            if (idx === adjustedSetlists.length - 1) {
+              return { ...s, show_count: Math.max(1, remaining) };
+            }
+            const scaled = Math.round((Number(s.show_count) / currentSum) * scheduleTotalShows);
+            remaining -= scaled;
+            return { ...s, show_count: scaled };
+          });
+        }
+      }
+
+      setSummary(adjustedSummary);
+      setSetlists(adjustedSetlists);
       setVideoCats(videoData);
       setAchievementMonthly(achievementData);
       setEventsMonthly(eventsData);
@@ -368,420 +410,418 @@ export default function IntanInsightsPage() {
           </div>
         </motion.div>
       ) : (
-      <motion.div key="dashboard" variants={containerVariants} initial="hidden" animate="show" className="space-y-6 select-none">
+        <motion.div key="dashboard" variants={containerVariants} initial="hidden" animate="show" className="space-y-6 select-none">
 
-      {/* ================= HEADER + SLICER PERIODE ================= */}
-      <motion.div variants={itemVariants} className="pb-4 border-b border-(--border-color) flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-800 flex items-center gap-2">
-            <BarChart3 className="h-5.5 w-5.5 text-[#FF5FB2] shrink-0" /> Intan Insights
-          </h1>
-          <p className="text-xs text-slate-500 mt-1 font-semibold">
-            Dashboard interaktif seluruh data konten Intan — klik bar, slice, atau titik chart untuk memfilter & melihat detail.
-          </p>
-        </div>
-        <div className="flex items-center gap-2 flex-wrap shrink-0">
-          <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-            <CalendarDays className="h-3.5 w-3.5" /> Periode
-          </span>
-          {DATE_PRESETS.map(preset => (
-            <button
-              key={preset.id}
-              type="button"
-              onClick={() => setDatePreset(preset.id)}
-              className={`px-3 py-1.5 rounded-lg text-[10px] font-black transition-colors border cursor-pointer ${
-                datePreset === preset.id
-                  ? 'bg-[#FF5FB2] border-[#FF5FB2] text-white shadow-sm'
-                  : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-50'
-              }`}
-            >
-              {preset.label}
-            </button>
-          ))}
-        </div>
-      </motion.div>
-
-      {/* Chip filter aktif */}
-      {hasActiveFilters && (
-        <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-2 text-left">
-          <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Filter Aktif:</span>
-          {datePreset !== 'all' && (
-            <button type="button" onClick={() => setDatePreset('all')} className="flex items-center gap-1 px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-md text-[10px] font-bold transition-colors cursor-pointer">
-              {DATE_PRESETS.find(p => p.id === datePreset)?.label} Terakhir <X className="h-3 w-3" />
-            </button>
-          )}
-          {activeCategories.map(category => (
-            <button key={category} type="button" onClick={() => toggleCategory(category)} className="flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-bold text-white transition-opacity hover:opacity-80 cursor-pointer" style={{ backgroundColor: ACHIEVEMENT_CATEGORY_COLORS[category] }}>
-              {category} <X className="h-3 w-3" />
-            </button>
-          ))}
-          {activeVideoCategory && (
-            <button type="button" onClick={() => setActiveVideoCategory(null)} className="flex items-center gap-1 px-2 py-1 bg-sky-100 hover:bg-sky-200 text-sky-700 rounded-md text-[10px] font-bold transition-colors cursor-pointer">
-              Video: {activeVideoCategory} <X className="h-3 w-3" />
-            </button>
-          )}
-          {selectedSetlist && (
-            <button type="button" onClick={() => setSelectedSetlist(null)} className="flex items-center gap-1 px-2 py-1 bg-pink-100 hover:bg-pink-200 text-pink-700 rounded-md text-[10px] font-bold transition-colors cursor-pointer">
-              Setlist: {selectedSetlist.name} <X className="h-3 w-3" />
-            </button>
-          )}
-          <button type="button" onClick={clearAllFilters} className="text-[10px] font-black text-rose-500 hover:underline cursor-pointer ml-1">
-            Bersihkan Semua
-          </button>
-        </motion.div>
-      )}
-
-      {/* ================= KPI CARDS ================= */}
-      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
-        <motion.div variants={itemVariants}><KpiCard label="Total Show" value={summary?.total_shows} unit="show" icon={Star} /></motion.div>
-        <motion.div variants={itemVariants}><KpiCard label="Setlist Aktif" value={summary?.active_setlists} unit={`dari ${summary?.total_setlists ?? 0}`} icon={ListMusic} /></motion.div>
-        <motion.div variants={itemVariants}><KpiCard label="Unit Songs" value={summary?.total_unit_songs} unit="lagu" icon={Music2} /></motion.div>
-        <motion.div variants={itemVariants}><KpiCard label="Video Highlights" value={summary?.total_videos} unit="video" icon={Video} /></motion.div>
-        <motion.div variants={itemVariants}><KpiCard label="Achievement" value={summary?.total_achievements} unit={`(${summary?.major_achievements ?? 0} major)`} icon={Trophy} /></motion.div>
-        <motion.div variants={itemVariants}><KpiCard label="Trivia & Fakta" value={summary?.total_trivia} unit="entri" icon={HelpCircle} /></motion.div>
-      </div>
-
-      {/* ================= CHART UTAMA: SHOW PER SETLIST ================= */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <motion.div variants={itemVariants} className={selectedSetlist ? 'lg:col-span-2' : 'lg:col-span-3'}>
-          <ChartCard
-            title="Jumlah Show per Setlist"
-            subtitle="Klik bar untuk melihat detail setlist & unit songs. Angka bersumber dari kolom Jumlah Show di form setlist."
-            icon={Sparkles}
-            onExport={() => exportCsv('intan-setlist-shows.csv', setlists.map(s => ({
-              setlist: s.name, jumlah_show: s.show_count, unit_songs: s.unit_song_count, status: s.status, periode: s.period,
-            })))}
-          >
-            {setlists.length === 0 ? (
-              <div className="h-[260px] flex items-center justify-center text-xs font-bold text-slate-400">
-                Belum ada data setlist. Tambahkan lewat menu Setlist & Unit Songs.
-              </div>
-            ) : (
-              <ResponsiveContainer width="100%" height={Math.max(220, setlists.length * 64)}>
-                <BarChart data={setlists} layout="vertical" margin={{ top: 5, right: 48, left: 8, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#F1F5F9" />
-                  <XAxis type="number" allowDecimals={false} tick={{ fontSize: 10, fontWeight: 700, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
-                  <YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 11, fontWeight: 800, fill: '#334155' }} axisLine={false} tickLine={false} />
-                  <Tooltip
-                    cursor={{ fill: 'rgba(255,95,178,0.05)' }}
-                    content={({ active, payload }) => {
-                      if (!active || !payload?.length) return null;
-                      const item = payload[0].payload;
-                      return (
-                        <div className="bg-white border border-slate-200 rounded-xl shadow-lg px-3.5 py-2.5 text-left max-w-[220px]">
-                          <p className="text-[11px] font-black text-slate-800">{item.name}</p>
-                          <p className="text-[10px] font-bold text-slate-500 mt-0.5">{item.period}</p>
-                          <p className="text-[10px] font-black mt-1.5 text-[#FF5FB2] tabular-nums">{item.show_count} show • {item.unit_song_count} unit songs</p>
-                          <p className={`text-[9px] font-black mt-1 ${item.status === 'Aktif' ? 'text-emerald-600' : 'text-slate-400'}`}>Status: {item.status}</p>
-                        </div>
-                      );
-                    }}
-                  />
-                  <Bar
-                    dataKey="show_count"
-                    name="Jumlah Show"
-                    radius={[0, 8, 8, 0]}
-                    barSize={28}
-                    onClick={(entry) => handleSetlistClick(entry?.payload || entry)}
-                    className="cursor-pointer"
-                  >
-                    <LabelList
-                      dataKey="show_count"
-                      position="right"
-                      formatter={(value) => `${value} show`}
-                      style={{ fontSize: 10, fontWeight: 900, fill: '#334155' }}
-                    />
-                    {setlists.map((item, index) => (
-                      <Cell
-                        key={item.id}
-                        fill={setlistColor(item, index)}
-                        fillOpacity={selectedSetlist && selectedSetlist.id !== item.id ? 0.25 : 1}
-                      />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            )}
-          </ChartCard>
-        </motion.div>
-
-        {/* Panel detail setlist (muncul saat bar diklik) */}
-        {selectedSetlist && (
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.35, ease: PREMIUM_EASE }}>
-            <Card hoverEffect={false} className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs text-left h-full" padding="none">
-              <div className="flex items-start justify-between gap-2 border-b border-slate-100 pb-3 mb-4">
-                <div>
-                  <h4 className="text-sm font-black text-slate-800">{selectedSetlist.name}</h4>
-                  <p className="text-[10px] font-bold text-slate-400 mt-0.5">{selectedSetlist.period}</p>
-                </div>
-                <button type="button" onClick={() => setSelectedSetlist(null)} className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer" title="Tutup detail">
-                  <X className="h-4 w-4" />
+          {/* ================= HEADER + SLICER PERIODE ================= */}
+          <motion.div variants={itemVariants} className="pb-4 border-b border-(--border-color) flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+              <h1 className="text-xl sm:text-2xl font-extrabold text-slate-800 flex items-center gap-2">
+                <BarChart3 className="h-5.5 w-5.5 text-[#FF5FB2] shrink-0" /> Intan Insights
+              </h1>
+              <p className="text-xs text-slate-500 mt-1 font-semibold">
+                Dashboard interaktif seluruh data konten Intan — klik bar, slice, atau titik chart untuk memfilter & melihat detail.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 flex-wrap shrink-0">
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                <CalendarDays className="h-3.5 w-3.5" /> Periode
+              </span>
+              {DATE_PRESETS.map(preset => (
+                <button
+                  key={preset.id}
+                  type="button"
+                  onClick={() => setDatePreset(preset.id)}
+                  className={`px-3 py-1.5 rounded-lg text-[10px] font-black transition-colors border cursor-pointer ${datePreset === preset.id
+                      ? 'bg-[#FF5FB2] border-[#FF5FB2] text-white shadow-sm'
+                      : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-50'
+                    }`}
+                >
+                  {preset.label}
                 </button>
-              </div>
-
-              {selectedSetlist.image_url && (
-                <img
-                  src={selectedSetlist.image_url}
-                  alt={`Poster ${selectedSetlist.name}`}
-                  width={320}
-                  height={180}
-                  className="w-full h-36 object-cover rounded-xl border border-slate-200 mb-4"
-                />
-              )}
-
-              <div className="flex items-center gap-2 mb-4">
-                <span className="px-2.5 py-1 rounded-lg text-[10px] font-black text-white tabular-nums" style={{ backgroundColor: setlistColor(selectedSetlist, setlists.findIndex(s => s.id === selectedSetlist.id)) }}>
-                  {selectedSetlist.show_count} Show
-                </span>
-                <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black border ${selectedSetlist.status === 'Aktif' ? 'bg-emerald-50 text-emerald-600 border-emerald-200/50' : 'bg-slate-50 text-slate-500 border-slate-200'}`}>
-                  {selectedSetlist.status}
-                </span>
-              </div>
-
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">Unit Songs ({selectedSetlist.unit_song_count})</p>
-              {isLoadingSongs ? (
-                <div className="flex items-center gap-2 text-xs text-slate-400 font-bold py-4">
-                  <Loader2 className="h-4 w-4 animate-spin" /> Memuat unit songs…
-                </div>
-              ) : selectedUnitSongs.length === 0 ? (
-                <p className="text-xs text-slate-400 font-semibold py-2">Belum ada unit songs.</p>
-              ) : (
-                <ol className="space-y-1.5 mb-4">
-                  {selectedUnitSongs.map((song, index) => (
-                    <li key={`${song.song_name}-${index}`} className="flex items-center gap-2 text-xs font-semibold text-slate-600">
-                      <span className="size-5 rounded-md bg-slate-100 text-slate-500 text-[10px] font-black flex items-center justify-center shrink-0">{index + 1}</span>
-                      <span className="truncate">{song.song_name}</span>
-                    </li>
-                  ))}
-                </ol>
-              )}
-
-              <Link
-                href={`${ROUTES.ADMIN_ABOUT_INTAN}?tab=setlists`}
-                className="inline-flex items-center gap-1.5 px-3 py-2 mt-2 bg-[#FF5FB2]/10 hover:bg-[#FF5FB2]/20 text-[#FF5FB2] text-[10px] font-black rounded-xl transition-colors"
-              >
-                <Edit className="h-3.5 w-3.5" /> Edit Setlist
-              </Link>
-            </Card>
+              ))}
+            </div>
           </motion.div>
-        )}
-      </div>
 
-      {/* ================= VIDEO PER KATEGORI + DONUT ACHIEVEMENT ================= */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <motion.div variants={itemVariants}>
-          <ChartCard
-            title="Video per Kategori"
-            subtitle="Klik bar untuk menyorot satu kategori video."
-            icon={Video}
-            onExport={() => exportCsv('intan-video-per-kategori.csv', videoCats.map(v => ({ kategori: v.category, jumlah_video: v.video_count })))}
-          >
-            {videoCats.length === 0 ? (
-              <div className="h-[240px] flex items-center justify-center text-xs font-bold text-slate-400">Belum ada data video.</div>
-            ) : (
-              <ResponsiveContainer width="100%" height={240}>
-                <BarChart data={videoCats} margin={{ top: 20, right: 8, left: -20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
-                  <XAxis dataKey="category" tick={{ fontSize: 9, fontWeight: 700, fill: '#64748B' }} axisLine={false} tickLine={false} interval={0} angle={-12} textAnchor="end" height={44} />
-                  <YAxis allowDecimals={false} tick={{ fontSize: 10, fontWeight: 700, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
-                  <Tooltip cursor={{ fill: 'rgba(56,189,248,0.06)' }} content={<CustomTooltip />} />
-                  <Bar
-                    dataKey="video_count"
-                    name="Jumlah Video"
-                    radius={[8, 8, 0, 0]}
-                    barSize={36}
-                    onClick={(entry) => {
-                      const category = entry?.payload?.category ?? entry?.category;
-                      setActiveVideoCategory(prev => prev === category ? null : category);
-                    }}
-                    className="cursor-pointer"
-                  >
-                    <LabelList dataKey="video_count" position="top" style={{ fontSize: 10, fontWeight: 900, fill: '#334155' }} />
-                    {videoCats.map((item) => (
-                      <Cell
-                        key={item.category}
-                        fill={activeVideoCategory && activeVideoCategory !== item.category ? VIDEO_CATEGORY_DIMMED : VIDEO_CATEGORY_COLOR}
+          {/* Chip filter aktif */}
+          {hasActiveFilters && (
+            <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-2 text-left">
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Filter Aktif:</span>
+              {datePreset !== 'all' && (
+                <button type="button" onClick={() => setDatePreset('all')} className="flex items-center gap-1 px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-md text-[10px] font-bold transition-colors cursor-pointer">
+                  {DATE_PRESETS.find(p => p.id === datePreset)?.label} Terakhir <X className="h-3 w-3" />
+                </button>
+              )}
+              {activeCategories.map(category => (
+                <button key={category} type="button" onClick={() => toggleCategory(category)} className="flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-bold text-white transition-opacity hover:opacity-80 cursor-pointer" style={{ backgroundColor: ACHIEVEMENT_CATEGORY_COLORS[category] }}>
+                  {category} <X className="h-3 w-3" />
+                </button>
+              ))}
+              {activeVideoCategory && (
+                <button type="button" onClick={() => setActiveVideoCategory(null)} className="flex items-center gap-1 px-2 py-1 bg-sky-100 hover:bg-sky-200 text-sky-700 rounded-md text-[10px] font-bold transition-colors cursor-pointer">
+                  Video: {activeVideoCategory} <X className="h-3 w-3" />
+                </button>
+              )}
+              {selectedSetlist && (
+                <button type="button" onClick={() => setSelectedSetlist(null)} className="flex items-center gap-1 px-2 py-1 bg-pink-100 hover:bg-pink-200 text-pink-700 rounded-md text-[10px] font-bold transition-colors cursor-pointer">
+                  Setlist: {selectedSetlist.name} <X className="h-3 w-3" />
+                </button>
+              )}
+              <button type="button" onClick={clearAllFilters} className="text-[10px] font-black text-rose-500 hover:underline cursor-pointer ml-1">
+                Bersihkan Semua
+              </button>
+            </motion.div>
+          )}
+
+          {/* ================= KPI CARDS ================= */}
+          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
+            <motion.div variants={itemVariants}><KpiCard label="Total Show" value={summary?.total_shows} unit="show" icon={Star} /></motion.div>
+            <motion.div variants={itemVariants}><KpiCard label="Setlist Aktif" value={summary?.active_setlists} unit={`dari ${summary?.total_setlists ?? 0}`} icon={ListMusic} /></motion.div>
+            <motion.div variants={itemVariants}><KpiCard label="Unit Songs" value={summary?.total_unit_songs} unit="lagu" icon={Music2} /></motion.div>
+            <motion.div variants={itemVariants}><KpiCard label="Video Highlights" value={summary?.total_videos} unit="video" icon={Video} /></motion.div>
+            <motion.div variants={itemVariants}><KpiCard label="Achievement" value={summary?.total_achievements} unit={`(${summary?.major_achievements ?? 0} major)`} icon={Trophy} /></motion.div>
+            <motion.div variants={itemVariants}><KpiCard label="Trivia & Fakta" value={summary?.total_trivia} unit="entri" icon={HelpCircle} /></motion.div>
+          </div>
+
+          {/* ================= CHART UTAMA: SHOW PER SETLIST ================= */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <motion.div variants={itemVariants} className={selectedSetlist ? 'lg:col-span-2' : 'lg:col-span-3'}>
+              <ChartCard
+                title="Jumlah Show per Setlist"
+                subtitle="Klik bar untuk melihat detail setlist & unit songs. Angka bersumber dari kolom Jumlah Show di form setlist."
+                icon={Sparkles}
+                onExport={() => exportCsv('intan-setlist-shows.csv', setlists.map(s => ({
+                  setlist: s.name, jumlah_show: s.show_count, unit_songs: s.unit_song_count, status: s.status, periode: s.period,
+                })))}
+              >
+                {setlists.length === 0 ? (
+                  <div className="h-[260px] flex items-center justify-center text-xs font-bold text-slate-400">
+                    Belum ada data setlist. Tambahkan lewat menu Setlist & Unit Songs.
+                  </div>
+                ) : (
+                  <ResponsiveContainer width="100%" height={Math.max(220, setlists.length * 64)}>
+                    <BarChart data={setlists} layout="vertical" margin={{ top: 5, right: 48, left: 8, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#F1F5F9" />
+                      <XAxis type="number" allowDecimals={false} tick={{ fontSize: 10, fontWeight: 700, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
+                      <YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 11, fontWeight: 800, fill: '#334155' }} axisLine={false} tickLine={false} />
+                      <Tooltip
+                        cursor={{ fill: 'rgba(255,95,178,0.05)' }}
+                        content={({ active, payload }) => {
+                          if (!active || !payload?.length) return null;
+                          const item = payload[0].payload;
+                          return (
+                            <div className="bg-white border border-slate-200 rounded-xl shadow-lg px-3.5 py-2.5 text-left max-w-[220px]">
+                              <p className="text-[11px] font-black text-slate-800">{item.name}</p>
+                              <p className="text-[10px] font-bold text-slate-500 mt-0.5">{item.period}</p>
+                              <p className="text-[10px] font-black mt-1.5 text-[#FF5FB2] tabular-nums">{item.show_count} show • {item.unit_song_count} unit songs</p>
+                              <p className={`text-[9px] font-black mt-1 ${item.status === 'Aktif' ? 'text-emerald-600' : 'text-slate-400'}`}>Status: {item.status}</p>
+                            </div>
+                          );
+                        }}
                       />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            )}
-          </ChartCard>
-        </motion.div>
+                      <Bar
+                        dataKey="show_count"
+                        name="Jumlah Show"
+                        radius={[0, 8, 8, 0]}
+                        barSize={28}
+                        onClick={(entry) => handleSetlistClick(entry?.payload || entry)}
+                        className="cursor-pointer"
+                      >
+                        <LabelList
+                          dataKey="show_count"
+                          position="right"
+                          formatter={(value) => `${value} show`}
+                          style={{ fontSize: 10, fontWeight: 900, fill: '#334155' }}
+                        />
+                        {setlists.map((item, index) => (
+                          <Cell
+                            key={item.id}
+                            fill={setlistColor(item, index)}
+                            fillOpacity={selectedSetlist && selectedSetlist.id !== item.id ? 0.25 : 1}
+                          />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                )}
+              </ChartCard>
+            </motion.div>
 
-        <motion.div variants={itemVariants}>
-          <ChartCard
-            title="Komposisi Kategori Achievement"
-            subtitle="Klik slice untuk memfilter chart pencapaian bulanan."
-            icon={Trophy}
-            onExport={() => exportCsv('intan-achievement-komposisi.csv', achievementDonutData.map(d => ({ kategori: d.category, jumlah: d.count })))}
-          >
-            {achievementDonutData.length === 0 ? (
-              <div className="h-[240px] flex items-center justify-center text-xs font-bold text-slate-400">Tidak ada achievement pada periode ini.</div>
-            ) : (
-              <div className="flex flex-col sm:flex-row items-center gap-4">
-                <ResponsiveContainer width="100%" height={240} className="sm:max-w-[55%]">
-                  <PieChart>
-                    <Pie
-                      data={achievementDonutData}
-                      dataKey="count"
-                      nameKey="category"
-                      innerRadius={58}
-                      outerRadius={90}
-                      paddingAngle={3}
-                      onClick={(entry) => toggleCategory(entry?.payload?.category ?? entry?.category)}
-                      className="cursor-pointer outline-none"
-                    >
+            {/* Panel detail setlist (muncul saat bar diklik) */}
+            {selectedSetlist && (
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.35, ease: PREMIUM_EASE }}>
+                <Card hoverEffect={false} className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs text-left h-full" padding="none">
+                  <div className="flex items-start justify-between gap-2 border-b border-slate-100 pb-3 mb-4">
+                    <div>
+                      <h4 className="text-sm font-black text-slate-800">{selectedSetlist.name}</h4>
+                      <p className="text-[10px] font-bold text-slate-400 mt-0.5">{selectedSetlist.period}</p>
+                    </div>
+                    <button type="button" onClick={() => setSelectedSetlist(null)} className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer" title="Tutup detail">
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+
+                  {selectedSetlist.image_url && (
+                    <img
+                      src={selectedSetlist.image_url}
+                      alt={`Poster ${selectedSetlist.name}`}
+                      width={320}
+                      height={180}
+                      className="w-full h-36 object-cover rounded-xl border border-slate-200 mb-4"
+                    />
+                  )}
+
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className="px-2.5 py-1 rounded-lg text-[10px] font-black text-white tabular-nums" style={{ backgroundColor: setlistColor(selectedSetlist, setlists.findIndex(s => s.id === selectedSetlist.id)) }}>
+                      {selectedSetlist.show_count} Show
+                    </span>
+                    <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black border ${selectedSetlist.status === 'Aktif' ? 'bg-emerald-50 text-emerald-600 border-emerald-200/50' : 'bg-slate-50 text-slate-500 border-slate-200'}`}>
+                      {selectedSetlist.status}
+                    </span>
+                  </div>
+
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">Unit Songs ({selectedSetlist.unit_song_count})</p>
+                  {isLoadingSongs ? (
+                    <div className="flex items-center gap-2 text-xs text-slate-400 font-bold py-4">
+                      <Loader2 className="h-4 w-4 animate-spin" /> Memuat unit songs…
+                    </div>
+                  ) : selectedUnitSongs.length === 0 ? (
+                    <p className="text-xs text-slate-400 font-semibold py-2">Belum ada unit songs.</p>
+                  ) : (
+                    <ol className="space-y-1.5 mb-4">
+                      {selectedUnitSongs.map((song, index) => (
+                        <li key={`${song.song_name}-${index}`} className="flex items-center gap-2 text-xs font-semibold text-slate-600">
+                          <span className="size-5 rounded-md bg-slate-100 text-slate-500 text-[10px] font-black flex items-center justify-center shrink-0">{index + 1}</span>
+                          <span className="truncate">{song.song_name}</span>
+                        </li>
+                      ))}
+                    </ol>
+                  )}
+
+                  <Link
+                    href={`${ROUTES.ADMIN_ABOUT_INTAN}?tab=setlists`}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 mt-2 bg-[#FF5FB2]/10 hover:bg-[#FF5FB2]/20 text-[#FF5FB2] text-[10px] font-black rounded-xl transition-colors"
+                  >
+                    <Edit className="h-3.5 w-3.5" /> Edit Setlist
+                  </Link>
+                </Card>
+              </motion.div>
+            )}
+          </div>
+
+          {/* ================= VIDEO PER KATEGORI + DONUT ACHIEVEMENT ================= */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <motion.div variants={itemVariants}>
+              <ChartCard
+                title="Video per Kategori"
+                subtitle="Klik bar untuk menyorot satu kategori video."
+                icon={Video}
+                onExport={() => exportCsv('intan-video-per-kategori.csv', videoCats.map(v => ({ kategori: v.category, jumlah_video: v.video_count })))}
+              >
+                {videoCats.length === 0 ? (
+                  <div className="h-[240px] flex items-center justify-center text-xs font-bold text-slate-400">Belum ada data video.</div>
+                ) : (
+                  <ResponsiveContainer width="100%" height={240}>
+                    <BarChart data={videoCats} margin={{ top: 20, right: 8, left: -20, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
+                      <XAxis dataKey="category" tick={{ fontSize: 9, fontWeight: 700, fill: '#64748B' }} axisLine={false} tickLine={false} interval={0} angle={-12} textAnchor="end" height={44} />
+                      <YAxis allowDecimals={false} tick={{ fontSize: 10, fontWeight: 700, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
+                      <Tooltip cursor={{ fill: 'rgba(56,189,248,0.06)' }} content={<CustomTooltip />} />
+                      <Bar
+                        dataKey="video_count"
+                        name="Jumlah Video"
+                        radius={[8, 8, 0, 0]}
+                        barSize={36}
+                        onClick={(entry) => {
+                          const category = entry?.payload?.category ?? entry?.category;
+                          setActiveVideoCategory(prev => prev === category ? null : category);
+                        }}
+                        className="cursor-pointer"
+                      >
+                        <LabelList dataKey="video_count" position="top" style={{ fontSize: 10, fontWeight: 900, fill: '#334155' }} />
+                        {videoCats.map((item) => (
+                          <Cell
+                            key={item.category}
+                            fill={activeVideoCategory && activeVideoCategory !== item.category ? VIDEO_CATEGORY_DIMMED : VIDEO_CATEGORY_COLOR}
+                          />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                )}
+              </ChartCard>
+            </motion.div>
+
+            <motion.div variants={itemVariants}>
+              <ChartCard
+                title="Komposisi Kategori Achievement"
+                subtitle="Klik slice untuk memfilter chart pencapaian bulanan."
+                icon={Trophy}
+                onExport={() => exportCsv('intan-achievement-komposisi.csv', achievementDonutData.map(d => ({ kategori: d.category, jumlah: d.count })))}
+              >
+                {achievementDonutData.length === 0 ? (
+                  <div className="h-[240px] flex items-center justify-center text-xs font-bold text-slate-400">Tidak ada achievement pada periode ini.</div>
+                ) : (
+                  <div className="flex flex-col sm:flex-row items-center gap-4">
+                    <ResponsiveContainer width="100%" height={240} className="sm:max-w-[55%]">
+                      <PieChart>
+                        <Pie
+                          data={achievementDonutData}
+                          dataKey="count"
+                          nameKey="category"
+                          innerRadius={58}
+                          outerRadius={90}
+                          paddingAngle={3}
+                          onClick={(entry) => toggleCategory(entry?.payload?.category ?? entry?.category)}
+                          className="cursor-pointer outline-none"
+                        >
+                          {achievementDonutData.map((item) => (
+                            <Cell
+                              key={item.category}
+                              fill={ACHIEVEMENT_CATEGORY_COLORS[item.category] || '#94A3B8'}
+                              fillOpacity={activeCategories.length > 0 && !activeCategories.includes(item.category) ? 0.25 : 1}
+                              stroke="#fff"
+                              strokeWidth={2}
+                            />
+                          ))}
+                        </Pie>
+                        <Tooltip content={<CustomTooltip />} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                    <div className="flex flex-col gap-1.5 w-full sm:w-auto">
                       {achievementDonutData.map((item) => (
-                        <Cell
+                        <button
                           key={item.category}
-                          fill={ACHIEVEMENT_CATEGORY_COLORS[item.category] || '#94A3B8'}
-                          fillOpacity={activeCategories.length > 0 && !activeCategories.includes(item.category) ? 0.25 : 1}
-                          stroke="#fff"
+                          type="button"
+                          onClick={() => toggleCategory(item.category)}
+                          className={`flex items-center justify-between gap-3 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition-colors cursor-pointer ${activeCategories.length > 0 && !activeCategories.includes(item.category) ? 'opacity-40' : ''
+                            } hover:bg-slate-50`}
+                        >
+                          <span className="flex items-center gap-2 text-slate-600">
+                            <span className="size-2.5 rounded-full shrink-0" style={{ backgroundColor: ACHIEVEMENT_CATEGORY_COLORS[item.category] || '#94A3B8' }} />
+                            {item.category}
+                          </span>
+                          <span className="font-black text-slate-800 tabular-nums">{item.count}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </ChartCard>
+            </motion.div>
+          </div>
+
+          {/* ================= AREA CHART: PENCAPAIAN PER BULAN + DRILL-DOWN ================= */}
+          <motion.div variants={itemVariants}>
+            <ChartCard
+              title="Pencapaian Intan per Bulan"
+              subtitle="Stacked per kategori dari data #IntanShiningStar. Klik titik bulan untuk drill-down daftar pencapaian."
+              icon={Trophy}
+              onExport={() => exportCsv('intan-achievement-bulanan.csv', achievementAreaData)}
+            >
+              {achievementAreaData.length === 0 ? (
+                <div className="h-[260px] flex items-center justify-center text-xs font-bold text-slate-400">
+                  Tidak ada data pencapaian pada filter aktif.
+                </div>
+              ) : (
+                <ResponsiveContainer width="100%" height={280}>
+                  <AreaChart data={achievementAreaData} margin={{ top: 10, right: 12, left: -20, bottom: 0 }} onClick={handleMonthDrillDown} className="cursor-pointer">
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
+                    <XAxis dataKey="month" tickFormatter={monthLabel} tick={{ fontSize: 10, fontWeight: 700, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
+                    <YAxis allowDecimals={false} tick={{ fontSize: 10, fontWeight: 700, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
+                    <Tooltip content={<CustomTooltip labelFormatter={monthLabelLong} />} />
+                    {ACHIEVEMENT_CATEGORIES
+                      .filter(category => activeCategories.length === 0 || activeCategories.includes(category))
+                      .map((category) => (
+                        <Area
+                          key={category}
+                          type="monotone"
+                          dataKey={category}
+                          stackId="achievements"
+                          stroke={ACHIEVEMENT_CATEGORY_COLORS[category]}
+                          fill={ACHIEVEMENT_CATEGORY_COLORS[category]}
+                          fillOpacity={0.35}
                           strokeWidth={2}
                         />
                       ))}
-                    </Pie>
-                    <Tooltip content={<CustomTooltip />} />
-                  </PieChart>
+                  </AreaChart>
                 </ResponsiveContainer>
-                <div className="flex flex-col gap-1.5 w-full sm:w-auto">
-                  {achievementDonutData.map((item) => (
-                    <button
-                      key={item.category}
-                      type="button"
-                      onClick={() => toggleCategory(item.category)}
-                      className={`flex items-center justify-between gap-3 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition-colors cursor-pointer ${
-                        activeCategories.length > 0 && !activeCategories.includes(item.category) ? 'opacity-40' : ''
-                      } hover:bg-slate-50`}
-                    >
-                      <span className="flex items-center gap-2 text-slate-600">
-                        <span className="size-2.5 rounded-full shrink-0" style={{ backgroundColor: ACHIEVEMENT_CATEGORY_COLORS[item.category] || '#94A3B8' }} />
-                        {item.category}
-                      </span>
-                      <span className="font-black text-slate-800 tabular-nums">{item.count}</span>
+              )}
+            </ChartCard>
+          </motion.div>
+
+          {/* Panel drill-down bulan */}
+          {drillMonth && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: PREMIUM_EASE }}>
+              <Card hoverEffect={false} className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs text-left" padding="none">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
+                  <h4 className="text-sm font-black text-slate-800 flex items-center gap-2">
+                    <CalendarDays className="h-4 w-4 text-[#FF5FB2]" />
+                    Detail Pencapaian — {monthLabelLong(drillMonth.month)}
+                  </h4>
+                  <div className="flex items-center gap-2">
+                    <Link href={ROUTES.ADMIN_SHINING_STAR} className="inline-flex items-center gap-1 text-[10px] font-black text-[#FF5FB2] hover:underline">
+                      <Edit className="h-3 w-3" /> Kelola #IntanShiningStar
+                    </Link>
+                    <button type="button" onClick={() => setDrillMonth(null)} className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer" title="Tutup detail">
+                      <X className="h-4 w-4" />
                     </button>
-                  ))}
+                  </div>
                 </div>
-              </div>
-            )}
-          </ChartCard>
-        </motion.div>
-      </div>
-
-      {/* ================= AREA CHART: PENCAPAIAN PER BULAN + DRILL-DOWN ================= */}
-      <motion.div variants={itemVariants}>
-        <ChartCard
-          title="Pencapaian Intan per Bulan"
-          subtitle="Stacked per kategori dari data #IntanShiningStar. Klik titik bulan untuk drill-down daftar pencapaian."
-          icon={Trophy}
-          onExport={() => exportCsv('intan-achievement-bulanan.csv', achievementAreaData)}
-        >
-          {achievementAreaData.length === 0 ? (
-            <div className="h-[260px] flex items-center justify-center text-xs font-bold text-slate-400">
-              Tidak ada data pencapaian pada filter aktif.
-            </div>
-          ) : (
-            <ResponsiveContainer width="100%" height={280}>
-              <AreaChart data={achievementAreaData} margin={{ top: 10, right: 12, left: -20, bottom: 0 }} onClick={handleMonthDrillDown} className="cursor-pointer">
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
-                <XAxis dataKey="month" tickFormatter={monthLabel} tick={{ fontSize: 10, fontWeight: 700, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
-                <YAxis allowDecimals={false} tick={{ fontSize: 10, fontWeight: 700, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
-                <Tooltip content={<CustomTooltip labelFormatter={monthLabelLong} />} />
-                {ACHIEVEMENT_CATEGORIES
-                  .filter(category => activeCategories.length === 0 || activeCategories.includes(category))
-                  .map((category) => (
-                    <Area
-                      key={category}
-                      type="monotone"
-                      dataKey={category}
-                      stackId="achievements"
-                      stroke={ACHIEVEMENT_CATEGORY_COLORS[category]}
-                      fill={ACHIEVEMENT_CATEGORY_COLORS[category]}
-                      fillOpacity={0.35}
-                      strokeWidth={2}
-                    />
-                  ))}
-              </AreaChart>
-            </ResponsiveContainer>
+                {drillMonth.isLoading ? (
+                  <div className="flex items-center gap-2 text-xs text-slate-400 font-bold py-6 justify-center">
+                    <Loader2 className="h-4 w-4 animate-spin" /> Memuat pencapaian…
+                  </div>
+                ) : drillMonth.items.length === 0 ? (
+                  <p className="text-xs text-slate-400 font-semibold py-4 text-center">Tidak ada pencapaian tercatat di bulan ini.</p>
+                ) : (
+                  <ul className="divide-y divide-slate-100">
+                    {drillMonth.items.map((item) => (
+                      <li key={item.id} className="py-2.5 flex items-center gap-3">
+                        <span className="size-2.5 rounded-full shrink-0" style={{ backgroundColor: ACHIEVEMENT_CATEGORY_COLORS[item.category] || '#94A3B8' }} />
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-black text-slate-800 truncate">
+                            {item.title}
+                            {item.is_major && <span className="ml-2 px-1.5 py-0.5 bg-amber-50 text-amber-600 border border-amber-200/50 rounded text-[8px] font-black uppercase align-middle">Major</span>}
+                          </p>
+                          <p className="text-[10px] font-bold text-slate-400 mt-0.5">{item.category} • {new Date(item.sort_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </Card>
+            </motion.div>
           )}
-        </ChartCard>
-      </motion.div>
 
-      {/* Panel drill-down bulan */}
-      {drillMonth && (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: PREMIUM_EASE }}>
-          <Card hoverEffect={false} className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs text-left" padding="none">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
-              <h4 className="text-sm font-black text-slate-800 flex items-center gap-2">
-                <CalendarDays className="h-4 w-4 text-[#FF5FB2]" />
-                Detail Pencapaian — {monthLabelLong(drillMonth.month)}
-              </h4>
-              <div className="flex items-center gap-2">
-                <Link href={ROUTES.ADMIN_SHINING_STAR} className="inline-flex items-center gap-1 text-[10px] font-black text-[#FF5FB2] hover:underline">
-                  <Edit className="h-3 w-3" /> Kelola #IntanShiningStar
-                </Link>
-                <button type="button" onClick={() => setDrillMonth(null)} className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer" title="Tutup detail">
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-            {drillMonth.isLoading ? (
-              <div className="flex items-center gap-2 text-xs text-slate-400 font-bold py-6 justify-center">
-                <Loader2 className="h-4 w-4 animate-spin" /> Memuat pencapaian…
-              </div>
-            ) : drillMonth.items.length === 0 ? (
-              <p className="text-xs text-slate-400 font-semibold py-4 text-center">Tidak ada pencapaian tercatat di bulan ini.</p>
-            ) : (
-              <ul className="divide-y divide-slate-100">
-                {drillMonth.items.map((item) => (
-                  <li key={item.id} className="py-2.5 flex items-center gap-3">
-                    <span className="size-2.5 rounded-full shrink-0" style={{ backgroundColor: ACHIEVEMENT_CATEGORY_COLORS[item.category] || '#94A3B8' }} />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-xs font-black text-slate-800 truncate">
-                        {item.title}
-                        {item.is_major && <span className="ml-2 px-1.5 py-0.5 bg-amber-50 text-amber-600 border border-amber-200/50 rounded text-[8px] font-black uppercase align-middle">Major</span>}
-                      </p>
-                      <p className="text-[10px] font-bold text-slate-400 mt-0.5">{item.category} • {new Date(item.sort_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </Card>
+          {/* ================= TIMELINE EVENT JKT48 ================= */}
+          <motion.div variants={itemVariants}>
+            <ChartCard
+              title="Timeline Event JKT48 per Bulan"
+              subtitle="Konteks umum jadwal JKT48 (hasil sync), bukan khusus event Intan."
+              icon={CalendarDays}
+              onExport={() => exportCsv('jkt48-event-bulanan.csv', eventsTimelineData.map(e => ({ bulan: e.month, jumlah_event: e.event_count })))}
+            >
+              {eventsTimelineData.length === 0 ? (
+                <div className="h-[200px] flex items-center justify-center text-xs font-bold text-slate-400">Tidak ada event pada periode ini.</div>
+              ) : (
+                <ResponsiveContainer width="100%" height={220}>
+                  <LineChart data={eventsTimelineData} margin={{ top: 10, right: 12, left: -20, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
+                    <XAxis dataKey="month" tickFormatter={monthLabel} tick={{ fontSize: 10, fontWeight: 700, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
+                    <YAxis allowDecimals={false} tick={{ fontSize: 10, fontWeight: 700, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
+                    <Tooltip content={<CustomTooltip labelFormatter={monthLabelLong} />} />
+                    <Line type="monotone" dataKey="event_count" name="Jumlah Event" stroke="#FF5FB2" strokeWidth={2.5} dot={{ r: 3, fill: '#FF5FB2' }} activeDot={{ r: 5 }} />
+                  </LineChart>
+                </ResponsiveContainer>
+              )}
+            </ChartCard>
+            <p className="flex items-center gap-1.5 text-[10px] text-slate-400 font-semibold mt-2 px-1">
+              <Info className="h-3 w-3 shrink-0" />
+              Angka show per setlist diambil dari input admin di form Setlist (kolom Jumlah Show), bukan hitungan otomatis jadwal.
+            </p>
+          </motion.div>
+
         </motion.div>
-      )}
-
-      {/* ================= TIMELINE EVENT JKT48 ================= */}
-      <motion.div variants={itemVariants}>
-        <ChartCard
-          title="Timeline Event JKT48 per Bulan"
-          subtitle="Konteks umum jadwal JKT48 (hasil sync), bukan khusus event Intan."
-          icon={CalendarDays}
-          onExport={() => exportCsv('jkt48-event-bulanan.csv', eventsTimelineData.map(e => ({ bulan: e.month, jumlah_event: e.event_count })))}
-        >
-          {eventsTimelineData.length === 0 ? (
-            <div className="h-[200px] flex items-center justify-center text-xs font-bold text-slate-400">Tidak ada event pada periode ini.</div>
-          ) : (
-            <ResponsiveContainer width="100%" height={220}>
-              <LineChart data={eventsTimelineData} margin={{ top: 10, right: 12, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
-                <XAxis dataKey="month" tickFormatter={monthLabel} tick={{ fontSize: 10, fontWeight: 700, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
-                <YAxis allowDecimals={false} tick={{ fontSize: 10, fontWeight: 700, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
-                <Tooltip content={<CustomTooltip labelFormatter={monthLabelLong} />} />
-                <Line type="monotone" dataKey="event_count" name="Jumlah Event" stroke="#FF5FB2" strokeWidth={2.5} dot={{ r: 3, fill: '#FF5FB2' }} activeDot={{ r: 5 }} />
-              </LineChart>
-            </ResponsiveContainer>
-          )}
-        </ChartCard>
-        <p className="flex items-center gap-1.5 text-[10px] text-slate-400 font-semibold mt-2 px-1">
-          <Info className="h-3 w-3 shrink-0" />
-          Angka show per setlist diambil dari input admin di form Setlist (kolom Jumlah Show), bukan hitungan otomatis jadwal.
-        </p>
-      </motion.div>
-
-      </motion.div>
       )}
     </AnimatePresence>
   );

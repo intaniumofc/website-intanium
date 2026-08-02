@@ -310,9 +310,6 @@ export default function ComicFlipbook() {
         {/* Modal Header */}
         <div className="flex items-center justify-between w-full max-w-7xl mx-auto pb-2.5 border-b border-white/20 shrink-0 gap-2">
           <div className="flex items-center gap-2 min-w-0">
-            <span className="inline-block px-2.5 py-0.5 text-[9px] sm:text-[10px] uppercase font-black tracking-widest border rounded-md shadow-sm bg-pink-100 text-pink-800 border-pink-300 shrink-0">
-              Arsip Komik
-            </span>
             <span className="font-black text-xs sm:text-sm md:text-base text-white tracking-tight flex items-center gap-1.5 truncate">
               <BookOpen className="h-4 w-4 text-pink-400 shrink-0" />
               <span className="truncate">Arsip Komik Digital</span>
