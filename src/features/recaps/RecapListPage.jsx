@@ -138,10 +138,24 @@ function ClosedBookIntro({ state, onOpen, onOpenEnd }) {
 
 function DesktopReader({ currentMonth, onMonthChange, monthlyRecaps }) {
   const flipBook = useRef(null);
+  const isJumpingRef = useRef(false);
+
   const flipToMonth = (index) => {
-    flipBook.current?.pageFlip()?.flip(index * 2);
+    isJumpingRef.current = true;
+    const pageFlipObj = flipBook.current?.pageFlip();
+    if (pageFlipObj) {
+      if (typeof pageFlipObj.turnToPage === 'function') {
+        pageFlipObj.turnToPage(index * 2);
+      } else {
+        pageFlipObj.flip(index * 2);
+      }
+    }
     onMonthChange(index);
+    setTimeout(() => {
+      isJumpingRef.current = false;
+    }, 600);
   };
+
   return (
     <>
       <div className="recap-toolbar">
@@ -178,7 +192,10 @@ function DesktopReader({ currentMonth, onMonthChange, monthlyRecaps }) {
           usePortrait={false}
           mobileScrollSupport
           className="recap-flip-book"
-          onFlip={(event) => onMonthChange(Math.min(Math.floor(event.data / 2), monthlyRecaps.length - 1))}
+          onFlip={(event) => {
+            if (isJumpingRef.current) return;
+            onMonthChange(Math.min(Math.floor(event.data / 2), monthlyRecaps.length - 1));
+          }}
         >
           {monthlyRecaps.flatMap((recap, index) => [
             <ActivityPage key={`${recap.id}-activity`} recap={recap} pageNumber={index + 1} />,
