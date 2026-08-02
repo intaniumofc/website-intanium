@@ -13,7 +13,8 @@ export default function UploadPanel({
   onPhotoUploaded,
   onPhotoRemoved
 }: UploadPanelProps) {
-  
+  const slotsCount = photos.length;
+
   const handleFileChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
@@ -28,20 +29,51 @@ export default function UploadPanel({
     }
   };
 
-  const slotsCount = photos.length;
+  const handleBulkFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const fileList = Array.from(files).slice(0, slotsCount);
+      fileList.forEach((file, i) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          if (event.target?.result) {
+            onPhotoUploaded(i, event.target.result as string);
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  };
 
   return (
     <div className="glass-panel rounded-2xl p-5 bg-[var(--bg-card)] border border-[var(--border-color)] flex flex-col relative w-full max-w-md mx-auto">
-      {/* Title Bar */}
-      <div className="flex items-center gap-2 mb-4 text-[var(--text-primary)] font-semibold text-sm border-b border-[var(--border-color)]/25 pb-2">
-        <svg className="w-5 h-5 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4-4m4 4v12" />
-        </svg>
-        <span>UNGGAH FOTO ANDA</span>
+      {/* Title Bar with Bulk Upload Action */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 text-[var(--text-primary)] font-semibold text-sm border-b border-[var(--border-color)]/25 pb-3">
+        <div className="flex items-center gap-2">
+          <svg className="w-5 h-5 text-[var(--color-primary)] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4-4m4 4v12" />
+          </svg>
+          <span>UNGGAH {slotsCount} FOTO ANDA</span>
+        </div>
+
+        {/* Bulk Multi-Upload Button */}
+        <label className="cursor-pointer bg-[var(--color-primary)]/10 hover:bg-[var(--color-primary)]/20 text-[var(--color-primary)] text-[11px] font-bold px-3 py-1.5 rounded-lg border border-[var(--color-primary)]/30 transition-all flex items-center justify-center gap-1.5 active:scale-95 shadow-xs">
+          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+          <span>Pilih {slotsCount} Foto Sekaligus</span>
+          <input
+            type="file"
+            multiple
+            accept="image/*"
+            onChange={handleBulkFileChange}
+            className="hidden"
+          />
+        </label>
       </div>
 
       <p className="text-xs text-[var(--text-secondary)] mb-4 leading-relaxed font-body">
-        Pilih {slotsCount} foto terbaik dari galeri perangkat Anda untuk disusun ke dalam photostrip.
+        Pilih {slotsCount} foto terbaik dari galeri perangkat Anda untuk disusun ke dalam photostrip bingkai. Anda dapat mengunggah satu-per-satu atau sekaligus.
       </p>
 
       {/* Grid of Dynamic Upload Slots */}

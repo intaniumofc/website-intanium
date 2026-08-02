@@ -24,22 +24,22 @@ interface State {
 
 type Action =
   | { type: "SELECT_FRAME_NEXT" }
-  | { type: "START_CAMERA_REQUEST" }
+  | { type: "START_CAMERA_REQUEST"; slotsCount?: number }
   | { type: "START_CAMERA_SUCCESS"; stream: MediaStream }
   | { type: "START_CAMERA_FAILURE"; errorMsg: string }
-  | { type: "START_UPLOAD_MODE" }
+  | { type: "START_UPLOAD_MODE"; slotsCount?: number }
   | { type: "UPLOAD_PHOTO_SUCCESS"; index: number; dataUrl: string }
   | { type: "REMOVE_UPLOADED_PHOTO"; index: number }
   | { type: "PROCESS_UPLOAD" }
-  | { type: "CANCEL_UPLOAD" }
+  | { type: "CANCEL_UPLOAD"; slotsCount?: number }
   | { type: "SET_COUNTDOWN"; countdown: number }
   | { type: "TICK_COUNTDOWN" }
   | { type: "CAPTURE_PHOTO_START" }
   | { type: "CAPTURE_PHOTO_SUCCESS"; photoDataUrl: string }
-  | { type: "CONFIRM_PHOTO_SUCCESS" }
+  | { type: "CONFIRM_PHOTO_SUCCESS"; slotsCount?: number }
   | { type: "SELECT_SLOT"; index: number }
   | { type: "SET_PHOTO_SCALE"; index: number; scale: number }
-  | { type: "SET_FRAME"; frameId: string }
+  | { type: "SET_FRAME"; frameId: string; slotsCount?: number }
   | { type: "START_EXPORT" }
   | { type: "END_EXPORT" }
   | { type: "RESET" };
@@ -48,10 +48,10 @@ const initialState: State = {
   state: "SELECT_FRAME",
   stream: null,
   capturedPhotos: [],
-  photoScales: [1.0, 1.0, 1.0, 1.0],
+  photoScales: [],
   photoIndex: 0,
   countdown: 0,
-  activeFrameId: FRAMES_CONFIG[0]?.id ?? "",
+  activeFrameId: "",
   errorMsg: "",
   inputMode: null
 };
@@ -64,7 +64,7 @@ function reducer(state: State, action: Action): State {
         state: "SELECT_INPUT_MODE"
       };
     case "START_CAMERA_REQUEST": {
-      const slotsCount = FRAMES_CONFIG.find((f) => f.id === state.activeFrameId)?.slots.length || 4;
+      const slotsCount = action.slotsCount || state.capturedPhotos.length || 4;
       return {
         ...state,
         state: "REQUESTING_CAMERA",
@@ -90,7 +90,7 @@ function reducer(state: State, action: Action): State {
         inputMode: null
       };
     case "START_UPLOAD_MODE": {
-      const slotsCount = FRAMES_CONFIG.find((f) => f.id === state.activeFrameId)?.slots.length || 4;
+      const slotsCount = action.slotsCount || state.capturedPhotos.length || 4;
       return {
         ...state,
         state: "UPLOAD_PREVIEW",
@@ -128,7 +128,7 @@ function reducer(state: State, action: Action): State {
         state: "REVIEW"
       };
     case "CANCEL_UPLOAD": {
-      const slotsCount = FRAMES_CONFIG.find((f) => f.id === state.activeFrameId)?.slots.length || 4;
+      const slotsCount = action.slotsCount || state.capturedPhotos.length || 4;
       if (state.state === "SELECT_INPUT_MODE") {
         return {
           ...state,
@@ -182,7 +182,7 @@ function reducer(state: State, action: Action): State {
       };
     }
     case "CONFIRM_PHOTO_SUCCESS": {
-      const slotsCount = FRAMES_CONFIG.find((f) => f.id === state.activeFrameId)?.slots.length || 4;
+      const slotsCount = action.slotsCount || state.capturedPhotos.length || 4;
       const nextIndex = state.photoIndex < slotsCount - 1 ? state.photoIndex + 1 : state.photoIndex;
       return {
         ...state,
@@ -206,11 +206,16 @@ function reducer(state: State, action: Action): State {
         photoScales: nextScales
       };
     }
-    case "SET_FRAME":
+    case "SET_FRAME": {
+      const slotsCount = action.slotsCount || 4;
       return {
         ...state,
-        activeFrameId: action.frameId
+        activeFrameId: action.frameId,
+        capturedPhotos: Array(slotsCount).fill(""),
+        photoScales: Array(slotsCount).fill(1.0),
+        photoIndex: 0
       };
+    }
     case "START_EXPORT":
       return {
         ...state,
@@ -300,7 +305,8 @@ export default function PhotoboothStudio() {
 
   // Main Webcam Capture Sequence Trigger
   const startCaptureSequence = async () => {
-    dispatch({ type: "START_CAMERA_REQUEST" });
+    const slotsCount = activeFrame ? activeFrame.slots.length : 4;
+    dispatch({ type: "START_CAMERA_REQUEST", slotsCount });
     try {
       const cameraStream = await startCamera();
       dispatch({ type: "START_CAMERA_SUCCESS", stream: cameraStream });
@@ -499,7 +505,7 @@ export default function PhotoboothStudio() {
             return (
               <button
                 key={frame.id}
-                onClick={() => dispatch({ type: "SET_FRAME", frameId: frame.id })}
+                onClick={() => dispatch({ type: "SET_FRAME", frameId: frame.id, slotsCount: frame.slots.length })}
                 className={`flex flex-col text-left rounded-3xl bg-white overflow-hidden border-3 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg w-full focus:outline-hidden relative group cursor-pointer ${isActive
                   ? "border-[var(--color-primary)] shadow-md ring-4 ring-[var(--color-primary-light)]/35"
                   : "border-neutral-200/80 hover:border-neutral-300"
@@ -730,19 +736,19 @@ export default function PhotoboothStudio() {
             state={state.state}
             onSelectFrameNext={() => dispatch({ type: "SELECT_FRAME_NEXT" })}
             onStart={startCaptureSequence}
-            onStartUpload={() => dispatch({ type: "START_UPLOAD_MODE" })}
+            onStartUpload={() => dispatch({ type: "START_UPLOAD_MODE", slotsCount: activeFrame.slots.length })}
             onRetry={() => dispatch({ type: "REMOVE_UPLOADED_PHOTO", index: state.photoIndex })}
             onRetake={handleRetake}
             onDownload={handleDownload}
             onShare={handleShare}
             onProcessUpload={() => dispatch({ type: "PROCESS_UPLOAD" })}
-            onCancelUpload={() => dispatch({ type: "CANCEL_UPLOAD" })}
+            onCancelUpload={() => dispatch({ type: "CANCEL_UPLOAD", slotsCount: activeFrame.slots.length })}
             canShare={canShare}
             uploadedCount={filledPhotosCount}
             slotsCount={activeFrame.slots.length}
             photoIndex={state.photoIndex}
             onCaptureClick={() => dispatch({ type: "SET_COUNTDOWN", countdown: 3 })}
-            onConfirmPhoto={() => dispatch({ type: "CONFIRM_PHOTO_SUCCESS" })}
+            onConfirmPhoto={() => dispatch({ type: "CONFIRM_PHOTO_SUCCESS", slotsCount: activeFrame.slots.length })}
             isAllCaptured={isAllCaptured}
             photoScale={currentScale}
             onScaleChange={(scale) => dispatch({ type: "SET_PHOTO_SCALE", index: state.photoIndex, scale })}
