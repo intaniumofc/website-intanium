@@ -49,7 +49,10 @@ const AVAILABLE_PERMISSIONS = [
   { id: 'games', label: 'Kelola Game' },
   { id: 'esport', label: 'Kelola Esport' },
   { id: 'keanggotaan', label: 'Kelola Keanggotaan' },
-  { id: 'join-us', label: 'Kelola Join Us' }
+  { id: 'join-us', label: 'Kelola Join Us' },
+  { id: 'photobooth', label: 'Kelola Photobooth' },
+  { id: 'media', label: 'Media Manager' },
+  { id: 'audit-logs', label: 'Log Aktivitas' }
 ];
 
 export default function AdminMembershipPage() {
