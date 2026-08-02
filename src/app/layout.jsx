@@ -2,6 +2,7 @@ import '../index.css';
 import Script from 'next/script';
 import SmoothScroll from '../components/common/SmoothScroll';
 import TabTitleTyper from '../components/common/TabTitleTyper';
+import IrisChatWidget from '../components/iris/IrisChatWidget';
 import { Plus_Jakarta_Sans, Inter, Playfair_Display, Cormorant_Garamond, JetBrains_Mono } from 'next/font/google';
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -9,6 +10,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   weight: ['400', '600', '700', '800'],
   variable: '--font-plus-jakarta',
   display: 'swap',
+  adjustFontFallback: false,
 });
 
 const inter = Inter({
@@ -16,6 +18,7 @@ const inter = Inter({
   weight: ['400', '600'],
   variable: '--font-inter',
   display: 'swap',
+  adjustFontFallback: false,
 });
 
 const playfairDisplay = Playfair_Display({
@@ -24,6 +27,7 @@ const playfairDisplay = Playfair_Display({
   style: ['normal'],
   variable: '--font-playfair',
   display: 'swap',
+  adjustFontFallback: false,
 });
 
 const cormorantGaramond = Cormorant_Garamond({
@@ -31,6 +35,7 @@ const cormorantGaramond = Cormorant_Garamond({
   weight: ['400', '600'],
   variable: '--font-cormorant',
   display: 'swap',
+  adjustFontFallback: false,
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -38,6 +43,7 @@ const jetbrainsMono = JetBrains_Mono({
   weight: ['400'],
   variable: '--font-jetbrains',
   display: 'swap',
+  adjustFontFallback: false,
 });
 
 const defaultSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://website-IRIS.vercel.app';
@@ -140,6 +146,7 @@ export default function RootLayout({ children }) {
           <SmoothScroll />
           <TabTitleTyper />
           {children}
+          <IrisChatWidget />
         </div>
         <Script
           id="json-ld-organization"

@@ -56,7 +56,7 @@ export default function AdminLayout({ children }) {
 
   // Dropdown menus states
   const isPathMerch = pathname.startsWith('/admin/merchandise') || pathname.startsWith('/admin/orders') || pathname.startsWith('/admin/categories');
-  const isPathProfile = pathname.startsWith('/admin/about-intan') || pathname.startsWith('/admin/intan-insights') || pathname.startsWith('/admin/schedule') || pathname.startsWith('/admin/intan-shining-star') || pathname.startsWith('/admin/comic-pages');
+  const isPathProfile = pathname.startsWith('/admin/about-intan') || pathname.startsWith('/admin/intan-insights') || pathname.startsWith('/admin/schedule') || pathname.startsWith('/admin/intan-shining-star') || pathname.startsWith('/admin/comic-pages') || pathname.startsWith('/admin/peta-penampilan');
 
   const [openDropdowns, setOpenDropdowns] = useState({
     merchandise_group: isPathMerch,
@@ -68,7 +68,7 @@ export default function AdminLayout({ children }) {
     if (pathname.startsWith('/admin/merchandise') || pathname.includes('/admin/merchandise')) {
       setOpenDropdowns(prev => ({ ...prev, merchandise_group: true }));
     }
-    if (pathname.startsWith('/admin/about-intan') || pathname.startsWith('/admin/intan-insights') || pathname.startsWith('/admin/schedule') || pathname.startsWith('/admin/intan-shining-star') || pathname.startsWith('/admin/comic-pages')) {
+    if (pathname.startsWith('/admin/about-intan') || pathname.startsWith('/admin/intan-insights') || pathname.startsWith('/admin/schedule') || pathname.startsWith('/admin/intan-shining-star') || pathname.startsWith('/admin/comic-pages') || pathname.startsWith('/admin/peta-penampilan')) {
       setOpenDropdowns(prev => ({ ...prev, 'about-intan_group': true }));
     }
   }, [pathname]);
@@ -88,6 +88,7 @@ export default function AdminLayout({ children }) {
     if (cleanHref === ROUTES.ADMIN_CATEGORIES) return 'categories';
     if (cleanHref === ROUTES.ADMIN_ORDERS) return 'orders';
     if (cleanHref.startsWith(ROUTES.ADMIN_ABOUT_INTAN)) return 'about-intan';
+    if (cleanHref === ROUTES.ADMIN_PERFORMANCE_MAP) return 'about-intan';
     if (cleanHref === ROUTES.ADMIN_INTAN_INSIGHTS) return 'about-intan';
     if (cleanHref === ROUTES.ADMIN_SHINING_STAR) return 'shining-star';
     if (cleanHref === ROUTES.ADMIN_COMIC_PAGES) return 'shining-star';
@@ -212,7 +213,8 @@ export default function AdminLayout({ children }) {
         { name: 'Trivia & Fakta', href: `${ROUTES.ADMIN_ABOUT_INTAN}?tab=trivia` },
         { name: '#IntanShiningStar', href: ROUTES.ADMIN_SHINING_STAR },
         { name: 'Komik Flipbook', href: ROUTES.ADMIN_COMIC_PAGES },
-        { name: 'Schedule', href: ROUTES.ADMIN_SCHEDULE }
+        { name: 'Schedule', href: ROUTES.ADMIN_SCHEDULE },
+        { name: 'Peta Penampilan', href: ROUTES.ADMIN_PERFORMANCE_MAP }
       ]
     },
     { id: 'recaps', name: 'Recap & Zine', href: ROUTES.ADMIN_RECAPS, icon: BookOpen },
