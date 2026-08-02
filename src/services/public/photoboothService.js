@@ -1,5 +1,6 @@
 import { createClient } from '../../utils/supabase/client';
 import { FRAMES_CONFIG } from '../../lib/photobooth/frames';
+import { proxyR2Url } from '../../lib/helpers';
 
 const supabase = createClient();
 
@@ -40,7 +41,13 @@ export const photoboothService = {
     try {
       const settings = await this.getSettings();
       const customFrames = settings.customFrames || [];
-      return [...FRAMES_CONFIG, ...customFrames];
+      const combined = [...FRAMES_CONFIG, ...customFrames];
+      return combined.map((f) => ({
+        ...f,
+        src: proxyR2Url(f.src),
+        thumbnail: f.thumbnail ? proxyR2Url(f.thumbnail) : proxyR2Url(f.src),
+        watermark: f.watermark && f.watermark.logo ? { ...f.watermark, logo: proxyR2Url(f.watermark.logo) } : f.watermark,
+      }));
     } catch (err) {
       console.error('Error getting combined photobooth frames:', err);
       return FRAMES_CONFIG;
