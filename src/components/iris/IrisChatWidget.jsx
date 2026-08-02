@@ -51,9 +51,9 @@ const DEFAULT_QUESTIONS = [
 ];
 
 /**
- * Format markdown bold (**text**), italic (*text*), and bullet lists (- item) cleanly into HTML
+ * Format markdown links ([label](url)), bold (**text**), italic (*text*), and bullet lists (- item) cleanly into HTML
  */
-function formatMessageText(text, isUser = false) {
+function formatMessageText(text, isUser = false, onNavigate = null) {
   if (!text) return null;
 
   const lines = text.split('\n');
@@ -67,10 +67,10 @@ function formatMessageText(text, isUser = false) {
     const isBullet = trimmed.startsWith('- ') || trimmed.startsWith('* ');
     const content = isBullet ? trimmed.replace(/^[-*]\s+/, '') : line;
 
-    // Parse **bold** and *italic*
+    // Parse Markdown Links [label](url), Bold **text**, and Italic *text*
     const parts = [];
     let lastIndex = 0;
-    const regex = /(\*\*|__)(.*?)\1|(\*|_)(.*?)\3/g;
+    const regex = /\[([^\]]+)\]\(([^)]+)\)|(\*\*|__)(.*?)\3|(\*|_)(.*?)\5/g;
     let match;
 
     while ((match = regex.exec(content)) !== null) {
@@ -78,21 +78,46 @@ function formatMessageText(text, isUser = false) {
         parts.push(content.substring(lastIndex, match.index));
       }
 
-      if (match[2]) {
+      if (match[1] && match[2]) {
+        // Link [label](url)
+        const label = match[1];
+        const url = match[2];
+        const isInternal = url.startsWith('/');
+
+        parts.push(
+          <a
+            key={match.index}
+            href={url}
+            onClick={(e) => {
+              if (isInternal && onNavigate) {
+                e.preventDefault();
+                onNavigate(url);
+              }
+            }}
+            target={isInternal ? '_self' : '_blank'}
+            rel={isInternal ? undefined : 'noreferrer'}
+            className={`font-semibold underline decoration-pink-300 underline-offset-2 hover:decoration-pink-500 cursor-pointer transition-colors ${
+              isUser ? 'text-pink-100 hover:text-white' : 'text-pink-600 hover:text-pink-700'
+            }`}
+          >
+            {label}
+          </a>
+        );
+      } else if (match[4]) {
         // Bold text
         parts.push(
           <strong
             key={match.index}
             className={isUser ? 'font-bold text-white' : 'font-bold text-slate-900'}
           >
-            {match[2]}
+            {match[4]}
           </strong>
         );
-      } else if (match[4]) {
+      } else if (match[6]) {
         // Italic text
         parts.push(
           <em key={match.index} className="italic">
-            {match[4]}
+            {match[6]}
           </em>
         );
       }
@@ -143,9 +168,55 @@ export default function IrisChatWidget() {
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [sessionId] = useState(() => `session-${Math.random().toString(36).substring(2, 9)}`);
+  const [sessionId, setSessionId] = useState('');
   const [feedbackGiven, setFeedbackGiven] = useState({});
   const messagesEndRef = useRef(null);
+
+  // 1. Hydrate state from sessionStorage on mount
+  useEffect(() => {
+    try {
+      const savedMessages = sessionStorage.getItem('iris_chat_messages');
+      if (savedMessages) {
+        const parsed = JSON.parse(savedMessages);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setMessages(parsed);
+        }
+      }
+
+      const savedIsOpen = sessionStorage.getItem('iris_chat_is_open');
+      if (savedIsOpen === 'true') {
+        setIsOpen(true);
+      }
+
+      let savedSessionId = sessionStorage.getItem('iris_chat_session_id');
+      if (!savedSessionId) {
+        savedSessionId = `session-${Math.random().toString(36).substring(2, 9)}`;
+        sessionStorage.setItem('iris_chat_session_id', savedSessionId);
+      }
+      setSessionId(savedSessionId);
+    } catch (e) {
+      console.warn('Could not hydrate chat state from sessionStorage:', e);
+    }
+  }, []);
+
+  // 2. Persist state changes to sessionStorage
+  useEffect(() => {
+    try {
+      if (messages && messages.length > 0) {
+        sessionStorage.setItem('iris_chat_messages', JSON.stringify(messages));
+      }
+    } catch (e) {
+      console.warn('Could not save messages to sessionStorage:', e);
+    }
+  }, [messages]);
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('iris_chat_is_open', String(isOpen));
+    } catch (e) {
+      console.warn('Could not save isOpen to sessionStorage:', e);
+    }
+  }, [isOpen]);
 
   const currentSuggestedQuestions = SUGGESTED_QUESTIONS_MAP[pathname] || DEFAULT_QUESTIONS;
 
