@@ -2,6 +2,7 @@ import '../index.css';
 import Script from 'next/script';
 import SmoothScroll from '../components/common/SmoothScroll';
 import TabTitleTyper from '../components/common/TabTitleTyper';
+import IrisChatWidget from '../components/iris/IrisChatWidget';
 import { Plus_Jakarta_Sans, Inter, Playfair_Display, Cormorant_Garamond, JetBrains_Mono } from 'next/font/google';
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -145,6 +146,7 @@ export default function RootLayout({ children }) {
           <SmoothScroll />
           <TabTitleTyper />
           {children}
+          <IrisChatWidget />
         </div>
         <Script
           id="json-ld-organization"
