@@ -9,7 +9,7 @@ export const metadata = {
 
 export default function Page() {
   return (
-    <MainLayout fullWidth>
+    <MainLayout fullWidth noPaddingTop>
       <IntanShiningStarPage />
     </MainLayout>
   );
