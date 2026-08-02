@@ -67,6 +67,18 @@ export const scheduleService = {
   },
 
   createEvent: async (eventData) => {
+    try {
+      const res = await fetch('/api/admin/schedule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'create_event', eventData }),
+      });
+      const resData = await res.json();
+      if (res.ok && resData.success) return resData;
+    } catch (err) {
+      console.warn('API route schedule create failed, trying client fallback:', err);
+    }
+
     const id = eventData.id || `event-${Math.floor(100000 + Math.random() * 900000)}`;
     const payload = {
       ...eventData,
@@ -87,6 +99,18 @@ export const scheduleService = {
   },
 
   updateEvent: async (id, eventData) => {
+    try {
+      const res = await fetch('/api/admin/schedule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'update_event', id, eventData }),
+      });
+      const resData = await res.json();
+      if (res.ok && resData.success) return resData;
+    } catch (err) {
+      console.warn('API route schedule update failed, trying client fallback:', err);
+    }
+
     const { data, error } = await supabase
       .from('events')
       .update(eventData)
@@ -101,6 +125,19 @@ export const scheduleService = {
   },
 
   setEventStatus: async (id, status) => {
+    try {
+      const res = await fetch('/api/admin/schedule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'set_status', id, status }),
+      });
+      const resData = await res.json();
+      if (res.ok && resData.success) return resData;
+      if (resData && resData.error) return { success: false, error: resData.error };
+    } catch (err) {
+      console.warn('API route schedule set_status failed, trying client fallback:', err);
+    }
+
     const { data, error } = await supabase
       .from('events')
       .update({ status })
@@ -115,6 +152,19 @@ export const scheduleService = {
   },
 
   publishAllDrafts: async () => {
+    try {
+      const res = await fetch('/api/admin/schedule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'publish_all_drafts' }),
+      });
+      const resData = await res.json();
+      if (res.ok && resData.success) return resData;
+      if (resData && resData.error) return { success: false, error: resData.error };
+    } catch (err) {
+      console.warn('API route publish_all_drafts failed, trying client fallback:', err);
+    }
+
     const { data, error } = await supabase
       .from('events')
       .update({ status: 'published' })
@@ -128,6 +178,18 @@ export const scheduleService = {
   },
 
   deleteAllDrafts: async () => {
+    try {
+      const res = await fetch('/api/admin/schedule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'delete_all_drafts' }),
+      });
+      const resData = await res.json();
+      if (res.ok && resData.success) return resData;
+    } catch (err) {
+      console.warn('API route delete_all_drafts failed, trying client fallback:', err);
+    }
+
     const { data, error } = await supabase
       .from('events')
       .delete()
@@ -141,6 +203,18 @@ export const scheduleService = {
   },
 
   deleteEvent: async (id) => {
+    try {
+      const res = await fetch('/api/admin/schedule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'delete_event', id }),
+      });
+      const resData = await res.json();
+      if (res.ok && resData.success) return resData;
+    } catch (err) {
+      console.warn('API route delete_event failed, trying client fallback:', err);
+    }
+
     const { error } = await supabase.from('events').delete().eq('id', id);
     if (error) {
       console.error('Error deleting event:', error);

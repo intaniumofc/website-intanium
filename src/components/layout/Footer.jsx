@@ -1,7 +1,7 @@
 'use client';
 
 import { FaInstagram, FaTiktok, FaYoutube } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
+import { FaXTwitter, FaThreads } from "react-icons/fa6";
 import Image from 'next/image';
 import Link from 'next/link';
 import logoNobg from "../../assets/logos/logo-nobg.webp";
@@ -32,6 +32,7 @@ const defaultSections = [
 const defaultSocialLinks = [
   { icon: FaInstagram, href: SOCIALS.INSTAGRAM, label: "Instagram" },
   { icon: FaXTwitter, href: SOCIALS.TWITTER, label: "X (Twitter)" },
+  { icon: FaThreads, href: SOCIALS.THREADS, label: "Threads" },
   { icon: FaTiktok, href: SOCIALS.TIKTOK, label: "TikTok" },
   { icon: FaYoutube, href: SOCIALS.YOUTUBE, label: "YouTube" },
 ];

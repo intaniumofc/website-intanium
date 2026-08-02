@@ -7,7 +7,7 @@ import { ArrowRight } from "lucide-react";
 import bannerNium from "@/assets/logos/banner-nium.webp";
 import { SOCIALS, ROUTES } from "@/lib/constants";
 import { FaYoutube } from "react-icons/fa";
-import { FaXTwitter, FaInstagram, FaTiktok, FaEnvelope } from "react-icons/fa6";
+import { FaXTwitter, FaInstagram, FaTiktok, FaThreads, FaEnvelope } from "react-icons/fa6";
 
 export default function AboutSection3() {
   const heroRef = useRef(null);
@@ -95,6 +95,20 @@ export default function AboutSection3() {
                 animationNum={2}
                 timelineRef={heroRef}
                 customVariants={revealVariants}
+                href={SOCIALS.THREADS}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Kunjungi Threads IRIS"
+                title="Threads"
+                className="w-8 h-8 sm:w-10 sm:h-10 bg-transparent border border-(--border-color) rounded-full flex items-center justify-center cursor-pointer hover:bg-(--color-primary) hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 transition-all duration-300 group"
+              >
+                <FaThreads className="w-4 h-4 sm:w-5 sm:h-5 text-(--color-primary) group-hover:text-white transition-colors duration-300" />
+              </TimelineContent>
+              <TimelineContent
+                as="a"
+                animationNum={3}
+                timelineRef={heroRef}
+                customVariants={revealVariants}
                 href={SOCIALS.TIKTOK}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -106,7 +120,7 @@ export default function AboutSection3() {
               </TimelineContent>
               <TimelineContent
                 as="a"
-                animationNum={3}
+                animationNum={4}
                 timelineRef={heroRef}
                 customVariants={revealVariants}
                 href={SOCIALS.YOUTUBE}
@@ -120,7 +134,7 @@ export default function AboutSection3() {
               </TimelineContent>
               <TimelineContent
                 as="a"
-                animationNum={4}
+                animationNum={5}
                 timelineRef={heroRef}
                 customVariants={revealVariants}
                 href={SOCIALS.EMAIL}

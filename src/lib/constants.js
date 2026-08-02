@@ -58,7 +58,7 @@ export const SOCIALS = {
   TIKTOK: 'https://tiktok.com/@iris_ofc',
   YOUTUBE: 'https://www.youtube.com/@iris_ofc',
   EMAIL: 'mailto:irisofc@gmail.com',
-  THREADS: 'https://www.threads.net/@iris_ofc',
+  THREADS: 'https://www.threads.net/@intanium_ofc',
 };
 
 export const MERCH_CATEGORIES = {

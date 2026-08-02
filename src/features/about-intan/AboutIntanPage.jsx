@@ -960,7 +960,7 @@ export default function AboutIntanPage() {
       href: 'https://www.idn.app/jkt48_intan',
       color: '#E1251B',
       icon: (
-        <PlayCircle className="w-5 h-5" />
+        <span className="font-bold text-[10px] sm:text-xs tracking-wider select-none">IDN</span>
       )
     },
     {
@@ -968,7 +968,10 @@ export default function AboutIntanPage() {
       href: 'https://www.showroom-live.com/r/JKT48_Intan',
       color: '#0891b2',
       icon: (
-        <Video className="w-5 h-5" />
+        <div className="flex flex-col items-center leading-none text-[7px] sm:text-[8px] font-black tracking-tight select-none">
+          <span>SHOW</span>
+          <span>ROOM</span>
+        </div>
       )
     }
   ];

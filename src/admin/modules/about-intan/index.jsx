@@ -125,6 +125,8 @@ function StatsTab() {
   const [editingId, setEditingId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({ label: '', value: '', icon: '', description: '', sort_order: 0 });
+  const [showroomCount, setShowroomCount] = useState('');
+  const [idnCount, setIdnCount] = useState('');
   const [confirmDelete, setConfirmDelete] = useState({ isOpen: false, id: null });
 
   const fetchData = async () => { setIsLoading(true); setItems(await aboutIntanService.getStats()); setIsLoading(false); };
@@ -139,8 +141,43 @@ function StatsTab() {
     return () => { isCurrent = false; };
   }, []);
 
-  const handleAdd = () => { setModalMode('add'); setEditingId(null); setFormData({ label: '', value: '', icon: '', description: '', sort_order: items.length + 1 }); setIsModalOpen(true); };
-  const handleEdit = (item) => { setModalMode('edit'); setEditingId(item.id); setFormData({ label: item.label, value: item.value, icon: item.icon || '', description: item.description || '', sort_order: item.sort_order || 0 }); setIsModalOpen(true); };
+  const handleShowroomChange = (val) => {
+    setShowroomCount(val);
+    const sr = Number(val) || 0;
+    const idn = Number(idnCount) || 0;
+    if (val !== '' || idnCount !== '') {
+      const total = sr + idn;
+      setFormData(prev => ({ ...prev, value: `${total}+ Live` }));
+    }
+  };
+
+  const handleIdnChange = (val) => {
+    setIdnCount(val);
+    const sr = Number(showroomCount) || 0;
+    const idn = Number(val) || 0;
+    if (showroomCount !== '' || val !== '') {
+      const total = sr + idn;
+      setFormData(prev => ({ ...prev, value: `${total}+ Live` }));
+    }
+  };
+
+  const handleAdd = () => {
+    setModalMode('add');
+    setEditingId(null);
+    setFormData({ label: '', value: '', icon: 'Radio', description: '', sort_order: items.length + 1 });
+    setShowroomCount('');
+    setIdnCount('');
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (item) => {
+    setModalMode('edit');
+    setEditingId(item.id);
+    setFormData({ label: item.label, value: item.value, icon: item.icon || '', description: item.description || '', sort_order: item.sort_order || 0 });
+    setShowroomCount('');
+    setIdnCount('');
+    setIsModalOpen(true);
+  };
 
   const handleDelete = (id) => {
     setConfirmDelete({ isOpen: true, id });
@@ -202,21 +239,66 @@ function StatsTab() {
         <form onSubmit={handleSubmit} className="space-y-4 text-sm">
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-(--text-secondary)">Label</label>
-            <input autoComplete="off" /* autocomplete="off" */ name="label" type="text" value={formData.label} onChange={e => setFormData(p => ({ ...p, label: e.target.value }))} placeholder="Contoh: Total Show Teater" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" required />
+            <input autoComplete="off" name="label" type="text" value={formData.label} onChange={e => setFormData(p => ({ ...p, label: e.target.value }))} placeholder="Contoh: Total Live Sosial Media" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" required />
           </div>
+
+          {/* Sub-Kalkulator Rincian Total Live (Showroom + IDN Live) */}
+          <div className="p-3.5 bg-pink-50/70 border border-pink-200 rounded-2xl space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="font-bold text-pink-700 text-xs flex items-center gap-1.5">
+                📻 Rincian Total Live (Showroom + IDN Live)
+              </span>
+              <span className="text-[10px] text-pink-600 font-bold bg-white px-2 py-0.5 rounded-full border border-pink-200">
+                Otomatis Dijumlahkan
+              </span>
+            </div>
+            <div className="grid grid-cols-2 gap-3 pt-1">
+              <div className="flex flex-col gap-1">
+                <label className="font-bold text-[10px] uppercase tracking-wider text-slate-600">Showroom Live</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={showroomCount}
+                  onChange={e => handleShowroomChange(e.target.value)}
+                  placeholder="Contoh: 150"
+                  className="w-full px-3 py-1.5 bg-white border border-pink-200 rounded-xl text-xs outline-none focus:border-pink-500 font-bold"
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="font-bold text-[10px] uppercase tracking-wider text-slate-600">IDN Live</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={idnCount}
+                  onChange={e => handleIdnChange(e.target.value)}
+                  placeholder="Contoh: 106"
+                  className="w-full px-3 py-1.5 bg-white border border-pink-200 rounded-xl text-xs outline-none focus:border-pink-500 font-bold"
+                />
+              </div>
+            </div>
+            {(showroomCount !== '' || idnCount !== '') && (
+              <div className="text-[11px] text-pink-800 font-bold pt-1 flex items-center justify-between border-t border-pink-200/60 mt-2">
+                <span>Penjumlahan: {Number(showroomCount) || 0} + {Number(idnCount) || 0}</span>
+                <span className="text-xs font-black text-pink-900 bg-pink-200/80 px-2 py-0.5 rounded-lg">
+                  = {((Number(showroomCount) || 0) + (Number(idnCount) || 0))}+ Live
+                </span>
+              </div>
+            )}
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="font-bold text-xs uppercase tracking-wider text-(--text-secondary)">Nilai</label>
-              <input autoComplete="off" /* autocomplete="off" */ name="value" type="text" value={formData.value} onChange={e => setFormData(p => ({ ...p, value: e.target.value }))} placeholder="Contoh: 128+ Show" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" required />
+              <label className="font-bold text-xs uppercase tracking-wider text-(--text-secondary)">Nilai Total</label>
+              <input autoComplete="off" name="value" type="text" value={formData.value} onChange={e => setFormData(p => ({ ...p, value: e.target.value }))} placeholder="Contoh: 256+ Live" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" required />
             </div>
             <div className="flex flex-col gap-1.5">
               <label className="font-bold text-xs uppercase tracking-wider text-(--text-secondary)">Ikon</label>
-              <input autoComplete="off" /* autocomplete="off" */ name="icon" type="text" value={formData.icon} onChange={e => setFormData(p => ({ ...p, icon: e.target.value }))} placeholder="Theater, Radio, ListMusic, Mic2" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" />
+              <input autoComplete="off" name="icon" type="text" value={formData.icon} onChange={e => setFormData(p => ({ ...p, icon: e.target.value }))} placeholder="Theater, Radio, ListMusic, Mic2" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" />
             </div>
           </div>
           <div className="flex flex-col gap-1.5">
             <label className="font-bold text-xs uppercase tracking-wider text-(--text-secondary)">Deskripsi</label>
-            <input autoComplete="off" /* autocomplete="off" */ name="description" type="text" value={formData.description} onChange={e => setFormData(p => ({ ...p, description: e.target.value }))} placeholder="Penjelasan singkat…" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" />
+            <input autoComplete="off" name="description" type="text" value={formData.description} onChange={e => setFormData(p => ({ ...p, description: e.target.value }))} placeholder="Penjelasan singkat…" className="w-full px-3 py-2 bg-(--bg-primary) border border-(--border-color) rounded-xl outline-none focus:border-(--color-primary)" />
           </div>
           <div className="flex justify-end gap-2 pt-4 border-t border-(--border-color)">
             <Button type="button" variant="outline" size="sm" onClick={() => setIsModalOpen(false)} disabled={isSubmitting}>Batal</Button>
@@ -314,7 +396,9 @@ function SetlistsTab() {
   return (
     <>
       <div className="flex justify-between items-center mb-4">
-        <p className="text-xs text-(--text-secondary)">Kelola setlist teater dan daftar unit songs Intan.</p>
+        <p className="text-xs text-(--text-secondary)">
+          Kelola setlist teater dan daftar unit songs Intan. <span className="font-bold text-emerald-600">(Jumlah show tersinkronisasi otomatis secara live dari halaman Schedule)</span>
+        </p>
         <Button variant="primary" size="sm" className="flex items-center gap-1.5 shadow-md cursor-pointer" onClick={handleAdd}>
           <Plus className="h-4 w-4" /> Tambah Setlist
         </Button>
@@ -324,7 +408,18 @@ function SetlistsTab() {
         columns={[
           { key: 'name', header: 'Nama Setlist', render: (item) => <span className="font-bold text-(--text-primary)">{item.name}</span> },
           { key: 'period', header: 'Periode' },
-          { key: 'shows', header: 'Total Show', render: (item) => <span className="tabular-nums">{item.shows || (item.show_count ? `${item.show_count}+ Shows` : '-')}</span> },
+          {
+            key: 'shows',
+            header: 'Total Show',
+            render: (item) => (
+              <div className="flex items-center gap-2">
+                <span className="tabular-nums font-bold text-(--color-primary)">{item.shows || (item.show_count ? `${item.show_count}+ Shows` : '-')}</span>
+                <span className="px-2 py-0.5 text-[9px] font-bold rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs" title="Tersinkronisasi otomatis dari Schedule">
+                  ✓ Schedule Sync
+                </span>
+              </div>
+            )
+          },
           { key: 'theme', header: 'Tema', render: (item) => <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-(--color-primary-light) text-(--color-primary)">{item.theme}</span> },
           { key: 'unitSongs', header: 'Unit Songs', render: (item) => <span className="text-xs text-(--text-muted)">{(item.unitSongs || []).length} lagu</span> },
         ]}
