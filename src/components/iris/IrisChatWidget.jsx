@@ -179,7 +179,18 @@ export default function IrisChatWidget() {
       if (savedMessages) {
         const parsed = JSON.parse(savedMessages);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          setMessages(parsed);
+          // Clean up any lingering loading state if a hard reload occurred mid-stream
+          const sanitized = parsed.map((m) => {
+            if (m.isLoading) {
+              return {
+                ...m,
+                isLoading: false,
+                text: m.text || 'Respon terputus saat memuat ulang halaman. Silakan tanyakan kembali.',
+              };
+            }
+            return m;
+          });
+          setMessages(sanitized);
         }
       }
 
