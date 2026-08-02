@@ -84,7 +84,7 @@ export async function GET(request) {
           title: item.title,
           snippet: item.summary || item.description || `${item.city} - ${item.venue_name}`,
           rank: item.city?.toLowerCase().includes(cleanQuery.toLowerCase()) ? 0.9 : 0.6,
-          url: `/performance-map?id=${item.id}`,
+          url: `/peta-penampilan?id=${item.id}`,
         });
       }
     }

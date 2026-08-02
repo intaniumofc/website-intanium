@@ -59,7 +59,7 @@ export async function retrieveContext(question, intentObj = {}) {
               source_table: 'performance_locations',
               title: item.title,
               snippet: `Tanggal Event: ${item.event_date || ''} | Lokasi: ${item.city} - ${item.venue_name}`,
-              url: `/performance-map?id=${item.id}`,
+              url: `/peta-penampilan?id=${item.id}`,
             });
           }
         }
@@ -84,7 +84,7 @@ export async function retrieveContext(question, intentObj = {}) {
           source_table: 'statistics_snapshot',
           title: 'Statistik Penampilan & Pencapaian Nur Intan',
           snippet: `Total Penampilan Show Teater: ${statsData.theater_count || 0}, Total Event Offair: ${statsData.offair_count || 0}, Total Kota Dikunjungi: ${statsData.city_count || 0}, Total Provinsi: ${statsData.province_count || 0}, Total Pencapaian Milestone: ${statsData.achievement_count || 0}, Kota Paling Sering Dikunjungi: ${statsData.most_visited_city || 'N/A'}.`,
-          url: '/performance-map',
+          url: '/peta-penampilan',
         });
       }
     } catch (e) {
