@@ -529,13 +529,9 @@ export default function IrisStructureSection() {
           <div className="w-full space-y-8">
             {/* ROW 1: Title (left) & Right Stack (Nur Intan + General Coordinator) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center w-full">
-              {/* Left Side: Title & Badge */}
+              {/* Left Side: Title */}
               <div className="structure-title lg:col-span-5 space-y-4 text-left">
-                <span className="text-[9px] uppercase tracking-widest text-[var(--color-secondary)] font-bold bg-purple-100/60 px-3.5 py-1 rounded-full w-fit border border-purple-200/50 block">
-                  Struktur Organisasi
-                </span>
-                
-                <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-[var(--color-primary)] leading-tight">
+                <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-slate-900 leading-tight">
                   Struktur Pengurus <br />
                   <span
                     className="text-5xl sm:text-6xl tracking-widest inline-block mt-1 font-black select-none transition-all duration-300 hover:scale-105"

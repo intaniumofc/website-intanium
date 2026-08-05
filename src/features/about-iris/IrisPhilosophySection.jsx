@@ -103,8 +103,8 @@ export default function IrisPhilosophySection() {
             <Rainbow className="w-3.5 h-3.5" />
             <span>Mitologi & Nilai</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-black text-[var(--color-primary)] tracking-tight">
-            Filosofi Nama IRIS
+          <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
+            Filosofi Nama <span className="text-[var(--color-primary)]">IRIS</span>
           </h2>
         </div>
         <div className="md:col-span-7 pt-1 sm:pt-4">

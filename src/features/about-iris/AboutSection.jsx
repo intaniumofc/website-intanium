@@ -229,21 +229,51 @@ export default function AboutSection3() {
         {/* Main Content */}
         <div className="grid md:grid-cols-3 gap-8 mt-6">
           <div className="md:col-span-2">
-            <h1 className="text-2xl sm:text-3xl md:text-5xl font-black text-(--color-primary) leading-tight tracking-tight mb-6 text-left">
-              <VerticalCutReveal
-                splitBy="words"
-                staggerDuration={0.04}
-                staggerFrom="first"
-                reverse={true}
-                transition={{
-                  type: "spring",
-                  stiffness: 250,
-                  damping: 30,
-                  delay: 0.4,
-                }}
-              >
-                Menyatukan Hati untuk Kilau Abadi Nur Intan.
-              </VerticalCutReveal>
+            <h1 className="text-2xl sm:text-3xl md:text-5xl font-black leading-tight tracking-tight mb-6 text-left flex flex-wrap gap-x-[0.28em] gap-y-1">
+              <span className="text-slate-900">
+                <VerticalCutReveal
+                  splitBy="words"
+                  staggerDuration={0.04}
+                  staggerFrom="first"
+                  reverse={true}
+                  transition={{ type: "spring", stiffness: 250, damping: 30, delay: 0.4 }}
+                >
+                  Menyatukan
+                </VerticalCutReveal>
+              </span>
+              <span className="text-[var(--color-primary)]">
+                <VerticalCutReveal
+                  splitBy="words"
+                  staggerDuration={0.04}
+                  staggerFrom="first"
+                  reverse={true}
+                  transition={{ type: "spring", stiffness: 250, damping: 30, delay: 0.45 }}
+                >
+                  Hati
+                </VerticalCutReveal>
+              </span>
+              <span className="text-slate-900">
+                <VerticalCutReveal
+                  splitBy="words"
+                  staggerDuration={0.04}
+                  staggerFrom="first"
+                  reverse={true}
+                  transition={{ type: "spring", stiffness: 250, damping: 30, delay: 0.5 }}
+                >
+                  untuk Kilau Abadi
+                </VerticalCutReveal>
+              </span>
+              <span className="text-[var(--color-primary)]">
+                <VerticalCutReveal
+                  splitBy="words"
+                  staggerDuration={0.04}
+                  staggerFrom="first"
+                  reverse={true}
+                  transition={{ type: "spring", stiffness: 250, damping: 30, delay: 0.65 }}
+                >
+                  Nur Intan.
+                </VerticalCutReveal>
+              </span>
             </h1>
 
             <TimelineContent

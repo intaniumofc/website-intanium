@@ -48,8 +48,8 @@ export default function GemintangSection() {
             style={{ top: star.top, left: star.left, right: star.right, bottom: star.bottom }}
             initial={{ scale: 0, opacity: 0 }}
             whileInView={{
-              scale: [0, 1.4, 1],
-              opacity: [0, 1, 1],
+              scale: 1,
+              opacity: 1,
             }}
             viewport={{ once: true, amount: 0.15 }}
             transition={{
@@ -82,7 +82,7 @@ export default function GemintangSection() {
           {/* Tag Pill */}
           <motion.div
             initial={{ scale: 0.5, opacity: 0, y: 30 }}
-            whileInView={{ scale: [0.5, 1.15, 1], opacity: 1, y: 0 }}
+            whileInView={{ scale: 1, opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.15 }}
             transition={{ type: 'spring', stiffness: 300, damping: 16, delay: 0.7 }}
             className="inline-flex items-center gap-2 bg-white text-[var(--color-primary)] px-3.5 py-1 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-widest shadow-md"
@@ -95,7 +95,7 @@ export default function GemintangSection() {
           <div className="space-y-1 my-1">
             <motion.h2
               initial={{ scale: 0.5, opacity: 0, y: 40 }}
-              whileInView={{ scale: [0.5, 1.12, 1], opacity: 1, y: 0 }}
+              whileInView={{ scale: 1, opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.15 }}
               transition={{ type: 'spring', stiffness: 320, damping: 15, delay: 0.82 }}
               className="text-4xl sm:text-6xl md:text-7xl font-black tracking-widest leading-none select-none"
@@ -114,7 +114,7 @@ export default function GemintangSection() {
 
             <motion.p
               initial={{ scale: 0.7, opacity: 0, y: 20 }}
-              whileInView={{ scale: [0.7, 1.1, 1], opacity: 1, y: 0 }}
+              whileInView={{ scale: 1, opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.15 }}
               transition={{ type: 'spring', stiffness: 300, damping: 16, delay: 0.94 }}
               className="text-base sm:text-xl font-bold tracking-wider text-pink-100/90 font-heading"
@@ -135,7 +135,7 @@ export default function GemintangSection() {
           {/* Tagline Description */}
           <motion.p
             initial={{ scale: 0.8, opacity: 0, y: 25 }}
-            whileInView={{ scale: [0.8, 1.05, 1], opacity: 1, y: 0 }}
+            whileInView={{ scale: 1, opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.15 }}
             transition={{ type: 'spring', stiffness: 280, damping: 18, delay: 1.12 }}
             className="text-sm sm:text-base md:text-lg font-medium leading-relaxed sm:leading-loose text-white/95 max-w-2xl text-center font-sans tracking-wide drop-shadow-xs"

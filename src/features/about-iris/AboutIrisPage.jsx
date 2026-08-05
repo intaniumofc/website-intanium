@@ -12,7 +12,13 @@ import IrisPhilosophySection from './IrisPhilosophySection';
 import {
   Sparkles,
   Gem,
-  ChevronDown
+  ChevronDown,
+  Flower2,
+  Star,
+  Rainbow,
+  Heart,
+  Compass,
+  Activity
 } from 'lucide-react';
 
 const ButterflySVG = ({ className }) => (
@@ -41,25 +47,32 @@ const ButterflySVG = ({ className }) => (
   </svg>
 );
 
-// Static Data Constants
+// Static Data Constants - Makna Logo IRIS Official
 const LOGO_PHILOSOPHY = [
   {
-    id: 'logo-1',
-    icon: Sparkles,
-    title: 'Cahaya',
-    desc: 'Dari makna ‘Nur’, cahaya menjadi simbol harapan, kehangatan, dan pancaran diri yang terus tumbuh.'
+    id: 'sinergi',
+    title: 'Ruang Sinergi & Resonansi',
+    desc: 'Logo ini merepresentasikan sebuah ruang yang dibentuk oleh sinergi dan resonansi antara Intan JKT48 dan orang-orang di sekitarnya.'
   },
   {
-    id: 'logo-2',
-    icon: Gem,
-    title: 'Permata',
-    desc: 'Terinspirasi dari ‘Intan’, permata melambangkan keindahan, keteguhan, dan kilau yang lahir dari proses.'
+    id: 'dewi',
+    title: 'Bunga Iris & Dewi Pelangi',
+    desc: 'Bunga iris membawa dua makna: sebagai bunga, ia merepresentasikan keindahan, pertumbuhan, dan proses mekar; sementara dalam mitologi, Iris adalah dewi pelangi dan pembawa pesan, sebuah simbol penghubung.'
   },
   {
-    id: 'logo-3',
-    icon: ButterflySVG,
-    title: 'Kupu-Kupu',
-    desc: 'Kupu-kupu merepresentasikan gerak, transformasi, dan kelembutan — seperti tarian yang ringan namun penuh makna.'
+    id: 'irisan',
+    title: 'Irisan Kupu-Kupu & Bunga',
+    desc: 'Kupu-kupu yang saling beririsan dengan bunga iris merepresentasikan pertemuan dua figur yang berbeda, menciptakan sinergi melalui pertumbuhan, dan hubungan yang saling memengaruhi. Irisan keduanya menggambarkan sebuah pertemuan yang memungkinkan setiap elemen untuk saling memengaruhi berkembang bersama.'
+  },
+  {
+    id: 'bintang',
+    title: 'Bintang Resonansi Dua Arah',
+    desc: 'Bintang di tengah menjadi pusat sekaligus titik resonansi yang menyatukan keseluruhan bentuk. Resonansi ini bergerak dalam dua arah: energi dan inspirasi dari Intan JKT48 memengaruhi orang-orang di dalam ruang ini, begitupun sebaliknya.'
+  },
+  {
+    id: 'spektrum',
+    title: 'Outline Terbuka Spektrum Pelangi',
+    desc: 'Outline terbuka dengan warna-warna spektrum pelangi merepresentasikan keberagaman dan inklusivitas. Bentuknya yang tidak tertutup sepenuhnya menggambarkan sebuah ruang yang selalu terbuka bagi siapa pun untuk hadir, terhubung, dan menjadi bagian di dalamnya.'
   }
 ];
 
@@ -221,26 +234,28 @@ const VISIMISI_VIEWPORT = { once: true, margin: '-100px' };
 const VISI_CLIP = { clipPath: 'polygon(0 0, 50vw 0, calc(50vw - 80px) 100%, 0 100%)' };
 const MISI_CLIP = { clipPath: 'polygon(50vw 0, 100% 0, 100% 100%, calc(50vw - 80px) 100%)' };
 
+// Soft IRIS Brand Color Palette Logo Viewer
 function LogoPngViewer({ fallbackImage, className = 'w-72 h-72 sm:w-80 sm:h-80' }) {
   return (
-    <div className={`relative ${className} rounded-full bg-[radial-gradient(circle_at_50%_40%,#FFF0F7_0%,#FFC2E2_35%,#FF6BB9_70%,#E63B96_100%)] border-2 border-white/80 p-1 flex items-center justify-center shadow-[0_20px_60px_-15px_rgba(255,95,178,0.5)] overflow-hidden group select-none`}>
-      {/* Soft pulsing rings — white/pink glow */}
-      <div className="absolute inset-4 rounded-full border border-white/50 animate-[pulse_4s_cubic-bezier(0.4,0,0.6,1)_infinite] z-0 pointer-events-none" />
-      <div className="absolute inset-9 rounded-full border border-white/30 animate-[pulse_5s_cubic-bezier(0.4,0,0.6,1)_infinite] z-0 pointer-events-none" />
+    <div className={`relative ${className} rounded-full border-2 border-white p-1 flex items-center justify-center shadow-[0_16px_50px_-10px_rgba(255,95,178,0.35)] overflow-hidden group select-none bg-white/40 backdrop-blur-md`}>
+      {/* Soft IRIS Primary Glow Aura */}
+      <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_50%_50%,rgba(255,95,178,0.25)_0%,rgba(168,85,247,0.15)_50%,transparent_75%)] opacity-80 animate-[pulse_4s_ease-in-out_infinite] pointer-events-none" />
 
-      {/* White/Golden orbit ring */}
+      {/* Inner background container */}
+      <div className="absolute inset-1.5 rounded-full bg-[radial-gradient(circle_at_50%_40%,#FFF0F7_0%,#FFD6EB_40%,#FF6BB9_80%,#D83584_100%)] z-0" />
+
+      {/* Soft pulsing rings */}
+      <div className="absolute inset-4 rounded-full border border-white/60 animate-[pulse_4s_cubic-bezier(0.4,0,0.6,1)_infinite] z-10 pointer-events-none" />
+      <div className="absolute inset-9 rounded-full border border-white/40 animate-[pulse_5s_cubic-bezier(0.4,0,0.6,1)_infinite] z-10 pointer-events-none" />
+
+      {/* Elegant orbit ring */}
       <div
-        className="absolute inset-3 rounded-full border border-white/40 border-t-amber-200/80 animate-[spin_16s_linear_infinite] z-10 pointer-events-none"
+        className="absolute inset-3 rounded-full border border-white/50 border-t-pink-200 animate-[spin_20s_linear_infinite] z-10 pointer-events-none"
         style={OUTER_ORBIT_STYLE}
       />
-      {/* Pink/White inner orbit ring, reverse */}
-      <div
-        className="absolute inset-7 rounded-full border border-pink-200/40 border-b-white/60 animate-[spin_11s_linear_infinite_reverse] z-10 pointer-events-none"
-        style={INNER_ORBIT_STYLE}
-      />
 
-      {/* Radiant pink & white backplate aura */}
-      <div className="absolute w-3/4 h-3/4 bg-[radial-gradient(circle,rgba(255,255,255,0.75)_0%,rgba(255,214,237,0.5)_40%,rgba(255,95,178,0.3)_75%,transparent_100%)] rounded-full blur-xl pointer-events-none z-0" />
+      {/* Radiant aura */}
+      <div className="absolute w-3/4 h-3/4 bg-[radial-gradient(circle,rgba(255,255,255,0.9)_0%,rgba(255,214,237,0.5)_50%,transparent_100%)] rounded-full blur-lg pointer-events-none z-10" />
 
       {/* Floating crystalline butterfly medallion */}
       <motion.div
@@ -253,17 +268,15 @@ function LogoPngViewer({ fallbackImage, className = 'w-72 h-72 sm:w-80 sm:h-80' 
           alt="IRIS Official Logo"
           width={200}
           height={200}
-          className="w-full h-full object-contain filter drop-shadow-[0_0_16px_rgba(255,255,255,0.9)] drop-shadow-[0_0_30px_rgba(255,95,178,0.6)]"
+          className="w-full h-full object-contain filter drop-shadow-[0_0_12px_rgba(255,255,255,0.9)] drop-shadow-[0_0_24px_rgba(255,95,178,0.5)]"
         />
       </motion.div>
     </div>
   );
 }
 
-// Premium glass philosophy card (interaktif: hover/tap menyalakan konektor ke logo)
+// Clean, Centered, Soft-Branded Philosophy Card
 function PhilosophyCard({ item, index, variants, className = '', activeId, onActivate, onDeactivate }) {
-  const Icon = item.icon;
-  const num = String(index + 1).padStart(2, '0');
   const isActive = activeId === item.id;
 
   const activate = () => onActivate && onActivate(item.id);
@@ -272,7 +285,7 @@ function PhilosophyCard({ item, index, variants, className = '', activeId, onAct
   return (
     <motion.div
       variants={variants}
-      whileHover={CARD_HOVER}
+      whileHover={{ y: -4, scale: 1.015 }}
       transition={CARD_SPRING}
       onHoverStart={activate}
       onHoverEnd={deactivate}
@@ -288,116 +301,62 @@ function PhilosophyCard({ item, index, variants, className = '', activeId, onAct
       tabIndex={0}
       role="button"
       aria-pressed={isActive}
-      className={`group relative cursor-pointer rounded-3xl border bg-white/55 backdrop-blur-xl p-5 outline-none transition-all duration-500 focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 ${isActive
-        ? 'border-(--color-primary)/55 shadow-[0_26px_64px_-26px_rgba(124,58,237,0.55)] ring-1 ring-(--color-primary)/25'
-        : 'border-white/70 shadow-[0_18px_50px_-28px_rgba(28,15,132,0.45)] hover:border-white/90'} ${className}`}
+      className={`group relative cursor-pointer rounded-3xl border bg-white/90 backdrop-blur-xl p-5 outline-none transition-all duration-300 flex flex-col items-center justify-center ${isActive
+        ? 'border-pink-300 shadow-[0_16px_40px_-15px_rgba(255,95,178,0.25)] ring-2 ring-[var(--color-primary)]/30 bg-white'
+        : 'border-slate-100 shadow-[0_10px_30px_-15px_rgba(255,95,178,0.12)] hover:border-pink-200 hover:shadow-[0_14px_35px_-12px_rgba(255,95,178,0.2)] hover:bg-white'} ${className}`}
     >
-      {/* Ambient glow saat aktif/hover */}
-      <div className={`pointer-events-none absolute inset-0 -z-10 rounded-3xl bg-[radial-gradient(circle_at_30%_0%,rgba(196,181,253,0.22),transparent_70%)] transition-opacity duration-500 ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`} />
+      {/* Soft IRIS Hover Glow */}
+      <div className={`pointer-events-none absolute inset-0 -z-10 rounded-3xl bg-[radial-gradient(circle_at_50%_0%,rgba(255,95,178,0.08),transparent_70%)] transition-opacity duration-300 ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`} />
 
-      <div className="flex gap-4 items-start">
-        {/* Crystalline glass icon tile */}
-        <div className="flex flex-col items-center gap-1.5 shrink-0">
-          <span className="text-[10px] font-bold text-(--color-primary)/35 font-mono tracking-widest">{num}</span>
-          <span className={`relative w-10 h-10 rounded-2xl border border-white/80 flex items-center justify-center shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),0_6px_16px_-8px_rgba(124,58,237,0.5)] transition-all duration-500 overflow-hidden ${isActive
-            ? 'scale-110 text-white bg-[linear-gradient(140deg,var(--color-primary),var(--color-purple))]'
-            : 'text-(--color-primary) bg-[linear-gradient(140deg,rgba(255,255,255,0.85),rgba(221,214,254,0.55))] group-hover:scale-110'}`}>
-            <span className="absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_35%_25%,rgba(255,255,255,0.8),transparent_60%)] opacity-70" />
-            <Icon className="relative size-4.5" />
-          </span>
-        </div>
+      <div className="flex flex-col items-center text-center space-y-2.5 w-full">
+        {/* Title */}
+        <h3 className="font-extrabold text-base sm:text-lg text-slate-900 leading-snug group-hover:text-[var(--color-primary)] transition-colors text-center">
+          {item.title}
+        </h3>
 
-        {/* Title + description */}
-        <div className="space-y-1 text-left">
-          <h3 className="font-extrabold text-sm text-(--color-primary) leading-tight">{item.title}</h3>
-          <p className="text-xs text-(--text-secondary) leading-relaxed">{item.desc}</p>
-        </div>
+        {/* Description Rata Kanan-Kiri (Justify) */}
+        <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium text-justify w-full [text-align-last:center]">
+          {item.desc}
+        </p>
       </div>
     </motion.div>
   );
 }
 
-// Mapping connector → philosophy id (untuk highlight interaktif)
 const CONNECTOR_PATHS = [
-  { id: 'logo-1', d: 'M315 115 Q405 200 455 260', cx: 455, cy: 260 },
-  { id: 'logo-2', d: 'M685 115 Q595 200 545 260', cx: 545, cy: 260 },
-  {
-    id: 'logo-3',
-    d: 'M500 520 Q500 395 500 335',
-    cx: 500,
-    cy: 335,
-    gradient: 'connectorGradVertical',
-    activeGradient: 'connectorGradVerticalActive'
-  }
+  { id: 'sinergi', d: 'M 330 90 Q 420 180 435 245' },
+  { id: 'dewi', d: 'M 670 90 Q 580 180 565 245' },
+  { id: 'irisan', d: 'M 330 310 L 410 310' },
+  { id: 'spektrum', d: 'M 670 310 L 590 310' },
+  { id: 'bintang', d: 'M 500 408 L 500 532' }
 ];
-const CIRCLE_TRANSITION_STYLE = { transition: 'fill 0.3s ease, fill-opacity 0.3s ease' };
 
-// Desktop-only SVG overlay: garis connector yang menyala saat kartu aktif
 function OrbitConnectors({ activeId }) {
   return (
     <svg
-      viewBox="0 0 1000 620"
+      viewBox="0 0 1000 700"
       preserveAspectRatio="none"
-      className="absolute inset-0 w-full h-full pointer-events-none z-0"
+      className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-visible"
       fill="none"
     >
-      <defs>
-        <linearGradient id="connectorGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="var(--color-pink)" stopOpacity="0" />
-          <stop offset="50%" stopColor="var(--color-pink)" stopOpacity="0.5" />
-          <stop offset="100%" stopColor="#FFA66E" stopOpacity="0.12" />
-        </linearGradient>
-        <linearGradient id="connectorGradActive" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="var(--color-pink)" stopOpacity="0.4" />
-          <stop offset="50%" stopColor="var(--color-pink)" stopOpacity="1" />
-          <stop offset="100%" stopColor="#FFA66E" stopOpacity="0.8" />
-        </linearGradient>
-        <linearGradient id="connectorGradVertical" gradientUnits="userSpaceOnUse" x1="500" y1="520" x2="500" y2="335">
-          <stop offset="0%" stopColor="var(--color-pink)" stopOpacity="0.2" />
-          <stop offset="50%" stopColor="#FFA66E" stopOpacity="0.55" />
-          <stop offset="100%" stopColor="var(--color-pink)" stopOpacity="0.2" />
-        </linearGradient>
-        <linearGradient id="connectorGradVerticalActive" gradientUnits="userSpaceOnUse" x1="500" y1="520" x2="500" y2="335">
-          <stop offset="0%" stopColor="#FF75C3" stopOpacity="0.55" />
-          <stop offset="50%" stopColor="var(--color-pink)" stopOpacity="1" />
-          <stop offset="100%" stopColor="#FFA66E" stopOpacity="0.85" />
-        </linearGradient>
-      </defs>
-
-      {CONNECTOR_PATHS.map((path) => {
-        const isActive = activeId === path.id;
-        const gradient = path.gradient || 'connectorGrad';
-        const activeGradient = path.activeGradient || 'connectorGradActive';
-        const pathStyle = {
-          strokeWidth: isActive ? 2.6 : 1.5,
-          filter: isActive ? 'drop-shadow(0 0 6px rgba(124,58,237,0.6))' : 'none',
-          transition: 'stroke-width 0.35s ease, filter 0.35s ease'
-        };
-        return (
-          <motion.path
-            key={path.id}
-            variants={connectorReveal}
-            d={path.d}
-            stroke={`url(#${isActive ? activeGradient : gradient})`}
-            strokeLinecap="round"
-            style={pathStyle}
-          />
-        );
-      })}
-
       {CONNECTOR_PATHS.map((path) => {
         const isActive = activeId === path.id;
         return (
-          <motion.circle
-            key={`dot-${path.id}`}
-            variants={connectorReveal}
-            cx={path.cx}
-            cy={path.cy}
-            r={isActive ? 4 : 2.5}
-            fill={isActive ? 'var(--color-pink)' : '#FF75C3'}
-            fillOpacity={isActive ? 1 : 0.6}
-            style={CIRCLE_TRANSITION_STYLE}
-          />
+          <g key={path.id}>
+            {/* Connector Line Path */}
+            <motion.path
+              d={path.d}
+              stroke="#FF5FB2"
+              strokeOpacity={isActive ? 0.95 : 0.4}
+              strokeWidth={isActive ? 3.5 : 1.75}
+              strokeDasharray={isActive ? "none" : "5 5"}
+              strokeLinecap="round"
+              style={{
+                filter: isActive ? 'drop-shadow(0 0 10px rgba(255,95,178,0.85))' : 'drop-shadow(0 0 3px rgba(255,95,178,0.2))',
+                transition: 'stroke-width 0.3s ease, stroke-opacity 0.3s ease, filter 0.3s ease'
+              }}
+            />
+          </g>
         );
       })}
     </svg>
@@ -424,7 +383,7 @@ function DecorativeSparkles() {
       <ButterflySVG className="absolute -top-6 right-[14%] w-24 h-24 text-purple-300/10 rotate-12" />
       <ButterflySVG className="absolute bottom-2 left-[8%] w-20 h-20 text-indigo-300/10 -rotate-12" />
 
-      {/* Tiny twinkling sparkles */}
+      {/* Twinkling sparkles */}
       {sparkles.map((s, i) => {
         const spanStyle = { top: s.top, left: s.left };
         const spanAnimate = { opacity: [0.2, 0.7, 0.2], scale: [0.8, 1.1, 0.8] };
@@ -454,8 +413,6 @@ export default function AboutIrisPage() {
     setOpenMisiIndex(prev => prev === index ? null : index);
   };
 
-
-
   return (
     <div className="relative min-h-screen">
       <div className="relative z-10 space-y-24 sm:space-y-32 max-w-6xl mx-auto pt-0 pb-8 px-1 overflow-visible">
@@ -478,41 +435,41 @@ export default function AboutIrisPage() {
           whileInView="visible"
           viewport={FILOSOFI_VIEWPORT}
           variants={FILOSOFI_SECTION_VARIANTS}
-          className="relative space-y-7"
+          className="relative space-y-10 py-6 overflow-visible"
         >
+          <DecorativeSparkles />
+
           {/* Section Title */}
-          <motion.div variants={sectionReveal} className="text-center max-w-2xl mx-auto space-y-3">
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-(--color-primary)">
-              Filosofi Logo IRIS
+          <motion.div variants={sectionReveal} className="text-center max-w-3xl mx-auto space-y-4">
+            <h2 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight">
+              Filosofi Logo <span className="text-[var(--color-primary)]">IRIS</span>
             </h2>
-            <p className="text-sm text-(--text-secondary) leading-relaxed">
-              Setiap garis, kilau, dan gerak dalam logo IRIS menyimpan makna tentang cahaya, keteguhan, dan transformasi diri.
+            <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-medium max-w-2xl mx-auto">
+              Representasi sebuah ruang harmonis yang dibentuk oleh sinergi, pertumbuhan, dan inspirasi dua arah antara Intan JKT48 dan seluruh pendukungnya.
             </p>
           </motion.div>
 
-          {/* --- DESKTOP: Constellation / Orbit Map --- */}
-          <div className="relative hidden lg:block w-full max-w-6xl mx-auto min-h-[640px] overflow-visible">
-            <DecorativeSparkles />
+          {/* --- DESKTOP: Constellation Map --- */}
+          <div className="relative hidden lg:block w-full max-w-6xl mx-auto min-h-[700px] overflow-visible">
             <OrbitConnectors activeId={activeId} />
 
-            {/* Center medallion wrapper: posisi di div biasa */}
-            <div className="absolute left-1/2 top-[50%] -translate-x-1/2 -translate-y-1/2 z-10 flex items-center justify-center">
+            {/* Center Logo Medallion */}
+            <div className="absolute left-1/2 top-[44%] -translate-x-1/2 -translate-y-1/2 z-10 flex items-center justify-center">
               <motion.div
                 variants={logoMedallionReveal}
                 className="relative flex items-center justify-center"
               >
-                <div className="pointer-events-none absolute left-1/2 top-1/2 h-[320px] w-[320px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-purple-300/15" />
-                <div className="pointer-events-none absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-indigo-300/15" />
+                <div className="pointer-events-none absolute left-1/2 top-1/2 h-[290px] w-[290px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-pink-200/30 animate-[pulse_6s_ease-in-out_infinite]" />
 
                 <LogoPngViewer
                   fallbackImage={logoNobg}
-                  className="w-52 h-52 xl:w-56 xl:h-56"
+                  className="w-50 h-50 xl:w-54 xl:h-54"
                 />
               </motion.div>
             </div>
 
-            {/* Card 1: Cahaya */}
-            <div className="absolute left-[10%] top-[3%] w-[320px] z-20">
+            {/* Node 1: Ruang Sinergi & Resonansi (Top Left) */}
+            <div className="absolute left-[0%] top-[0%] w-[330px] xl:w-[360px] z-20">
               <PhilosophyCard
                 item={LOGO_PHILOSOPHY[0]}
                 index={0}
@@ -524,8 +481,8 @@ export default function AboutIrisPage() {
               />
             </div>
 
-            {/* Card 2: Permata */}
-            <div className="absolute right-[10%] top-[3%] w-[320px] z-20">
+            {/* Node 2: Bunga Iris & Dewi Pelangi (Top Right) */}
+            <div className="absolute right-[0%] top-[0%] w-[330px] xl:w-[360px] z-20">
               <PhilosophyCard
                 item={LOGO_PHILOSOPHY[1]}
                 index={1}
@@ -537,8 +494,8 @@ export default function AboutIrisPage() {
               />
             </div>
 
-            {/* Card 3: Kupu-Kupu */}
-            <div className="absolute left-1/2 bottom-[4%] w-[420px] -translate-x-1/2 z-20">
+            {/* Node 3: Irisan Kupu-Kupu & Bunga (Mid Left) */}
+            <div className="absolute left-[0%] top-[38%] w-[330px] xl:w-[360px] z-20">
               <PhilosophyCard
                 item={LOGO_PHILOSOPHY[2]}
                 index={2}
@@ -549,27 +506,44 @@ export default function AboutIrisPage() {
                 onDeactivate={handleDeactivatePhil}
               />
             </div>
+
+            {/* Node 4: Outline Terbuka Spektrum Pelangi (Mid Right) */}
+            <div className="absolute right-[0%] top-[38%] w-[330px] xl:w-[360px] z-20">
+              <PhilosophyCard
+                item={LOGO_PHILOSOPHY[4]}
+                index={4}
+                variants={philosophyCardReveal}
+                className="w-full"
+                activeId={activeId}
+                onActivate={setActiveId}
+                onDeactivate={handleDeactivatePhil}
+              />
+            </div>
+
+            {/* Node 5: Bintang Resonansi Dua Arah (Bottom Center - Perfectly Positioned below Center Logo!) */}
+            <div className="absolute left-1/2 top-[76%] -translate-x-1/2 w-[460px] xl:w-[500px] z-20">
+              <PhilosophyCard
+                item={LOGO_PHILOSOPHY[3]}
+                index={3}
+                variants={philosophyCardReveal}
+                className="w-full"
+                activeId={activeId}
+                onActivate={setActiveId}
+                onDeactivate={handleDeactivatePhil}
+              />
+            </div>
           </div>
 
-          {/* --- MOBILE / TABLET: Clean stacked layout --- */}
-          <div className="lg:hidden flex flex-col items-center">
-            <motion.div variants={scaleIn} className="relative flex items-center justify-center">
-              <LogoPngViewer fallbackImage={logoNobg} className="w-60 h-60 sm:w-64 sm:h-64" />
+          {/* --- MOBILE / TABLET: Clean Flow Layout --- */}
+          <div className="lg:hidden flex flex-col items-center space-y-6">
+            <motion.div variants={logoMedallionReveal} className="relative flex items-center justify-center">
+              <LogoPngViewer fallbackImage={logoNobg} className="w-52 h-52 sm:w-60 sm:h-60" />
             </motion.div>
 
-            {/* Connector vertikal kecil yang glowing */}
-            <motion.div
-              variants={sectionReveal}
-              className="my-5 h-10 w-px bg-[linear-gradient(to_bottom,transparent,rgba(167,139,250,0.6),transparent)]"
-            />
+            {/* Vertikal Connector Line Glowing */}
+            <div className="my-2 h-10 w-0.5 bg-gradient-to-b from-pink-300 to-transparent" />
 
-            <motion.div
-              className="grid grid-cols-1 gap-4 w-full px-4 max-w-md"
-              variants={staggerContainer}
-              initial="hidden"
-              whileInView="visible"
-              viewport={SOFT_VIEWPORT}
-            >
+            <div className="grid grid-cols-1 gap-4 w-full px-2 max-w-md">
               {LOGO_PHILOSOPHY.map((item, index) => (
                 <PhilosophyCard
                   key={item.id}
@@ -582,7 +556,7 @@ export default function AboutIrisPage() {
                   onDeactivate={handleDeactivatePhil}
                 />
               ))}
-            </motion.div>
+            </div>
           </div>
         </motion.section>
 
