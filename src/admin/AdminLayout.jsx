@@ -32,7 +32,8 @@ import {
   Camera,
   HardDrive,
   Shield,
-  UserPlus
+  UserPlus,
+  Palette
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import logoNobg from '../assets/logos/logo-nobg.webp';
@@ -97,6 +98,7 @@ export default function AdminLayout({ children }) {
     if (cleanHref === ROUTES.ADMIN_NEWS) return 'news';
     if (cleanHref === ROUTES.ADMIN_PLAYLISTS) return 'playlists';
     if (cleanHref === ROUTES.ADMIN_GALLERY) return 'gallery';
+    if (cleanHref === ROUTES.ADMIN_FANART) return 'gallery'; // Grouping fanart permission with gallery or it can be its own
     if (cleanHref === ROUTES.ADMIN_MADING) return 'mading';
     if (cleanHref === ROUTES.ADMIN_HASHTAGS) return 'hashtags';
     if (cleanHref === ROUTES.ADMIN_GAMES) return 'games';
@@ -214,14 +216,14 @@ export default function AdminLayout({ children }) {
         { name: 'Milestone', href: ROUTES.ADMIN_SHINING_STAR },
         { name: 'Komik Flipbook', href: ROUTES.ADMIN_COMIC_PAGES },
         { name: 'Schedule', href: ROUTES.ADMIN_SCHEDULE },
-        { name: 'Peta Penampilan', href: ROUTES.ADMIN_PERFORMANCE_MAP },
-        { name: 'Kelola Fan-art', href: ROUTES.ADMIN_FANART }
+        { name: 'Peta Penampilan', href: ROUTES.ADMIN_PERFORMANCE_MAP }
       ]
     },
     { id: 'recaps', name: 'Recap & Zine', href: ROUTES.ADMIN_RECAPS, icon: BookOpen },
     { id: 'news', name: 'Berita & News', href: ROUTES.ADMIN_NEWS, icon: Newspaper },
     { id: 'playlists', name: 'Denger Intan', href: ROUTES.ADMIN_PLAYLISTS, icon: Headphones },
     { id: 'gallery', name: 'Galeri Album', href: ROUTES.ADMIN_GALLERY, icon: ImageIcon },
+    { id: 'fanart', name: 'Kelola Fan-art', href: ROUTES.ADMIN_FANART, icon: Palette },
     { id: 'mading', name: 'Moderasi Mading', href: ROUTES.ADMIN_MADING, icon: Pin },
     { id: 'hashtags', name: 'Kelola Tagar', href: ROUTES.ADMIN_HASHTAGS, icon: Hash },
     { id: 'games', name: 'Kelola Game', href: ROUTES.ADMIN_GAMES, icon: Gamepad2 },

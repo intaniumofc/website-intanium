@@ -27,11 +27,11 @@ export async function POST(request) {
   try {
     const formData = await request.formData();
     const file = formData.get('file');
-    const bucketName = formData.get('bucketName') || 'intanium-storage';
-    const folderPath = formData.get('folderPath') || 'fanarts/submissions';
+    const bucketName = formData.get('bucketName') || 'fanarts';
+    const folderPath = formData.get('folderPath') || 'submissions';
 
     // Strictly restrict to fanart submissions to prevent abuse
-    if (bucketName !== 'intanium-storage' || !folderPath.startsWith('fanarts/submissions')) {
+    if (bucketName !== 'fanarts' || !folderPath.startsWith('submissions')) {
       return NextResponse.json({ error: 'Invalid bucket or folder path for public upload.' }, { status: 403 });
     }
 

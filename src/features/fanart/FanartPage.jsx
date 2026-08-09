@@ -76,7 +76,7 @@ export default function FanartPage() {
     try {
       let finalUrl = formData.url;
       if (file) {
-        finalUrl = await uploadFile(file, 'intanium-storage', 'fanarts/submissions', '/api/public-upload');
+        finalUrl = await uploadFile(file, 'fanarts', 'submissions', '/api/public-upload');
       }
 
       const response = await fanartService.submitFanart({
