@@ -725,6 +725,28 @@
 .recap-list {
   display: grid;
   gap: 0.42rem;
+  max-height: 150px;
+  overflow-y: auto;
+  padding-right: 0.4rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(216, 53, 132, 0.4) transparent;
+}
+
+.recap-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.recap-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.recap-list::-webkit-scrollbar-thumb {
+  background: rgba(216, 53, 132, 0.4);
+  border-radius: 4px;
+}
+
+.recap-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(216, 53, 132, 0.7);
 }
 
 .recap-list li {
