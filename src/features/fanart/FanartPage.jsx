@@ -76,7 +76,7 @@ export default function FanartPage() {
     try {
       let finalUrl = formData.url;
       if (file) {
-        finalUrl = await uploadFile(file, 'fanarts', 'submissions');
+        finalUrl = await uploadFile(file, 'intanium-storage', 'fanarts/submissions', '/api/public-upload');
       }
 
       const response = await fanartService.submitFanart({
@@ -88,16 +88,6 @@ export default function FanartPage() {
       setIsSubmitting(false);
       setIsSubmitOpen(false);
 
-      // Add to local state list for instant feedback
-      const newFanart = {
-        id: `local-${Date.now()}`,
-        title: formData.title,
-        author: formData.author,
-        description: formData.description,
-        url: finalUrl,
-      };
-      setFanarts((prev) => [newFanart, ...prev]);
-
       // Reset form fields
       setFormData({ title: '', author: '', description: '', url: '' });
       setFile(null);
@@ -107,6 +97,7 @@ export default function FanartPage() {
     } catch (err) {
       console.error(err);
       setIsSubmitting(false);
+      setErrors(prev => ({ ...prev, submit: err.message || 'Terjadi kesalahan saat mengunggah' }));
     }
   };
 
@@ -148,6 +139,11 @@ export default function FanartPage() {
         title="Kirim Karya Fanart Anda"
         size="md"
       >
+        {errors.submit && (
+          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/50 rounded-lg text-red-500 text-sm font-medium">
+            {errors.submit}
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="fanart-form-title" className="block text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1.5 cursor-pointer">
@@ -209,7 +205,18 @@ export default function FanartPage() {
               }] : []}
               onFilesChange={(newFiles) => {
                 if (newFiles && newFiles.length > 0) {
-                  setFile(newFiles[0]);
+                  const selectedFile = newFiles[0];
+                  if (!selectedFile.type?.startsWith('image/')) {
+                    setErrors((prev) => ({ ...prev, url: 'File harus berupa gambar (JPG, PNG)' }));
+                    setFile(null);
+                    return;
+                  }
+                  if (selectedFile.size > 5 * 1024 * 1024) {
+                    setErrors((prev) => ({ ...prev, url: 'Ukuran file maksimal 5MB' }));
+                    setFile(null);
+                    return;
+                  }
+                  setFile(selectedFile);
                   if (errors.url) {
                     setErrors((prev) => ({ ...prev, url: '' }));
                   }

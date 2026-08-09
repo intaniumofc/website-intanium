@@ -37,6 +37,7 @@ export const ROUTES = {
   ADMIN_CATEGORIES: '/admin/merchandise/categories',
   ADMIN_ORDERS: '/admin/merchandise/orders',
   ADMIN_RECAPS: '/admin/recaps',
+  ADMIN_FANART: '/admin/fanart',
   ADMIN_SCHEDULE: '/admin/schedule',
   ADMIN_NEWS: '/admin/news',
   ADMIN_GALLERY: '/admin/gallery',

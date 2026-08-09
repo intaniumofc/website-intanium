@@ -1,45 +1,64 @@
-// Service for managing community Fanart submissions
-
-const MOCK_FANARTS = [
-  {
-    id: 'fanart-1',
-    title: 'Intan in Cyberpunk Neon World',
-    author: 'RezaArt23',
-    description: 'Ilustrasi bertema futuristik cyberpunk neon violet, menggambarkan model Live2D Intan memakai kacamata visors bertekstur digital.',
-    url: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=600&auto=format&fit=crop&q=80',
-    createdAt: '2025-11-20',
-  },
-  {
-    id: 'fanart-2',
-    title: 'Chibi Intan drinking Matcha Latte',
-    author: 'SakuraDraws',
-    description: 'Fanart chibi menggemaskan menampilkan ekspresi senang Intan memeluk gelas Es Matcha Latte super besar. Dibuat dengan gaya warna pastel lembut.',
-    url: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=600&auto=format&fit=crop&q=80',
-    createdAt: '2025-10-05',
-  },
-  {
-    id: 'fanart-3',
-    title: 'Summer Party Key Visual Celebration',
-    author: 'DickyDesign',
-    description: 'Desain poster khusus festival musim panas bertemakan pantai tropis, lengkap dengan kembang api ungu berkilauan di latar langit malam.',
-    url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
-    createdAt: '2025-09-12',
-  },
-];
+// Service for managing community Fanart submissions via Supabase
+import { supabase } from '../../lib/supabaseClient';
 
 export const fanartService = {
-  getFanarts: async () => {
-    await new Promise(resolve => setTimeout(resolve, 300));
-    return MOCK_FANARTS;
+  getFanarts: async (status = 'approved') => {
+    let query = supabase.from('fanarts').select('*').order('created_at', { ascending: false });
+    
+    if (status !== 'all') {
+      query = query.eq('status', status);
+    }
+    
+    const { data, error } = await query;
+    if (error) {
+      console.error('Error fetching fanarts:', error);
+      throw new Error('Gagal mengambil data fanart');
+    }
+    
+    return data || [];
   },
 
   submitFanart: async (fanartData) => {
-    // In real app, write to Supabase "fanarts" table
-    await new Promise(resolve => setTimeout(resolve, 500));
+    const { error } = await supabase.from('fanarts').insert([
+      {
+        title: fanartData.title,
+        author: fanartData.author,
+        description: fanartData.description,
+        url: fanartData.url,
+        status: 'pending' // default status for public submission
+      }
+    ]);
+
+    if (error) {
+      console.error('Error submitting fanart:', error);
+      throw new Error('Terjadi kesalahan saat mengirim fanart');
+    }
+
     return {
       success: true,
-      message: 'Karya fanart Anda berhasil disubmit untuk proses moderasi. Terima kasih atas kontribusinya!',
-      data: fanartData
+      message: 'Karya fanart berhasil dikirim! Saat ini berstatus Pending dan akan tayang setelah ditinjau oleh Admin.',
     };
+  },
+
+  updateFanartStatus: async (id, newStatus) => {
+    const { error } = await supabase.from('fanarts')
+      .update({ status: newStatus })
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error updating fanart status:', error);
+      return { success: false, error: 'Gagal memperbarui status' };
+    }
+    
+    return { success: true };
+  },
+
+  deleteFanart: async (id) => {
+    const { error } = await supabase.from('fanarts').delete().eq('id', id);
+    if (error) {
+      console.error('Error deleting fanart:', error);
+      return { success: false, error: 'Gagal menghapus karya' };
+    }
+    return { success: true };
   }
 };

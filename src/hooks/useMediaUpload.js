@@ -166,7 +166,7 @@ export function useMediaUpload() {
    * @param {string} folderPath 
    * @returns {Promise<string>} Public URL of uploaded asset
    */
-  const uploadFile = async (rawFile, bucketName = 'assets', folderPath = 'media') => {
+  const uploadFile = async (rawFile, bucketName = 'assets', folderPath = 'media', endpoint = '/api/upload') => {
     setIsUploading(true);
     setError(null);
     setProgress(5);
@@ -200,7 +200,7 @@ export function useMediaUpload() {
       setProgress(50);
 
       // Post file directly to our server-side API proxy to prevent CORS issues
-      const response = await fetch('/api/upload', {
+      const response = await fetch(endpoint, {
         method: 'POST',
         body: formData,
       });

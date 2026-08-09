@@ -214,7 +214,8 @@ export default function AdminLayout({ children }) {
         { name: 'Milestone', href: ROUTES.ADMIN_SHINING_STAR },
         { name: 'Komik Flipbook', href: ROUTES.ADMIN_COMIC_PAGES },
         { name: 'Schedule', href: ROUTES.ADMIN_SCHEDULE },
-        { name: 'Peta Penampilan', href: ROUTES.ADMIN_PERFORMANCE_MAP }
+        { name: 'Peta Penampilan', href: ROUTES.ADMIN_PERFORMANCE_MAP },
+        { name: 'Kelola Fan-art', href: ROUTES.ADMIN_FANART }
       ]
     },
     { id: 'recaps', name: 'Recap & Zine', href: ROUTES.ADMIN_RECAPS, icon: BookOpen },
