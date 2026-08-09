@@ -714,7 +714,7 @@ export default function IntanInsightsPage() {
           <motion.div variants={itemVariants}>
             <ChartCard
               title="Pencapaian Intan per Bulan"
-              subtitle="Stacked per kategori dari data #IntanShiningStar. Klik titik bulan untuk drill-down daftar pencapaian."
+              subtitle="Stacked per kategori dari data Milestone. Klik titik bulan untuk drill-down daftar pencapaian."
               icon={Trophy}
               onExport={() => exportCsv('intan-achievement-bulanan.csv', achievementAreaData)}
             >
@@ -760,7 +760,7 @@ export default function IntanInsightsPage() {
                   </h4>
                   <div className="flex items-center gap-2">
                     <Link href={ROUTES.ADMIN_SHINING_STAR} className="inline-flex items-center gap-1 text-[10px] font-black text-[#FF5FB2] hover:underline">
-                      <Edit className="h-3 w-3" /> Kelola #IntanShiningStar
+                      <Edit className="h-3 w-3" /> Kelola Milestone
                     </Link>
                     <button type="button" onClick={() => setDrillMonth(null)} className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer" title="Tutup detail">
                       <X className="h-4 w-4" />

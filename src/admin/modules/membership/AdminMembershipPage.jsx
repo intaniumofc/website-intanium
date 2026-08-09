@@ -38,7 +38,7 @@ const AVAILABLE_PERMISSIONS = [
   { id: 'categories', label: 'Kategori Produk' },
   { id: 'orders', label: 'Kelola Order Merch' },
   { id: 'about-intan', label: 'Profil Member (Intan)' },
-  { id: 'shining-star', label: '#IntanShiningStar' },
+  { id: 'shining-star', label: 'Milestone' },
   { id: 'schedule', label: 'Jadwal / Schedule' },
   { id: 'recaps', label: 'Recap & Zine' },
   { id: 'news', label: 'Berita & News' },

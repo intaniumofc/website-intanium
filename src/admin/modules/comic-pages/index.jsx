@@ -263,7 +263,7 @@ export default function AdminComicPages() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-[var(--border-color)]">
         <div>
           <h1 className="flex items-center gap-2 text-xl sm:text-2xl font-extrabold text-[var(--text-primary)]">
-            <BookOpen className="h-5.5 w-5.5 text-[var(--color-primary)]" /> Komik #IntanShiningStar
+            <BookOpen className="h-5.5 w-5.5 text-[var(--color-primary)]" /> Komik Milestone
           </h1>
           <p className="mt-1 text-xs text-[var(--text-secondary)]">
             Kelola halaman komik flipbook. Resolusi 750×1000px (3:4).
