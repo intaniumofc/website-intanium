@@ -4,7 +4,6 @@ import Link from "next/link";
 import { TimelineContent } from "@/components/ui/timeline-animation";
 import { VerticalCutReveal } from "@/components/ui/vertical-cut-reveal";
 import { ArrowRight } from "lucide-react";
-import bannerNium from "@/assets/logos/banner-nium.webp";
 import { SOCIALS, ROUTES } from "@/lib/constants";
 import { FaYoutube } from "react-icons/fa";
 import { FaXTwitter, FaInstagram, FaTiktok, FaThreads, FaEnvelope } from "react-icons/fa6";
@@ -176,7 +175,7 @@ export default function AboutSection3() {
                 preserveAspectRatio="xMidYMid slice"
                 width={"100%"}
                 height={"100%"}
-                href={bannerNium?.src || bannerNium}
+                href="/header.webp"
               ></image>
             </svg>
           </TimelineContent>
