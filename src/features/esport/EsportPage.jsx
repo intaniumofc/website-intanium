@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { FaInstagram, FaXTwitter } from 'react-icons/fa6';
 import Card from '../../components/common/Card';
+import { proxyR2Url } from '../../lib/helpers';
 import { esportService } from '../../services/public/esportService';
 
 import achievementPlaceholder from '../../assets/images/esport/achievement_placeholder.webp';
@@ -105,6 +106,8 @@ export default function EsportPage() {
     if (esportData[key] && !esportData[key].isActive) return;
     setFlippedCard((prev) => (prev === key ? null : key));
   };
+
+  const proxyImage = (img) => proxyR2Url(img?.src || img);
 
   const getBadgeColor = (key) => {
     switch (key) {
@@ -240,6 +243,7 @@ export default function EsportPage() {
                 isFlipped={isFlipped}
                 onToggle={() => handleFlipToggle(key)}
                 memberCount={memberCount}
+                proxyImage={proxyImage}
               />
             );
           })}
@@ -296,7 +300,7 @@ export default function EsportPage() {
                     <div className="w-full flex items-center justify-between gap-1">
                       {/* Left Team (IRIS) */}
                       <div className="flex-1 flex flex-col items-center text-center max-w-[75px]">
-                        <img src={(logoNobg)?.src || (logoNobg)} alt="IRIS Logo" className="w-8 h-8 object-contain filter drop-shadow-sm select-none" />
+                        <img src={proxyImage(logoNobg)} alt="IRIS Logo" className="w-8 h-8 object-contain filter drop-shadow-sm select-none" />
                         <span className="text-[10px] font-black text-slate-800 tracking-wider mt-1 truncate w-full">IRIS</span>
                       </div>
 
@@ -339,7 +343,7 @@ export default function EsportPage() {
                       {/* Right Team (Opponent) */}
                       <div className="flex-1 flex flex-col items-center text-center max-w-[75px]">
                         {match.opponentLogo && (match.opponentLogo.startsWith('http') || match.opponentLogo.startsWith('blob:')) ? (
-                          <img src={(match.opponentLogo)?.src || (match.opponentLogo)} alt={match.opponent} className="w-8 h-8 object-contain rounded-full border border-slate-200 bg-white" />
+                          <img src={proxyImage(match.opponentLogo || match.opponent_logo)} alt={match.opponent} className="w-8 h-8 object-contain rounded-full border border-slate-200 bg-white" />
                         ) : (
                           <span className="text-xl filter drop-shadow-sm select-none" role="img" aria-label="opponent logo">{match.opponentLogo}</span>
                         )}
@@ -386,9 +390,9 @@ export default function EsportPage() {
                 >
                   {/* Top Image Banner */}
                   <div className="relative h-48 overflow-hidden bg-slate-950">
-                    <img
-                      src={(ach.imageUrl || achievementPlaceholder)?.src || (ach.imageUrl || achievementPlaceholder)}
-                      alt={ach.title}
+                      <img
+                        src={proxyImage(ach.imageUrl || ach.image_url || achievementPlaceholder)}
+                        alt={ach.title}
                       className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                       loading="lazy"
                     />
@@ -408,7 +412,7 @@ export default function EsportPage() {
                         <span>&bull;</span>
                         <span className="text-[var(--color-secondary)] flex items-center gap-1">
                           {ach.badge && (ach.badge.startsWith('http') || ach.badge.startsWith('blob:')) ? (
-                            <img src={(ach.badge)?.src || (ach.badge)} alt={ach.rank} className="w-4 h-4 object-contain rounded" />
+                            <img src={proxyImage(ach.badge)} alt={ach.rank} className="w-4 h-4 object-contain rounded" />
                           ) : (
                             <span>{ach.badge}</span>
                           )} {ach.rank}
@@ -463,7 +467,8 @@ function DivisionFlipCard({
   isActive = true,
   isFlipped,
   onToggle,
-  memberCount
+  memberCount,
+  proxyImage
 }) {
   const handleKeyPress = (e) => {
     if (!isActive) return;
@@ -498,7 +503,7 @@ function DivisionFlipCard({
           {/* Background Wallpaper Image & Premium Dark Overlay */}
           <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
             <img
-              src={(wallpaper)?.src || (wallpaper)}
+              src={proxyImage(wallpaper)}
               alt={divLabel}
               className={`w-full h-full object-cover transition-transform duration-700 ease-out ${
                 isActive ? 'group-hover:scale-110' : 'grayscale opacity-70'
@@ -581,7 +586,7 @@ function DivisionFlipCard({
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-full overflow-hidden p-0.5 border border-slate-200 bg-white flex-shrink-0">
                     <img
-                      src={(member.imageUrl)?.src || (member.imageUrl)}
+                      src={proxyImage(member.imageUrl)}
                       alt={member.name}
                       className="w-full h-full object-cover rounded-full"
                       loading="lazy"
