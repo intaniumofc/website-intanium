@@ -30,18 +30,9 @@ export default function MadingPage() {
       // Load Supabase notes
       const dbNotes = await madingService.getNotes();
 
-      const savedLoves = JSON.parse((typeof window !== 'undefined' ? (...args) => localStorage.getItem(...args) : () => null)('mading_loves') || '{}');
-
       // Map database notes
       const mappedDbNotes = dbNotes.map((note) => {
         const noteId = note.id;
-
-        let loves = savedLoves[noteId];
-        if (loves === undefined) {
-          // Seed initial loves count based on char code sum
-          loves = (Math.abs(noteId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)) % 28) + 5;
-          savedLoves[noteId] = loves;
-        }
 
         const dateObj = new Date(note.createdAt);
         const formattedDate = isNaN(dateObj.getTime())
@@ -54,7 +45,7 @@ export default function MadingPage() {
           message: note.message,
           color: note.themeColor || 'yellow',
           date: formattedDate,
-          loves: loves,
+          loves: note.likes || 0,
           rotate: (Math.abs(noteId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)) % 7) - 3,
           isAdmin: note.isAdmin
         };
@@ -62,7 +53,7 @@ export default function MadingPage() {
 
       // Set notes list
       setNotes(mappedDbNotes);
-      (typeof window !== 'undefined' ? (...args) => localStorage.setItem(...args) : () => {})('mading_loves', JSON.stringify(savedLoves));
+      setIsLoading(false);
     } catch (err) {
       console.error('Failed loading notes:', err);
       // Fail-safe
@@ -94,11 +85,6 @@ export default function MadingPage() {
         const createdNote = await madingService.postNote(dbPayload);
         const noteId = createdNote.id;
 
-        // Initialize likes locally
-        const savedLoves = JSON.parse((typeof window !== 'undefined' ? (...args) => localStorage.getItem(...args) : () => null)('mading_loves') || '{}');
-        savedLoves[noteId] = 0;
-        (typeof window !== 'undefined' ? (...args) => localStorage.setItem(...args) : () => {})('mading_loves', JSON.stringify(savedLoves));
-
         const dateObj = new Date(createdNote.createdAt);
         newNoteFormatted = {
           id: noteId,
@@ -115,10 +101,6 @@ export default function MadingPage() {
         // Offline / not configured fallback
         // eslint-disable-next-line react-hooks/purity
         const localId = `local-${Date.now()}`;
-
-        const savedLoves = JSON.parse((typeof window !== 'undefined' ? (...args) => localStorage.getItem(...args) : () => null)('mading_loves') || '{}');
-        savedLoves[localId] = 0;
-        (typeof window !== 'undefined' ? (...args) => localStorage.setItem(...args) : () => {})('mading_loves', JSON.stringify(savedLoves));
 
         newNoteFormatted = {
           id: localId,
@@ -143,32 +125,32 @@ export default function MadingPage() {
   };
 
   // Love / Like incrementation handler
-  const handleLoveNote = (noteId) => {
+  const handleLoveNote = async (noteId) => {
     // Check if user has liked already
     const userLiked = JSON.parse((typeof window !== 'undefined' ? (...args) => localStorage.getItem(...args) : () => null)('mading_user_liked_ids') || '[]');
     if (userLiked.includes(noteId)) {
       return; // prevent duplicate likes
     }
 
-    // Save likes count
-    const savedLoves = JSON.parse((typeof window !== 'undefined' ? (...args) => localStorage.getItem(...args) : () => null)('mading_loves') || '{}');
-    const note = notes.find(n => n.id === noteId);
-    if (!note) return;
-
-    const nextLoves = (note.loves || 0) + 1;
-    savedLoves[noteId] = nextLoves;
-    (typeof window !== 'undefined' ? (...args) => localStorage.setItem(...args) : () => {})('mading_loves', JSON.stringify(savedLoves));
-
-    // Mark as liked by current user
-    userLiked.push(noteId);
-    (typeof window !== 'undefined' ? (...args) => localStorage.setItem(...args) : () => {})('mading_user_liked_ids', JSON.stringify(userLiked));
-
-    // Update state
-    setNotes(prev => prev.map(n => n.id === noteId ? { ...n, loves: nextLoves } : n));
-
-    // If modal detail is currently opened, update the modal note
+    // Call service to increment likes in DB
+    const res = await madingService.likeNote(noteId);
+    
+    // Update local state even if DB request fails to give immediate feedback
+    setNotes(prevNotes => 
+      prevNotes.map(n => 
+        n.id === noteId ? { ...n, loves: (n.loves || 0) + 1 } : n
+      )
+    );
+    
+    // If selected note is open, update it too
     if (selectedNote && selectedNote.id === noteId) {
-      setSelectedNote(prev => ({ ...prev, loves: nextLoves }));
+      setSelectedNote(prev => ({ ...prev, loves: (prev.loves || 0) + 1 }));
+    }
+
+    if (res && res.success) {
+      // Mark as liked by current user only if DB request succeeded
+      userLiked.push(noteId);
+      (typeof window !== 'undefined' ? (...args) => localStorage.setItem(...args) : () => {})('mading_user_liked_ids', JSON.stringify(userLiked));
     }
   };
 

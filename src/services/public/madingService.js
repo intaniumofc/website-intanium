@@ -32,7 +32,8 @@ export const madingService = {
       themeColor: note.theme_color,
       createdAt: note.created_at,
       isAdmin: note.is_admin,
-      isApproved: note.is_approved
+      isApproved: note.is_approved,
+      likes: note.likes || 0
     }));
   },
 
@@ -72,8 +73,18 @@ export const madingService = {
       themeColor: data.theme_color,
       createdAt: data.created_at,
       isAdmin: data.is_admin,
-      isApproved: data.is_approved
+      isApproved: data.is_approved,
+      likes: 0
     };
+  },
+
+  likeNote: async (id) => {
+    const { error } = await supabase.rpc('increment_mading_likes', { note_id: id });
+    if (error) {
+      console.error('Error liking note:', error);
+      return { success: false, error: error.message };
+    }
+    return { success: true };
   },
 
   approveNote: async (id) => {
