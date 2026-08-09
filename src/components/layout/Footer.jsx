@@ -13,7 +13,7 @@ const defaultSections = [
     links: [
       { name: "About Intan", href: "/about-intan" },
       { name: "IRIS Lore", href: "/about-iris" },
-      { name: "#IntanShiningStar", href: "/shining-star" },
+      { name: "Milestone", href: "/milestone" },
       { name: "#dengerINTAN", href: "/denger-intan" },
     ],
   },

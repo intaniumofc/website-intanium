@@ -18,7 +18,7 @@ export default async function sitemap() {
     '/games/menangkap-kecoa',
     '/photobooth',
     '/recaps',
-    '/shining-star',
+    '/milestone',
     '/join',
   ];
 

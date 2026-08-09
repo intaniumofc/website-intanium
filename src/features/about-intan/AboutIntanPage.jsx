@@ -1162,7 +1162,7 @@ export default function AboutIntanPage() {
             {/* CTA Buttons Group placed prominently at section end */}
             <motion.div variants={fadeUp} className="flex flex-wrap items-center justify-center gap-4 pt-8">
               <Link
-                href="/shining-star"
+                href="/milestone"
                 className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-(--color-primary) text-white hover:bg-(--color-accent) font-bold text-sm tracking-wide shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer"
               >
                 <Route className="w-5 h-5" />

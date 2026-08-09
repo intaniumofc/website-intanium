@@ -208,7 +208,7 @@ export default function AdminIntanShiningStar() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pt-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-[var(--border-color)]">
         <div>
           <h1 className="flex items-center gap-2 text-xl sm:text-2xl font-extrabold text-[var(--text-primary)]">

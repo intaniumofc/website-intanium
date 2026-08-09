@@ -68,7 +68,7 @@ export default function Navbar({ isHome = false }) {
               link: ROUTES.ABOUT_INTAN,
             },
             {
-              label: "#IntanShiningStar",
+              label: "Milestone",
               description: "Journey archive and historic milestones of Intan",
               icon: Sparkle,
               link: ROUTES.SHINING_STAR,

@@ -154,7 +154,7 @@ export default function JourneyMap({ achievements = [] }) {
         {/* Header — lives in the SECTION (not the pinned stage), so it greets
             the reader at the top and scrolls away naturally instead of staying
             glued to the viewport for the whole pinned journey. */}
-        <div className="journey-header">
+        <div className="journey-header mt-24 md:mt-32">
           <h2 className="journey-heading">Jejak Cahaya Intan</h2>
           <p className="journey-sub">
             Ikuti perjalanan karir Nur Intan JKT48. Gulir perlahan dan saksikan

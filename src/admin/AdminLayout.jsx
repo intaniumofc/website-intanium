@@ -56,7 +56,7 @@ export default function AdminLayout({ children }) {
 
   // Dropdown menus states
   const isPathMerch = pathname.startsWith('/admin/merchandise') || pathname.startsWith('/admin/orders') || pathname.startsWith('/admin/categories');
-  const isPathProfile = pathname.startsWith('/admin/about-intan') || pathname.startsWith('/admin/intan-insights') || pathname.startsWith('/admin/schedule') || pathname.startsWith('/admin/intan-shining-star') || pathname.startsWith('/admin/comic-pages') || pathname.startsWith('/admin/peta-penampilan');
+  const isPathProfile = pathname.startsWith('/admin/about-intan') || pathname.startsWith('/admin/intan-insights') || pathname.startsWith('/admin/schedule') || pathname.startsWith('/admin/milestone') || pathname.startsWith('/admin/comic-pages') || pathname.startsWith('/admin/peta-penampilan');
 
   const [openDropdowns, setOpenDropdowns] = useState({
     merchandise_group: isPathMerch,
@@ -68,7 +68,7 @@ export default function AdminLayout({ children }) {
     if (pathname.startsWith('/admin/merchandise') || pathname.includes('/admin/merchandise')) {
       setOpenDropdowns(prev => ({ ...prev, merchandise_group: true }));
     }
-    if (pathname.startsWith('/admin/about-intan') || pathname.startsWith('/admin/intan-insights') || pathname.startsWith('/admin/schedule') || pathname.startsWith('/admin/intan-shining-star') || pathname.startsWith('/admin/comic-pages') || pathname.startsWith('/admin/peta-penampilan')) {
+    if (pathname.startsWith('/admin/about-intan') || pathname.startsWith('/admin/intan-insights') || pathname.startsWith('/admin/schedule') || pathname.startsWith('/admin/milestone') || pathname.startsWith('/admin/comic-pages') || pathname.startsWith('/admin/peta-penampilan')) {
       setOpenDropdowns(prev => ({ ...prev, 'about-intan_group': true }));
     }
   }, [pathname]);
