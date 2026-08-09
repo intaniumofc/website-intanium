@@ -305,7 +305,7 @@ export default function AdminEsportPage() {
           </p>
         </div>
         <button
-          onClick={() => handleOpenModal(activeTab === 'divisions' ? 'division' : activeTab.slice(0, -1))}
+          onClick={() => handleOpenModal(activeTab === 'divisions' ? 'division' : activeTab === 'matches' ? 'match' : activeTab.slice(0, -1))}
           className="flex items-center gap-2 bg-[var(--color-pink)] text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#1a0e8a] transition-colors cursor-pointer"
         >
           <Plus className="w-4 h-4" />
