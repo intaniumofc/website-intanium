@@ -38,8 +38,21 @@ const ActivityPage = forwardRef(function ActivityPage({ recap, pageNumber }, ref
           </ul>
         </RecapSection>
         <RecapSection title="02 / YouTube Highlight" badge="YouTube">
-          <p className="recap-meta">{recap.left.youtube.date}</p>
-          <p className="recap-content-title">{recap.left.youtube.title}</p>
+          {recap.left.youtube.items ? (
+            <ul className="recap-list">
+              {recap.left.youtube.items.map((item, idx) => (
+                <li key={`yt-${recap.id}-${idx}`}>
+                  <time>{item.date}</time>
+                  <strong>{item.title}</strong>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <>
+              <p className="recap-meta">{recap.left.youtube.date}</p>
+              <p className="recap-content-title">{recap.left.youtube.title}</p>
+            </>
+          )}
         </RecapSection>
         <RecapSection title="03 / Live Activity" badge={`${recap.left.live.total}x Live`}>
           <p className="recap-meta">{recap.left.live.platform}</p>

@@ -211,7 +211,7 @@ export default function AdminLayout({ children }) {
         { name: 'Setlist & Unit Songs', href: `${ROUTES.ADMIN_ABOUT_INTAN}?tab=setlists` },
         { name: 'Video Highlights', href: `${ROUTES.ADMIN_ABOUT_INTAN}?tab=videos` },
         { name: 'Trivia & Fakta', href: `${ROUTES.ADMIN_ABOUT_INTAN}?tab=trivia` },
-        { name: '#IntanShiningStar', href: ROUTES.ADMIN_SHINING_STAR },
+        { name: 'Milestone', href: ROUTES.ADMIN_SHINING_STAR },
         { name: 'Komik Flipbook', href: ROUTES.ADMIN_COMIC_PAGES },
         { name: 'Schedule', href: ROUTES.ADMIN_SCHEDULE },
         { name: 'Peta Penampilan', href: ROUTES.ADMIN_PERFORMANCE_MAP }

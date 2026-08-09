@@ -33,8 +33,7 @@ export default function AdminRecaps() {
     monthlyNote: '',
     theaterTotal: 0,
     theaterItems: [],
-    youtubeDate: '',
-    youtubeTitle: '',
+    youtubeItems: [],
     livePlatform: 'IDN Live',
     liveTotal: 0,
     liveDates: '',
@@ -70,8 +69,7 @@ export default function AdminRecaps() {
       monthlyNote: '',
       theaterTotal: 0,
       theaterItems: [],
-      youtubeDate: '',
-      youtubeTitle: '',
+      youtubeItems: [],
       livePlatform: 'IDN Live',
       liveTotal: 0,
       liveDates: '',
@@ -98,8 +96,7 @@ export default function AdminRecaps() {
       monthlyNote: item.right_page?.monthlyNote || '',
       theaterTotal: item.left_page?.theater?.total || 0,
       theaterItems: item.left_page?.theater?.items || [],
-      youtubeDate: item.left_page?.youtube?.date || '',
-      youtubeTitle: item.left_page?.youtube?.title || '',
+      youtubeItems: item.left_page?.youtube?.items || (item.left_page?.youtube?.title ? [{ date: item.left_page.youtube.date, title: item.left_page.youtube.title }] : []),
       livePlatform: item.left_page?.live?.platform || 'IDN Live',
       liveTotal: item.left_page?.live?.total || 0,
       liveDates: item.left_page?.live?.dates?.join(', ') || '',
@@ -157,6 +154,28 @@ export default function AdminRecaps() {
     });
   };
 
+  const handleAddYoutubeItem = () => {
+    setMonthlyFormData(prev => ({
+      ...prev,
+      youtubeItems: [...prev.youtubeItems, { date: '', title: '' }]
+    }));
+  };
+
+  const handleRemoveYoutubeItem = (index) => {
+    setMonthlyFormData(prev => ({
+      ...prev,
+      youtubeItems: prev.youtubeItems.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleYoutubeItemChange = (index, field, value) => {
+    setMonthlyFormData(prev => {
+      const updated = [...prev.youtubeItems];
+      updated[index] = { ...updated[index], [field]: value };
+      return { ...prev, youtubeItems: updated };
+    });
+  };
+
   const handleSubmitMonthly = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -188,8 +207,7 @@ export default function AdminRecaps() {
           items: monthlyFormData.theaterItems.filter(item => item.date.trim() && item.title.trim())
         },
         youtube: {
-          date: monthlyFormData.youtubeDate,
-          title: monthlyFormData.youtubeTitle
+          items: monthlyFormData.youtubeItems.filter(item => item.date.trim() && item.title.trim())
         },
         live: {
           platform: monthlyFormData.livePlatform,
@@ -491,11 +509,21 @@ export default function AdminRecaps() {
               </div>
 
               {/* YouTube Section */}
-              <div className="p-3 bg-gray-50 border border-gray-200 rounded-xl space-y-2">
+              <div className="p-3 bg-gray-50 border border-gray-200 rounded-xl space-y-3">
                 <h4 className="font-extrabold text-xs text-[var(--text-primary)]">02. YouTube Highlight</h4>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                  <input type="text" name="youtubeDate" placeholder="Tgl (ex: 15 MEI)" value={monthlyFormData.youtubeDate} onChange={handleMonthlyInputChange} className="px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs" />
-                  <input type="text" name="youtubeTitle" placeholder="Judul Video YouTube" value={monthlyFormData.youtubeTitle} onChange={handleMonthlyInputChange} className="sm:col-span-2 px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs" />
+                <div className="space-y-2">
+                  {monthlyFormData.youtubeItems.map((item, idx) => (
+                    <div key={idx} className="flex items-center gap-2">
+                      <input type="text" placeholder="Tgl (ex: 15 MEI)" value={item.date} onChange={(e) => handleYoutubeItemChange(idx, 'date', e.target.value)} className="w-28 px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs" />
+                      <input type="text" placeholder="Judul Video YouTube" value={item.title} onChange={(e) => handleYoutubeItemChange(idx, 'title', e.target.value)} className="flex-1 px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs" />
+                      <button type="button" onClick={() => handleRemoveYoutubeItem(idx)} className="p-1.5 text-red-500 hover:bg-red-100 rounded-lg">
+                        <Trash className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                  <button type="button" onClick={handleAddYoutubeItem} className="text-xs text-[var(--color-primary)] font-bold flex items-center gap-1 mt-1">
+                    <PlusCircle className="h-3.5 w-3.5" /> Tambah Video YouTube
+                  </button>
                 </div>
               </div>
 
