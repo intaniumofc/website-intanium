@@ -15,9 +15,10 @@ export const esportService = {
   },
 
   createDivision: async (divisionData) => {
+    const { id, ...insertData } = divisionData;
     const { data, error } = await supabase
       .from('esport_divisions')
-      .insert([divisionData])
+      .insert([insertData])
       .select()
       .single();
     if (error) {
@@ -82,9 +83,10 @@ export const esportService = {
   },
 
   createRoster: async (rosterData) => {
+    const { id, ...insertData } = rosterData;
     const { data, error } = await supabase
       .from('esport_rosters')
-      .insert([rosterData])
+      .insert([insertData])
       .select()
       .single();
     if (error) {
@@ -132,9 +134,10 @@ export const esportService = {
   },
 
   createMatch: async (matchData) => {
+    const { id, ...insertData } = matchData;
     const { data, error } = await supabase
       .from('esport_matches')
-      .insert([matchData])
+      .insert([insertData])
       .select()
       .single();
     if (error) {
@@ -182,9 +185,10 @@ export const esportService = {
   },
 
   createAchievement: async (achievementData) => {
+    const { id, ...insertData } = achievementData;
     const { data, error } = await supabase
       .from('esport_achievements')
-      .insert([achievementData])
+      .insert([insertData])
       .select()
       .single();
     if (error) {
