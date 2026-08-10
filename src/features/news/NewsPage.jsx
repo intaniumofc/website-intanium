@@ -182,22 +182,10 @@ function GlassNewsCard({ item, index = 0, featured = false }) {
   );
 }
 
-export default function NewsPage() {
-  const [newsList, setNewsList] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+export default function NewsPage({ initialNews = [] }) {
+  const [newsList, setNewsList] = useState(() => initialNews.map(normalizeNews));
+  const [isLoading, setIsLoading] = useState(false);
   const [activeCategory, setActiveCategory] = useState('Semua');
-
-  useEffect(() => {
-    newsService.getNews()
-      .then((data) => {
-        setNewsList(data.map(normalizeNews));
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        console.error(error);
-        setIsLoading(false);
-      });
-  }, []);
 
   const filteredNews = useMemo(
     () => activeCategory === 'Semua'

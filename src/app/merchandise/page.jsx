@@ -1,6 +1,9 @@
 import React, { Suspense } from 'react';
 import MainLayout from '../../components/layout/MainLayout';
 import MerchandisePage from '../../features/merchandise/MerchandisePage';
+import { merchandiseService } from '../../services/public/merchandiseService';
+
+export const revalidate = 60; // ISR cache revalidation every 60 seconds
 
 const productSchema = {
   '@context': 'https://schema.org',
@@ -40,7 +43,14 @@ export const metadata = {
   },
 };
 
-export default function Page() {
+export default async function Page() {
+  let initialProducts = [];
+  try {
+    initialProducts = await merchandiseService.getProducts('All', '') || [];
+  } catch (err) {
+    console.error('Error fetching merchandise:', err);
+  }
+
   return (
     <MainLayout>
       <script
@@ -48,7 +58,7 @@ export default function Page() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
       />
       <Suspense fallback={<div className="flex h-screen items-center justify-center">Loading merchandise...</div>}>
-        <MerchandisePage />
+        <MerchandisePage initialProducts={initialProducts} />
       </Suspense>
     </MainLayout>
   );

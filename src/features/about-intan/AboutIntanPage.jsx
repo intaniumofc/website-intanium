@@ -672,38 +672,24 @@ const EditorialTriviaSection = ({ triviaDetails = [] }) => {
   );
 };
 
-const ScheduleSection = () => {
+const ScheduleSection = ({ initialSchedule = [] }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [scheduleData, setScheduleData] = useState([]);
 
-  useEffect(() => {
-    let isMounted = true;
-    const fetchSchedules = async () => {
-      try {
-        const data = await scheduleService.getEvents('all');
-        if (isMounted) {
-          const mapped = data.map(event => {
-            const dateObj = new Date(event.time);
-            return {
-              id: event.id,
-              date: `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`,
-              time: dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB',
-              title: event.title,
-              location: event.description || 'Online',
-              type: event.platform,
-              link: event.link
-            };
-          });
-          setScheduleData(mapped);
-        }
-      } catch (error) {
-        console.error('Failed to fetch schedules:', error);
-      }
-    };
-    fetchSchedules();
-    return () => { isMounted = false; };
-  }, []);
+  const scheduleData = React.useMemo(() => {
+    return initialSchedule.map(event => {
+      const dateObj = new Date(event.time);
+      return {
+        id: event.id,
+        date: `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`,
+        time: dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB',
+        title: event.title,
+        location: event.description || 'Online',
+        type: event.platform,
+        link: event.link
+      };
+    });
+  }, [initialSchedule]);
 
   const getDayEventStyle = (events, isSelected) => {
     if (isSelected) {
@@ -971,9 +957,9 @@ const ScheduleSection = () => {
   );
 };
 
-export default function AboutIntanPage() {
-  const [bio, setBio] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+export default function AboutIntanPage({ initialBio = null, initialSchedule = [] }) {
+  const [bio, setBio] = useState(initialBio);
+  const [isLoading, setIsLoading] = useState(false);
 
   // States for interactive filter tabs
   const [videoFilter, setVideoFilter] = useState('All');
@@ -1053,21 +1039,11 @@ export default function AboutIntanPage() {
     document.title = 'Tentang Nur Intan JKT48 | Fan Archive & Profile';
   }, []);
 
-  useEffect(() => {
-    aboutIntanService.getBio()
-      .then((data) => {
-        setBio(data);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setIsLoading(false);
-      });
-  }, []);
+  // Bio data is now fetched on the server and passed as initialBio
 
 
 
-  if (isLoading) return <Loading fullPage={false} message="Membaca biodata Intan..." />;
+  if (isLoading || !bio) return <Loading fullPage={false} message="Membaca biodata Intan..." />;
 
   // Filtered lists
   const filteredVideos = videoFilter === 'All'
@@ -1527,7 +1503,7 @@ export default function AboutIntanPage() {
           </motion.section>
 
           {/* ================= 8. SCHEDULE SECTION ================= */}
-          <ScheduleSection />
+          <ScheduleSection initialSchedule={initialSchedule} />
 
         </div>
       </ScrollExpandMedia>

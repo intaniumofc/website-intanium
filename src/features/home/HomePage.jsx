@@ -45,10 +45,10 @@ const scrollRevealVariants = {
   }
 };
 
-export default function HomePage() {
-  const [featuredNews, setFeaturedNews] = useState([]);
-  const [featuredProducts, setFeaturedProducts] = useState([]);
-  const [bio, setBio] = useState(null);
+export default function HomePage({ initialFeaturedNews = [], initialFeaturedProducts = [], initialBio = null }) {
+  const [featuredNews, setFeaturedNews] = useState(initialFeaturedNews);
+  const [featuredProducts, setFeaturedProducts] = useState(initialFeaturedProducts);
+  const [bio, setBio] = useState(initialBio);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -126,31 +126,7 @@ export default function HomePage() {
     }
   ], []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch data parallelly from existing services
-        const [news, products, bioData] = await Promise.all([
-          newsService.getNews(),
-          merchandiseService.getProducts('All'),
-          aboutIntanService.getBio(),
-        ]);
-
-        // Pick top 4 news articles
-        setFeaturedNews(news.slice(0, 4));
-
-        // Keep all products for premium paginated carousel storefront
-        setFeaturedProducts(products);
-
-        // Set bio data
-        setBio(bioData);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    fetchData();
-  }, []);
+  // Data is now fetched server-side in page.jsx and passed as props
   return (
     <LoadingProvider>
       <Preloader />

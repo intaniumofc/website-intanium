@@ -1,6 +1,9 @@
 import React from 'react';
 import MainLayout from '../../components/layout/MainLayout';
 import SchedulePage from '../../features/schedule/SchedulePage';
+import { scheduleService } from '../../services/public/scheduleService';
+
+export const revalidate = 60; // ISR cache revalidation every 60 seconds
 
 const eventSchema = {
   '@context': 'https://schema.org',
@@ -45,14 +48,21 @@ export const metadata = {
   },
 };
 
-export default function Page() {
+export default async function Page() {
+  let initialEvents = [];
+  try {
+    initialEvents = await scheduleService.getEvents('all') || [];
+  } catch (err) {
+    console.error('Error fetching schedules:', err);
+  }
+
   return (
     <MainLayout>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(eventSchema) }}
       />
-      <SchedulePage />
+      <SchedulePage initialEvents={initialEvents} />
     </MainLayout>
   );
 }

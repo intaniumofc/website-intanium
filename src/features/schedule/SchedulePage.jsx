@@ -159,9 +159,7 @@ function SidebarEventsPanel({ events, selectedDate }) {
   );
 }
 
-export default function SchedulePage() {
-  const [events, setEvents] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+export default function SchedulePage({ initialEvents = [] }) {
   const [activePlatform, setActivePlatform] = useState('All');
   const [selectedDate, setSelectedDate] = useState(new Date());
 
@@ -169,18 +167,10 @@ export default function SchedulePage() {
     document.title = 'Jadwal & Kegiatan | Official Website IRIS';
   }, []);
 
-  useEffect(() => {
-    setIsLoading(true);
-    scheduleService.getEvents('all', activePlatform)
-      .then((data) => {
-        setEvents(data);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setIsLoading(false);
-      });
-  }, [activePlatform]);
+  const filteredEvents = useMemo(() => {
+    if (activePlatform === 'All') return initialEvents;
+    return initialEvents.filter(e => e.platform === activePlatform || e.type === activePlatform);
+  }, [initialEvents, activePlatform]);
 
   return (
     <div className="relative space-y-8 w-full pb-6 overflow-visible">
@@ -220,16 +210,7 @@ export default function SchedulePage() {
       {/* ========= MAIN CONTENT VIEW LAYOUT ========= */}
       <div className="relative min-h-[350px] overflow-visible">
         <AnimatePresence mode="wait">
-          {isLoading ? (
-            <motion.div
-              key="loading"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <Loading message="Memuat schedule..." />
-            </motion.div>
-          ) : events.length === 0 ? (
+          {filteredEvents.length === 0 ? (
             <motion.div
               key="empty"
               initial={{ opacity: 0 }}
@@ -253,7 +234,7 @@ export default function SchedulePage() {
               {/* Kolom Kiri: Kalender */}
               <div className="lg:col-span-7 xl:col-span-8">
                 <ScheduleCalendarView
-                  events={events}
+                  events={filteredEvents}
                   selectedDate={selectedDate}
                   onSelectDate={setSelectedDate}
                 />
@@ -262,7 +243,7 @@ export default function SchedulePage() {
               {/* Kolom Kanan: Sidebar Detail */}
               <div className="lg:col-span-5 xl:col-span-4 h-full">
                 <SidebarEventsPanel
-                  events={events}
+                  events={filteredEvents}
                   selectedDate={selectedDate}
                 />
               </div>

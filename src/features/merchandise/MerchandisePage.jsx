@@ -118,7 +118,7 @@ function buildProductsLink(options) {
   return queryString ? `/merchandise?${queryString}` : '/merchandise';
 }
 
-export default function MerchandisePage() {
+export default function MerchandisePage({ initialProducts = [] }) {
   const [searchParams, setSearchParams] = useCustomSearchParams();
   const query = searchParams.get('q') ?? '';
   const category = searchParams.get('category') ?? '';
@@ -142,8 +142,8 @@ export default function MerchandisePage() {
     setSearchParams(nextParams);
   };
 
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState(initialProducts);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const [gridCols, setGridCols] = useState(3);
@@ -152,21 +152,8 @@ export default function MerchandisePage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [categoryExpanded, setCategoryExpanded] = useState(true);
 
-  // Fetch products
   useEffect(() => {
     document.title = 'Pre-Order Merchandise | Official Shop IRIS';
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setLoading(true);
-    merchandiseService.getProducts('All', '')
-      .then((data) => {
-        setProducts(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setError('Gagal memuat katalog produk.');
-        setLoading(false);
-      });
   }, []);
 
   // Filter products client-side

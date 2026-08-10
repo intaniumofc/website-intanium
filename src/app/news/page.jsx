@@ -1,6 +1,9 @@
 import React from 'react';
 import MainLayout from '../../components/layout/MainLayout';
 import NewsPage from '../../features/news/NewsPage';
+import { newsService } from '../../services/public/newsService';
+
+export const revalidate = 60; // ISR cache revalidation every 60 seconds
 
 export const metadata = {
   title: 'Berita & Pengumuman Terbaru | IRIS Official Website',
@@ -22,10 +25,17 @@ export const metadata = {
   },
 };
 
-export default function Page() {
+export default async function Page() {
+  let initialNews = [];
+  try {
+    initialNews = await newsService.getNews() || [];
+  } catch (err) {
+    console.error('Error fetching news:', err);
+  }
+
   return (
     <MainLayout>
-      <NewsPage />
+      <NewsPage initialNews={initialNews} />
     </MainLayout>
   );
 }
