@@ -133,8 +133,6 @@ export default function RootLayout({ children }) {
         <link rel="icon" type="image/webp" href="/logo-nobg.webp" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
-        <link rel="preload" href="/hero-intan-vidio.webm" as="video" type="video/webm" />
-        <link rel="preload" as="image" href="/_next/static/media/intan-01.webp" type="image/webp" />
       </head>
       <body>
         {/* Skip-to-content link for screen readers & keyboard navigation (WCAG 2.4.1) */}
