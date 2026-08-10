@@ -63,7 +63,7 @@ export function useJourneyAnimation({
       // --- Precompute each node's fractional position along the path ---
       // Sample once, then snap every node to its nearest sample so reveals
       // fire exactly when the character passes that point.
-      const SAMPLES = 400;
+      const SAMPLES = 100;
       const sampled = [];
       for (let i = 0; i <= SAMPLES; i++) {
         sampled.push(pathEl.getPointAtLength((i / SAMPLES) * pathLength));

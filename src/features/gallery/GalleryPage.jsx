@@ -345,7 +345,7 @@ export default function GalleryPage() {
         </div>
       ) : (
         <ContainerScroll className="w-full pb-16 pt-4">
-          <ContainerSticky className="mx-auto max-w-7xl px-4 md:px-8 overflow-y-auto admin-scrollbar">
+          <ContainerSticky className="mx-auto max-w-7xl px-4 md:px-8 hide-scrollbar overflow-y-auto">
             <GalleryContainer
               className={isMobile ? "grid-cols-2" : "grid-cols-3"}
               isMobile={isMobile}

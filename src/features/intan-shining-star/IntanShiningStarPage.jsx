@@ -6,9 +6,8 @@ import { Sparkles, Star } from 'lucide-react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useSafeReducedMotion } from '../../hooks/useSafeReducedMotion';
-import Loading from '../../components/common/Loading';
 import ComicFlipbook from '../../components/common/ComicFlipbook';
-import { achievementService } from '../../services/public/achievementService';
+import { achievementService, FALLBACK_ACHIEVEMENTS } from '../../services/public/achievementService';
 import JourneyMap from '../../components/timeline/journey/JourneyMap';
 import './IntanShiningStarPage.css';
 
@@ -20,17 +19,15 @@ const reveal = {
 };
 
 export default function IntanShiningStarPage() {
-  const [achievements, setAchievements] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [achievements, setAchievements] = useState(FALLBACK_ACHIEVEMENTS);
   const reduceMotion = useSafeReducedMotion();
 
   useEffect(() => {
     document.title = 'Intan Journey | JKT48 Official Achievement & Journey';
     let mounted = true;
     achievementService.getAchievements().then((data) => {
-      if (mounted) {
+      if (mounted && data && data.length > 0) {
         setAchievements(data);
-        setIsLoading(false);
         setTimeout(() => {
           ScrollTrigger.refresh();
         }, 150);
@@ -38,8 +35,6 @@ export default function IntanShiningStarPage() {
     });
     return () => { mounted = false; };
   }, []);
-
-  if (isLoading) return <Loading message="Membuka arsip cahaya Intan..." />;
 
   return (
     <div className={`shining-page ${reduceMotion ? 'reduce-motion' : ''}`}>

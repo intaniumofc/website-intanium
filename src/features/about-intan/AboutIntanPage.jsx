@@ -36,6 +36,8 @@ import intanPoster from '../../assets/images/intan-02.webp';
 import intanBg from '../../assets/images/intan-04.webp';
 import intanProfile from '../../assets/images/Nur_Intan.webp';
 import intan1 from '../../assets/images/intan-01.webp';
+import intanThinking from '../../assets/images/intan-thinking.png';
+import intanPointing from '../../assets/images/intan-pointing.png';
 import { ImageSwiper } from '../../components/ui/ImageSwiper';
 import StickyNavSection from './StickyNavSection';
 
@@ -75,7 +77,7 @@ function IconCrystalTile({ icon: IconComp }) {
     <div className="relative flex h-18 w-18 shrink-0 items-center justify-center rounded-[1.5rem] border border-white/70 bg-white/65 text-[#17105F] shadow-[0_18px_40px_rgba(23,16,95,0.12),inset_0_1.5px_3px_rgba(255,255,255,0.85)] backdrop-blur-xl transition-all duration-300 group-hover:border-purple-200/50 group-hover:bg-white/75 group-hover:shadow-[0_22px_45px_rgba(124,58,237,0.18),inset_0_1.5px_3px_rgba(255,255,255,0.95)]">
       {/* Radial Highlight */}
       <span className="absolute inset-0 rounded-[1.5rem] bg-[radial-gradient(circle_at_35%_25%,rgba(255,255,255,0.95),transparent_58%)] opacity-80 pointer-events-none" />
-      
+
       {/* Subtle Inner Glow */}
       <span className="absolute inset-[1px] rounded-[1.4rem] border border-white/40 pointer-events-none" />
 
@@ -99,9 +101,8 @@ function ProfileFactItem({ fact, delay = 0 }) {
 
   return (
     <motion.div
-      className={`flex items-center gap-4.5 group cursor-default ${
-        isRight ? 'md:flex-row-reverse md:text-right' : 'text-left'
-      }`}
+      className={`flex items-center gap-4.5 group cursor-default ${isRight ? 'md:flex-row-reverse md:text-right' : 'text-left'
+        }`}
       variants={fadeUp}
       transition={{ delay }}
       whileHover={{ y: -3, transition: { duration: 0.25 } }}
@@ -446,58 +447,228 @@ const SetlistPosterCard = ({ setlist }) => {
   );
 };
 
-const TriviaItem = ({ question, answer }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const uniqueId = React.useId();
+const EditorialTriviaSection = ({ triviaDetails = [] }) => {
+  const [openIndex, setOpenIndex] = useState(null);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const shouldReduceMotion = useReducedMotion();
+
+  const handleMouseMove = (e) => {
+    if (shouldReduceMotion) return;
+    if (typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0)) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    setMousePos({
+      x: Math.min(Math.max(((e.clientX - centerX) / (rect.width / 2)) * 8, -10), 10),
+      y: Math.min(Math.max(((e.clientY - centerY) / (rect.height / 2)) * 6, -6), 6)
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setMousePos({ x: 0, y: 0 });
+    setHoveredIndex(null);
+  };
+
+  const isPointing = hoveredIndex !== null || openIndex !== null;
+
+  const thinkingSrc = typeof intanThinking === 'object' ? intanThinking.src : intanThinking;
+  const pointingSrc = typeof intanPointing === 'object' ? intanPointing.src : intanPointing;
+
+  const toggleItem = (index) => {
+    setOpenIndex(prev => (prev === index ? null : index));
+  };
 
   return (
-    <motion.div
-      animate={isOpen ? "open" : "closed"}
-      className={`rounded-2xl border transition-colors duration-300 ${isOpen
-        ? "border-(--color-primary)/40 bg-(--color-primary-light)/40 shadow-[0_10px_25px_-5px_rgba(23,12,121,0.06)]"
-        : "border-(--border-color) bg-(--bg-card)/60"
-        }`}
+    <motion.section
+      id="trivia-section"
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.1 }}
+      variants={staggerContainer}
+      className="space-y-8 scroll-mt-32 relative"
     >
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        aria-expanded={isOpen}
-        aria-controls={`trivia-panel-${uniqueId}`}
-        className="flex w-full items-center justify-between gap-4 py-3.5 px-4.5 text-left cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary) focus-visible:ring-offset-2 rounded-2xl"
+      <div
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        className="w-full"
       >
-        <span
-          className={`text-sm sm:text-base font-bold transition-colors duration-300 ${isOpen ? "text-(--color-primary)" : "text-(--text-primary) group-hover:text-(--color-secondary)"
-            }`}
-        >
-          {question}
-        </span>
-        <motion.span
-          variants={{
-            open: { rotate: "45deg" },
-            closed: { rotate: "0deg" },
-          }}
-          transition={{ duration: 0.25, ease: PREMIUM_EASE }}
-          className={`flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-lg transition-colors duration-300 ${isOpen ? "bg-(--color-primary) text-white" : "bg-(--color-primary-light) text-(--color-primary)"
-            }`}
-        >
-          <Plus className="h-4 w-4" />
-        </motion.span>
-      </button>
-      <motion.div
-        id={`trivia-panel-${uniqueId}`}
-        role="region"
-        initial={false}
-        animate={{
-          height: isOpen ? "auto" : "0px",
-          marginBottom: isOpen ? "12px" : "0px"
-        }}
-        transition={{ duration: 0.35, ease: PREMIUM_EASE }}
-        className="overflow-hidden px-4.5"
-      >
-        <p className={`text-xs sm:text-sm leading-relaxed text-(--text-secondary) font-medium ${question?.includes('Quote') || question?.includes('quote') ? 'italic text-base text-(--color-primary) border-l-2 border-(--color-accent) pl-3 mt-1' : ''}`}>
-          {answer}
-        </p>
-      </motion.div>
-    </motion.div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+
+          {/* LEFT COLUMN: Clean Header + Intan Host Photography */}
+          <motion.div variants={fadeUp} className="lg:col-span-5 flex flex-col space-y-6 relative">
+
+            {/* Section Header */}
+            <div className="space-y-1.5">
+              <p className="text-xs font-black uppercase tracking-widest text-(--color-secondary) select-none">
+                TRIVIA & FAKTA INTAN
+              </p>
+              <h3 className="text-3xl sm:text-4xl lg:text-5xl font-black text-(--color-primary) tracking-tight font-heading leading-tight">
+                Seberapa Kenal <br />
+                Kamu Dengan Intan?
+              </h3>
+              <p className="text-xs sm:text-sm text-(--text-secondary) font-medium leading-relaxed max-w-sm pt-1">
+                Fakta kecil, cerita di balik layar teater, dan beberapa hal unik yang mungkin belum pernah kamu tahu.
+              </p>
+            </div>
+
+            {/* Intan Photo Stage with Clean Chat Speech Bubble */}
+            <div className="relative w-full max-w-[320px] sm:max-w-[360px] h-[380px] sm:h-[430px] flex items-center justify-center mx-auto lg:mx-0">
+
+              {/* Chat Speech Bubble with Pointed Tail (Signature Intan Pink) */}
+              <motion.div
+                key={isPointing ? (openIndex !== null ? 'open' : 'pointing') : 'default'}
+                initial={{ opacity: 0, y: -4, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.25, ease: PREMIUM_EASE }}
+                className="absolute top-2 -right-1 sm:-right-3 z-20 px-3.5 py-1.5 bg-gradient-to-r from-pink-500 to-rose-400 text-white rounded-2xl shadow-md shadow-pink-500/20 border border-pink-400/50 text-xs font-bold flex items-center gap-1.5 pointer-events-none"
+              >
+                <span>{
+                  openIndex !== null
+                    ? "Nah! Ini dia jawabannya! ✨"
+                    : hoveredIndex !== null
+                      ? "Penasaran kan? Klik buat lihat! 👉"
+                      : "Hmm... seberapa kenal kamu? 🤔"
+                }</span>
+
+                {/* Pointed Tail pointing down towards Intan */}
+                <span className="absolute -bottom-1.5 left-5 w-3 h-3 bg-pink-500 border-b border-l border-pink-400/50 rotate-[-45deg] rounded-bl-[1px]" />
+              </motion.div>
+
+              {/* Soft subtle backdrop glow */}
+              <div className="absolute inset-4 bg-gradient-to-tr from-pink-200/30 via-purple-100/20 to-blue-100/20 rounded-[40px] blur-xl opacity-60 pointer-events-none" />
+
+              {/* Parallax Image Wrapper */}
+              <motion.div
+                animate={{
+                  x: shouldReduceMotion ? 0 : mousePos.x,
+                  y: shouldReduceMotion ? 0 : mousePos.y
+                }}
+                transition={{ type: "spring", stiffness: 150, damping: 20, mass: 0.5 }}
+                className="relative w-full h-full flex items-center justify-center pointer-events-none"
+              >
+                {/* ASSET A: Thinking Pose (DEFAULT STATE) */}
+                <motion.img
+                  src={thinkingSrc}
+                  alt="Intan Thinking Pose"
+                  initial={false}
+                  animate={{
+                    opacity: isPointing ? 0 : 1,
+                    scale: isPointing ? 0.96 : 1,
+                  }}
+                  transition={{ duration: 0.35, ease: PREMIUM_EASE }}
+                  className="absolute inset-0 w-full h-full object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.06)]"
+                  loading="lazy"
+                />
+
+                {/* ASSET B: Pointing Pose (HOVER / ACTIVE STATE) */}
+                <motion.img
+                  src={pointingSrc}
+                  alt="Intan Pointing Pose"
+                  initial={false}
+                  animate={{
+                    opacity: isPointing ? 1 : 0,
+                    scale: isPointing ? 1.02 : 0.98,
+                  }}
+                  transition={{ duration: 0.35, ease: PREMIUM_EASE }}
+                  className="absolute inset-0 w-full h-full object-contain filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.08)]"
+                  loading="lazy"
+                />
+              </motion.div>
+            </div>
+
+          </motion.div>
+
+          {/* RIGHT COLUMN: Clean Editorial Trivia List */}
+          <motion.div variants={fadeUp} className="lg:col-span-7">
+            <div className="divide-y divide-(--border-color) border-t border-b border-(--border-color)">
+              {triviaDetails.map((item, index) => {
+                const isOpen = openIndex === index;
+                const isHovered = hoveredIndex === index;
+                const numberStr = String(index + 1).padStart(2, '0');
+                const uniqueId = `trivia-item-${index}`;
+
+                return (
+                  <div
+                    key={index}
+                    onMouseEnter={() => setHoveredIndex(index)}
+                    onMouseLeave={() => setHoveredIndex(null)}
+                    className="group transition-colors duration-200"
+                  >
+                    {/* Header Button */}
+                    <button
+                      onClick={() => toggleItem(index)}
+                      aria-expanded={isOpen}
+                      aria-controls={`trivia-panel-${uniqueId}`}
+                      id={`trivia-button-${uniqueId}`}
+                      className="w-full flex items-center justify-between gap-4 py-4.5 px-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary) rounded-xl cursor-pointer"
+                    >
+                      <div className="flex items-center gap-5 min-w-0 pr-2">
+                        {/* Number */}
+                        <span className={`font-mono text-xl sm:text-2xl font-bold tracking-tight shrink-0 transition-colors duration-200 ${
+                          isOpen || isHovered
+                            ? 'text-(--color-primary)'
+                            : 'text-(--text-secondary)'
+                        }`}>
+                          {numberStr}
+                        </span>
+
+                        {/* Question */}
+                        <motion.span
+                          animate={{ x: isHovered && !shouldReduceMotion ? 4 : 0 }}
+                          transition={{ duration: 0.2, ease: PREMIUM_EASE }}
+                          className={`text-base sm:text-lg font-bold leading-snug transition-colors duration-200 ${
+                            isOpen || isHovered ? 'text-(--color-primary)' : 'text-(--text-primary)'
+                          }`}
+                        >
+                          {item.question}
+                        </motion.span>
+                      </div>
+
+                      {/* Icon Button */}
+                      <motion.div
+                        animate={{ rotate: isOpen ? 45 : 0 }}
+                        transition={{ duration: 0.25, ease: PREMIUM_EASE }}
+                        className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-colors duration-200 ${
+                          isOpen
+                            ? 'bg-(--color-primary) text-white'
+                            : 'bg-(--color-primary-light) text-(--color-primary) group-hover:bg-(--color-primary) group-hover:text-white'
+                        }`}
+                      >
+                        <Plus className="w-4 h-4" />
+                      </motion.div>
+                    </button>
+
+                    {/* Answer Accordion */}
+                    <AnimatePresence initial={false}>
+                      {isOpen && (
+                        <motion.div
+                          id={`trivia-panel-${uniqueId}`}
+                          role="region"
+                          aria-labelledby={`trivia-button-${uniqueId}`}
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3, ease: PREMIUM_EASE }}
+                          className="overflow-hidden px-2 pb-4"
+                        >
+                          <div className="bg-(--color-primary-light)/30 border-l-2 border-(--color-primary) rounded-r-xl p-4 text-xs sm:text-sm text-(--text-body) font-medium leading-relaxed">
+                            <p className={item.question?.toLowerCase().includes('quote') ? 'italic text-(--color-primary) font-semibold text-base' : ''}>
+                              {item.answer}
+                            </p>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              })}
+            </div>
+          </motion.div>
+
+        </div>
+      </div>
+    </motion.section>
   );
 };
 
@@ -636,164 +807,163 @@ const ScheduleSection = () => {
         <div className="relative grid grid-cols-1 lg:grid-cols-[300px_1fr] justify-between gap-5 lg:gap-7 items-start">
           {/* Left Panel: Mini Calendar */}
           <div className="bg-[var(--color-surface)]/95 p-4 rounded-3xl border border-(--border-color) shadow-(--box-shadow-sm) mx-auto w-full max-w-sm lg:max-w-none">
-          {/* Header */}
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-base font-black text-(--color-primary) font-heading">
-              {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
-            </h3>
-            <div className="flex gap-1.5">
-              <button onClick={prevMonth} className="p-1.5 hover:bg-slate-100 rounded-full transition-colors cursor-pointer text-slate-500 hover:text-(--color-primary) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary)" aria-label="Bulan sebelumnya">
-                <ChevronLeft className="w-4.5 h-4.5" />
-              </button>
-              <button onClick={nextMonth} className="p-1.5 hover:bg-slate-100 rounded-full transition-colors cursor-pointer text-slate-500 hover:text-(--color-primary) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary)" aria-label="Bulan berikutnya">
-                <ChevronRight className="w-4.5 h-4.5" />
-              </button>
+            {/* Header */}
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-base font-black text-(--color-primary) font-heading">
+                {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
+              </h3>
+              <div className="flex gap-1.5">
+                <button onClick={prevMonth} className="p-1.5 hover:bg-slate-100 rounded-full transition-colors cursor-pointer text-slate-500 hover:text-(--color-primary) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary)" aria-label="Bulan sebelumnya">
+                  <ChevronLeft className="w-4.5 h-4.5" />
+                </button>
+                <button onClick={nextMonth} className="p-1.5 hover:bg-slate-100 rounded-full transition-colors cursor-pointer text-slate-500 hover:text-(--color-primary) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary)" aria-label="Bulan berikutnya">
+                  <ChevronRight className="w-4.5 h-4.5" />
+                </button>
+              </div>
             </div>
-          </div>
 
-          {/* Grid Header */}
-          <div className="grid grid-cols-7 mb-1.5 text-center">
-            {dayNames.map(day => (
-              <div key={day} className="text-[9px] font-black text-slate-400 uppercase tracking-wider">{day}</div>
-            ))}
-          </div>
-
-          {/* Grid Days */}
-          <div className="grid grid-cols-7 gap-y-1.5 gap-x-0.5">
-            {/* Empty slots before day 1 */}
-            {Array.from({ length: firstDayOfMonth }).map((_, i) => (
-              <div key={`empty-${i}`} className="h-8"></div>
-            ))}
-
-            {/* Days */}
-            {Array.from({ length: daysInMonth }).map((_, i) => {
-              const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), i + 1);
-              const isSelected = isSameDate(date, selectedDate);
-              const dayEvents = getEventsForDate(date);
-              const formattedDateLabel = `${i + 1} ${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
-
-              return (
-                <div key={i} className="flex flex-col items-center justify-center">
-                  <button
-                    onClick={() => setSelectedDate(date)}
-                    aria-label={formattedDateLabel}
-                    aria-pressed={isSelected}
-                    className={`w-7.5 h-7.5 flex items-center justify-center rounded-full text-[12px] font-black transition-all duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary) ${
-                      getDayEventStyle(dayEvents, isSelected)
-                    }`}
-                  >
-                    {i + 1}
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="mt-4 border-t border-slate-200/80 pt-3">
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[10px] font-bold text-slate-500">
-              {categoryLegend.map((item) => (
-                <span key={item.label} className="inline-flex items-center gap-1.5">
-                  <span className={`h-2 w-2 rounded-full ${item.color}`} />
-                  {item.label}
-                </span>
+            {/* Grid Header */}
+            <div className="grid grid-cols-7 mb-1.5 text-center">
+              {dayNames.map(day => (
+                <div key={day} className="text-[9px] font-black text-slate-400 uppercase tracking-wider">{day}</div>
               ))}
             </div>
-          </div>
+
+            {/* Grid Days */}
+            <div className="grid grid-cols-7 gap-y-1.5 gap-x-0.5">
+              {/* Empty slots before day 1 */}
+              {Array.from({ length: firstDayOfMonth }).map((_, i) => (
+                <div key={`empty-${i}`} className="h-8"></div>
+              ))}
+
+              {/* Days */}
+              {Array.from({ length: daysInMonth }).map((_, i) => {
+                const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), i + 1);
+                const isSelected = isSameDate(date, selectedDate);
+                const dayEvents = getEventsForDate(date);
+                const formattedDateLabel = `${i + 1} ${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+
+                return (
+                  <div key={i} className="flex flex-col items-center justify-center">
+                    <button
+                      onClick={() => setSelectedDate(date)}
+                      aria-label={formattedDateLabel}
+                      aria-pressed={isSelected}
+                      className={`w-7.5 h-7.5 flex items-center justify-center rounded-full text-[12px] font-black transition-all duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary) ${getDayEventStyle(dayEvents, isSelected)
+                        }`}
+                    >
+                      {i + 1}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="mt-4 border-t border-slate-200/80 pt-3">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[10px] font-bold text-slate-500">
+                {categoryLegend.map((item) => (
+                  <span key={item.label} className="inline-flex items-center gap-1.5">
+                    <span className={`h-2 w-2 rounded-full ${item.color}`} />
+                    {item.label}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Right Panel: Details */}
           <div className="flex flex-col h-full rounded-3xl border border-(--border-color) bg-white/86 p-4 shadow-xs sm:p-5">
-          <div className="mb-4 border-b border-(--border-color) pb-3">
-            <h3 className="text-xl sm:text-2xl font-black text-(--color-primary) font-heading">
-              {selectedDate.getDate()} {monthNames[selectedDate.getMonth()]} {selectedDate.getFullYear()}
-            </h3>
-            <p className="text-xs sm:text-sm text-(--text-muted) mt-1 font-semibold">
-              {selectedEvents.length > 0 ? `Ada ${selectedEvents.length} momen Intan di tanggal ini` : 'Belum ada jadwal terkonfirmasi'}
-            </p>
-          </div>
+            <div className="mb-4 border-b border-(--border-color) pb-3">
+              <h3 className="text-xl sm:text-2xl font-black text-(--color-primary) font-heading">
+                {selectedDate.getDate()} {monthNames[selectedDate.getMonth()]} {selectedDate.getFullYear()}
+              </h3>
+              <p className="text-xs sm:text-sm text-(--text-muted) mt-1 font-semibold">
+                {selectedEvents.length > 0 ? `Ada ${selectedEvents.length} momen Intan di tanggal ini` : 'Belum ada jadwal terkonfirmasi'}
+              </p>
+            </div>
 
-          <div className="space-y-3">
-            {selectedEvents.length > 0 ? (
-              selectedEvents.map((event, idx) => (
-                <div key={idx} className="group p-4 rounded-2xl border border-(--border-color) bg-white hover:-translate-y-0.5 hover:shadow-sm transition-all duration-300 flex flex-col sm:flex-row gap-3 sm:items-center justify-between">
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center gap-2">
-                      <span className={`px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded border ${getTypeStyle(event.type)}`}>
-                        {event.type}
-                      </span>
-                      <span className="text-[11px] font-bold text-slate-500 flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        {event.time}
-                      </span>
+            <div className="space-y-3">
+              {selectedEvents.length > 0 ? (
+                selectedEvents.map((event, idx) => (
+                  <div key={idx} className="group p-4 rounded-2xl border border-(--border-color) bg-white hover:-translate-y-0.5 hover:shadow-sm transition-all duration-300 flex flex-col sm:flex-row gap-3 sm:items-center justify-between">
+                    <div className="flex flex-col gap-1.5">
+                      <div className="flex items-center gap-2">
+                        <span className={`px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded border ${getTypeStyle(event.type)}`}>
+                          {event.type}
+                        </span>
+                        <span className="text-[11px] font-bold text-slate-500 flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {event.time}
+                        </span>
+                      </div>
+                      <h4 className="text-[15px] font-black text-(--color-primary) group-hover:text-(--color-secondary) transition-colors leading-tight">{event.title}</h4>
+                      <p className="text-[11px] text-slate-500 font-medium flex items-center gap-1 mt-0.5">
+                        <MapPin className="w-3 h-3" />
+                        {event.location}
+                      </p>
                     </div>
-                    <h4 className="text-[15px] font-black text-(--color-primary) group-hover:text-(--color-secondary) transition-colors leading-tight">{event.title}</h4>
-                    <p className="text-[11px] text-slate-500 font-medium flex items-center gap-1 mt-0.5">
-                      <MapPin className="w-3 h-3" />
-                      {event.location}
-                    </p>
+                    <div className="flex flex-col sm:items-end mt-2 sm:mt-0">
+                      {event.link ? (
+                        <>
+                          <span className="text-[9px] text-slate-400 italic mb-2 hidden sm:block">Dukung Intan secara langsung!</span>
+                          <a href={event.link} target="_blank" rel="noopener noreferrer" className="self-start sm:self-auto px-4 py-2 bg-(--color-primary-light) text-(--color-primary) hover:bg-(--color-primary) hover:text-white rounded-xl text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5">
+                            {['YouTube', 'IDN Live', 'Showroom', 'TikTok'].includes(event.type) ? 'Buka Live' : 'Lihat Detail'} <ArrowRight className="w-3 h-3" />
+                          </a>
+                        </>
+                      ) : (
+                        <span className="text-[10px] text-slate-400 italic font-medium px-2 py-1 bg-slate-50 rounded-md border border-slate-100">Jadwal Internal</span>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex flex-col sm:items-end mt-2 sm:mt-0">
-                    {event.link ? (
-                      <>
-                        <span className="text-[9px] text-slate-400 italic mb-2 hidden sm:block">Dukung Intan secara langsung!</span>
-                        <a href={event.link} target="_blank" rel="noopener noreferrer" className="self-start sm:self-auto px-4 py-2 bg-(--color-primary-light) text-(--color-primary) hover:bg-(--color-primary) hover:text-white rounded-xl text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5">
-                          {['YouTube', 'IDN Live', 'Showroom', 'TikTok'].includes(event.type) ? 'Buka Live' : 'Lihat Detail'} <ArrowRight className="w-3 h-3" />
-                        </a>
-                      </>
-                    ) : (
-                      <span className="text-[10px] text-slate-400 italic font-medium px-2 py-1 bg-slate-50 rounded-md border border-slate-100">Jadwal Internal</span>
-                    )}
-                  </div>
+                ))
+              ) : (
+                <div className="py-12 flex flex-col items-center justify-center text-center px-4 rounded-2xl border border-dashed border-(--border-color) bg-slate-50/50">
+                  <Calendar className="w-10 h-10 text-slate-300 mb-3" />
+                  <p className="text-sm font-bold text-slate-600">Tidak ada jadwal untuk hari ini.</p>
+                  <p className="text-xs text-slate-400 mt-1 max-w-xs">Pilih tanggal lain yang memiliki penanda titik, atau nantikan pengumuman acara selanjutnya.</p>
                 </div>
-              ))
-            ) : (
-              <div className="py-12 flex flex-col items-center justify-center text-center px-4 rounded-2xl border border-dashed border-(--border-color) bg-slate-50/50">
-                <Calendar className="w-10 h-10 text-slate-300 mb-3" />
-                <p className="text-sm font-bold text-slate-600">Tidak ada jadwal untuk hari ini.</p>
-                <p className="text-xs text-slate-400 mt-1 max-w-xs">Pilih tanggal lain yang memiliki penanda titik, atau nantikan pengumuman acara selanjutnya.</p>
+              )}
+            </div>
+
+            {/* Upcoming Mini List if <= 1 event */}
+            {upcomingEvents.length > 0 && selectedEvents.length <= 1 && (
+              <div className="mt-6 pt-5 border-t border-(--border-color)">
+                <h4 className="text-xs font-bold text-slate-400 tracking-widest mb-3">Upcoming</h4>
+                <div className="space-y-2.5">
+                  {upcomingEvents.map((evt, idx) => {
+                    const day = evt.date.split('-')[2];
+                    const monthIdx = parseInt(evt.date.split('-')[1]) - 1;
+                    return (
+                      <div
+                        key={idx}
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => setSelectedDate(new Date(evt.date))}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            setSelectedDate(new Date(evt.date));
+                          }
+                        }}
+                        className="flex items-center justify-between group cursor-pointer bg-white/45 hover:bg-white/75 p-3 rounded-xl border border-transparent hover:border-(--border-color) transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary)"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-10 h-10 shrink-0 rounded-xl bg-indigo-50 flex flex-col items-center justify-center text-(--color-primary)">
+                            <span className="text-[10px] font-bold leading-none">{day}</span>
+                            <span className="text-[8px] uppercase tracking-wider">{monthNames[monthIdx].substring(0, 3)}</span>
+                          </div>
+                          <div className="min-w-0">
+                            <h5 className="text-sm font-bold text-slate-700 group-hover:text-(--color-primary) transition-colors line-clamp-1">{evt.title}</h5>
+                            <p className="text-[10px] text-slate-500 font-medium flex items-center gap-1 mt-0.5"><Clock className="w-2.5 h-2.5 shrink-0" />{evt.time} - {evt.location}</p>
+                          </div>
+                        </div>
+                        <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-(--color-secondary) transition-colors shrink-0" />
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             )}
-          </div>
-
-          {/* Upcoming Mini List if <= 1 event */}
-          {upcomingEvents.length > 0 && selectedEvents.length <= 1 && (
-            <div className="mt-6 pt-5 border-t border-(--border-color)">
-              <h4 className="text-xs font-bold text-slate-400 tracking-widest mb-3">Upcoming</h4>
-              <div className="space-y-2.5">
-                {upcomingEvents.map((evt, idx) => {
-                  const day = evt.date.split('-')[2];
-                  const monthIdx = parseInt(evt.date.split('-')[1]) - 1;
-                  return (
-                    <div
-                      key={idx}
-                      role="button"
-                      tabIndex={0}
-                      onClick={() => setSelectedDate(new Date(evt.date))}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          setSelectedDate(new Date(evt.date));
-                        }
-                      }}
-                      className="flex items-center justify-between group cursor-pointer bg-white/45 hover:bg-white/75 p-3 rounded-xl border border-transparent hover:border-(--border-color) transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary)"
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-10 h-10 shrink-0 rounded-xl bg-indigo-50 flex flex-col items-center justify-center text-(--color-primary)">
-                          <span className="text-[10px] font-bold leading-none">{day}</span>
-                          <span className="text-[8px] uppercase tracking-wider">{monthNames[monthIdx].substring(0, 3)}</span>
-                        </div>
-                        <div className="min-w-0">
-                          <h5 className="text-sm font-bold text-slate-700 group-hover:text-(--color-primary) transition-colors line-clamp-1">{evt.title}</h5>
-                          <p className="text-[10px] text-slate-500 font-medium flex items-center gap-1 mt-0.5"><Clock className="w-2.5 h-2.5 shrink-0" />{evt.time} - {evt.location}</p>
-                        </div>
-                      </div>
-                      <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-(--color-secondary) transition-colors shrink-0" />
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
           </div>
         </div>
       </motion.div>
@@ -1179,7 +1349,10 @@ export default function AboutIntanPage() {
             </motion.div>
           </motion.section>
 
-          {/* ================= 3. STATS SECTION (KARIR DALAM ANGKA) ================= */}
+          {/* ================= 3. FUN FACTS & TRIVIA ================= */}
+          <EditorialTriviaSection triviaDetails={bio.triviaDetails} />
+
+          {/* ================= 4. STATS SECTION (KARIR DALAM ANGKA) ================= */}
           <motion.section
             id="stats-section"
             initial="hidden"
@@ -1200,24 +1373,53 @@ export default function AboutIntanPage() {
               return (
                 <div className={`grid grid-cols-1 sm:grid-cols-2 ${gridColsClass} gap-8 justify-center`}>
                   {bio.stats.map((stat, index) => {
-                const IconComp = statIcons[stat.label] || Award;
-                return (
-                  <StatCounter
-                    key={stat.label}
-                    icon={IconComp}
-                    value={stat.value}
-                    label={stat.label}
-                    description={stat.description}
-                    delay={index * 0.1}
-                  />
-                );
-              })}
+                    const IconComp = statIcons[stat.label] || Award;
+                    return (
+                      <StatCounter
+                        key={stat.label}
+                        icon={IconComp}
+                        value={stat.value}
+                        label={stat.label}
+                        description={stat.description}
+                        delay={index * 0.1}
+                      />
+                    );
+                  })}
                 </div>
               );
             })()}
           </motion.section>
 
-          {/* ================= 4. GALERI KONTEN & YOUTUBE ================= */}
+          {/* ================= 5. SETLIST & UNIT SONGS ================= */}
+          <motion.section
+            id="setlist-section"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.15 }}
+            variants={staggerContainer}
+            className="space-y-8 scroll-mt-32"
+          >
+            <SectionHeader
+              label="Karya Panggung"
+              title="Setlist & Unit Songs"
+              description="Daftar setlist teater resmi JKT48 beserta lagu unit (unit songs) yang dibawakan. Klik kartu poster untuk membalikkan kartu dan melihat daftar lagunya."
+            />
+
+            <motion.div
+              variants={staggerContainer}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-center items-start pt-4"
+            >
+              {bio.setlistsAndUnitSongs.map((setlist) => {
+                return (
+                  <motion.div key={setlist.id} variants={fadeUp}>
+                    <SetlistPosterCard setlist={setlist} />
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          </motion.section>
+
+          {/* ================= 6. GALERI KONTEN & YOUTUBE ================= */}
           <motion.section
             id="highlights-section"
             initial="hidden"
@@ -1274,9 +1476,8 @@ export default function AboutIntanPage() {
                           setActiveVideo(video);
                         }
                       }}
-                      className={`group flex flex-col justify-between overflow-hidden rounded-3xl border border-(--border-color) bg-(--bg-card) shadow-(--box-shadow-sm) hover:shadow-(--box-shadow-md) transition-all duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary) focus-visible:ring-offset-2 ${
-                        isFeatured ? 'md:col-span-2 lg:col-span-2 lg:flex-row' : ''
-                      }`}
+                      className={`group flex flex-col justify-between overflow-hidden rounded-3xl border border-(--border-color) bg-(--bg-card) shadow-(--box-shadow-sm) hover:shadow-(--box-shadow-md) transition-all duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary) focus-visible:ring-offset-2 ${isFeatured ? 'md:col-span-2 lg:col-span-2 lg:flex-row' : ''
+                        }`}
                     >
                       <div className={isFeatured ? 'flex flex-col lg:flex-row w-full h-full' : 'flex flex-col w-full h-full'}>
                         {/* Image Thumbnail wrapper with Zoom and Play overlay */}
@@ -1306,9 +1507,8 @@ export default function AboutIntanPage() {
                             <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase border border-(--color-secondary)/15 text-(--color-secondary) bg-[rgba(8,145,178,0.04)] tracking-wide">
                               {video.category}
                             </span>
-                            <h4 className={`font-black text-(--color-primary) tracking-tight leading-snug pt-1 group-hover:text-(--color-primary-hover) transition-colors ${
-                              isFeatured ? 'text-lg lg:text-xl line-clamp-3' : 'text-sm line-clamp-2'
-                            }`}>
+                            <h4 className={`font-black text-(--color-primary) tracking-tight leading-snug pt-1 group-hover:text-(--color-primary-hover) transition-colors ${isFeatured ? 'text-lg lg:text-xl line-clamp-3' : 'text-sm line-clamp-2'
+                              }`}>
                               {video.title}
                             </h4>
                           </div>
@@ -1326,64 +1526,7 @@ export default function AboutIntanPage() {
             </motion.div>
           </motion.section>
 
-          {/* ================= 5. SETLIST & UNIT SONGS ================= */}
-          <motion.section
-            id="setlist-section"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.15 }}
-            variants={staggerContainer}
-            className="space-y-8 scroll-mt-32"
-          >
-            <SectionHeader
-              label="Karya Panggung"
-              title="Setlist & Unit Songs"
-              description="Daftar setlist teater resmi JKT48 beserta lagu unit (unit songs) yang dibawakan. Klik kartu poster untuk membalikkan kartu dan melihat daftar lagunya."
-            />
-
-            <motion.div
-              variants={staggerContainer}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-center items-start pt-4"
-            >
-              {bio.setlistsAndUnitSongs.map((setlist) => {
-                return (
-                  <motion.div key={setlist.id} variants={fadeUp}>
-                    <SetlistPosterCard setlist={setlist} />
-                  </motion.div>
-                );
-              })}
-            </motion.div>
-          </motion.section>
-
-          {/* ================= 6. FUN FACTS & TRIVIA ================= */}
-          <motion.section
-            id="trivia-section"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.15 }}
-            variants={staggerContainer}
-            className="space-y-8 scroll-mt-32"
-          >
-            <SectionHeader
-              label="Trivia & Fakta"
-              title="Fakta Menarik & Kebiasaan Unik"
-              description="Kumpulan anekdot kecil, quote inspiratif, cerita di balik layar teater, serta chemistry bersama rekan member lainnya."
-            />
-
-            {/* FAQ List */}
-            <motion.div
-              variants={fadeUp}
-              className="mx-auto mt-4 max-w-3xl w-full space-y-2.5"
-            >
-              {bio.triviaDetails.map((faq, index) => (
-                <TriviaItem key={index} {...faq} />
-              ))}
-            </motion.div>
-          </motion.section>
-
-
-
-          {/* ================= 8. NEW SCHEDULE SECTION (PLACED AT THE END) ================= */}
+          {/* ================= 8. SCHEDULE SECTION ================= */}
           <ScheduleSection />
 
         </div>
