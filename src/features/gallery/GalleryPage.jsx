@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, createContext, useContext, forwardRef, useMemo } from 'react';
+import { useState, useEffect, createContext, useContext, forwardRef, useMemo } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { X } from 'lucide-react';
 import { cn } from '../../lib/utils';
@@ -220,14 +220,33 @@ export default function GalleryPage() {
 
   useEffect(() => {
     document.title = 'Galeri Foto IRIS | Album Memori Komunitas';
-    fetchPhotos(0);
+    let isMounted = true;
+
+    const loadInitialPhotos = async () => {
+      try {
+        setIsLoading(true);
+        const data = await galleryService.getGalleryPhotos(LIMIT, 0);
+        if (!isMounted) return;
+        const filtered = data.filter(p => p.display_type === 'gallery' || p.display_type === 'both');
+        if (data.length < LIMIT) setHasMore(false);
+        setPhotos(filtered);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        if (isMounted) setIsLoading(false);
+      }
+    };
+
+    loadInitialPhotos();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const fetchPhotos = async (currentOffset) => {
     try {
-      if (currentOffset === 0) setIsLoading(true);
-      else setIsLoadingMore(true);
-
+      setIsLoadingMore(true);
       const data = await galleryService.getGalleryPhotos(LIMIT, currentOffset);
       const filtered = data.filter(p => p.display_type === 'gallery' || p.display_type === 'both');
       
@@ -235,20 +254,14 @@ export default function GalleryPage() {
         setHasMore(false);
       }
 
-      if (currentOffset === 0) {
-        setPhotos(filtered);
-      } else {
-        setPhotos(prev => {
-          // Prevent duplicates just in case
-          const existingIds = new Set(prev.map(p => p.id));
-          const newPhotos = filtered.filter(p => !existingIds.has(p.id));
-          return [...prev, ...newPhotos];
-        });
-      }
+      setPhotos(prev => {
+        const existingIds = new Set(prev.map(p => p.id));
+        const newPhotos = filtered.filter(p => !existingIds.has(p.id));
+        return [...prev, ...newPhotos];
+      });
     } catch (err) {
       console.error(err);
     } finally {
-      setIsLoading(false);
       setIsLoadingMore(false);
     }
   };
@@ -345,7 +358,7 @@ export default function GalleryPage() {
         </div>
       ) : (
         <ContainerScroll className="w-full pb-16 pt-4">
-          <ContainerSticky className="mx-auto max-w-7xl px-4 md:px-8 hide-scrollbar overflow-y-auto">
+          <ContainerSticky className="mx-auto max-w-7xl px-4 md:px-8">
             <GalleryContainer
               className={isMobile ? "grid-cols-2" : "grid-cols-3"}
               isMobile={isMobile}
