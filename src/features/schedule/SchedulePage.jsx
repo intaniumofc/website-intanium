@@ -162,8 +162,10 @@ function SidebarEventsPanel({ events, selectedDate }) {
 export default function SchedulePage({ initialEvents = [] }) {
   const [activePlatform, setActivePlatform] = useState('All');
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     document.title = 'Jadwal & Kegiatan | Official Website IRIS';
   }, []);
 
@@ -210,7 +212,17 @@ export default function SchedulePage({ initialEvents = [] }) {
       {/* ========= MAIN CONTENT VIEW LAYOUT ========= */}
       <div className="relative min-h-[350px] overflow-visible">
         <AnimatePresence mode="wait">
-          {filteredEvents.length === 0 ? (
+          {!mounted ? (
+            <motion.div
+              key="loading"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="flex justify-center py-20"
+            >
+              <div className="w-8 h-8 border-4 border-[var(--color-pink)] border-t-transparent rounded-full animate-spin"></div>
+            </motion.div>
+          ) : filteredEvents.length === 0 ? (
             <motion.div
               key="empty"
               initial={{ opacity: 0 }}

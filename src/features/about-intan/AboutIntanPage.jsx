@@ -675,6 +675,11 @@ const EditorialTriviaSection = ({ triviaDetails = [] }) => {
 const ScheduleSection = ({ initialSchedule = [] }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const scheduleData = React.useMemo(() => {
     return initialSchedule.map(event => {
