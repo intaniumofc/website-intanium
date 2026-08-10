@@ -13,7 +13,7 @@ const defaultSections = [
     links: [
       { name: "About Intan", href: "/about-intan" },
       { name: "IRIS Lore", href: "/about-iris" },
-      { name: "Milestone", href: "/milestone" },
+      { name: "Journey", href: "/milestone" },
       { name: "#dengerINTAN", href: "/denger-intan" },
     ],
   },
@@ -50,7 +50,7 @@ export default function Footer({
     title: "IRIS",
   },
   sections = defaultSections,
-  description = "Official portal of the IRIS community for Nur Intan JKT48 fans. Access streaming schedules, recap zines, interactive bulletin boards, and official merchandise.",
+  description = "Portal resmi IRIS, komunitas pendukung Nur Intan JKT48. Nikmati kemudahan akses jadwal tayang pertunjukan, zine rekap perjalanan, forum buletin interaktif, serta rilisan merchandise resmi.",
   socialLinks = defaultSocialLinks,
   copyright = `© ${new Date().getFullYear()} IRIS Official. All rights reserved.`,
   legalLinks = defaultLegalLinks,
@@ -92,7 +92,7 @@ export default function Footer({
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
-          
+
           {/* Column 1: Brand & Description */}
           <div className="relative space-y-4">
             <Link href={logo.url} className="group flex items-center gap-2.5">

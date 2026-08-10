@@ -25,7 +25,7 @@ export default function IntanShiningStarPage() {
   const reduceMotion = useSafeReducedMotion();
 
   useEffect(() => {
-    document.title = 'Intan Shining Star | JKT48 Official Achievement & Journey';
+    document.title = 'Intan Journey | JKT48 Official Achievement & Journey';
     let mounted = true;
     achievementService.getAchievements().then((data) => {
       if (mounted) {

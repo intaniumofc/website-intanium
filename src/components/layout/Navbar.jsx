@@ -63,19 +63,19 @@ export default function Navbar({ isHome = false }) {
           items: [
             {
               label: "About Nur Intan",
-              description: "Complete profile, bio, and fun facts about Intan",
+              description: "Profil lengkap, biodata, dan fakta menarik tentang Intan",
               icon: User,
               link: ROUTES.ABOUT_INTAN,
             },
             {
-              label: "Milestone",
-              description: "Journey archive and historic milestones of Intan",
+              label: "Journey",
+              description: "Arsip perjalanan karier dan pencapaian bersejarah Intan",
               icon: Sparkle,
               link: ROUTES.SHINING_STAR,
             },
             {
               label: "Recap",
-              description: "Digital e-magazine archive of monthly recaps",
+              description: "Majalah digital rekap kegiatan dan momen bulanan",
               icon: BookOpen,
               link: ROUTES.RECAPS,
             },
@@ -86,7 +86,7 @@ export default function Navbar({ isHome = false }) {
           items: [
             {
               label: "About IRIS",
-              description: "Origins, philosophy, guidelines, and how to join Discord",
+              description: "Asal-usul, filosofi, panduan, dan cara bergabung di Discord",
               icon: Globe,
               link: ROUTES.ABOUT_IRIS,
             },
@@ -103,19 +103,19 @@ export default function Navbar({ isHome = false }) {
           items: [
             {
               label: "Event Schedule",
-              description: "Theater calendar, video calls, birthdays, and Nur Intan events",
+              description: "Jadwal teater, video call, ulang tahun, dan event Intan",
               icon: Calendar,
               link: ROUTES.SCHEDULE,
             },
             {
-              label: "Peta Penampilan",
-              description: "Interactive map of Nur Intan show locations & events across Indonesia",
+              label: "Performance Map",
+              description: "Peta interaktif lokasi pertunjukan dan event Intan di Indonesia",
               icon: MapPin,
               link: ROUTES.PERFORMANCE_MAP,
             },
             {
               label: "News & Announcements",
-              description: "Official announcements and latest event updates",
+              description: "Pengumuman resmi dan kabar terbaru kegiatan IRIS & Intan",
               icon: Newspaper,
               link: ROUTES.NEWS,
             },
@@ -132,25 +132,25 @@ export default function Navbar({ isHome = false }) {
           items: [
             {
               label: "Message Board",
-              description: "Post your warm messages of support on the digital board",
+              description: "Kirim pesan hangat dan dukungan di papan mading digital",
               icon: ChatCenteredText,
               link: ROUTES.MADING,
             },
             {
               label: "Fanart Gallery",
-              description: "Beautiful fanart gallery contributed by fan artists",
+              description: "Koleksi karya seni dan ilustrasi indah buatan penggemar",
               icon: Palette,
               link: ROUTES.FANART,
             },
             {
               label: "IRIS Esport",
-              description: "Official e-sports hub of the IRIS community",
+              description: "Pusat kegiatan dan turnamen e-sports resmi komunitas IRIS",
               icon: Trophy,
               link: ROUTES.ESPORT,
             },
             {
               label: "Photo Studio",
-              description: "Snap photos with Intan using exclusive photostrips",
+              description: "Foto bersama bingkai eksklusif Intan di photobooth digital",
               icon: Camera,
               link: ROUTES.PHOTOBOOTH,
             },
@@ -161,7 +161,7 @@ export default function Navbar({ isHome = false }) {
           items: [
             {
               label: "Photo Gallery",
-              description: "Screenshot archive of fun streaming moments",
+              description: "Arsip foto dan tangkapan layar momen keseruan live streaming",
               icon: ImageIcon,
               link: ROUTES.GALLERY,
             },
@@ -178,13 +178,13 @@ export default function Navbar({ isHome = false }) {
           items: [
             {
               label: "Pre-Order Merchandise",
-              description: "Get your IRIS merchandise now!",
+              description: "Dapatkan koleksi merchandise resmi IRIS sekarang!",
               icon: ShoppingBag,
               link: ROUTES.MERCHANDISE,
             },
             {
               label: "Check Order Status",
-              description: "Track your merchandise order status",
+              description: "Pantau status dan nomor resi pesanan merchandise kamu",
               icon: CreditCard,
               link: ROUTES.PAYMENT_CONFIRM,
             },
@@ -277,7 +277,7 @@ export default function Navbar({ isHome = false }) {
                     : 'shadow-[var(--shadow-pink-glow)] hover:shadow-[var(--shadow-pink-glow-hover)]'
                   }`}
               >
-                <span>Join Us</span>
+                  <span>Join Us</span>
                 <span className="flex items-center justify-center h-8 w-8 rounded-full bg-white/20 group-hover:bg-white/30 transition-colors shrink-0">
                   <ArrowRight className="h-4 w-4 text-white transition-transform duration-300 group-hover:translate-x-0.5" />
                 </span>
@@ -423,7 +423,7 @@ export default function Navbar({ isHome = false }) {
                   style={{ backgroundImage: 'var(--gradient-cta, linear-gradient(135deg, var(--color-pink, #ec4899), var(--color-pink-dark, #be185d)))' }}
                   className="flex items-center justify-center gap-2 w-full px-4 min-h-[44px] rounded-full text-base font-extrabold text-white shadow-[var(--shadow-pink-glow)] transition-all active:scale-95"
                 >
-                  <span>Join Us</span>
+                    <span>Join Us</span>
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>

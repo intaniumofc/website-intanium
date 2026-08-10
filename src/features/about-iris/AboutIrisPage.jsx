@@ -50,29 +50,24 @@ const ButterflySVG = ({ className }) => (
 // Static Data Constants - Makna Logo IRIS Official
 const LOGO_PHILOSOPHY = [
   {
-    id: 'sinergi',
-    title: 'Ruang Sinergi & Resonansi',
-    desc: 'Logo ini merepresentasikan sebuah ruang yang dibentuk oleh sinergi dan resonansi antara Intan JKT48 dan orang-orang di sekitarnya.'
-  },
-  {
-    id: 'dewi',
-    title: 'Bunga Iris & Dewi Pelangi',
-    desc: 'Bunga iris membawa dua makna: sebagai bunga, ia merepresentasikan keindahan, pertumbuhan, dan proses mekar; sementara dalam mitologi, Iris adalah dewi pelangi dan pembawa pesan, sebuah simbol penghubung.'
-  },
-  {
-    id: 'irisan',
+    id: 'kupu_bunga',
     title: 'Irisan Kupu-Kupu & Bunga',
-    desc: 'Kupu-kupu yang saling beririsan dengan bunga iris merepresentasikan pertemuan dua figur yang berbeda, menciptakan sinergi melalui pertumbuhan, dan hubungan yang saling memengaruhi. Irisan keduanya menggambarkan sebuah pertemuan yang memungkinkan setiap elemen untuk saling memengaruhi berkembang bersama.'
+    desc: 'Kupu-kupu yang saling beririsan dengan bunga iris merepresentasikan pertemuan dua figur yang berbeda, menciptakan sinergi melalui pertumbuhan, dan hubungan yang saling memengaruhi.'
+  },
+  {
+    id: 'bunga_pelangi',
+    title: 'Bunga Iris & Dewi Pelangi',
+    desc: 'Bunga iris membawa dua makna: sebagai bunga merepresentasikan keindahan dan pertumbuhan; sementara dalam mitologi, Iris adalah dewi pelangi dan pembawa pesan, sebuah simbol penghubung utama.'
+  },
+  {
+    id: 'outline_pelangi',
+    title: 'Outline Terbuka Spektrum Pelangi',
+    desc: 'Outline terbuka dengan warna-warna spektrum pelangi merepresentasikan keberagaman dan inklusivitas. Bentuknya yang tidak tertutup menggambarkan sebuah ruang yang selalu terbuka bagi siapa pun.'
   },
   {
     id: 'bintang',
     title: 'Bintang Resonansi Dua Arah',
-    desc: 'Bintang di tengah menjadi pusat sekaligus titik resonansi yang menyatukan keseluruhan bentuk. Resonansi ini bergerak dalam dua arah: energi dan inspirasi dari Intan JKT48 memengaruhi orang-orang di dalam ruang ini, begitupun sebaliknya.'
-  },
-  {
-    id: 'spektrum',
-    title: 'Outline Terbuka Spektrum Pelangi',
-    desc: 'Outline terbuka dengan warna-warna spektrum pelangi merepresentasikan keberagaman dan inklusivitas. Bentuknya yang tidak tertutup sepenuhnya menggambarkan sebuah ruang yang selalu terbuka bagi siapa pun untuk hadir, terhubung, dan menjadi bagian di dalamnya.'
+    desc: 'Bintang di tengah menjadi pusat sekaligus titik resonansi dua arah: energi dan inspirasi dari Intan JKT48 memengaruhi orang-orang di dalam ruang ini, begitupun sebaliknya.'
   }
 ];
 
@@ -324,17 +319,16 @@ function PhilosophyCard({ item, index, variants, className = '', activeId, onAct
 }
 
 const CONNECTOR_PATHS = [
-  { id: 'sinergi', d: 'M 330 90 Q 420 180 435 245' },
-  { id: 'dewi', d: 'M 670 90 Q 580 180 565 245' },
-  { id: 'irisan', d: 'M 330 310 L 410 310' },
-  { id: 'spektrum', d: 'M 670 310 L 590 310' },
-  { id: 'bintang', d: 'M 500 408 L 500 532' }
+  { id: 'kupu_bunga', d: 'M 330 110 Q 420 180 435 235' },
+  { id: 'bunga_pelangi', d: 'M 670 110 Q 580 180 565 235' },
+  { id: 'outline_pelangi', d: 'M 330 450 Q 420 380 435 325' },
+  { id: 'bintang', d: 'M 670 450 Q 580 380 565 325' }
 ];
 
 function OrbitConnectors({ activeId }) {
   return (
     <svg
-      viewBox="0 0 1000 700"
+      viewBox="0 0 1000 560"
       preserveAspectRatio="none"
       className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-visible"
       fill="none"
@@ -449,27 +443,27 @@ export default function AboutIrisPage() {
             </p>
           </motion.div>
 
-          {/* --- DESKTOP: Constellation Map --- */}
-          <div className="relative hidden lg:block w-full max-w-6xl mx-auto min-h-[700px] overflow-visible">
+          {/* --- DESKTOP: Constellation Map (Simetris 4-Card Grid) --- */}
+          <div className="relative hidden lg:block w-full max-w-6xl mx-auto min-h-[580px] overflow-visible">
             <OrbitConnectors activeId={activeId} />
 
             {/* Center Logo Medallion */}
-            <div className="absolute left-1/2 top-[44%] -translate-x-1/2 -translate-y-1/2 z-10 flex items-center justify-center">
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 flex items-center justify-center">
               <motion.div
                 variants={logoMedallionReveal}
                 className="relative flex items-center justify-center"
               >
-                <div className="pointer-events-none absolute left-1/2 top-1/2 h-[290px] w-[290px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-pink-200/30 animate-[pulse_6s_ease-in-out_infinite]" />
+                <div className="pointer-events-none absolute left-1/2 top-1/2 h-[280px] w-[280px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-pink-200/30 animate-[pulse_6s_ease-in-out_infinite]" />
 
                 <LogoPngViewer
                   fallbackImage={logoNobg}
-                  className="w-50 h-50 xl:w-54 xl:h-54"
+                  className="w-48 h-48 xl:w-52 xl:h-52"
                 />
               </motion.div>
             </div>
 
-            {/* Node 1: Ruang Sinergi & Resonansi (Top Left) */}
-            <div className="absolute left-[0%] top-[0%] w-[330px] xl:w-[360px] z-20">
+            {/* Node 1: Irisan Kupu-Kupu & Bunga (Top Left) */}
+            <div className="absolute left-[0%] top-[2%] w-[330px] xl:w-[370px] z-20">
               <PhilosophyCard
                 item={LOGO_PHILOSOPHY[0]}
                 index={0}
@@ -482,7 +476,7 @@ export default function AboutIrisPage() {
             </div>
 
             {/* Node 2: Bunga Iris & Dewi Pelangi (Top Right) */}
-            <div className="absolute right-[0%] top-[0%] w-[330px] xl:w-[360px] z-20">
+            <div className="absolute right-[0%] top-[2%] w-[330px] xl:w-[370px] z-20">
               <PhilosophyCard
                 item={LOGO_PHILOSOPHY[1]}
                 index={1}
@@ -494,8 +488,8 @@ export default function AboutIrisPage() {
               />
             </div>
 
-            {/* Node 3: Irisan Kupu-Kupu & Bunga (Mid Left) */}
-            <div className="absolute left-[0%] top-[38%] w-[330px] xl:w-[360px] z-20">
+            {/* Node 3: Outline Terbuka Spektrum Pelangi (Bottom Left) */}
+            <div className="absolute left-[0%] bottom-[2%] w-[330px] xl:w-[370px] z-20">
               <PhilosophyCard
                 item={LOGO_PHILOSOPHY[2]}
                 index={2}
@@ -507,21 +501,8 @@ export default function AboutIrisPage() {
               />
             </div>
 
-            {/* Node 4: Outline Terbuka Spektrum Pelangi (Mid Right) */}
-            <div className="absolute right-[0%] top-[38%] w-[330px] xl:w-[360px] z-20">
-              <PhilosophyCard
-                item={LOGO_PHILOSOPHY[4]}
-                index={4}
-                variants={philosophyCardReveal}
-                className="w-full"
-                activeId={activeId}
-                onActivate={setActiveId}
-                onDeactivate={handleDeactivatePhil}
-              />
-            </div>
-
-            {/* Node 5: Bintang Resonansi Dua Arah (Bottom Center - Perfectly Positioned below Center Logo!) */}
-            <div className="absolute left-1/2 top-[76%] -translate-x-1/2 w-[460px] xl:w-[500px] z-20">
+            {/* Node 4: Bintang Resonansi Dua Arah (Bottom Right) */}
+            <div className="absolute right-[0%] bottom-[2%] w-[330px] xl:w-[370px] z-20">
               <PhilosophyCard
                 item={LOGO_PHILOSOPHY[3]}
                 index={3}
