@@ -8,10 +8,10 @@ export async function POST(request) {
 
   const actorEmail = profile.username || 'admin@iris.admin';
 
-  // Strict role check: only IT Support / super_admin is allowed to restore
-  if (actorEmail.toLowerCase() !== 'it_support@iris.admin') {
+  // Strict role check: only Tech / super_admin is allowed to restore
+  if (actorEmail.toLowerCase() !== 'tech@iris.admin') {
     return NextResponse.json(
-      { success: false, error: 'Forbidden: Hanya IT Support yang dapat melakukan restore data.' },
+      { success: false, error: 'Forbidden: Hanya Admin Tech yang dapat melakukan restore data.' },
       { status: 403 }
     );
   }

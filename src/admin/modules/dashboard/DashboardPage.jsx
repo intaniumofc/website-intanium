@@ -26,7 +26,7 @@ import { useAdminToast } from '../../../components/common/useAdminToast';
 import { auditService } from '../../../services/admin/auditService';
 
 const PREMIUM_EASE = [0.16, 1, 0.3, 1];
-const IT_SUPPORT_EMAIL = 'it_support@iris.admin';
+const TECH_SUPPORT_EMAIL = 'tech@iris.admin';
 
 const PAID_STATUSES = ['paid', 'processing', 'ready_for_pickup', 'shipped', 'completed'];
 const PENDING_STATUSES = ['pending_review', 'waiting_payment'];
@@ -253,7 +253,7 @@ export default function DashboardPage() {
   const [restorePayload, setRestorePayload] = useState(null);
 
   // IT Support = role super_admin (atau akun email khusus lama)
-  const isITSupportUser = currentUserRole === 'super_admin' || currentUserEmail.toLowerCase() === IT_SUPPORT_EMAIL;
+  const isITSupportUser = currentUserRole === 'super_admin' || currentUserEmail.toLowerCase() === TECH_SUPPORT_EMAIL;
 
   const loadDashboardData = async () => {
     try {
@@ -490,7 +490,7 @@ export default function DashboardPage() {
     const { id, isAll } = confirmDelete;
     setConfirmDelete({ isOpen: false, id: null, isAll: false });
     if (!isITSupportUser) {
-      notify.error('Akses Ditolak', 'Hanya IT Support yang dapat mengelola log aktivitas.');
+      notify.error('Akses Ditolak', 'Hanya Admin Tech yang dapat mengelola log aktivitas.');
       return;
     }
     try {
@@ -1051,7 +1051,7 @@ export default function DashboardPage() {
                 </div>
               ) : (
                 activities.map((log) => {
-                  const isITSupportLog = log.admin_username.toLowerCase() === IT_SUPPORT_EMAIL;
+                  const isITSupportLog = log.admin_username.toLowerCase() === TECH_SUPPORT_EMAIL;
                   return (
                     <div key={log.id} className="flex justify-between items-center py-2.5 border-b border-slate-100/50 last:border-0 hover:bg-slate-50/30 px-2 rounded-lg transition-colors">
                       <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -1066,7 +1066,7 @@ export default function DashboardPage() {
                             <span className={`inline-block text-[8px] font-black px-1.5 py-0.5 rounded ${
                               isITSupportLog ? 'bg-indigo-50 text-indigo-600' : 'bg-slate-100 text-slate-500'
                             }`}>
-                              {isITSupportLog ? 'IT Support' : 'Admin'}
+                              {isITSupportLog ? 'Admin Tech' : log.admin_username}
                             </span>
                           </div>
                           <p className="text-xs font-semibold text-slate-600 mt-1 break-words">{log.action}</p>
@@ -1101,8 +1101,8 @@ export default function DashboardPage() {
             <h4 className="text-sm font-black text-slate-800 flex items-center gap-2">
               <BookOpen className="h-4.5 w-4.5 text-amber-600" /> Backup & Restore Data
             </h4>
-            <p className="text-xs text-slate-500 font-semibold">
-              Unduh seluruh data events, news, recaps, gallery, dan mading sebagai berkas JSON untuk backup, atau pulihkan data dari file JSON cadangan.
+            <p className="text-xs text-slate-500 font-semibold mt-2 border-t border-slate-100 pt-2">
+              Hanya Admin Tech yang dapat melakukan restore data untuk mencegah konflik dengan proses produksi yang sedang berjalan.
             </p>
           </div>
           <div className="flex flex-wrap gap-2 shrink-0">

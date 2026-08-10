@@ -37,9 +37,9 @@ export async function DELETE(request) {
 
   const actorEmail = profile.username || 'admin@iris.admin';
 
-  // Strictly enforce super_admin IT Support username rule
-  if (actorEmail.toLowerCase() !== 'it_support@iris.admin') {
-    return NextResponse.json({ success: false, error: 'Forbidden: Hanya IT Support yang dapat mengelola log aktivitas.' }, { status: 403 });
+  // Strictly enforce super_admin Tech username rule
+  if (actorEmail.toLowerCase() !== 'tech@iris.admin') {
+    return NextResponse.json({ success: false, error: 'Forbidden: Hanya Admin Tech yang dapat mengelola log aktivitas.' }, { status: 403 });
   }
 
   try {
