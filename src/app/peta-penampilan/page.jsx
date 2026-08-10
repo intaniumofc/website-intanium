@@ -3,6 +3,8 @@ import MainLayout from '../../components/layout/MainLayout';
 import PerformanceMapSection from '../../components/performance-map/PerformanceMapSection';
 import { getPerformanceLocations } from '../../lib/performance-locations';
 
+export const revalidate = 60; // ISR cache revalidation every 60 seconds
+
 export const metadata = {
   title: 'Peta Jejak Penampilan Nur Intan JKT48 | IRIS Official Website',
   description: 'Peta interaktif lokasi pertunjukan theater dan event offair Nur Intan JKT48 di seluruh wilayah Indonesia.',
