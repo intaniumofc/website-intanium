@@ -179,7 +179,7 @@ export default function AdminAuditLogs() {
                   <th className="px-6 py-3.5 w-48">Waktu</th>
                   <th className="px-6 py-3.5 w-64">Nama Admin</th>
                   <th className="px-6 py-3.5">Deskripsi Aktivitas</th>
-                  {isITSupport && <th className="px-6 py-3.5 w-24 text-right">Aksi</th>}
+                  {isTechSupport && <th className="px-6 py-3.5 w-24 text-right">Aksi</th>}
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
