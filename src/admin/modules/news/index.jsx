@@ -11,6 +11,12 @@ import { useAdminToast } from '../../../components/common/useAdminToast';
 import { Plus, Edit, Trash2, Calendar, Search, Newspaper, Upload, Loader, X } from 'lucide-react';
 import { useMediaUpload } from '../../../hooks/useMediaUpload';
 import { FileUploadCard } from '../../../components/ui/FileUploadCard';
+import rehypeSanitize from 'rehype-sanitize';
+import dynamic from 'next/dynamic';
+import '@uiw/react-md-editor/markdown-editor.css';
+import '@uiw/react-markdown-preview/markdown.css';
+
+const MDEditor = dynamic(() => import('@uiw/react-md-editor'), { ssr: false });
 
 export default function AdminNews() {
   const notify = useAdminToast();
@@ -432,9 +438,19 @@ export default function AdminNews() {
           </div>
 
           {/* Content */}
-          <div className="flex flex-col gap-1.5">
-            <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Konten Lengkap Berita</label>
-            <textarea name="content" rows="6" placeholder="Tulis artikel lengkap di sini… (Mendukung paragraf baru)" value={formData.content} onChange={handleInputChange} className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-primary)] transition-colors font-sans" required />
+          <div className="flex flex-col gap-1.5" data-color-mode="light">
+            <label className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)]">Konten Lengkap Berita (Markdown)</label>
+            <div className="w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[var(--color-pink)]/15 focus-within:border-[var(--color-primary)] transition-colors">
+              <MDEditor
+                value={formData.content}
+                onChange={(val) => setFormData(prev => ({ ...prev, content: val || '' }))}
+                height={400}
+                previewOptions={{
+                  rehypePlugins: [[rehypeSanitize]]
+                }}
+                className="!border-0 !rounded-none !shadow-none"
+              />
+            </div>
           </div>
 
           {/* Submit Action */}

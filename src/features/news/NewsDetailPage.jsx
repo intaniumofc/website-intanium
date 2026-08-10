@@ -5,6 +5,8 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 
 import { ArrowLeft, Calendar, User } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { newsService } from '../../services/public/newsService';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
@@ -130,8 +132,10 @@ export default function NewsDetailPage() {
             {news.title}
           </h1>
 
-          <div className="max-w-none space-y-4 text-sm font-medium leading-relaxed text-[var(--color-body)] sm:text-base sm:leading-8 break-all [word-break:break-all] [overflow-wrap:anywhere] whitespace-pre-line min-w-0">
-            {news.content}
+          <div className="prose prose-sm sm:prose-base prose-slate max-w-none text-[var(--color-body)] min-w-0 [word-break:break-word] [overflow-wrap:anywhere]">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {news.content}
+            </ReactMarkdown>
           </div>
         </div>
       </Card>
