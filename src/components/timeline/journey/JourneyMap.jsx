@@ -9,7 +9,6 @@ import { usePreloadImages } from './usePreloadImages';
 import { useJourneyEnvironment } from './useJourneyEnvironment';
 import { useJourneyAnimation } from './useJourneyAnimation';
 import JourneyBackground from './JourneyBackground';
-import JourneyButterflies from './JourneyButterflies';
 import JourneyPath from './JourneyPath';
 import JourneyNode from './JourneyNode';
 import JourneyCard from './JourneyCard';
@@ -164,9 +163,6 @@ export default function JourneyMap({ achievements = [] }) {
 
         <div ref={stageRef} className="journey-stage">
           <JourneyBackground reducedMotion={reducedMotion} />
-
-          {/* Ambient butterflies + dust drifting across the whole scene */}
-          <JourneyButterflies reducedMotion={reducedMotion} />
 
           {/* Month wheel — left-side navigator */}
           {!reducedMotion && (
