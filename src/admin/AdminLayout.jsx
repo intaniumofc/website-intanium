@@ -98,7 +98,7 @@ export default function AdminLayout({ children }) {
     if (cleanHref === ROUTES.ADMIN_NEWS) return 'news';
     if (cleanHref === ROUTES.ADMIN_PLAYLISTS) return 'playlists';
     if (cleanHref === ROUTES.ADMIN_GALLERY) return 'gallery';
-    if (cleanHref === ROUTES.ADMIN_FANART) return 'gallery'; // Grouping fanart permission with gallery or it can be its own
+    if (cleanHref === ROUTES.ADMIN_FANART) return 'fanart';
     if (cleanHref === ROUTES.ADMIN_MADING) return 'mading';
     if (cleanHref === ROUTES.ADMIN_HASHTAGS) return 'hashtags';
     if (cleanHref === ROUTES.ADMIN_GAMES) return 'games';

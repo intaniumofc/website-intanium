@@ -45,6 +45,7 @@ const AVAILABLE_PERMISSIONS = [
   { id: 'playlists', label: 'Denger Intan (Playlists)' },
   { id: 'gallery', label: 'Galeri Album' },
   { id: 'mading', label: 'Moderasi Mading' },
+  { id: 'fanart', label: 'Kelola Fan Art' },
   { id: 'hashtags', label: 'Kelola Tagar' },
   { id: 'games', label: 'Kelola Game' },
   { id: 'esport', label: 'Kelola Esport' },
