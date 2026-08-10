@@ -421,7 +421,7 @@ export default function EsportPage() {
 
                       {/* Description */}
                       <p className="text-xs text-[var(--text-secondary)] leading-relaxed pt-1">
-                        Membawa nama IRIS di kancah kompetitif tingkat regional/nasional.
+                        {ach.description || 'Membawa nama IRIS di kancah kompetitif tingkat regional/nasional.'}
                       </p>
                     </div>
 

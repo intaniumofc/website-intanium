@@ -27,11 +27,11 @@ export async function POST(request) {
   try {
     const formData = await request.formData();
     const file = formData.get('file');
-    const bucketName = formData.get('bucketName') || 'fanarts';
-    const folderPath = formData.get('folderPath') || 'submissions';
+    const bucketName = formData.get('bucketName') || 'assets';
+    const folderPath = formData.get('folderPath') || 'fanarts';
 
     // Strictly restrict to fanart submissions to prevent abuse
-    if (bucketName !== 'fanarts' || !folderPath.startsWith('submissions')) {
+    if (bucketName !== 'assets' || !folderPath.startsWith('fanarts')) {
       return NextResponse.json({ error: 'Invalid bucket or folder path for public upload.' }, { status: 403 });
     }
 

@@ -8,7 +8,6 @@ import ConfirmDialog from '../../../components/common/ConfirmDialog';
 import { useAdminToast } from '../../../components/common/useAdminToast';
 import { CheckCircle, XCircle, Trash2, Palette, Image as ImageIcon } from 'lucide-react';
 import { fanartService } from '../../../services/public/fanartService';
-import { proxyR2Url } from '../../../lib/helpers';
 
 export default function AdminFanart() {
   const notify = useAdminToast();
@@ -100,7 +99,7 @@ export default function AdminFanart() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
                         {item.url ? (
-                          <img src={proxyR2Url(item.url)} alt={item.title} className="w-full h-full object-cover" />
+                          <img src={item.url} alt={item.title} className="w-full h-full object-cover" />
                         ) : (
                           <div className="flex items-center justify-center w-full h-full"><ImageIcon className="w-6 h-6 text-gray-300" /></div>
                         )}

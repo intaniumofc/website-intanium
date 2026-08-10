@@ -10,7 +10,6 @@ import Card from '../../components/common/Card';
 import { useMediaUpload } from '../../hooks/useMediaUpload';
 import { FileUploadCard } from '../../components/ui/FileUploadCard';
 import { Palette } from 'lucide-react';
-import { proxyR2Url } from '../../lib/helpers';
 
 export default function FanartPage() {
   const [fanarts, setFanarts] = useState([]);
@@ -77,7 +76,7 @@ export default function FanartPage() {
     try {
       let finalUrl = formData.url;
       if (file) {
-        finalUrl = await uploadFile(file, 'fanarts', 'submissions', '/api/public-upload');
+        finalUrl = await uploadFile(file, 'assets', 'fanarts/submissions', '/api/public-upload');
       }
 
       const response = await fanartService.submitFanart({
@@ -130,7 +129,7 @@ export default function FanartPage() {
       {isLoading ? (
         <Loading message="Mengambil karya seni fanart..." />
       ) : (
-        <ImageGrid images={fanarts.map(f => ({ ...f, url: proxyR2Url(f.url) }))} />
+        <ImageGrid images={fanarts} />
       )}
 
       {/* Submission Overlay Dialog */}

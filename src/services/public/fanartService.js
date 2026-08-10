@@ -1,5 +1,5 @@
-// Service for managing community Fanart submissions via Supabase
 import { supabase } from '../../lib/supabaseClient';
+import { proxyR2Url } from '../../lib/helpers';
 
 export const fanartService = {
   getFanarts: async (status = 'approved') => {
@@ -14,8 +14,10 @@ export const fanartService = {
       console.error('Error fetching fanarts:', error);
       throw new Error('Gagal mengambil data fanart');
     }
-    
-    return data || [];
+    return data ? data.map(item => ({
+      ...item,
+      url: proxyR2Url(item.url)
+    })) : [];
   },
 
   submitFanart: async (fanartData) => {

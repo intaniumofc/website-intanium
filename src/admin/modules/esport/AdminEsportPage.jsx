@@ -77,7 +77,7 @@ export default function AdminEsportPage() {
   const [divisionForm, setDivisionForm] = useState({ id: '', name: '', tagline: '', logo: '', banner_gradient: '', wallpaper: '' });
   const [rosterForm, setRosterForm] = useState({ id: null, division_id: '', name: '', ign: '', role: '', image_url: '', social_instagram: '', social_twitter: '', sort_order: 0 });
   const [matchForm, setMatchForm] = useState({ id: null, division_id: '', opponent: '', opponent_logo: '', date: '', time: '', stage: '', status: 'Upcoming', score: '', result: '', stream_url: '' });
-  const [achievementForm, setAchievementForm] = useState({ id: null, division_id: '', title: '', rank: '', date: '', badge: '', image_url: '' });
+  const [achievementForm, setAchievementForm] = useState({ id: null, division_id: '', title: '', rank: '', date: '', badge: '', image_url: '', description: '' });
 
   useEffect(() => {
     fetchData();
@@ -1159,6 +1159,10 @@ export default function AdminEsportPage() {
                     <div>
                       <label className="block text-sm font-semibold text-slate-700 mb-1.5">Judul Prestasi</label>
                       <input autoComplete="off" type="text" name="title" value={achievementForm.title} onChange={(e) => handleInputChange(e, 'achievement')} placeholder="Contoh: Champion - IRIS Cup 2026" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors font-bold" required />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-1.5">Deskripsi Prestasi</label>
+                      <textarea name="description" value={achievementForm.description || ''} onChange={(e) => handleInputChange(e, 'achievement')} placeholder="Contoh: Membawa nama IRIS di kancah kompetitif tingkat regional/nasional." rows={2} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] transition-colors"></textarea>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
