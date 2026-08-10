@@ -56,7 +56,7 @@ export default function Footer({
   legalLinks = defaultLegalLinks,
 }) {
   return (
-    <footer className="relative z-20 mt-0 bg-white text-[var(--color-heading)] transition-colors duration-300 select-none" role="contentinfo">
+    <footer className="relative z-20 mt-16 sm:mt-20 md:mt-28 bg-white text-[var(--color-heading)] transition-colors duration-300 select-none" role="contentinfo">
       {/* Top Organic Pink Wave Divider - Positioned above footer */}
       <div className="absolute bottom-full inset-x-0 w-full overflow-hidden leading-none pointer-events-none translate-y-[2px] z-30">
         <svg
