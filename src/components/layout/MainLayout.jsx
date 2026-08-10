@@ -27,7 +27,7 @@ export default function MainLayout({ children, isHome = false, fullWidth = false
         </main>
       ) : (
         /* Constrained layout for standard pages */
-        <main className={`flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 animate-fade-in relative ${noPaddingTop ? '' : 'pt-20 sm:pt-24 md:pt-28'}`}>
+        <main className={`flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 sm:pb-24 md:pb-32 animate-fade-in relative ${noPaddingTop ? '' : 'pt-20 sm:pt-24 md:pt-28'}`}>
           {children}
         </main>
       )}
