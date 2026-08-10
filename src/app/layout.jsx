@@ -128,13 +128,13 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="id" className={`${plusJakartaSans.variable} ${inter.variable} ${playfairDisplay.variable} ${cormorantGaramond.variable} ${jetbrainsMono.variable}`}>
+    <html lang="id" suppressHydrationWarning className={`${plusJakartaSans.variable} ${inter.variable} ${playfairDisplay.variable} ${cormorantGaramond.variable} ${jetbrainsMono.variable}`}>
       <head>
         <link rel="icon" type="image/webp" href="/logo-nobg.webp" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         {/* Skip-to-content link for screen readers & keyboard navigation (WCAG 2.4.1) */}
         <a
           href="#main-content"
