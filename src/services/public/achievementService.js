@@ -14,7 +14,7 @@ export const ACHIEVEMENT_CATEGORIES = [
   'Fan Project',
 ];
 
-export const FALLBACK_ACHIEVEMENTS = [
+const FALLBACK_ACHIEVEMENTS = [
   {
     id: 'gen13-introduction',
     date: '31 Desember 2024',
