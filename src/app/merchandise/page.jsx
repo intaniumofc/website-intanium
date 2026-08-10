@@ -9,7 +9,7 @@ const productSchema = {
   '@context': 'https://schema.org',
   '@type': 'Product',
   'name': 'Official Fanbase Merchandise Nur Intan JKT48',
-  'image': 'https://website-IRIS.vercel.app/cover.jpeg',
+  'image': 'https://irisofc.my.id/cover.jpeg',
   'description': 'Koleksi merchandise eksklusif resmi fanbase Nur Intan JKT48 (IRIS).',
   'brand': {
     '@type': 'Brand',
@@ -17,7 +17,7 @@ const productSchema = {
   },
   'offers': {
     '@type': 'Offer',
-    'url': 'https://website-IRIS.vercel.app/merchandise',
+    'url': 'https://irisofc.my.id/merchandise',
     'priceCurrency': 'IDR',
     'availability': 'https://schema.org/InStock'
   }

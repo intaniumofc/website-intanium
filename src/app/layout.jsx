@@ -46,7 +46,7 @@ const jetbrainsMono = JetBrains_Mono({
   adjustFontFallback: false,
 });
 
-const defaultSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://website-IRIS.vercel.app';
+const defaultSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://irisofc.my.id';
 
 const jsonLdData = {
   '@context': 'https://schema.org',
