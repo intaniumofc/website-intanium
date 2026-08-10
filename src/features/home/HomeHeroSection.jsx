@@ -57,7 +57,7 @@ export default function HomeHeroSection() {
 
     let ctx = gsap.context(() => {
       // Set initial states
-      if (videoContainerRef.current) gsap.set(videoContainerRef.current, { scale: 1.1, opacity: 0 });
+      if (videoContainerRef.current) gsap.set(videoContainerRef.current, { scale: 1.05, opacity: 1 });
 
       const titleLines = [titleLine1Ref.current, titleLine2Ref.current].filter(Boolean);
       if (titleLines.length > 0) {
