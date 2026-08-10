@@ -648,10 +648,10 @@ export default function PaymentConfirmPage() {
                   />
                 </div>
                 <span className="text-[9px] text-[var(--text-secondary)] text-center mt-2 font-semibold">
-                  A01 • ATHIF, COBLONG
+                  INTANIUM OFC
                 </span>
                 <span className="text-[8px] text-[var(--text-muted)] text-center">
-                  NMID: ID1025370590016
+                  NMID: ID1025386933150 A01
                 </span>
               </div>
             </div>
