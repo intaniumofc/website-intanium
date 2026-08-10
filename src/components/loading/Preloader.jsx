@@ -99,7 +99,7 @@ export default function Preloader() {
       if (reduceMotion) {
         gsap.to(container, {
           opacity: 0,
-          duration: 0.4,
+          duration: 0.3,
           onComplete: () => setIsHidden(true),
         });
         return;
@@ -114,7 +114,7 @@ export default function Preloader() {
         tl.to(logoRef.current, {
           scale: 0.8,
           opacity: 0,
-          duration: 0.25,
+          duration: 0.2,
           ease: 'power3.inOut',
         }, 0);
       }
@@ -140,17 +140,17 @@ export default function Preloader() {
       if (apertureRef.current) {
         tl.to(apertureRef.current, {
           scale: 50,
-          duration: 0.4,
+          duration: 0.3,
           ease: 'expo.out',
-        }, 0.1);
+        }, 0.08);
       }
 
       // Final fade out of entire container
       tl.to(container, {
         opacity: 0,
-        duration: 0.25,
+        duration: 0.2,
         ease: 'power2.out',
-      }, 0.25);
+      }, 0.2);
 
     }, container);
 

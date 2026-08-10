@@ -9,7 +9,7 @@ html:not(.preloader-done) {
 
 /* Ensure body background matches preloader to prevent white flash */
 body {
-  background-color: #05021A;
+  background-color: #FFFFFF;
 }
 
 /* Hide homepage content initially to prevent flash of unstyled content */

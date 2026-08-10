@@ -43,13 +43,13 @@ export function usePreloader({ videoSrc, imageSources = [], onComplete }) {
       setTimeout(() => {
         loadingRef.current.completeLoading();
         onComplete?.();
-      }, 400);
+      }, 200);
     };
 
     safetyTimeout = setTimeout(() => {
       console.warn('[Preloader] Safety timeout reached. Forcing completion.');
       finishLoading();
-    }, 10000);
+    }, 6000);
 
     const run = async () => {
       try {

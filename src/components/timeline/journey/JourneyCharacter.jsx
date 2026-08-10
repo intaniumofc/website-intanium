@@ -26,7 +26,7 @@ function JourneyCharacter({ rootRef, faceRef, bobRef, size = 96 }) {
           {/* 3D Flapping Butterfly Wrapper */}
           <div className="journey-butterfly-wrapper">
             <img
-              src="/kupu-kupu.png"
+              src="/kupu-kupu.webp"
               alt="Kupu-Kupu Penjelajah IRIS"
               className="journey-butterfly-img"
               draggable="false"

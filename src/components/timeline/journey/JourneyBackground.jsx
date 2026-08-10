@@ -31,7 +31,7 @@ function JourneyBackground({ reducedMotion = false }) {
       {/* Warm yellow gradient & image base */}
       <div 
         className="journey-bg-gradient" 
-        style={{ backgroundImage: "url('/bg-shining-star.png')", backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}
+        style={{ backgroundImage: "url('/bg-shining-star.webp')", backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}
       />
 
       {/* Very soft blobs */}

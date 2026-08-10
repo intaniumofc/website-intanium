@@ -120,15 +120,24 @@
   }
 
   body {
-    background-image: url('/bg-web.webp');
-    background-attachment: fixed;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
     background-color: #FFFFFF;
     color: var(--text-body);
     font-family: var(--font-sans);
     min-height: 100vh;
+    position: relative;
+  }
+
+  /* GPU-composited fixed background — avoids costly background-attachment:fixed repaints */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-image: url('/bg-web.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    will-change: transform;
   }
 
   h1,

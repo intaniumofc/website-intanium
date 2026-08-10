@@ -169,7 +169,7 @@ export default function HomePage() {
               viewport={{ once: true, amount: 0.15 }}
               variants={scrollRevealVariants}
             >
-              <KenalanIntanCarousel socialLinks={socialLinks} />
+              <KenalanIntanCarousel socialLinks={socialLinks} bio={bio} />
             </motion.div>
           )}
 

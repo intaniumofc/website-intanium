@@ -18,7 +18,6 @@ import { cn } from '../../lib/utils';
 import { ROUTES } from '../../lib/constants';
 import { SocialTooltip } from '../../components/ui/social-media';
 import ScrollFloat from '../../components/ui/ScrollFloat';
-import { aboutIntanService } from '../../services/public/aboutIntanService';
 import intan1 from '../../assets/images/intan-01.webp';
 import intan2 from '../../assets/images/intan-02.webp';
 import intan3 from '../../assets/images/intan-03.webp';
@@ -35,7 +34,7 @@ const cardContent = {
     "Member Generasi 13 JKT48 yang dikenal ramah, penuh energi, dan berdedikasi tinggi. Selain aktif di panggung teater, Intan merupakan mahasiswi D3 Periklanan Kreatif Vokasi Universitas Indonesia dan mantan atlet pencak silat berprestasi.",
 };
 
-export default function KenalanIntanCarousel({ socialLinks, className }) {
+export default function KenalanIntanCarousel({ socialLinks, className, bio }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [dynamicStats, setDynamicStats] = useState({
     showCount: '128+ Show',
@@ -43,27 +42,22 @@ export default function KenalanIntanCarousel({ socialLinks, className }) {
   });
 
   useEffect(() => {
-    let isMounted = true;
-    aboutIntanService.getBio().then((bio) => {
-      if (!isMounted || !bio) return;
-      const theaterStat = bio.stats?.find(s =>
-        s.label?.toLowerCase().includes('teater') || s.label?.toLowerCase().includes('show')
-      );
-      const setlistStat = bio.stats?.find(s =>
-        s.label?.toLowerCase().includes('setlist')
-      );
+    if (!bio) return;
+    const theaterStat = bio.stats?.find(s =>
+      s.label?.toLowerCase().includes('teater') || s.label?.toLowerCase().includes('show')
+    );
+    const setlistStat = bio.stats?.find(s =>
+      s.label?.toLowerCase().includes('setlist')
+    );
 
-      const showVal = theaterStat ? theaterStat.value : (bio.stats?.[0]?.value || '128+ Show');
-      const setlistVal = setlistStat ? setlistStat.value : (bio.stats?.[2]?.value || '3 Setlist');
+    const showVal = theaterStat ? theaterStat.value : (bio.stats?.[0]?.value || '128+ Show');
+    const setlistVal = setlistStat ? setlistStat.value : (bio.stats?.[2]?.value || '3 Setlist');
 
-      setDynamicStats({
-        showCount: showVal,
-        setlistCount: setlistVal,
-      });
-    }).catch(err => console.error('Error fetching dynamic stats:', err));
-
-    return () => { isMounted = false; };
-  }, []);
+    setDynamicStats({
+      showCount: showVal,
+      setlistCount: setlistVal,
+    });
+  }, [bio]);
 
   // Auto-play slideshow every 4 seconds
   useEffect(() => {
