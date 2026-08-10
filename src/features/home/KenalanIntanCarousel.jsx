@@ -31,7 +31,7 @@ const cardContent = {
   catchphrase: "Intan permata yang berkilau, temukan cahayaku di hatimu!",
   birthInfo: "Bogor, 23 Feb 2006",
   description:
-    "Member Generasi 13 JKT48 yang dikenal ramah, penuh energi, dan berdedikasi tinggi. Selain aktif di panggung teater, Intan merupakan mahasiswi D3 Periklanan Kreatif Vokasi Universitas Indonesia dan mantan atlet pencak silat berprestasi.",
+    "Member trainee aktif Generasi 13 JKT48 yang memulai perjalanannya dari seorang 'Woti' yang sering melakukan cover dance JKT48. Dikenal sebagai sosok yang pantang menyerah, energik, dan hangat, Intan memiliki latar belakang yang membuatnya tumbuh menjadi seorang idol yang penuh daya pikat dan dekat dengan para penggemarnya.",
 };
 
 export default function KenalanIntanCarousel({ socialLinks, className, bio }) {
@@ -176,7 +176,7 @@ export default function KenalanIntanCarousel({ socialLinks, className, bio }) {
               <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-[var(--color-border)]">
                 {socialLinks && (
                   <div className="flex items-center gap-2.5 flex-wrap sm:flex-nowrap">
-                    <span className="text-[11px] font-bold text-[var(--color-text-secondary)] uppercase tracking-wider whitespace-nowrap">Ikuti Intan:</span>
+                    <span className="text-[11px] font-bold text-[var(--color-text-secondary)] whitespace-nowrap">Ikuti Intan:</span>
                     <SocialTooltip items={socialLinks} />
                   </div>
                 )}
