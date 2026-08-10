@@ -240,12 +240,16 @@ export default function AdminPhotoboothPage() {
     setConfirmDeleteFrame({ isOpen: true, id });
   };
 
-  const confirmDeleteFrameAction = () => {
+  const confirmDeleteFrameAction = async () => {
     const id = confirmDeleteFrame.id;
     setConfirmDeleteFrame({ isOpen: false, id: null });
     const updatedCustomFrames = (settings.customFrames || []).filter(f => f.id !== id);
-    setSettings(prev => ({ ...prev, customFrames: updatedCustomFrames }));
-    notify.success('Template Dihapus', 'Template bingkai foto telah dihapus.');
+    const newSettings = { ...settings, customFrames: updatedCustomFrames };
+    setSettings(newSettings);
+    
+    // Auto-save to DB so it persists immediately
+    await photoboothService.updateSettings(newSettings);
+    notify.success('Template Dihapus', 'Template bingkai foto telah dihapus secara permanen.');
   };
 
   // Save settings to Supabase

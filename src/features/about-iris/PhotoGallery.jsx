@@ -161,7 +161,7 @@ export const PhotoGallery = () => {
   };
 
   return (
-    <div className="mt-20 relative select-none">
+    <div className="mt-20 pb-24 relative select-none">
       <div className="absolute inset-0 max-md:hidden top-[200px] -z-10 h-[300px] w-full bg-transparent bg-[linear-gradient(to_right,#57534e_1px,transparent_1px),linear-gradient(to_bottom,#57534e_1px,transparent_1px)] bg-[size:3rem_3rem] opacity-20 [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)] dark:bg-[linear-gradient(to_right,#a8a29e_1px,transparent_1px),linear-gradient(to_bottom,#a8a29e_1px,transparent_1px)]"></div>
       <h3 className="z-20 mx-auto max-w-2xl text-center text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-slate-800 mb-3">
         Galeri Memori <span className="text-[var(--color-primary)]">IRIS</span>
