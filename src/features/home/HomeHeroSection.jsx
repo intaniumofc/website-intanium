@@ -48,79 +48,47 @@ export default function HomeHeroSection() {
     }
   }, [isComplete]);
 
-  // ── 1. ENTRANCE ANIMATION (Triggered after Preloader completes) ──
+  // ── 1. ENTRANCE ANIMATION ──
   useEffect(() => {
-    if (!isComplete) return;
-
     const container = containerRef.current;
     if (!container) return;
 
     let ctx = gsap.context(() => {
-      // Set initial states
-      if (videoContainerRef.current) gsap.set(videoContainerRef.current, { scale: 1.05, opacity: 1 });
+      if (videoContainerRef.current) gsap.set(videoContainerRef.current, { scale: 1, opacity: 1 });
 
       const titleLines = [titleLine1Ref.current, titleLine2Ref.current].filter(Boolean);
-      if (titleLines.length > 0) {
-        gsap.set(titleLines, { y: '115%', rotate: 4 });
-      }
-
       const fadeElements = [subtitleRef.current, ctaRef.current].filter(Boolean);
-      if (fadeElements.length > 0) {
-        gsap.set(fadeElements, {
-          opacity: 0,
-          scale: 0.95,
-          filter: 'blur(8px)',
-          y: 25,
-        });
-      }
 
-      if (scrollIndicatorRef.current) gsap.set(scrollIndicatorRef.current, { opacity: 0 });
-
-      // Entrance animation timeline
       const entranceTl = gsap.timeline({
-        delay: 0.1,
+        delay: 0.05,
         onComplete: () => setEntranceFinished(true)
       });
 
-      // Video scale & fade in
-      if (videoContainerRef.current) {
-        entranceTl.to(videoContainerRef.current, {
-          scale: 1,
-          opacity: 1,
-          duration: 1.2,
-          ease: 'power3.out',
-          onStart: () => {
-            if (videoRef.current) {
-              videoRef.current.play().catch(() => { });
-            }
-          },
-        }, 0);
+      if (titleLines.length > 0) {
+        entranceTl.fromTo(
+          titleLines,
+          { y: '40%', opacity: 0 },
+          { y: '0%', opacity: 1, rotate: 0, duration: 0.7, ease: 'power3.out', stagger: 0.08 },
+          0
+        );
       }
 
-      // Title Line 1 Roll up
-      if (titleLine1Ref.current) {
-        entranceTl.to(titleLine1Ref.current, { y: '0%', rotate: 0, duration: 1.1, ease: 'power4.out' }, 0.2);
+      if (fadeElements.length > 0) {
+        entranceTl.fromTo(
+          fadeElements,
+          { opacity: 0, y: 15 },
+          { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', stagger: 0.08 },
+          0.15
+        );
       }
-      // Title Line 2 Roll up
-      if (titleLine2Ref.current) {
-        entranceTl.to(titleLine2Ref.current, { y: '0%', rotate: 0, duration: 1.1, ease: 'power4.out' }, '-=0.95');
-      }
-      // Subtitle blur & fade & scale in
-      if (subtitleRef.current) {
-        entranceTl.to(subtitleRef.current, { opacity: 1, scale: 1, filter: 'blur(0px)', y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.75');
-      }
-      // CTA fade & scale in
-      if (ctaRef.current) {
-        entranceTl.to(ctaRef.current, { opacity: 1, scale: 1, filter: 'blur(0px)', y: 0, duration: 0.7, ease: 'power3.out' }, '-=0.6');
-      }
-      // Scroll indicator fade in
+
       if (scrollIndicatorRef.current) {
-        entranceTl.to(scrollIndicatorRef.current, { opacity: 1, duration: 0.6 }, '-=0.3');
+        entranceTl.fromTo(scrollIndicatorRef.current, { opacity: 0 }, { opacity: 1, duration: 0.4 }, 0.3);
       }
     }, container);
 
     return () => ctx.revert();
-  }, [isComplete]);
+  }, []);
 
   // ── 2. SCROLL TRIGGER TIMELINE (Only after entrance completes) ──
   useEffect(() => {
