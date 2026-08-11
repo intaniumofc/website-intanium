@@ -1,17 +1,15 @@
 /* Gosok Intan Mini Game Stylesheet */
 
-.scratch-page-container {
-  /* Inherit global light lavender page background to maintain text contrast */
-}
 
-/* Custom premium cyber dark spaces backgrounds for the inner game boards */
+
+/* Custom premium bright spaces backgrounds for the inner game boards */
 .scratch-start-arena {
   position: relative;
   isolation: isolate;
-  background: radial-gradient(circle at center, #0b1528 0%, #030712 100%);
+  background: radial-gradient(circle at center, #ffffff 0%, #fdf2f8 100%);
   box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
-    inset 0 0 48px rgba(3, 7, 18, 0.5);
+    inset 0 0 0 1px rgba(236, 72, 153, 0.15),
+    inset 0 0 48px rgba(236, 72, 153, 0.05);
 }
 
 .scratch-start-arena::before {
@@ -20,20 +18,20 @@
   z-index: 0;
   content: "";
   background: 
-    radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.15) 0%, transparent 60%),
-    radial-gradient(circle at 80% 20%, rgba(168, 85, 247, 0.12) 0%, transparent 50%);
+    radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.08) 0%, transparent 60%),
+    radial-gradient(circle at 80% 20%, rgba(168, 85, 247, 0.08) 0%, transparent 50%);
   pointer-events: none;
 }
 
 .scratch-play-area {
   position: relative;
   isolation: isolate;
-  background: radial-gradient(circle at center, #0b1528 0%, #030712 100%);
+  background: radial-gradient(circle at center, #ffffff 0%, #f8fafc 100%);
   box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.15),
-    inset 0 0 0 7px rgba(3, 7, 18, 0.3),
-    inset 0 22px 32px rgba(3, 7, 18, 0.5),
-    0 18px 36px rgba(6, 182, 212, 0.08);
+    inset 0 0 0 1px rgba(236, 72, 153, 0.15),
+    inset 0 0 0 7px rgba(255, 255, 255, 0.5),
+    inset 0 22px 32px rgba(236, 72, 153, 0.05),
+    0 18px 36px rgba(236, 72, 153, 0.08);
   touch-action: manipulation;
 }
 
@@ -43,29 +41,29 @@
   z-index: 0;
   content: "";
   background: 
-    radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.12) 0%, transparent 60%),
-    radial-gradient(circle at 20% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+    radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.05) 0%, transparent 60%),
+    radial-gradient(circle at 20% 80%, rgba(236, 72, 153, 0.08) 0%, transparent 50%);
   pointer-events: none;
 }
 
 .scratch-card-box {
-  background-color: rgba(15, 23, 42, 0.85);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), 
-              0 0 40px rgba(6, 182, 212, 0.08);
+  background-color: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 25px 50px -12px rgba(236, 72, 153, 0.15), 
+              0 0 40px rgba(168, 85, 247, 0.08);
   backdrop-filter: blur(16px);
 }
 
 /* Custom Grid wrapper styling */
 .scratch-cell-wrapper {
-  background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.6),
-              0 2px 5px rgba(0, 0, 0, 0.3);
+  background: radial-gradient(circle at center, #f8fafc 0%, #e2e8f0 100%);
+  border: 1px solid rgba(236, 72, 153, 0.15);
+  box-shadow: inset 0 4px 10px rgba(236, 72, 153, 0.1),
+              0 2px 5px rgba(236, 72, 153, 0.05);
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
 }
 
 .scratch-cell-wrapper:hover {
-  border-color: rgba(6, 182, 212, 0.25);
+  border-color: rgba(236, 72, 153, 0.4);
   transform: scale(1.02);
 }
 

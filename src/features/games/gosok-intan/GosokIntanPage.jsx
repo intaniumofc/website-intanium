@@ -248,10 +248,10 @@ export default function GosokIntanPage() {
   };
 
   const getPerformanceBadge = (finalScore) => {
-    if (finalScore >= 100) return { title: 'IRIS Gem Master', emoji: '🏆', color: 'text-amber-400 border-amber-500/35 bg-amber-500/10' };
-    if (finalScore >= 60) return { title: 'Intan Admirer', emoji: '💎', color: 'text-cyan-400 border-cyan-500/30 bg-cyan-500/10' };
-    if (finalScore >= 20) return { title: 'Lucky Beginner', emoji: '⭐️', color: 'text-purple-400 border-purple-500/30 bg-purple-500/10' };
-    return { title: 'IRIS Novice', emoji: '🎮', color: 'text-slate-400 border-white/10 bg-white/5' };
+    if (finalScore >= 100) return { title: 'IRIS Gem Master', emoji: '🏆', color: 'text-amber-600 border-amber-200 bg-amber-50' };
+    if (finalScore >= 60) return { title: 'Intan Admirer', emoji: '💎', color: 'text-cyan-600 border-cyan-200 bg-cyan-50' };
+    if (finalScore >= 20) return { title: 'Lucky Beginner', emoji: '⭐️', color: 'text-purple-600 border-purple-200 bg-purple-50' };
+    return { title: 'IRIS Novice', emoji: '🎮', color: 'text-slate-600 border-slate-200 bg-slate-50' };
   };
 
   const loadLeaderboardData = async (selectedPeriod) => {
@@ -312,7 +312,7 @@ export default function GosokIntanPage() {
             <section className="game-arena-column">
               
               {gameState === 'start' && (
-                <div className="scratch-start-arena relative grid min-h-[520px] place-items-center overflow-hidden rounded-[1.5rem] px-5 py-10 text-center text-white">
+                <div className="scratch-start-arena relative grid min-h-[520px] place-items-center overflow-hidden rounded-[1.5rem] px-5 py-10 text-center text-[var(--color-heading)]">
                   <AnimatePresence mode="wait">
                     {showWelcome ? (
                       /* Welcome Quick Lobby */
@@ -321,16 +321,16 @@ export default function GosokIntanPage() {
                         initial={{ opacity: 0, y: 15 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -15 }}
-                        className="game-start-panel relative z-10 w-full max-w-md rounded-[1.75rem] border border-white/15 px-5 py-8 sm:px-8"
+                        className="relative z-10 w-full max-w-md rounded-[1.75rem] border border-[var(--color-pink)]/20 bg-white/70 shadow-2xl backdrop-blur-md px-5 py-8 sm:px-8"
                       >
-                        <div className="inline-flex p-4 bg-cyan-500/15 border border-cyan-500/30 rounded-2xl mb-4 text-cyan-400">
+                        <div className="inline-flex p-4 bg-[var(--color-pink)]/10 border border-[var(--color-pink)]/20 rounded-2xl mb-4 text-[var(--color-pink)]">
                           <Gem className="size-10 animate-pulse" />
                         </div>
-                        <h3 className="text-xs font-bold uppercase tracking-widest text-white/50">
+                        <h3 className="text-xs font-bold uppercase tracking-widest text-slate-500">
                           Selamat Datang Kembali
                         </h3>
                         <div className="flex items-center justify-center gap-2 mt-2 mb-3">
-                          <h2 className="text-3xl font-black text-white tracking-tight leading-none">
+                          <h2 className="text-3xl font-black text-[var(--color-heading)] tracking-tight leading-none">
                             {username}
                           </h2>
                           <button 
@@ -338,23 +338,23 @@ export default function GosokIntanPage() {
                               setIsEditingName(true);
                               setNameInput(username);
                             }}
-                            className="p-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-cyan-400 transition-all cursor-pointer"
+                            className="p-1.5 rounded-lg bg-white border border-[var(--color-border)] hover:bg-slate-50 hover:text-[var(--color-pink)] text-slate-400 transition-all cursor-pointer shadow-sm"
                             title="Edit nama"
                           >
                             <Edit3 className="size-3.5" />
                           </button>
                         </div>
-                        <p className="text-xs text-white/70 max-w-xs mx-auto leading-relaxed">
+                        <p className="text-xs text-slate-600 max-w-xs mx-auto leading-relaxed">
                           Sisa kuota tiket bermain harian Anda siap diaktifkan. Gosok foil logam perak dan temukan Kak Intan.
                         </p>
-                        <div className="my-5 p-4 bg-black/40 rounded-xl border border-white/5 flex items-center justify-between">
-                          <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest">Sisa Tiket:</span>
-                          <span className={`text-base font-black ${ticketsLeft > 1 ? 'text-cyan-400' : 'text-rose-400'}`}>{ticketsLeft} / 5</span>
+                        <div className="my-5 p-4 bg-white/60 rounded-xl border border-[var(--color-pink)]/15 shadow-sm flex items-center justify-between">
+                          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Sisa Tiket:</span>
+                          <span className={`text-base font-black ${ticketsLeft > 1 ? 'text-[var(--color-pink)]' : 'text-rose-500'}`}>{ticketsLeft} / 5</span>
                         </div>
                         <button
                           disabled={loading || ticketsLeft <= 0}
                           onClick={handleStartGame}
-                          className="game-start-button mt-2 w-full rounded-xl bg-white px-5 py-3.5 font-extrabold text-[#170C79] cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
+                          className="game-start-button mt-2 w-full rounded-xl bg-gradient-to-r from-[var(--color-pink)] to-[var(--color-purple)] px-5 py-3.5 font-extrabold text-white shadow-[var(--shadow-pink-glow)] cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
                         >
                           {loading ? 'Memuat Sesi...' : ticketsLeft <= 0 ? 'Tiket Bermain Habis' : 'Mulai Menggosok'}
                         </button>
@@ -366,17 +366,17 @@ export default function GosokIntanPage() {
                         initial={{ opacity: 0, y: 15 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -15 }}
-                        className="game-start-panel relative z-10 w-full max-w-md rounded-[1.75rem] border border-white/15 px-5 py-8 sm:px-8"
+                        className="relative z-10 w-full max-w-md rounded-[1.75rem] border border-[var(--color-pink)]/20 bg-white/70 shadow-2xl backdrop-blur-md px-5 py-8 sm:px-8"
                       >
-                        <div className="inline-flex p-4 bg-cyan-500/15 border border-cyan-500/30 rounded-2xl mb-4 text-cyan-400">
+                        <div className="inline-flex p-4 bg-[var(--color-pink)]/10 border border-[var(--color-pink)]/20 rounded-2xl mb-4 text-[var(--color-pink)]">
                           <Gamepad2 className="size-10 animate-pulse" />
                         </div>
-                        <h2 className="text-2xl font-black">Identitas Pemain</h2>
-                        <p className="text-xs text-white/70 mt-2 max-w-xs mx-auto">
+                        <h2 className="text-2xl font-black text-[var(--color-heading)]">Identitas Pemain</h2>
+                        <p className="text-xs text-slate-600 mt-2 max-w-xs mx-auto">
                           Masukkan nama Anda terlebih dahulu untuk memulai mencatat rekor di papan peringkat Arena.
                         </p>
                         <div className="space-y-2 text-left my-5">
-                          <label className="block text-[10px] font-extrabold uppercase text-white/55 tracking-wider">
+                          <label className="block text-[10px] font-extrabold uppercase text-slate-500 tracking-wider">
                             Nama Pemain
                           </label>
                           <input
@@ -389,10 +389,10 @@ export default function GosokIntanPage() {
                             }}
                             onKeyDown={(e) => e.key === 'Enter' && handleStartGame()}
                             maxLength={24}
-                            className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-white outline-none placeholder:text-white/35 focus:bg-white/15 focus:border-white/60"
+                            className="w-full rounded-xl border border-[var(--color-border)] bg-white px-4 py-3 text-[var(--color-heading)] shadow-sm outline-none placeholder:text-slate-400 focus:bg-white focus:border-[var(--color-pink)] focus:ring-2 focus:ring-[var(--color-pink)]/20"
                           />
                           {errorMsg && (
-                            <p className="text-red-300 text-xs font-semibold text-left">{errorMsg}</p>
+                            <p className="text-red-500 text-xs font-semibold text-left">{errorMsg}</p>
                           )}
                         </div>
                         <div className="flex gap-3">
@@ -402,7 +402,7 @@ export default function GosokIntanPage() {
                                 setIsEditingName(false);
                                 setNameInput(username);
                               }}
-                              className="flex-1 py-3 rounded-xl border border-white/10 text-white hover:bg-white/5 font-extrabold text-sm transition-colors cursor-pointer"
+                              className="flex-1 py-3 rounded-xl border border-[var(--color-border)] text-slate-600 hover:bg-slate-50 bg-white shadow-sm font-extrabold text-sm transition-colors cursor-pointer"
                             >
                               Batal
                             </button>
@@ -411,7 +411,7 @@ export default function GosokIntanPage() {
                             type="button"
                             disabled={loading || nameInput.trim().length < 2}
                             onClick={handleStartGame}
-                            className="game-start-button flex-grow rounded-xl bg-white px-5 py-3 font-extrabold text-[#170C79] cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
+                            className="game-start-button flex-grow rounded-xl bg-gradient-to-r from-[var(--color-pink)] to-[var(--color-purple)] px-5 py-3 font-extrabold text-white shadow-[var(--shadow-pink-glow)] cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
                           >
                             Konfirmasi
                           </button>
@@ -442,7 +442,7 @@ export default function GosokIntanPage() {
                       className="grid grid-cols-4 gap-3 sm:gap-4 max-w-md w-full aspect-square justify-center items-center relative z-10"
                     >
                       {cells.map((cell) => (
-                        <div key={cell.index} className="scratch-cell-wrapper aspect-square relative rounded-full overflow-hidden bg-slate-950 border border-white/5 shadow-inner flex items-center justify-center">
+                        <div key={cell.index} className="scratch-cell-wrapper aspect-square relative rounded-full overflow-hidden flex items-center justify-center">
                           {/* Render reveal content */}
                           {cell.revealed && (
                             <motion.div 
@@ -461,20 +461,20 @@ export default function GosokIntanPage() {
                                       draggable="false"
                                     />
                                   )}
-                                  <div className="absolute inset-0 bg-cyan-950/20 border border-cyan-400 rounded-full" />
-                                  <div className="absolute top-1 right-1 text-cyan-300">
+                                  <div className="absolute inset-0 bg-[var(--color-pink)]/10 border border-[var(--color-pink)] rounded-full" />
+                                  <div className="absolute top-1 right-1 text-[var(--color-pink)]">
                                     <Sparkles className="size-4 animate-bounce" />
                                   </div>
-                                  <div className="absolute bottom-1 left-1 text-yellow-300">
+                                  <div className="absolute bottom-1 left-1 text-yellow-400">
                                     <Gem className="size-3.5" />
                                   </div>
                                 </>
                               )}
                               {cell.content === 'bomb' && (
-                                <div className="w-full h-full bg-red-950/60 border border-red-500 flex flex-col items-center justify-center rounded-full text-red-500">
+                                <div className="w-full h-full bg-red-100 border border-red-500 flex flex-col items-center justify-center rounded-full text-red-500">
                                   <Bomb className="size-7 animate-ping absolute" />
                                   <Bomb className="size-6 z-10" />
-                                  <span className="text-[8px] font-black uppercase mt-1 text-red-400">BOOM!</span>
+                                  <span className="text-[8px] font-black uppercase mt-1 text-red-600">BOOM!</span>
                                 </div>
                               )}
                             </motion.div>
@@ -503,38 +503,38 @@ export default function GosokIntanPage() {
               )}
 
               {gameState === 'ended' && (
-                <div className="scratch-start-arena relative grid min-h-[520px] place-items-center overflow-hidden rounded-[1.5rem] px-5 py-10 text-center text-white">
+                <div className="scratch-start-arena relative grid min-h-[520px] place-items-center overflow-hidden rounded-[1.5rem] px-5 py-10 text-center text-[var(--color-heading)]">
                   <motion.div 
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="game-start-panel relative z-10 w-full max-w-md rounded-[1.75rem] border border-white/15 px-5 py-8 sm:px-8"
+                    className="relative z-10 w-full max-w-md rounded-[1.75rem] border border-[var(--color-pink)]/20 bg-white/70 shadow-2xl backdrop-blur-md px-5 py-8 sm:px-8"
                   >
                     {gameResult === 'won' ? (
-                      <div className="inline-flex p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-full text-emerald-400 mb-4 animate-bounce">
+                      <div className="inline-flex p-4 bg-emerald-100 border border-emerald-200 rounded-full text-emerald-500 mb-4 animate-bounce">
                         <Award className="size-12" />
                       </div>
                     ) : (
-                      <div className="inline-flex p-4 bg-red-500/10 border border-red-500/30 rounded-full text-red-400 mb-4 animate-pulse">
+                      <div className="inline-flex p-4 bg-red-100 border border-red-200 rounded-full text-red-500 mb-4 animate-pulse">
                         <Bomb className="size-12" />
                       </div>
                     )}
 
-                    <h3 className="text-3xl font-black">
+                    <h3 className="text-3xl font-black text-[var(--color-heading)]">
                       {gameResult === 'won' ? 'MISI SELESAI! 🎉' : 'AKSES TERPUTUS! 💥'}
                     </h3>
                     
-                    <p className="text-xs text-white/70 mt-2 leading-relaxed">
+                    <p className="text-xs text-slate-600 mt-2 leading-relaxed">
                       {gameResult === 'won' 
                         ? 'Luar biasa! Anda berhasil mengamankan semua foto Kak Intan tanpa mengenai jebakan bom!' 
                         : 'Sensor mendeteksi ledakan bom peledak di dalam salah satu grid.'}
                     </p>
 
                     {/* Score summary panel */}
-                    <div className="my-5 p-5 bg-black/40 rounded-2xl border border-white/5 max-w-xs mx-auto">
-                      <p className="text-[10px] font-bold text-white/50 uppercase tracking-widest">Skor Akhir</p>
-                      <p className="text-4xl font-black text-cyan-400 mt-1">{score} Pts</p>
+                    <div className="my-5 p-5 bg-white/60 rounded-2xl border border-[var(--color-pink)]/15 shadow-sm max-w-xs mx-auto">
+                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Skor Akhir</p>
+                      <p className="text-4xl font-black text-[var(--color-pink)] mt-1">{score} Pts</p>
 
-                      <div className={`mt-3 flex items-center justify-center gap-1.5 text-xs font-bold border rounded-lg py-1.5 px-3 bg-white/5 border-white/10 ${getPerformanceBadge(score).color}`}>
+                      <div className={`mt-3 flex items-center justify-center gap-1.5 text-xs font-bold border rounded-lg py-1.5 px-3 bg-white shadow-sm border-[var(--color-border)] ${getPerformanceBadge(score).color}`}>
                         <span>Gelar:</span>
                         <span>
                           {getPerformanceBadge(score).emoji} {getPerformanceBadge(score).title}
@@ -546,17 +546,32 @@ export default function GosokIntanPage() {
                     <div className="grid gap-2 sm:grid-cols-2 mt-6">
                       <button
                         onClick={() => setGameState('start')}
-                        className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 px-4 py-3 text-sm font-bold text-white cursor-pointer hover:bg-white/5 transition"
+                        className="inline-flex items-center justify-center gap-2 rounded-xl border border-[var(--color-border)] bg-white px-4 py-3 text-sm font-bold text-slate-600 shadow-sm cursor-pointer hover:bg-slate-50 transition"
                       >
                         Kembali ke Lobby
                       </button>
                       <button
                         disabled={ticketsLeft <= 0}
                         onClick={handleStartGame}
-                        className="game-start-button inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-bold text-[#170C79] cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
+                        className="game-start-button inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[var(--color-pink)] to-[var(--color-purple)] px-4 py-3 text-sm font-bold text-white shadow-[var(--shadow-pink-glow)] cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         <RotateCcw className="size-4" /> {ticketsLeft <= 0 ? 'Tiket Habis' : 'Main Lagi'}
                       </button>
+                    </div>
+
+                    {/* Share to X Button */}
+                    <div className="mt-3">
+                      <a
+                        href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Saya berhasil mencetak ${score} Pts di game Gosok Intan IRIS! Bisa kalahkan rekorku? 💎✨`)}&url=${encodeURIComponent(typeof window !== 'undefined' ? `${window.location.origin}/games/gosok-intan?user=${username}&score=${score}` : '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-black px-4 py-3.5 text-sm font-bold text-white shadow-sm hover:bg-slate-800 transition cursor-pointer"
+                      >
+                        <svg className="size-4 fill-white" viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 22.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                        </svg>
+                        Share Skor ke X
+                      </a>
                     </div>
                   </motion.div>
                 </div>
