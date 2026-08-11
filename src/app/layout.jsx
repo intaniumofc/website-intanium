@@ -154,6 +154,12 @@ export default function RootLayout({ children }) {
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdData) }}
         />
+        {/* Cloudflare Web Analytics */}
+        <Script 
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          strategy="afterInteractive"
+          data-cf-beacon='{"token": "8b01a7bc1fc64d658009f0230f6fa76d"}'
+        />
       </body>
     </html>
   );
