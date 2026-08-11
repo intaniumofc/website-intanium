@@ -104,7 +104,7 @@ export default function AdminPlaylists() {
       spotifyEmbedUrl: '',
       imageUrl: '',
       curatorNote: '',
-      description: 'Arsip keseruan dan memori lagu-lagu pilihan dari edisi #DengerINTAN sebelumnya.'
+      description: 'Arsip keseruan dan memori lagu-lagu pilihan dari edisi #dengerINTAN sebelumnya.'
     });
     setIsModalOpen(true);
   };
@@ -137,7 +137,7 @@ export default function AdminPlaylists() {
     const res = await playlistService.deletePlaylist(id);
     if (res.success) {
       setItems(items.filter(item => item.id !== id));
-      notify.success('Playlist dihapus', 'Playlist #DengerINTAN berhasil dihapus.');
+      notify.success('Playlist dihapus', 'Playlist #dengerINTAN berhasil dihapus.');
     } else {
       notify.error('Gagal menghapus playlist', res.error);
     }
@@ -381,7 +381,7 @@ export default function AdminPlaylists() {
         <div>
           <h1 className="text-xl sm:text-2xl font-extrabold text-[var(--text-primary)] flex items-center gap-2">
             <Headphones className="h-6 w-6 text-[var(--color-primary)]" />
-            <span>{activeTab === 'playlists' ? 'Kelola Playlist #DengerINTAN' : 'Kelola Most Played Songs'}</span>
+            <span>{activeTab === 'playlists' ? 'Kelola Playlist #dengerINTAN' : 'Kelola Most Played Songs'}</span>
           </h1>
           <p className="text-xs text-[var(--text-secondary)] mt-1">
             {activeTab === 'playlists'
@@ -410,7 +410,7 @@ export default function AdminPlaylists() {
               : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
           }`}
         >
-          Kelola Playlist #DengerINTAN
+          Kelola Playlist #dengerINTAN
         </button>
         <button
           onClick={() => setActiveTab('songs')}
@@ -989,7 +989,7 @@ export default function AdminPlaylists() {
       <ConfirmDialog
         isOpen={confirmPlaylistDelete.isOpen}
         title="Hapus Playlist?"
-        message="Playlist #DengerINTAN ini akan dihapus secara permanen. Tindakan ini tidak bisa dibatalkan."
+        message="Playlist #dengerINTAN ini akan dihapus secara permanen. Tindakan ini tidak bisa dibatalkan."
         confirmText="Ya, Hapus"
         cancelText="Batal"
         type="danger"

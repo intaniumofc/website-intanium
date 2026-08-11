@@ -193,6 +193,55 @@ export const recapService = {
       return { success: false, error: error.message };
     }
     return { success: true };
+  },
+
+  getAnnualDescription: async (year = 2026, monthlyRecaps = []) => {
+    try {
+      const { data, error } = await supabase
+        .from('recaps')
+        .select('summary')
+        .eq('id', `annual_desc_${year}`)
+        .single();
+      
+      if (!error && data?.summary) {
+        return data.summary;
+      }
+    } catch (e) {
+      console.error('Error fetching annual description:', e);
+    }
+    
+    // Fallback if not found in database
+    const yearItems = monthlyRecaps.filter(r => Number(r.year) === Number(year));
+    if (yearItems.length > 0) {
+      const firstMonth = yearItems[0].month;
+      const lastMonth = yearItems[yearItems.length - 1].month;
+      return `Ringkasan perjalanan Nur Intan yang telah terdokumentasi dari ${firstMonth} sampai ${lastMonth} ${year}.`;
+    }
+    return `Ringkasan perjalanan Nur Intan untuk tahun ${year}.`;
+  },
+
+  saveAnnualDescription: async (year = 2026, text = '') => {
+    try {
+      if (!text || text.trim() === '') {
+        // Delete if text is empty (revert to fallback)
+        await supabase.from('recaps').delete().eq('id', `annual_desc_${year}`);
+        return { success: true };
+      }
+      
+      const { error } = await supabase
+        .from('recaps')
+        .upsert([{
+          id: `annual_desc_${year}`,
+          title: `Annual Description ${year}`,
+          summary: text.trim(),
+          publish_date: new Date().toISOString()
+        }]);
+        
+      if (error) throw error;
+      return { success: true };
+    } catch (error) {
+      console.error('Error saving annual description:', error);
+      return { success: false, error: error.message };
+    }
   }
 };
-

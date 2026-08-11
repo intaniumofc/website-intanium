@@ -17,6 +17,10 @@ export default function AdminRecaps() {
   const [isMonthlyLoading, setIsMonthlyLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Annual Recap Description states
+  const [annualYear, setAnnualYear] = useState(2026);
+  const [annualDescInput, setAnnualDescInput] = useState('');
+
   // Modal form states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState('add'); // 'add' | 'edit'
@@ -49,6 +53,16 @@ export default function AdminRecaps() {
   useEffect(() => {
     fetchMonthlyData();
   }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchDesc = async () => {
+      const desc = await recapService.getAnnualDescription(annualYear, monthlyItems);
+      if (isMounted) setAnnualDescInput(desc);
+    };
+    fetchDesc();
+    return () => { isMounted = false; };
+  }, [annualYear, monthlyItems]);
 
   const fetchMonthlyData = async () => {
     setIsMonthlyLoading(true);
@@ -274,6 +288,67 @@ export default function AdminRecaps() {
           <Plus className="h-4 w-4" /> Tambah Buku Recap
         </Button>
       </div>
+
+      {/* Annual Recap Description Card */}
+      <Card hoverEffect={false} className="p-5 border border-[var(--border-color)] bg-white rounded-2xl shadow-sm space-y-3">
+        <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 border-b border-[var(--border-color)] pb-3">
+          <div>
+            <h3 className="font-extrabold text-sm text-[var(--text-primary)] flex items-center gap-2">
+              <BookOpen className="h-4 w-4 text-[var(--color-primary)] shrink-0" />
+              Kelola Deskripsi Recap Tahunan ({annualYear})
+            </h3>
+            <p className="text-xs text-[var(--text-secondary)]">
+              Atur kalimat ringkasan perjalanan di halaman Recap Tahunan per tahun.
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <label className="text-xs font-bold text-[var(--text-secondary)] whitespace-nowrap">Pilih Tahun:</label>
+            <select
+              value={annualYear}
+              onChange={(e) => setAnnualYear(Number(e.target.value))}
+              className="px-3 py-1.5 border border-[var(--border-color)] rounded-lg text-xs font-bold bg-white text-[var(--text-primary)] focus:outline-none cursor-pointer"
+            >
+              <option value={2026}>2026</option>
+              <option value={2027}>2027 (Coming Soon)</option>
+            </select>
+          </div>
+        </div>
+        <div className="space-y-3">
+          <textarea
+            rows={2}
+            value={annualDescInput}
+            onChange={(e) => setAnnualDescInput(e.target.value)}
+            placeholder="Ringkasan perjalanan Nur Intan…"
+            className="w-full p-3 border border-[var(--border-color)] rounded-xl text-xs text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/20"
+          />
+          <div className="flex justify-end gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-xs cursor-pointer"
+              onClick={async () => {
+                await recapService.saveAnnualDescription(annualYear, '');
+                const defaultDesc = await recapService.getAnnualDescription(annualYear, monthlyItems);
+                setAnnualDescInput(defaultDesc);
+                notify.success('Deskripsi Direset', `Deskripsi recap tahunan ${annualYear} dikembalikan ke kalkulasi otomatis.`);
+              }}
+            >
+              Reset ke Otomatis
+            </Button>
+            <Button
+              variant="primary"
+              size="sm"
+              className="text-xs cursor-pointer"
+              onClick={async () => {
+                await recapService.saveAnnualDescription(annualYear, annualDescInput);
+                notify.success('Deskripsi Disimpan', `Deskripsi recap tahunan ${annualYear} berhasil disimpan.`);
+              }}
+            >
+              Simpan Deskripsi
+            </Button>
+          </div>
+        </div>
+      </Card>
 
       {/* Filters & Search */}
       <div className="flex justify-between items-center">

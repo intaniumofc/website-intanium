@@ -19,7 +19,10 @@ import {
   SkipBack,
   SkipForward,
   Volume2,
-  VolumeX
+  VolumeX,
+  Calendar,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -172,8 +175,6 @@ function LazySpotifyIframe({ src, title, height = "352" }) {
   );
 }
 
-/* ------------------------------------------------------------- useRafLoop */
-
 function useRafLoop(cb) {
   const cbRef = useRef(cb);
   useEffect(() => {
@@ -193,124 +194,7 @@ function useRafLoop(cb) {
   }, []);
 }
 
-/* -------------------------------------------------- useTransitionSound */
 
-function useTransitionSound() {
-  const ctxRef = useRef(null);
-  useEffect(() => {
-    return () => {
-      if (ctxRef.current) {
-        ctxRef.current.close().catch(() => { });
-      }
-      ctxRef.current = null;
-    };
-  }, []);
-  return useCallback((bassEnergy = 0.5) => {
-    try {
-      if (!ctxRef.current) {
-        const Ctor =
-          window.AudioContext ||
-          window.webkitAudioContext;
-        if (!Ctor) return;
-        ctxRef.current = new Ctor();
-      }
-      const ctx = ctxRef.current;
-      if (ctx.state === 'suspended') ctx.resume();
-      const now = ctx.currentTime;
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      const startFreq = 440 + bassEnergy * 440;
-      const endFreq = startFreq * (2 / 3);
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(startFreq, now);
-      osc.frequency.exponentialRampToValueAtTime(endFreq, now + 0.09);
-      gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.exponentialRampToValueAtTime(0.06, now + 0.012);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
-      osc.connect(gain).connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.18);
-    } catch {
-      /* Web Audio unavailable */
-    }
-  }, []);
-}
-
-/* --------------------------------------------------- useAudioAnalyser */
-
-const FFT_SIZE = 256;
-
-function useAudioAnalyser(audioRef) {
-  const ctxRef = useRef(null);
-  const analyserRef = useRef(null);
-  const dataRef = useRef(new Uint8Array(FFT_SIZE / 2));
-  const connectedRef = useRef(false);
-
-  const connect = useCallback(() => {
-    const audio = audioRef.current;
-    if (!audio || connectedRef.current) return;
-    try {
-      const Ctor =
-        window.AudioContext ||
-        window.webkitAudioContext;
-      if (!Ctor) return;
-      const ctx = new Ctor();
-      const analyser = ctx.createAnalyser();
-      analyser.fftSize = FFT_SIZE;
-      analyser.smoothingTimeConstant = 0.8;
-      const source = ctx.createMediaElementSource(audio);
-      source.connect(analyser);
-      analyser.connect(ctx.destination);
-      ctxRef.current = ctx;
-      analyserRef.current = analyser;
-      dataRef.current = new Uint8Array(analyser.frequencyBinCount);
-      connectedRef.current = true;
-      if (ctx.state === 'suspended') ctx.resume().catch(() => { });
-    } catch {
-      /* unavailable or already connected */
-    }
-  }, [audioRef]);
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    audio.addEventListener('play', connect, { once: true });
-    return () => audio.removeEventListener('play', connect);
-  }, [audioRef, connect]);
-
-  useEffect(() => {
-    return () => {
-      if (ctxRef.current) {
-        ctxRef.current.close().catch(() => { });
-      }
-      ctxRef.current = null;
-    };
-  }, []);
-
-  const getFrequencyData = useCallback(() => {
-    const analyser = analyserRef.current;
-    if (!analyser) return null;
-    if (ctxRef.current && ctxRef.current.state === 'suspended')
-      ctxRef.current.resume().catch(() => { });
-    analyser.getByteFrequencyData(dataRef.current);
-    return dataRef.current;
-  }, []);
-
-  const getBandEnergy = useCallback((startBin, endBin) => {
-    if (!analyserRef.current) return 0;
-    const data = dataRef.current;
-    const count = endBin - startBin;
-    if (count <= 0) return 0;
-    let sum = 0;
-    for (let i = startBin; i < endBin && i < data.length; i++)
-      sum += data[i];
-    return sum / count / 255;
-  }, []);
-
-  return { getFrequencyData, getBandEnergy };
-}
-
-/* ------------------------------------------------------ useAudioPlayer */
 
 function shuffleOrder(pinFirst, count) {
   const rest = Array.from({ length: count }, (_, i) => i).filter(
@@ -372,21 +256,24 @@ function useAudioPlayer(tracks) {
     direction: null,
   });
 
-  const { getFrequencyData, getBandEnergy } = useAudioAnalyser(audioRef);
-  const playTransitionSound = useTransitionSound();
-
   const loadTrack = useCallback((index, autoplay, direction) => {
     const audio = audioRef.current;
     if (!audio) return;
-    const bassEnergy = getBandEnergy(0, 4);
-    playTransitionSound(bassEnergy);
+    
     dispatch({ type: 'SET_TRACK', index, direction });
+    
+    // Properly stop existing playback before setting new source
+    audio.pause();
     audio.src = tracks[index].src;
     audio.volume = isMuted ? 0 : volume;
     audio.muted = isMuted;
     audio.load();
-    if (autoplay) audio.play().catch(() => { });
-  }, [tracks, playTransitionSound, getBandEnergy, volume, isMuted]);
+    if (autoplay) {
+      audio.play().catch((err) => {
+        console.error("Autoplay prevented or playback failed:", err);
+      });
+    }
+  }, [tracks, volume, isMuted]);
 
   const toggle = useCallback(() => {
     const audio = audioRef.current;
@@ -524,7 +411,6 @@ function useAudioPlayer(tracks) {
     seek,
     toggleShuffle,
     cycleLoop,
-    getFrequencyData,
     loadTrack,
     volume,
     isMuted,
@@ -569,384 +455,7 @@ function useKeyboardShortcuts(actions) {
   }, [actions]);
 }
 
-/* --------------------------------------------------------- ScalesMixer */
-
-const COLS = 10;
-const ROWS = 10;
-const BAND_RANGES = [
-  [0, 1], [1, 3], [3, 6], [6, 10], [10, 16],
-  [16, 24], [24, 36], [36, 52], [52, 74], [74, 100],
-];
-const sineOut = (x) => Math.sin((x * Math.PI) / 2);
-const sineIn = (x) => 1 - Math.cos((x * Math.PI) / 2);
-const sineInOut = (x) => -(Math.cos(Math.PI * x) - 1) / 2;
-const lerp = (a, b, t) => a + (b - a) * t;
-const PART_A_DUR = 1.5;
-const PART_A_TO = 11;
-const PART_A_STEP = 3 / (COLS - 1);
-const PART_B_DUR = 1;
-const SCALE_FROM = 0.133;
-const SCALE_TO = 0.8;
-
-function partAColumnY(time, col) {
-  const local = time - col * PART_A_STEP;
-  const period = PART_A_DUR * 2;
-  const cyc = ((local % period) + period) % period;
-  if (cyc < PART_A_DUR) return PART_A_TO * sineInOut(cyc / PART_A_DUR);
-  return PART_A_TO * sineInOut(1 - (cyc - PART_A_DUR) / PART_A_DUR);
-}
-function partBCircle(time, col, row) {
-  const frac = row / ROWS;
-  const yFrom = lerp(77, -77, frac);
-  const yTo = lerp(col, -col, frac);
-  const local = time - col / COLS;
-  const period = PART_B_DUR * 2;
-  const cyc = ((local % period) + period) % period;
-  let e;
-  if (cyc < PART_B_DUR) e = sineOut(cyc / PART_B_DUR);
-  else e = sineIn(1 - (cyc - PART_B_DUR) / PART_B_DUR);
-  return [lerp(yFrom, yTo, e), lerp(SCALE_FROM, SCALE_TO, e)];
-}
-
-function ScalesMixer({ isPlaying, getFrequencyData }) {
-  const maskId = useId().replace(/:/g, '_');
-  const colRefs = useRef([]);
-  const circleRefs = useRef(Array.from({ length: COLS }, () => []));
-  const tRef = useRef(50);
-
-  useRafLoop((_, dt) => {
-    if (isPlaying) tRef.current += dt / 1000;
-    const time = tRef.current;
-    const freqData = getFrequencyData ? getFrequencyData() : null;
-    for (let c = 0; c < COLS; c++) {
-      let energy = 1.0;
-      if (freqData) {
-        const [binStart, binEnd] = BAND_RANGES[c];
-        let sum = 0;
-        for (let b = binStart; b < binEnd; b++) sum += freqData[b] ?? 0;
-        energy = Math.sqrt(sum / (binEnd - binStart) / 255);
-      }
-      const bobGain = freqData ? 0.4 + energy : 1;
-      const scaleGain = freqData ? 0.5 + energy : 1;
-      const colEl = colRefs.current[c];
-      if (colEl) {
-        const ay = partAColumnY(time, c) * bobGain;
-        colEl.style.transform = `translate(${c * 10}px, ${ay}px)`;
-      }
-      for (let r = 0; r < ROWS; r++) {
-        const circle = circleRefs.current[c][r];
-        if (!circle) continue;
-        const [ty, s] = partBCircle(time, c, r);
-        circle.style.transform = `translateY(${ty}px) scale(${s * scaleGain})`;
-      }
-    }
-  });
-
-  return (
-    <svg className="scales" viewBox="0 0 98 108" aria-hidden="true">
-      <mask id={maskId}>
-        <rect width="10" height="10" fill="#fff" />
-      </mask>
-      {Array.from({ length: COLS }, (_, c) => (
-        <g
-          key={c}
-          ref={(el) => {
-            colRefs.current[c] = el;
-          }}
-          style={{ transform: `translate(${c * 10}px, 0px)` }}
-        >
-          {Array.from({ length: ROWS }, (_, r) => (
-            <g
-              key={r}
-              mask={`url(#${maskId})`}
-              transform={`translate(0 ${r * 10})`}
-            >
-              <circle
-                ref={(el) => {
-                  circleRefs.current[c][r] = el;
-                }}
-                cx="5"
-                cy="5"
-                r="5"
-                style={{
-                  transformBox: 'fill-box',
-                  transformOrigin: 'center',
-                }}
-              />
-            </g>
-          ))}
-        </g>
-      ))}
-    </svg>
-  );
-}
-
-/* ------------------------------------------------------- Disc + layers */
-
-const SPIN_MAX = 0.4375;
-const BURST_DURATION = 620;
-
-function Disc({
-  layers,
-  isPlaying,
-  isZoomed,
-  trackKey,
-  direction,
-  onZoomToggle,
-}) {
-  const spinRef = useRef(null);
-  const rotRef = useRef(0);
-  const velRef = useRef(0);
-  const burstRef = useRef({ from: 0, start: 0, active: false, pending: false });
-  const lastKey = useRef(trackKey);
-
-  useEffect(() => {
-    if (trackKey !== lastKey.current) {
-      lastKey.current = trackKey;
-      if (direction) {
-        burstRef.current.from = direction === 'prev' ? 360 : -360;
-        burstRef.current.pending = true;
-      }
-    }
-  }, [trackKey, direction]);
-
-  useRafLoop((now) => {
-    const el = spinRef.current;
-    if (!el) return;
-    if (isPlaying) velRef.current += (SPIN_MAX - velRef.current) * 0.2;
-    else {
-      velRef.current *= 0.96;
-      if (velRef.current < 0.001) velRef.current = 0;
-    }
-    if (isZoomed) {
-      const target = Math.round(rotRef.current / 360) * 360;
-      const nx = rotRef.current + (target - rotRef.current) * 0.08;
-      rotRef.current = Math.abs(target - nx) < 0.1 ? target : nx;
-    } else {
-      rotRef.current += velRef.current;
-    }
-    const burst = burstRef.current;
-    if (burst.pending) {
-      burst.start = now;
-      burst.pending = false;
-      burst.active = true;
-    }
-    let b = 0;
-    if (burst.active) {
-      const t = (now - burst.start) / BURST_DURATION;
-      if (t >= 1) burst.active = false;
-      else b = burst.from * (1 - (1 - Math.pow(1 - t, 3)));
-    }
-    el.style.transform = `scale(1.01) rotate(${rotRef.current + b}deg)`;
-  });
-
-  return (
-    <div
-      className={`mask ${isZoomed ? 'is-zoomed' : ''}`}
-      onClick={(e) => {
-        e.stopPropagation();
-        onZoomToggle();
-      }}
-    >
-      <div className="spin" ref={spinRef}>
-        {layers.map((l, i) => {
-          const isNewest = i === layers.length - 1;
-          const cls = isNewest
-            ? l.dir
-              ? 'cover cover-enter'
-              : 'cover'
-            : 'cover cover-exit';
-          return (
-            <img
-              key={l.id}
-              src={(l.track.cover)?.src || (l.track.cover)}
-              alt={`${l.track.title} — ${l.track.artist}`}
-              className={cls}
-              draggable={false}
-            />
-          );
-        })}
-      </div>
-      <div className="hole">
-        <div className="hole-inner" />
-      </div>
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------ TrackInfo */
-
-function TrackInfo({ layers }) {
-  return (
-    <div className="track-info">
-      {layers.map((l, i) => {
-        const isNewest = i === layers.length - 1;
-        const dx = l.dir === 'next' ? 14 : l.dir === 'prev' ? -14 : 0;
-        const exitDx = -dx;
-        const state = isNewest ? (l.dir ? 'ti-enter' : '') : 'ti-exit';
-        const style = {
-          '--dx': `${isNewest ? dx : exitDx}px`,
-        };
-        return (
-          <div
-            key={l.id}
-            className={`ti-layer ${isNewest ? '' : 'ti-abs'}`}
-          >
-            <p className={`artist ${state}`} style={style}>
-              {l.track.artist}
-            </p>
-            <h2 className={`track ${state}`} style={style}>
-              {l.track.title}
-            </h2>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-/* ----------------------------------------------------------- ProgressBar */
-
-function fmt(s) {
-  if (!isFinite(s)) return '0:00';
-  return `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(
-    2,
-    '0'
-  )}`;
-}
-
-function ProgressBar({ currentTime, duration, onSeek }) {
-  const pct = duration ? (currentTime / duration) * 100 : 0;
-  return (
-    <>
-      <div
-        className="bar"
-        onClick={(e) => {
-          const rect = e.currentTarget.getBoundingClientRect();
-          onSeek(
-            Math.max(
-              0,
-              Math.min(1, (e.clientX - rect.left) / rect.width)
-            )
-          );
-        }}
-      >
-        <div className="bar-fill" style={{ width: `${pct}%` }} />
-      </div>
-      {duration > 0 && isFinite(duration) && duration !== Infinity && (
-        <div className="time">
-          <span className="current">{fmt(currentTime)}</span>
-          <span className="sep">/</span>
-          <span className="total">{fmt(duration)}</span>
-        </div>
-      )}
-    </>
-  );
-}
-
-/* -------------------------------------------------------------- Controls */
-
-function Controls({
-  isPlaying,
-  shuffled,
-  loopMode,
-  onToggle,
-  onNext,
-  onPrev,
-  onShuffle,
-  onLoop,
-}) {
-  return (
-    <div className="controls">
-      <button
-        className={`ctrl ctrl-toggle ${shuffled ? 'is-active' : ''} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500`}
-        onClick={onShuffle}
-        aria-label="Shuffle"
-        aria-pressed={shuffled}
-      >
-        <svg
-          viewBox="0 0 24 24"
-          width="14"
-          height="14"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M16 3h5v5" />
-          <path d="M21 3l-7 7" />
-          <path d="M3 21l7-7" />
-          <path d="M16 21h5v-5" />
-          <path d="M21 21l-7-7" />
-          <path d="M3 3l7 7" />
-        </svg>
-      </button>
-      <button
-        className="ctrl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-        onClick={onPrev}
-        aria-label="Sebelumnya"
-      >
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-          <path d="M19 5L8 12l11 7zM5 5h2v14H5z" />
-        </svg>
-      </button>
-      <button
-        className="ctrl ctrl-play focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-        onClick={onToggle}
-        aria-label={isPlaying ? 'Jeda' : 'Putar'}
-      >
-        {isPlaying ? (
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
-            <path d="M6 5h3v14H6zM15 5h3v14h-3z" />
-          </svg>
-        ) : (
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
-            <path d="M7 5v14l11-7z" />
-          </svg>
-        )}
-      </button>
-      <button
-        className="ctrl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-        onClick={onNext}
-        aria-label="Berikutnya"
-      >
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-          <path d="M5 5l11 7L5 19zM17 5h2v14h-2z" />
-        </svg>
-      </button>
-      <button
-        className={`ctrl ctrl-toggle ctrl-loop ${
-          loopMode !== 'off' ? 'is-active' : ''
-        } ${loopMode === 'one' ? 'mode-one' : ''} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500`}
-        onClick={onLoop}
-        aria-label="Loop"
-        aria-pressed={loopMode !== 'off'}
-      >
-        <svg
-          viewBox="0 0 24 24"
-          width="14"
-          height="14"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M4 12V8a2 2 0 0 1 2-2h12" />
-          <path d="M16 3l4 3l-4 3" />
-          <path d="M20 12v4a2 2 0 0 1-2 2H6" />
-          <path d="M8 21l-4-3l4-3" />
-        </svg>
-        <span className="loop-one">1</span>
-      </button>
-    </div>
-  );
-}
-
-/* ----------------------------------------------------- MusicPlayer root */
-
-export function MusicPlayer({ tracks, crossOrigin = 'anonymous' }) {
+export function MusicPlayer({ tracks }) {
   const {
     audioRef,
     state: playerState,
@@ -959,15 +468,8 @@ export function MusicPlayer({ tracks, crossOrigin = 'anonymous' }) {
     seek,
     toggleShuffle,
     cycleLoop,
-    getFrequencyData,
     loadTrack,
-    volume,
-    isMuted,
-    adjustVolume,
-    toggleMute,
   } = useAudioPlayer(tracks);
-
-  const [isFavorite, setIsFavorite] = useState(false);
 
   const seekForward = useCallback(() => {
     const a = audioRef.current;
@@ -980,27 +482,12 @@ export function MusicPlayer({ tracks, crossOrigin = 'anonymous' }) {
 
   const shortcuts = useMemo(
     () => ({
-      toggle,
-      next,
-      prev,
-      seekForward,
-      seekBackward,
-      toggleShuffle,
-      cycleLoop,
+      toggle, next, prev, seekForward, seekBackward, toggleShuffle, cycleLoop,
     }),
-    [
-      toggle,
-      next,
-      prev,
-      seekForward,
-      seekBackward,
-      toggleShuffle,
-      cycleLoop,
-    ]
+    [toggle, next, prev, seekForward, seekBackward, toggleShuffle, cycleLoop]
   );
   useKeyboardShortcuts(shortcuts);
 
-  // Formatting helper for duration
   const fmt = (s) => {
     if (!isFinite(s)) return '0:00';
     return `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
@@ -1008,312 +495,183 @@ export function MusicPlayer({ tracks, crossOrigin = 'anonymous' }) {
 
   const progressPercent = duration ? (currentTime / duration) * 100 : 0;
 
-
   return (
-    <div className="relative overflow-hidden w-full">
-      {/* Background decorations */}
-      <div className="absolute inset-0 -z-10 pointer-events-none">
-        <div className="absolute left-1/2 top-0 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-indigo-500/[0.03] blur-3xl" />
-        <div className="absolute bottom-0 right-0 h-[420px] w-[420px] rounded-full bg-sky-500/[0.02] blur-3xl" />
+    <div className="w-full max-w-[1500px] mx-auto flex flex-col xl:flex-row items-center xl:items-stretch gap-8 lg:gap-10 px-4 sm:px-6 py-6 sm:py-10">
+      {/* Audio Element */}
+      <audio ref={audioRef} preload="metadata" />
+
+      {/* LEFT COLUMN: Text & Actions */}
+      <div className="w-full xl:w-[320px] 2xl:w-[400px] flex flex-col items-center xl:items-start text-center xl:text-left shrink-0 xl:py-10">
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black text-[var(--text-primary)] leading-[1.15] tracking-tight mb-4">
+          Rekomendasi Lagu Pilihan Untuk <span className="text-[var(--color-primary)]">Intan</span>
+        </h2>
+        
+        <p className="text-sm sm:text-base lg:text-lg text-[var(--text-secondary)] font-medium mb-8 max-w-md xl:max-w-full">
+          Dengarkan kurasi lagu-lagu yang kami rekomendasikan untuk Nur Intan JKT48. Biarkan alunannya menjadi penemani harimu.
+        </p>
+        
+        <div className="flex flex-col sm:flex-row xl:flex-col 2xl:flex-row items-center gap-3 w-full sm:w-auto xl:w-full">
+          <Button 
+            className="w-full sm:w-auto xl:w-full 2xl:w-auto px-6 py-5 sm:py-6 rounded-full bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/90 text-white font-bold text-xs sm:text-sm shadow-[0_8px_20px_rgba(23,12,121,0.3)] transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shrink-0"
+            onClick={() => {
+              if(!playerState.isPlaying) toggle();
+            }}
+          >
+            <Play className="w-4 h-4 fill-current" /> Mulai Mendengarkan
+          </Button>
+          
+          <Button 
+            variant="outline"
+            className="w-full sm:w-auto xl:w-full 2xl:w-auto px-6 py-5 sm:py-6 rounded-full border-slate-300 hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] hover:bg-[var(--color-primary)]/5 text-[var(--text-primary)] font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 shrink-0"
+            onClick={() => {
+              const el = document.getElementById('playlist-koleksi');
+              if (el) {
+                const yOffset = -80;
+                const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                window.scrollTo({top: y, behavior: 'smooth'});
+              }
+            }}
+          >
+            <Calendar className="w-4 h-4" /> Jelajahi Playlist Bulanan
+          </Button>
+        </div>
       </div>
 
-      <div className="mx-auto max-w-7xl">
-        <div className="relative overflow-hidden border border-slate-200/40 bg-white/30 dark:bg-black/20 p-8 sm:p-10 md:p-14 rounded-[32px] shadow-[0_40px_120px_rgba(15,23,42,0.15)] backdrop-blur-2xl">
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/[0.04] via-transparent to-transparent pointer-events-none" />
+      {/* RIGHT COLUMN: The Dark Player */}
+      <div className="flex-1 w-full bg-[#1c1825] rounded-[2rem] lg:rounded-[3rem] shadow-[0_20px_50px_-10px_rgba(0,0,0,0.5)] overflow-hidden relative border border-white/10 flex flex-col lg:flex-row items-center lg:items-stretch p-5 sm:p-6 lg:p-8 xl:p-6 2xl:p-10 gap-5 lg:gap-6 xl:gap-6 2xl:gap-8 min-h-[380px]">
+        
+        {/* Decorative Background Glows */}
+        <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
+           <div className="absolute top-[-20%] left-[-10%] w-[250px] h-[250px] bg-purple-500/20 rounded-full blur-[70px]" />
+           <div className="absolute bottom-[-20%] right-[-10%] w-[250px] h-[250px] bg-blue-500/20 rounded-full blur-[70px]" />
+        </div>
 
-          <audio
-            ref={audioRef}
-            preload="metadata"
-            crossOrigin={crossOrigin}
-          />
+        {/* 1. Player Left: Disc */}
+        <div className="relative w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 lg:w-48 lg:h-48 xl:w-48 xl:h-48 2xl:w-56 2xl:h-56 shrink-0 self-center lg:self-center">
+          <div className={`w-full h-full rounded-full border-[5px] sm:border-[6px] border-[#100c17] shadow-[0_0_30px_rgba(0,0,0,0.6)] overflow-hidden relative spin-disc ${playerState.isPlaying ? 'is-playing' : ''}`}>
+             <div className="absolute inset-0 bg-[radial-gradient(circle,transparent_40%,rgba(0,0,0,0.9)_41%,transparent_42%,transparent_45%,rgba(0,0,0,0.9)_46%,transparent_47%,transparent_50%,rgba(0,0,0,0.9)_51%,transparent_52%)] pointer-events-none opacity-40 mix-blend-overlay z-10" />
+             <img src={currentTrack.cover?.src || currentTrack.cover} alt={currentTrack.title} className="w-full h-full object-cover z-0" />
+             <div className="absolute inset-0 bg-black/20 pointer-events-none z-10" />
+             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 sm:w-16 sm:h-16 bg-[#1c1825] rounded-full border border-purple-500/30 flex items-center justify-center z-20">
+               <img src={currentTrack.cover?.src || currentTrack.cover} alt="" className="absolute inset-0 w-full h-full object-cover opacity-30 blur-[2px] rounded-full" />
+               <div className="w-2 h-2 sm:w-3 sm:h-3 bg-white/90 rounded-full shadow-inner z-30" />
+             </div>
+          </div>
+          {/* Audio Reactive Glow */}
+          <div className={`absolute inset-[-10%] rounded-full bg-purple-500/20 blur-2xl transition-transform duration-500 -z-10 ${playerState.isPlaying ? 'scale-110 opacity-100' : 'scale-90 opacity-0'}`} />
+        </div>
 
-          <div className="relative z-10 grid gap-12 lg:grid-cols-[1.1fr_0.9fr] items-start">
-            {/* Left Column: Intro text and highlights */}
-            <div className="space-y-8 text-left">
-              <div className="space-y-4">
-                <Badge
-                  variant="outline"
-                  className="w-fit border-indigo-400/35 bg-indigo-500/5 text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-indigo-500 select-none px-3.5 py-1 rounded-full"
-                >
-                  🎧 MOST PLAYED
-                </Badge>
-                <div className="space-y-4">
-                  <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-[var(--color-primary)] leading-tight">
-                    Lagu Terpopuler Pilihan Intan
-                  </h2>
-                  <p className="max-w-xl text-sm sm:text-base leading-relaxed text-[var(--text-secondary)]">
-                    Dengarkan kurasi lagu-lagu yang paling sering diputar dan menemani aktivitas keseharian Nur Intan JKT48. Biarkan alunannya mengalir selaras dengan duniamu.
-                  </p>
-                </div>
+        {/* 2. Player Middle: Info, Wave, Controls */}
+        <div className="flex-1 flex flex-col justify-center min-w-0 w-full z-10 py-2 xl:py-4">
+          <div className="mb-4 xl:mb-6 text-center lg:text-left">
+            <p className="text-purple-400 text-[9px] sm:text-[10px] font-black uppercase tracking-[0.25em] mb-1.5">Now Playing</p>
+            <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white truncate mb-1">{currentTrack.title}</h3>
+            <p className="text-xs sm:text-sm text-slate-400 truncate">{currentTrack.artist}{currentTrack.mood ? ` • ${currentTrack.mood}` : ''}</p>
+          </div>
+
+          {/* Audio Waveform (CSS animated bars) */}
+          <div className="w-full h-8 sm:h-10 xl:h-12 mb-4 xl:mb-6 relative flex items-center justify-center lg:justify-start gap-1 opacity-70 overflow-hidden px-1">
+            {Array.from({ length: 30 }).map((_, i) => (
+              <div 
+                key={i} 
+                className="w-1.5 sm:w-2 sm:flex-1 bg-gradient-to-t from-purple-600 to-indigo-400 rounded-full animate-wave"
+                style={{ 
+                  height: playerState.isPlaying ? `${Math.random() * 80 + 20}%` : '20%', 
+                  animationDelay: `${i * 0.05}s`,
+                  animationPlayState: playerState.isPlaying ? 'running' : 'paused'
+                }} 
+              />
+            ))}
+          </div>
+
+          {/* Controls & Progress */}
+          <div className="w-full">
+            <div className="flex items-center gap-2 sm:gap-3 mb-4 xl:mb-5">
+              <span className="text-[9px] sm:text-[10px] font-bold tracking-widest text-slate-400 w-8 text-right">{fmt(currentTime)}</span>
+              <div 
+                className="flex-1 h-1.5 bg-white/10 rounded-full cursor-pointer relative group overflow-hidden"
+                onClick={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  seek(Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width)));
+                }}
+              >
+                <div className="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-500 to-indigo-400 rounded-full group-hover:from-purple-400 group-hover:to-indigo-300 transition-colors" style={{ width: `${progressPercent}%` }} />
               </div>
-
-              <div className="flex flex-wrap gap-4 pt-2">
-                <Button 
-                  size="lg" 
-                  onClick={toggle}
-                  className="h-12 rounded-full px-8 text-sm font-extrabold bg-indigo-600 hover:bg-indigo-700 text-white cursor-pointer transition-all duration-300"
-                >
-                  {playerState.isPlaying ? 'Jeda Musik' : 'Mulai Mendengarkan'}
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  onClick={() => {
-                    const el = document.getElementById('playlist-koleksi');
-                    if (el) el.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className="h-12 rounded-full px-8 text-sm font-extrabold border-slate-200 text-slate-700 bg-white/40 hover:bg-slate-50 hover:text-indigo-600 cursor-pointer transition-all duration-300"
-                >
-                  Jelajahi Playlist Bulanan
-                </Button>
-              </div>
-
-
+              <span className="text-[9px] sm:text-[10px] font-bold tracking-widest text-slate-400 w-8 text-left">{fmt(duration)}</span>
             </div>
 
-            {/* Right Column: Immersive Player App widget */}
-            <div className="space-y-6">
-              {/* Glassmorphic Player Card */}
-              <div className="rounded-3xl border border-slate-200/40 bg-white/60 dark:bg-slate-900/60 p-6 shadow-[0_25px_80px_rgba(15,23,42,0.15)] backdrop-blur-2xl text-left relative overflow-hidden">
-                
-                {/* Equalizer Visualizer overlay at the player top */}
-                <div className="absolute top-0 right-0 left-0 h-1.5 opacity-35">
-                  <div className="w-full h-full bg-gradient-to-r from-sky-400 via-indigo-500 to-pink-500 animate-pulse" />
-                </div>
-
-                <div className="flex items-start gap-4">
-                  {/* Album Cover art art block */}
-                  <div className="relative h-20 w-20 overflow-hidden rounded-2xl border border-slate-200/40 bg-gradient-to-br from-indigo-500/10 via-slate-100 to-transparent flex-shrink-0 shadow-sm">
-                    <img 
-                      src={currentTrack.cover?.src || currentTrack.cover} 
-                      alt={currentTrack.title} 
-                      className={`w-full h-full object-cover select-none transition-transform duration-700 ${playerState.isPlaying ? 'animate-none scale-105' : 'scale-100'}`} 
-                    />
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.4),_transparent_60%)]" />
-                    {playerState.isPlaying && (
-                      <div className="absolute bottom-1 right-1 flex items-end gap-0.5 h-3.5 w-4 overflow-hidden bg-black/40 rounded px-0.5 py-0.5">
-                        <div className="w-0.5 h-full bg-sky-400 rounded-full animate-bar1" />
-                        <div className="w-0.5 h-full bg-sky-400 rounded-full animate-bar2" />
-                        <div className="w-0.5 h-full bg-sky-400 rounded-full animate-bar3" />
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex-1 space-y-3.5 min-w-0">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <p className="text-[10px] uppercase tracking-[0.25em] font-extrabold text-indigo-500 select-none">
-                          Now playing
-                        </p>
-                        <h3 className="mt-1 text-xl font-black tracking-tight text-slate-800 dark:text-white truncate">
-                          {currentTrack.title}
-                        </h3>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
-                          {currentTrack.artist} {currentTrack.mood && `· ${currentTrack.mood}`}
-                        </p>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          setIsFavorite(!isFavorite);
-                          // Show custom notification
-                        }}
-                        className={`rounded-full border border-slate-200/50 bg-white/60 text-slate-500 backdrop-blur hover:text-rose-500 transition-colors h-9 w-9 shrink-0 ${isFavorite ? 'text-rose-500 border-rose-200 bg-rose-50/40' : ''}`}
-                      >
-                        <Heart className={`h-4 w-4 ${isFavorite ? 'fill-rose-500' : ''}`} />
-                      </Button>
-                    </div>
-
-                    {currentTrack.spotifyUrl && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-8 rounded-full border-slate-200 bg-white/70 px-4 text-[10px] uppercase font-black tracking-[0.2em] text-slate-700 hover:text-indigo-600 transition-colors cursor-pointer"
-                        asChild
-                      >
-                        <a
-                          href={currentTrack.spotifyUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          Open in Spotify
-                        </a>
-                      </Button>
-                    )}
-                  </div>
-                </div>
-
-                {/* Progress bar info slider */}
-                <div className="space-y-2 pt-5 select-none">
-                  <div className="flex items-center justify-between text-[11px] font-bold tracking-wide text-slate-400">
-                    <span>{fmt(currentTime)}</span>
-                    <span>{fmt(duration)}</span>
-                  </div>
-                  <div 
-                    onClick={(e) => {
-                      const rect = e.currentTarget.getBoundingClientRect();
-                      seek(Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width)));
-                    }}
-                    className="h-1.5 w-full rounded-full bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer relative"
-                  >
-                    <div
-                      className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-sky-400 transition-[width] duration-100"
-                      style={{ width: `${progressPercent}%` }}
-                    />
-                  </div>
-                </div>
-
-                {/* Controls options */}
-                <div className="flex items-center justify-between pt-5">
-                  <div className="flex items-center gap-1.5">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={toggleShuffle}
-                      className={`h-9 w-9 rounded-full border border-slate-200/50 bg-white/60 text-slate-500 backdrop-blur hover:text-indigo-600 transition-colors ${playerState.shuffled ? 'text-indigo-600 border-indigo-200 bg-indigo-50/40' : ''}`}
-                    >
-                      <Shuffle className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={prev}
-                      className="h-9 w-9 rounded-full border border-slate-200/50 bg-white/60 text-slate-500 backdrop-blur hover:text-indigo-600 transition-colors"
-                    >
-                      <SkipBack className="h-4 w-4" />
-                    </Button>
-                  </div>
-
-                  <Button 
-                    onClick={toggle}
-                    className="h-11 w-11 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white cursor-pointer flex items-center justify-center transition-transform hover:scale-105 active:scale-95 shadow-md"
-                  >
-                    {playerState.isPlaying ? <Pause className="h-4.5 w-4.5 fill-white" /> : <Play className="h-4.5 w-4.5 fill-white" />}
-                  </Button>
-
-                  <div className="flex items-center gap-1.5">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={next}
-                      className="h-9 w-9 rounded-full border border-slate-200/50 bg-white/60 text-slate-500 backdrop-blur hover:text-indigo-600 transition-colors"
-                    >
-                      <SkipForward className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={cycleLoop}
-                      className={`h-9 w-9 rounded-full border border-slate-200/50 bg-white/60 text-slate-500 backdrop-blur hover:text-indigo-600 transition-colors relative ${playerState.loopMode !== 'off' ? 'text-indigo-600 border-indigo-200 bg-indigo-50/40' : ''}`}
-                    >
-                      <Repeat className="h-4 w-4" />
-                      {playerState.loopMode === 'one' && (
-                        <span className="absolute -top-0.5 -right-0.5 text-[7px] font-black bg-indigo-600 text-white rounded-full w-3.5 h-3.5 flex items-center justify-center border border-white">1</span>
-                      )}
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={toggleMute}
-                      className={`h-9 w-9 rounded-full border border-slate-200/50 bg-white/60 text-slate-500 backdrop-blur hover:text-indigo-600 transition-colors ${isMuted ? 'text-rose-600 border-rose-200 bg-rose-50/40' : ''}`}
-                    >
-                      {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Optional Spotify track embed overlay below controls */}
-                {currentTrack.embedUrl && (
-                  <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200/40 bg-white/80 shadow-[0_20px_60px_rgba(15,23,42,0.15)] backdrop-blur">
-                    <LazySpotifyIframe
-                      src={currentTrack.embedUrl}
-                      title={`${currentTrack.title} - Spotify`}
-                      height="152"
-                    />
-                  </div>
-                )}
-              </div>
-
-              {/* Playlist queue buttons scrollable deck */}
-              <div className="relative">
-                <div className="max-h-[22rem] space-y-2.5 overflow-y-auto pr-1 hide-scrollbar relative z-10">
-                  {tracks.map((track, index) => {
-                    const isActive = index === playerState.currentIndex;
-                    const isPlaying = isActive && playerState.isPlaying;
-
-                    return (
-                      <button
-                        key={track.id || index}
-                        type="button"
-                        onClick={() => {
-                          if (isActive) {
-                            toggle();
-                          } else {
-                            loadTrack(index, true, index > playerState.currentIndex ? 'next' : 'prev');
-                          }
-                        }}
-                        className={`group flex w-full items-center gap-4 rounded-2xl border border-slate-200/40 bg-white/60 dark:bg-black/10 p-4 text-left backdrop-blur-xl transition-all duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 ${
-                          isActive
-                            ? "border-indigo-400 bg-gradient-to-r from-indigo-500/10 to-indigo-500/5 shadow-[0_15px_35px_rgba(15,23,42,0.1)] active-music-card"
-                            : "hover:-translate-y-0.5 hover:border-slate-350 hover:bg-white/80"
-                        }`}
-                      >
-                        <div
-                          className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border border-slate-200 text-xs font-black transition-colors relative overflow-hidden select-none ${
-                            isActive
-                              ? "bg-indigo-600 text-white border-indigo-500"
-                              : "bg-white/80 text-slate-700"
-                          }`}
-                        >
-                          <img 
-                            src={track.cover?.src || track.cover} 
-                            alt="" 
-                            className="absolute inset-0 w-full h-full object-cover opacity-15"
-                          />
-                          <span className="relative z-10">{track.title.charAt(0)}</span>
-                        </div>
-                        <div className="flex flex-1 items-center justify-between gap-4 min-w-0">
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-1.5">
-                              <p className={`text-sm font-black truncate ${isActive ? 'text-indigo-600 font-extrabold' : 'text-slate-800'}`}>
-                                {track.title}
-                              </p>
-                              {track.mood && (
-                                <Badge className="text-[9px] px-1.5 py-0.5 bg-slate-100 text-slate-500 hover:bg-slate-100 scale-90 border border-slate-200/30">
-                                  {track.mood}
-                                </Badge>
-                              )}
-                            </div>
-                            <p className="text-xs text-slate-500 truncate mt-0.5">
-                              {track.artist}
-                            </p>
-                          </div>
-                          
-                          <div className="shrink-0 flex items-center gap-2">
-                            {isActive && (
-                              <div className="flex items-end gap-0.5 h-3.5 w-4 overflow-hidden mb-0.5">
-                                <div className={`w-0.5 h-full bg-indigo-500 rounded-full ${isPlaying ? 'animate-bar1' : 'h-1.5'}`} />
-                                <div className={`w-0.5 h-full bg-indigo-500 rounded-full ${isPlaying ? 'animate-bar2' : 'h-3'}`} />
-                                <div className={`w-0.5 h-full bg-indigo-500 rounded-full ${isPlaying ? 'animate-bar3' : 'h-2'}`} />
-                              </div>
-                            )}
-                            <span className="text-[11px] font-bold tracking-wide text-slate-400">
-                              {track.playCount || '3:00'}
-                            </span>
-                          </div>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-                
-                {/* Gradient Masks */}
-                <div className="pointer-events-none absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-white/90 via-white/20 to-transparent z-20 opacity-40" />
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-white/90 via-white/20 to-transparent z-20 opacity-40" />
-              </div>
+            <div className="flex items-center justify-center lg:justify-between px-2 gap-4 lg:gap-0">
+               <button onClick={toggleShuffle} className={`p-2 transition-all hover:scale-110 active:scale-95 hidden sm:block ${playerState.shuffled ? 'text-purple-400' : 'text-slate-500 hover:text-white'}`}>
+                  <Shuffle size={16} strokeWidth={2.5} />
+               </button>
+               <button onClick={prev} className="p-2 text-slate-300 hover:text-white transition-all hover:scale-110 active:scale-95">
+                  <SkipBack size={20} fill="currentColor" />
+               </button>
+               <button onClick={toggle} className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center bg-purple-600 hover:bg-purple-500 text-white rounded-full shadow-[0_5px_20px_rgba(147,51,234,0.4)] transition-all hover:scale-105 active:scale-95 shrink-0">
+                  {playerState.isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" className="ml-1" />}
+               </button>
+               <button onClick={next} className="p-2 text-slate-300 hover:text-white transition-all hover:scale-110 active:scale-95">
+                  <SkipForward size={20} fill="currentColor" />
+               </button>
+               <button onClick={cycleLoop} className={`p-2 relative transition-all hover:scale-110 active:scale-95 hidden sm:block ${playerState.loopMode !== 'off' ? 'text-purple-400' : 'text-slate-500 hover:text-white'}`}>
+                  <Repeat size={16} strokeWidth={2.5} />
+                  {playerState.loopMode === 'one' && <span className="absolute -top-1 -right-1 text-[8px] font-black bg-purple-600 text-white rounded-full w-4 h-4 flex items-center justify-center border border-[#1c1825]">1</span>}
+               </button>
             </div>
           </div>
+        </div>
+
+        {/* 3. Player Right: Playlist List */}
+        <div className="w-full lg:w-[240px] xl:w-[250px] 2xl:w-[280px] shrink-0 border-t lg:border-t-0 lg:border-l border-white/10 pt-6 lg:pt-0 lg:pl-6 xl:pl-4 2xl:pl-6 flex flex-col z-10 self-stretch">
+           <div className="flex items-center justify-between mb-4">
+              <h4 className="text-white font-bold text-xs xl:text-sm tracking-wide">Playlist Untuk Intan</h4>
+              <div className="flex gap-1">
+                <button className="w-6 h-6 rounded-full bg-white/5 hover:bg-white/20 flex items-center justify-center text-white transition-colors cursor-pointer" onClick={() => document.querySelector('.player-playlist-scroll')?.scrollBy({top: -100, behavior:'smooth'})}>
+                  <ChevronLeft size={14} />
+                </button>
+                <button className="w-6 h-6 rounded-full bg-white/5 hover:bg-white/20 flex items-center justify-center text-white transition-colors cursor-pointer" onClick={() => document.querySelector('.player-playlist-scroll')?.scrollBy({top: 100, behavior:'smooth'})}>
+                  <ChevronRight size={14} />
+                </button>
+              </div>
+           </div>
+           
+           <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar player-playlist-scroll space-y-2 h-[200px] lg:h-[260px] xl:h-[300px]">
+              {tracks.map((track, index) => {
+                 const isActive = index === playerState.currentIndex;
+                 return (
+                    <button
+                       key={track.id || index}
+                       onClick={() => {
+                          if(isActive) toggle();
+                          else loadTrack(index, true, index > playerState.currentIndex ? 'next' : 'prev');
+                       }}
+                       className={`w-full flex items-center gap-2 xl:gap-3 p-2 rounded-xl transition-all duration-300 text-left group cursor-pointer ${isActive ? 'bg-white/10 shadow-sm border border-white/10' : 'hover:bg-white/5 border border-transparent'}`}
+                    >
+                       <span className={`text-[9px] xl:text-[10px] font-bold w-4 text-center shrink-0 ${isActive ? 'text-purple-400' : 'text-slate-500 group-hover:text-slate-300'}`}>
+                          {isActive && playerState.isPlaying ? (
+                             <div className="flex items-end justify-center gap-[2px] h-3">
+                               <div className="w-[2px] bg-purple-400 rounded-full animate-bar1 h-full" />
+                               <div className="w-[2px] bg-purple-400 rounded-full animate-bar2 h-[60%]" />
+                               <div className="w-[2px] bg-purple-400 rounded-full animate-bar3 h-[80%]" />
+                             </div>
+                          ) : (
+                             index + 1
+                          )}
+                       </span>
+                       <div className="w-8 h-8 xl:w-10 xl:h-10 rounded-md overflow-hidden relative shrink-0">
+                          <img src={track.cover?.src || track.cover} alt="" className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
+                       </div>
+                       <div className="flex-1 min-w-0">
+                          <p className={`text-[10px] xl:text-xs font-bold truncate ${isActive ? 'text-white' : 'text-slate-300 group-hover:text-white'}`}>{track.title}</p>
+                          <p className="text-[9px] xl:text-[10px] text-slate-500 truncate mt-0.5">{track.artist}</p>
+                       </div>
+                       <div className={`text-[9px] xl:text-[10px] font-bold shrink-0 ${isActive ? 'text-purple-400' : 'text-slate-600 group-hover:text-slate-400'}`}>
+                          {track.playCount || '3:00'}
+                       </div>
+                    </button>
+                 );
+              })}
+           </div>
         </div>
       </div>
     </div>
@@ -1351,7 +709,7 @@ export default function DengerIntanPage() {
 
   // Set page title for SEO best practices
   useEffect(() => {
-    document.title = '#DengerINTAN Playlist | IRIS';
+    document.title = '#dengerINTAN Playlist | IRIS';
   }, []);
 
   // Fetch playlists and most played songs on mount
@@ -1440,7 +798,7 @@ export default function DengerIntanPage() {
         titleComponent={
           <div className="flex flex-col items-center select-none pt-1">
             <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold text-[var(--color-primary)] leading-none tracking-tight relative mb-8">
-              #DengerINTAN
+              #dengerINTAN
             </h1>
           </div>
         }
@@ -1583,7 +941,7 @@ export default function DengerIntanPage() {
         <motion.div variants={fadeUp} className="mb-6 flex justify-between items-end border-b border-[var(--border-color)]/60 pb-3">
           <div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[var(--color-primary)] mb-1">
-              Koleksi Playlist #DengerINTAN
+              Koleksi Playlist #dengerINTAN
             </h2>
             <p className="text-xs sm:text-sm text-[var(--text-secondary)]">
               Arsip playlist yang pernah dikurasi Intan dari waktu ke waktu.

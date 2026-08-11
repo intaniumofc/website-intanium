@@ -5,7 +5,7 @@ const MOCK_PLAYLISTS = [
   {
     id: '2aMGqrDZrqERqgMPIQe0ui',
     title: 'Ongoing New Playlist',
-    description: 'Kumpulan lagu pilihan terbaru untuk menemani hari-harimu di #DengerINTAN.',
+    description: 'Kumpulan lagu pilihan terbaru untuk menemani hari-harimu di #dengerINTAN.',
     imageUrl: 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=600&auto=format&fit=crop',
     category: 'Juni 2026',
     badgeText: 'Ongoing Playlist',
@@ -20,7 +20,7 @@ const MOCK_PLAYLISTS = [
   {
     id: '4jLqcyPlFe7hdFFOr1r0ML',
     title: 'Archive Playlist Vol. 3',
-    description: 'Arsip keseruan dan memori lagu-lagu pilihan dari edisi #DengerINTAN sebelumnya.',
+    description: 'Arsip keseruan dan memori lagu-lagu pilihan dari edisi #dengerINTAN sebelumnya.',
     imageUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600&auto=format&fit=crop',
     category: 'Mei 2026',
     badgeText: 'Archive Playlist',
@@ -35,7 +35,7 @@ const MOCK_PLAYLISTS = [
   {
     id: '6azVHz2MOw9d0oJrZxmpul',
     title: 'Archive Playlist Vol. 2',
-    description: 'Arsip keseruan dan memori lagu-lagu pilihan dari edisi #DengerINTAN sebelumnya.',
+    description: 'Arsip keseruan dan memori lagu-lagu pilihan dari edisi #dengerINTAN sebelumnya.',
     imageUrl: 'https://images.unsplash.com/photo-1487180142328-054b783fc471?q=80&w=600&auto=format&fit=crop',
     category: 'April 2026',
     badgeText: 'Archive Playlist',
@@ -50,7 +50,7 @@ const MOCK_PLAYLISTS = [
   {
     id: '1zpGEcM4GlAyz4kpvjJUK9',
     title: 'Archive Playlist Vol. 1',
-    description: 'Arsip keseruan dan memori lagu-lagu pilihan dari edisi #DengerINTAN sebelumnya.',
+    description: 'Arsip keseruan dan memori lagu-lagu pilihan dari edisi #dengerINTAN sebelumnya.',
     imageUrl: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=600&auto=format&fit=crop',
     category: 'Maret 2026',
     badgeText: 'Archive Playlist',
@@ -59,7 +59,7 @@ const MOCK_PLAYLISTS = [
     embedUrl: 'https://www.youtube.com/embed/videoseries?list=PL3-sRM8xAzY-oQj01w4_mY6-x6H2bE3X1',
     spotifyUrl: 'https://open.spotify.com/playlist/1zpGEcM4GlAyz4kpvjJUK9',
     spotifyEmbedUrl: 'https://open.spotify.com/embed/playlist/1zpGEcM4GlAyz4kpvjJUK9?utm_source=generator',
-    curatorNote: 'Kilas balik ke playlist awal #DengerINTAN. Isinya lagu-lagu nostalgic yang bakal bikin kamu ikutan sing-along! 🎤☀️',
+    curatorNote: 'Kilas balik ke playlist awal #dengerINTAN. Isinya lagu-lagu nostalgic yang bakal bikin kamu ikutan sing-along! 🎤☀️',
     createdAt: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString()
   }
 ];

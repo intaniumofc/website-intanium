@@ -85,7 +85,7 @@
 }
 
 .recap-mode-switcher button.active {
-  background: linear-gradient(90deg, #FF5FB2 0%, #A855F7 100%);
+  background: var(--gradient-cta, linear-gradient(120deg, #FF5FB2 0%, #FFA66E 100%));
   color: white;
   box-shadow: 0 7px 20px rgba(255, 95, 178, 0.35);
 }

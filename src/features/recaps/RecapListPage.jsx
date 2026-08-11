@@ -109,7 +109,7 @@ function Stat({ label, value }) {
 }
 
 // 🔹 Sekarang menerima prop `onOpenEnd` dan meneruskannya ke <Book>
-function ClosedBookIntro({ state, onOpen, onOpenEnd }) {
+function ClosedBookIntro({ state, onOpen, onOpenEnd, year, isComingSoon }) {
   const isOpening = state === 'opening';
   const isExiting = state === 'transitioning';
   return (
@@ -124,25 +124,26 @@ function ClosedBookIntro({ state, onOpen, onOpenEnd }) {
         <Book isOpening={isOpening} onOpenEnd={onOpenEnd}>
           <div className="recap-cover-art">
             <span className="recap-cover-art__brand">IRIS</span>
-            <span className="recap-cover-art__tag">#Gemintang</span>
+            <span className="recap-cover-art__tag">{isComingSoon ? 'Coming Soon' : '#Gemintang'}</span>
             <div className="recap-cover-art__title">Recap<br />Book</div>
             <p className="recap-cover-art__footer">
-              Nur Intan<br />Monthly & Yearly Journey · 2026
+              Nur Intan<br />Monthly & Yearly Journey · {year}
             </p>
           </div>
         </Book>
         {!isOpening && (
           <span className="recap-book-hint">
-            Klik buku untuk membuka
+            {isComingSoon ? `Buku ${year} · Coming Soon` : 'Klik buku untuk membuka'}
           </span>
         )}
       </button>
       <div className="recap-closed-copy">
-        <span className="recap-kicker">Collectible Digital Edition · 2026</span>
-        <h2>Satu tahun, dirangkai menjadi cerita.</h2>
+        <span className="recap-kicker">Collectible Digital Edition · {year} {isComingSoon ? '(Coming Soon)' : ''}</span>
+        <h2>{isComingSoon ? `Edisi ${year} akan segera hadir.` : 'Satu tahun, dirangkai menjadi cerita.'}</h2>
         <p>
-          Buka catatan aktivitas Intan dari theater, live, video call, event,
-          dan momen spesial bersama IRIS.
+          {isComingSoon
+            ? `Buku rekap perjalanan Nur Intan untuk tahun ${year} masih dalam persiapan.`
+            : 'Buka catatan aktivitas Intan dari theater, live, video call, event, dan momen spesial bersama IRIS.'}
         </p>
       </div>
     </div>
@@ -169,12 +170,14 @@ function DesktopReader({ currentMonth, onMonthChange, monthlyRecaps }) {
     }, 600);
   };
 
+  if (!monthlyRecaps || monthlyRecaps.length === 0) return null;
+
   return (
     <>
       <div className="recap-toolbar">
         <div>
           <p className="recap-toolbar__eyebrow">Now Reading · Spread {String(currentMonth + 1).padStart(2, '0')} / {String(monthlyRecaps.length).padStart(2, '0')}</p>
-          <p className="recap-toolbar__title">{monthlyRecaps[currentMonth].month} {monthlyRecaps[currentMonth].year} · {monthlyRecaps[currentMonth].theme}</p>
+          <p className="recap-toolbar__title">{monthlyRecaps[currentMonth]?.month} {monthlyRecaps[currentMonth]?.year} · {monthlyRecaps[currentMonth]?.theme}</p>
         </div>
         <div className="recap-toolbar__controls">
           <button className="recap-control" disabled={currentMonth === 0} onClick={() => flipBook.current?.pageFlip()?.flipPrev()} aria-label="Bulan sebelumnya">
@@ -236,6 +239,8 @@ function MobileReader({ currentMonth, onMonthChange, monthlyRecaps }) {
   useEffect(() => {
     setSubPage(0);
   }, [currentMonth]);
+
+  if (!monthlyRecaps || monthlyRecaps.length === 0 || !recap) return null;
 
   const handlePrev = () => {
     setDirection(-1);
@@ -379,49 +384,128 @@ function MobileReader({ currentMonth, onMonthChange, monthlyRecaps }) {
   );
 }
 
-function AnnualRecap({ monthlyRecaps }) {
-  const stats = useMemo(() => monthlyRecaps.reduce((total, recap) => ({
-    theater: total.theater + (recap.left?.theater?.total || 0),
-    live: total.live + (recap.left?.live?.total || 0),
-    messages: total.messages + (recap.right?.privateMessage?.bubbleChat || 0),
-    moments: total.moments + (recap.right?.privateMessage?.photo || 0),
-  }), { theater: 0, live: 0, messages: 0, moments: 0 }), [monthlyRecaps]);
+function AnnualRecap({ monthlyRecaps, selectedYear, onYearChange, availableYears }) {
+  const yearRecaps = useMemo(
+    () => monthlyRecaps.filter((r) => Number(r.year) === Number(selectedYear)),
+    [monthlyRecaps, selectedYear]
+  );
+  const isComingSoon = Number(selectedYear) === 2027 || yearRecaps.length === 0;
+
+  const stats = useMemo(
+    () =>
+      yearRecaps.reduce(
+        (total, recap) => ({
+          theater: total.theater + (recap.left?.theater?.total || 0),
+          live: total.live + (recap.left?.live?.total || 0),
+          messages: total.messages + (recap.right?.privateMessage?.bubbleChat || 0),
+          moments: total.moments + (recap.right?.privateMessage?.photo || 0),
+        }),
+        { theater: 0, live: 0, messages: 0, moments: 0 }
+      ),
+    [yearRecaps]
+  );
+
+  const [description, setDescription] = useState('');
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchDescription = async () => {
+      const desc = await recapService.getAnnualDescription(selectedYear, yearRecaps);
+      if (isMounted) {
+        setDescription(desc);
+      }
+    };
+    fetchDescription();
+    return () => { isMounted = false; };
+  }, [selectedYear, yearRecaps]);
+
   return (
     <section className="recap-annual animate-fade-in">
-      <div className="recap-annual__header">
-        <span className="recap-kicker">Annual Edition · 2026 in Progress</span>
-        <h2>The story so far.</h2>
-        <p className="recap-intro" style={{ textAlign: 'left', margin: '1rem 0 0' }}>
-          Ringkasan perjalanan Nur Intan yang telah terdokumentasi dari Januari sampai April 2026.
-        </p>
-      </div>
-      <div className="recap-annual__stats">
-        <Stat label="Theater Shows" value={stats.theater} />
-        <Stat label="IDN Live" value={stats.live} />
-        <Stat label="Bubble Chats" value={stats.messages} />
-        <Stat label="Shared Photos" value={stats.moments} />
-      </div>
-      <div className="recap-annual__months">
-        {monthlyRecaps.map((recap) => (
-          <article key={recap.id}>
-            <h3>{recap.month} · {recap.theme}</h3>
-            <p>{recap.right?.monthlyNote}</p>
-          </article>
+      {/* Year Switcher for Annual Recap */}
+      <div className="flex justify-center items-center gap-2 mb-6">
+        {availableYears.map((y) => (
+          <button
+            key={y.year}
+            onClick={() => onYearChange(y.year)}
+            className={`px-4 py-2 rounded-full text-xs font-extrabold transition-all cursor-pointer ${selectedYear === y.year
+                ? 'text-white shadow-[0_6px_18px_rgba(255,95,178,0.35)] scale-105'
+                : 'bg-white/60 text-slate-600 hover:bg-white border border-slate-200'
+              }`}
+            style={selectedYear === y.year ? { background: 'var(--gradient-cta, linear-gradient(120deg, #FF5FB2 0%, #FFA66E 100%))' } : undefined}
+          >
+            Tahun {y.year} {y.isComingSoon ? '(Coming Soon)' : ''}
+          </button>
         ))}
       </div>
-    </section >
+
+      <div className="recap-annual__header">
+        <span className="recap-kicker">
+          Annual Edition · {selectedYear} {isComingSoon ? 'Coming Soon' : 'in Progress'}
+        </span>
+        <h2>The story so far.</h2>
+        <p className="recap-intro" style={{ textAlign: 'left', margin: '1rem 0 0' }}>
+          {isComingSoon
+            ? `Catatan perjalanan tahun ${selectedYear} belum dimulai. Rangkuman cerita dan momen Nur Intan di tahun ${selectedYear} akan hadir seiring berjalannya waktu.`
+            : description}
+        </p>
+      </div>
+
+      {!isComingSoon ? (
+        <>
+          <div className="recap-annual__stats">
+            <Stat label="Theater Shows" value={stats.theater} />
+            <Stat label="IDN Live" value={stats.live} />
+            <Stat label="Bubble Chats" value={stats.messages} />
+            <Stat label="Shared Photos" value={stats.moments} />
+          </div>
+          <div className="recap-annual__months">
+            {yearRecaps.map((recap) => (
+              <article key={recap.id}>
+                <h3>
+                  {recap.month} · {recap.theme}
+                </h3>
+                <p>{recap.right?.monthlyNote}</p>
+              </article>
+            ))}
+          </div>
+        </>
+      ) : (
+        <div className="p-8 text-center bg-indigo-50/50 rounded-2xl border border-indigo-100 my-8">
+          <p className="text-sm text-indigo-700 font-semibold">
+            Rekap tahunan {selectedYear} masih dalam proses penyusunan. Sampai jumpa di rilis edisi {selectedYear}!
+          </p>
+        </div>
+      )}
+    </section>
   );
 }
 
-
-
 export default function RecapListPage() {
   const [mode, setMode] = useState('monthly');
+  const [selectedYear, setSelectedYear] = useState(2026);
+  const [toastMsg, setToastMsg] = useState(null);
   const [readerState, setReaderState] = useState('closed'); // closed | opening | open
   const [currentMonth, setCurrentMonth] = useState(0);
   const [bookRecaps, setBookRecaps] = useState(monthlyRecaps);
   const openTimerRef = useRef(null);
   const transitionTimerRef = useRef(null);
+
+  const availableYears = useMemo(() => {
+    const yearsSet = new Set(bookRecaps.map((r) => Number(r.year)));
+    yearsSet.add(2026);
+    yearsSet.add(2027);
+    const sorted = Array.from(yearsSet).sort((a, b) => a - b);
+    return sorted.map((y) => ({
+      year: y,
+      isComingSoon: y === 2027 || !bookRecaps.some((r) => Number(r.year) === y),
+    }));
+  }, [bookRecaps]);
+
+  const yearMonthlyRecaps = useMemo(() => {
+    return bookRecaps.filter((r) => Number(r.year) === selectedYear);
+  }, [bookRecaps, selectedYear]);
+
+  const isComingSoonBook = selectedYear === 2027 || yearMonthlyRecaps.length === 0;
 
   const clearOpenTimer = useCallback(() => {
     if (openTimerRef.current) {
@@ -437,8 +521,12 @@ export default function RecapListPage() {
     }
   }, []);
 
-  // 🔹 Event-driven: pakai animationend dari <Book>, timer hanya jadi safety net
   const handleOpenBook = useCallback(() => {
+    if (isComingSoonBook) {
+      setToastMsg(`Buku Recap ${selectedYear} (Coming Soon) belum dapat dibuka saat ini.`);
+      setTimeout(() => setToastMsg(null), 3000);
+      return;
+    }
     if (readerState !== 'closed') return;
 
     const shouldRespectReducedMotion = process.env.NODE_ENV === 'production';
@@ -453,8 +541,6 @@ export default function RecapListPage() {
 
     setReaderState('opening');
 
-    // Safety net: kalau tab di-background, animationend bisa tidak terpanggil.
-    // Sedikit lebih lama dari durasi animasi (1450ms) sebagai cadangan.
     clearOpenTimer();
     openTimerRef.current = window.setTimeout(() => {
       clearTransitionTimer();
@@ -464,9 +550,8 @@ export default function RecapListPage() {
       }, 600);
       openTimerRef.current = null;
     }, 1700);
-  }, [readerState, clearOpenTimer, clearTransitionTimer]);
+  }, [readerState, isComingSoonBook, selectedYear, clearOpenTimer, clearTransitionTimer]);
 
-  // 🔹 Dipanggil tepat saat animasi buku benar-benar selesai → handoff frame-perfect
   const handleOpenEnd = useCallback(() => {
     clearOpenTimer();
     setReaderState((prev) => {
@@ -490,22 +575,29 @@ export default function RecapListPage() {
     }
   };
 
+  const handleYearChange = (year) => {
+    setSelectedYear(year);
+    setCurrentMonth(0);
+    setReaderState('closed');
+  };
+
   useEffect(() => {
-    recapService.getMonthlyRecaps()
-      .then(data => {
+    recapService
+      .getMonthlyRecaps()
+      .then((data) => {
         if (data && data.length > 0) {
-          const mapped = data.map(r => ({
+          const mapped = data.map((r) => ({
             id: r.id,
             year: r.year,
             month: r.month,
             theme: r.theme,
             left: r.left_page,
-            right: r.right_page
+            right: r.right_page,
           }));
           setBookRecaps(mapped);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.error('Gagal memuat dynamic monthly recaps dari database, menggunakan fallback statis:', err);
       });
   }, []);
@@ -522,6 +614,12 @@ export default function RecapListPage() {
       className={`recap-book-page ${readerState === 'opening' ? 'is-cinematic-opening' : ''}`}
       data-force-motion={process.env.NODE_ENV !== 'production' ? 'true' : undefined}
     >
+      {toastMsg && (
+        <div className="fixed bottom-6 right-6 bg-slate-900 text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-xl z-50 animate-bounce">
+          {toastMsg}
+        </div>
+      )}
+
       <header className="recap-intro">
         <span className="recap-kicker">IRIS Editorial Archive</span>
         <h1>Recap Nur Intan</h1>
@@ -529,21 +627,55 @@ export default function RecapListPage() {
       </header>
 
       <div className="recap-mode-switcher" aria-label="Pilih mode recap">
-        <button className={mode === 'monthly' ? 'active' : ''} onClick={() => handleModeChange('monthly')}><CalendarDays size={13} className="inline mr-1.5" />Bulanan</button>
-        <button className={mode === 'annual' ? 'active' : ''} onClick={() => handleModeChange('annual')}><BookOpen size={13} className="inline mr-1.5" />Tahunan</button>
+        <button className={mode === 'monthly' ? 'active' : ''} onClick={() => handleModeChange('monthly')}>
+          <CalendarDays size={13} className="inline mr-1.5" />
+          Bulanan
+        </button>
+        <button className={mode === 'annual' ? 'active' : ''} onClick={() => handleModeChange('annual')}>
+          <BookOpen size={13} className="inline mr-1.5" />
+          Tahunan
+        </button>
       </div>
 
       {mode === 'annual' ? (
-        <AnnualRecap monthlyRecaps={bookRecaps} />
+        <AnnualRecap
+          monthlyRecaps={bookRecaps}
+          selectedYear={selectedYear}
+          onYearChange={handleYearChange}
+          availableYears={availableYears}
+        />
       ) : (
         <>
+          {/* Year Switcher for Monthly Recap Books */}
+          <div className="flex justify-center items-center gap-2 mb-6">
+            {availableYears.map((y) => (
+              <button
+                key={y.year}
+                onClick={() => handleYearChange(y.year)}
+                className={`px-4 py-2 rounded-full text-xs font-extrabold transition-all cursor-pointer ${selectedYear === y.year
+                    ? 'text-white shadow-[0_6px_18px_rgba(255,95,178,0.35)] scale-105'
+                    : 'bg-white/60 text-slate-600 hover:bg-white border border-slate-200'
+                  }`}
+                style={selectedYear === y.year ? { background: 'var(--gradient-cta, linear-gradient(120deg, #FF5FB2 0%, #FFA66E 100%))' } : undefined}
+              >
+                Buku {y.year} {y.isComingSoon ? '(Coming Soon)' : ''}
+              </button>
+            ))}
+          </div>
+
           {(readerState === 'closed' || readerState === 'opening' || readerState === 'transitioning') && (
-            <ClosedBookIntro state={readerState} onOpen={handleOpenBook} onOpenEnd={handleOpenEnd} />
+            <ClosedBookIntro
+              state={readerState}
+              onOpen={handleOpenBook}
+              onOpenEnd={handleOpenEnd}
+              year={selectedYear}
+              isComingSoon={isComingSoonBook}
+            />
           )}
-          {(readerState === 'transitioning' || readerState === 'open') && (
+          {(readerState === 'transitioning' || readerState === 'open') && !isComingSoonBook && (
             <section className={`recap-reader ${readerState === 'transitioning' ? 'is-entering' : 'recap-reader--after-open'}`}>
-              <DesktopReader currentMonth={currentMonth} onMonthChange={setCurrentMonth} monthlyRecaps={bookRecaps} />
-              <MobileReader currentMonth={currentMonth} onMonthChange={setCurrentMonth} monthlyRecaps={bookRecaps} />
+              <DesktopReader currentMonth={currentMonth} onMonthChange={setCurrentMonth} monthlyRecaps={yearMonthlyRecaps} />
+              <MobileReader currentMonth={currentMonth} onMonthChange={setCurrentMonth} monthlyRecaps={yearMonthlyRecaps} />
             </section>
           )}
         </>

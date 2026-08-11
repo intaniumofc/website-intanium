@@ -225,6 +225,8 @@ export default function HomeMerchandiseSection({ products = [] }) {
           <motion.div
             key={`recent-grid-${recentPage}`}
             variants={cardContainerVariants}
+            initial="hidden"
+            animate="visible"
             exit={{ opacity: 0, transition: { duration: 0.3 } }}
             className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 lg:gap-5"
           >
