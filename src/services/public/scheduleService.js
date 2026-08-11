@@ -84,7 +84,8 @@ export const scheduleService = {
       ...eventData,
       id,
       thumbnail:
-        (eventData.thumbnail && eventData.thumbnail.trim()) || DEFAULT_THUMBNAIL,
+        (eventData.thumbnail && eventData.thumbnail.trim()) || 
+        (eventData.platform === 'Video Call' ? '/videocall.webp' : DEFAULT_THUMBNAIL),
     };
     const { data, error } = await supabase
       .from('events')

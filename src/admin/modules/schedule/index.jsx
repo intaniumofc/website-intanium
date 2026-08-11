@@ -277,7 +277,7 @@ export default function AdminSchedule() {
     const payload = {
       ...formData,
       time: isoTime,
-      thumbnail: formData.thumbnail.trim() || 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=600'
+      thumbnail: formData.thumbnail.trim() || (formData.platform === 'Video Call' ? '/videocall.webp' : 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=600')
     };
 
     let result;
