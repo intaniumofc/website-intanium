@@ -496,23 +496,23 @@ export function MusicPlayer({ tracks }) {
   const progressPercent = duration ? (currentTime / duration) * 100 : 0;
 
   return (
-    <div className="w-full max-w-[1500px] mx-auto flex flex-col xl:flex-row items-center xl:items-stretch gap-8 lg:gap-10 px-4 sm:px-6 py-6 sm:py-10">
+    <div className="w-full max-w-[1000px] mx-auto flex flex-col items-center gap-8 lg:gap-10 px-4 sm:px-6 py-6 sm:py-10">
       {/* Audio Element */}
       <audio ref={audioRef} preload="metadata" />
 
-      {/* LEFT COLUMN: Text & Actions */}
-      <div className="w-full xl:w-[320px] 2xl:w-[400px] flex flex-col items-center xl:items-start text-center xl:text-left shrink-0 xl:py-10">
+      {/* TOP SECTION: Text & Actions */}
+      <div className="w-full max-w-2xl flex flex-col items-center text-center shrink-0">
         <h2 className="text-3xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black text-[var(--text-primary)] leading-[1.15] tracking-tight mb-4">
           Rekomendasi Lagu Pilihan Untuk <span className="text-[var(--color-primary)]">Intan</span>
         </h2>
         
-        <p className="text-sm sm:text-base lg:text-lg text-[var(--text-secondary)] font-medium mb-8 max-w-md xl:max-w-full">
+        <p className="text-sm sm:text-base lg:text-lg text-[var(--text-secondary)] font-medium mb-8 max-w-md">
           Dengarkan kurasi lagu-lagu yang kami rekomendasikan untuk Nur Intan JKT48. Biarkan alunannya menjadi penemani harimu.
         </p>
         
-        <div className="flex flex-col sm:flex-row xl:flex-col 2xl:flex-row items-center gap-3 w-full sm:w-auto xl:w-full">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto">
           <Button 
-            className="w-full sm:w-auto xl:w-full 2xl:w-auto px-6 py-5 sm:py-6 rounded-full bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/90 text-white font-bold text-xs sm:text-sm shadow-[0_8px_20px_rgba(23,12,121,0.3)] transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shrink-0"
+            className="w-full sm:w-auto px-6 py-5 sm:py-6 rounded-full bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/90 text-white font-bold text-xs sm:text-sm shadow-[0_8px_20px_rgba(23,12,121,0.3)] transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shrink-0"
             onClick={() => {
               if(!playerState.isPlaying) toggle();
             }}
@@ -522,7 +522,7 @@ export function MusicPlayer({ tracks }) {
           
           <Button 
             variant="outline"
-            className="w-full sm:w-auto xl:w-full 2xl:w-auto px-6 py-5 sm:py-6 rounded-full border-slate-300 hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] hover:bg-[var(--color-primary)]/5 text-[var(--text-primary)] font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 shrink-0"
+            className="w-full sm:w-auto px-6 py-5 sm:py-6 rounded-full bg-white border border-slate-300 hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] hover:bg-[var(--color-primary)]/5 text-[var(--text-primary)] font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 shrink-0"
             onClick={() => {
               const el = document.getElementById('playlist-koleksi');
               if (el) {
@@ -537,7 +537,7 @@ export function MusicPlayer({ tracks }) {
         </div>
       </div>
 
-      {/* RIGHT COLUMN: The Dark Player */}
+      {/* BOTTOM SECTION: The Dark Player */}
       <div className="flex-1 w-full bg-[#1c1825] rounded-[2rem] lg:rounded-[3rem] shadow-[0_20px_50px_-10px_rgba(0,0,0,0.5)] overflow-hidden relative border border-white/10 flex flex-col lg:flex-row items-center lg:items-stretch p-5 sm:p-6 lg:p-8 xl:p-6 2xl:p-10 gap-5 lg:gap-6 xl:gap-6 2xl:gap-8 min-h-[380px]">
         
         {/* Decorative Background Glows */}

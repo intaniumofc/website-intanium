@@ -46,8 +46,9 @@ export default function AdminRecaps() {
     photo: 0,
     videoCallTitle: '',
     videoCallDates: '',
-    eventTitle: '',
-    eventDate: ''
+    videoCallTitle: '',
+    videoCallDates: '',
+    eventItems: []
   });
 
   useEffect(() => {
@@ -92,8 +93,9 @@ export default function AdminRecaps() {
       photo: 0,
       videoCallTitle: '',
       videoCallDates: '',
-      eventTitle: '',
-      eventDate: ''
+      videoCallTitle: '',
+      videoCallDates: '',
+      eventItems: []
     });
     setIsModalOpen(true);
   };
@@ -119,8 +121,7 @@ export default function AdminRecaps() {
       photo: item.right_page?.privateMessage?.photo || 0,
       videoCallTitle: item.right_page?.videoCall?.title || '',
       videoCallDates: item.right_page?.videoCall?.dates?.join(', ') || '',
-      eventTitle: item.right_page?.event?.title || '',
-      eventDate: item.right_page?.event?.date || ''
+      eventItems: item.right_page?.event?.items || (item.right_page?.event?.title ? [{ title: item.right_page.event.title, date: item.right_page.event.date }] : [])
     });
     setIsModalOpen(true);
   };
@@ -190,6 +191,28 @@ export default function AdminRecaps() {
     });
   };
 
+  const handleAddEventItem = () => {
+    setMonthlyFormData(prev => ({
+      ...prev,
+      eventItems: [...prev.eventItems, { date: '', title: '' }]
+    }));
+  };
+
+  const handleRemoveEventItem = (index) => {
+    setMonthlyFormData(prev => ({
+      ...prev,
+      eventItems: prev.eventItems.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleEventItemChange = (index, field, value) => {
+    setMonthlyFormData(prev => {
+      const updated = [...prev.eventItems];
+      updated[index] = { ...updated[index], [field]: value };
+      return { ...prev, eventItems: updated };
+    });
+  };
+
   const handleSubmitMonthly = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -240,8 +263,7 @@ export default function AdminRecaps() {
           dates: videoCallDatesArray
         },
         event: {
-          title: monthlyFormData.eventTitle,
-          date: monthlyFormData.eventDate
+          items: monthlyFormData.eventItems.filter(item => item.date.trim() && item.title.trim())
         },
         monthlyNote: monthlyFormData.monthlyNote
       }
@@ -647,11 +669,44 @@ export default function AdminRecaps() {
 
               {/* Special Event Section */}
               <div className="p-3 bg-gray-50 border border-gray-200 rounded-xl space-y-2">
-                <h4 className="font-extrabold text-xs text-[var(--text-primary)]">Special Event / Milestone</h4>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                  <input type="text" name="eventTitle" placeholder="Judul Event (ex: Concert / Birthday)" value={monthlyFormData.eventTitle} onChange={handleMonthlyInputChange} className="sm:col-span-2 px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs" />
-                  <input type="text" name="eventDate" placeholder="Tgl (ex: 28 MEI)" value={monthlyFormData.eventDate} onChange={handleMonthlyInputChange} className="px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs" />
+                <div className="flex items-center justify-between">
+                  <h4 className="font-extrabold text-xs text-[var(--text-primary)]">Special Event / Milestone</h4>
+                  <button type="button" onClick={handleAddEventItem} className="text-[var(--color-pink)] hover:bg-[var(--color-pink-tint-10)] p-1 rounded transition-colors text-[10px] font-bold flex items-center gap-1">
+                    <PlusCircle className="w-3 h-3" /> Tambah
+                  </button>
                 </div>
+                
+                {monthlyFormData.eventItems.length === 0 ? (
+                  <div className="text-center py-2 bg-white rounded border border-dashed border-gray-300 text-xs text-gray-400 font-semibold">
+                    Belum ada event ditambahkan
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {monthlyFormData.eventItems.map((item, idx) => (
+                      <div key={idx} className="flex gap-2 items-start bg-white p-2 rounded border border-gray-200">
+                        <div className="flex-1 space-y-2">
+                          <input
+                            type="text"
+                            placeholder="Judul Event (ex: Concert / Birthday)"
+                            value={item.title}
+                            onChange={(e) => handleEventItemChange(idx, 'title', e.target.value)}
+                            className="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:border-[var(--color-pink)] outline-none"
+                          />
+                          <input
+                            type="text"
+                            placeholder="Tanggal (ex: 28 MEI)"
+                            value={item.date}
+                            onChange={(e) => handleEventItemChange(idx, 'date', e.target.value)}
+                            className="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:border-[var(--color-pink)] outline-none"
+                          />
+                        </div>
+                        <button type="button" onClick={() => handleRemoveEventItem(idx)} className="text-red-500 hover:bg-red-50 p-1.5 mt-1 rounded self-start">
+                          <Trash className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           )}

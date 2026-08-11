@@ -82,9 +82,22 @@ const MomentsPage = forwardRef(function MomentsPage({ recap, pageNumber }, ref) 
           <p className="recap-content-title">{recap.right.videoCall.title}</p>
           <p className="recap-meta">{recap.right.videoCall.dates.join(' · ')}</p>
         </RecapSection>
-        <RecapSection title="Special Event" badge="Event">
-          <p className="recap-content-title">{recap.right.event.title}</p>
-          <p className="recap-meta">{recap.right.event.date}</p>
+        <RecapSection title="Special Event/Milestone" badge="Event">
+          {recap.right.event?.items && recap.right.event.items.length > 0 ? (
+            <ul className="recap-list">
+              {recap.right.event.items.map((ev, i) => (
+                <li key={i}>
+                  <p className="recap-content-title">{ev.title}</p>
+                  <p className="recap-meta">{ev.date}</p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <>
+              <p className="recap-content-title">{recap.right.event?.title}</p>
+              <p className="recap-meta">{recap.right.event?.date}</p>
+            </>
+          )}
         </RecapSection>
         <p className="recap-page__number">IRIS · Page {String(pageNumber * 2).padStart(2, '0')}</p>
       </div>
