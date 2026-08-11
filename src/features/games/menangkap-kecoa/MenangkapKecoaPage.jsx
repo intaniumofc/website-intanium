@@ -233,9 +233,17 @@ export default function MenangkapKecoaPage() {
       title: getPerformanceTitle(state.score),
     })
       .then((data) => {
-        if (data?.id) setResultUrl(`${window.location.origin}/games/menangkap-kecoa/result/${data.id}`);
+        if (data?.id) {
+          setResultUrl(`${window.location.origin}/games/menangkap-kecoa/result/${data.id}`);
+        } else {
+          setResultUrl(`${window.location.origin}/games/menangkap-kecoa?user=${encodeURIComponent(username)}&score=${state.score}`);
+        }
       })
-      .catch((error) => console.error('Gagal menyimpan skor game', error));
+      .catch((error) => {
+        // Fallback silently if offline or database is missing
+        console.warn('Fallback: Menggunakan URL lokal karena gagal menyimpan skor.');
+        setResultUrl(`${window.location.origin}/games/menangkap-kecoa?user=${encodeURIComponent(username)}&score=${state.score}`);
+      });
   }, [state, username, highScore]);
 
   const badges = getBadges(state);
