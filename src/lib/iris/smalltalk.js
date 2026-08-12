@@ -94,5 +94,30 @@ export function checkSmalltalk(message) {
     }
   }
 
+  // 4. Check Relationship / Boyfriend Questions (Playful Joking Answer)
+  const RELATIONSHIP_PATTERNS = [
+    /pacar/i,
+    /gebetan/i,
+    /pasangan/i,
+    /dekat\s*(sama|sm)\s*siapa/i,
+    /lagi\s*dekat\s*(sama|sm)/i,
+    /pacaran/i,
+    /jomblo/i,
+    /single/i,
+    /\bdoi(nya)?\b/i,
+    /\bcrush\b/i,
+  ];
+
+  for (const pattern of RELATIONSHIP_PATTERNS) {
+    if (pattern.test(cleanMsg)) {
+      return {
+        triggered: true,
+        intent: 'RELATIONSHIP_JOKE',
+        message:
+          'Waduh, pertanyaan yang bikin penasaran nih, Bub! 😂 Rahasia sih, tapi kalau ditanya Intan pacaran atau dekat sama siapa... ya jelas dekat dan pacarannya sama aku dong 😙😋, Tapi becanda ya, Bub! 😉 Sebagai member JKT48, Intan fokus latihan, pertunjukan teater, dan memberikan yang terbaik untuk fans. Lagipula urusan pribadi itu privasi member. Yuk kita dukung terus karir Intan biar makin bersinar! ✨',
+      };
+    }
+  }
+
   return { triggered: false };
 }

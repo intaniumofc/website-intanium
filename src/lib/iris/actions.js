@@ -4,12 +4,25 @@ import { createAdminClient } from '../supabase/adminClient.js';
 // Whitelist of allowed navigation paths (Strict Security Requirement #1)
 export const ALLOWED_NAVIGATE_PATHS = [
   '/',
-  '/gallery',
-  '/peta-penampilan',
-  '/schedule',
   '/about-intan',
+  '/about-iris',
+  '/denger-intan',
+  '/esport',
+  '/fanart',
+  '/gallery',
+  '/games',
+  '/games/menangkap-kecoa',
+  '/games/gosok-intan',
+  '/join',
+  '/mading',
+  '/merchandise',
+  '/milestone',
   '/shining-star',
   '/news',
+  '/peta-penampilan',
+  '/photobooth',
+  '/recaps',
+  '/schedule',
 ];
 
 // Discriminated Union Zod Schema for Actions (Plan Section 5)

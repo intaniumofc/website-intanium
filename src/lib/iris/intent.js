@@ -123,18 +123,71 @@ const INTENT_PATTERNS = [
   },
   {
     intent: 'NAVIGATE_PAGE',
-    pattern: /(buka|pergi ke|pindah ke|halaman)\s+(galeri|peta|jadwal|tentang|timeline|berita|home)/i,
+    pattern: /(buka|pergi ke|pindah ke|halaman|lihat)\s+(galeri|peta|jadwal|tentang intan|tentang iris|tentang|timeline|milestone|berita|home|beranda|denger intan|musik|playlist|esport|game|kecoa|gosok|fanart|mading|toko|merchandise|merch|photobooth|recap|rekap|join|daftar)/i,
     extract: (m) => {
-      const page = m[2]?.toLowerCase();
+      const page = (m[2] || '').toLowerCase();
       let path = '/';
       if (page.includes('galeri')) path = '/gallery';
       else if (page.includes('peta')) path = '/peta-penampilan';
       else if (page.includes('jadwal')) path = '/schedule';
+      else if (page.includes('tentang intan')) path = '/about-intan';
+      else if (page.includes('tentang iris')) path = '/about-iris';
       else if (page.includes('tentang')) path = '/about-intan';
-      else if (page.includes('timeline')) path = '/shining-star';
+      else if (page.includes('timeline') || page.includes('milestone')) path = '/milestone';
       else if (page.includes('berita')) path = '/news';
+      else if (page.includes('denger') || page.includes('musik') || page.includes('playlist')) path = '/denger-intan';
+      else if (page.includes('esport')) path = '/esport';
+      else if (page.includes('kecoa')) path = '/games/menangkap-kecoa';
+      else if (page.includes('gosok')) path = '/games/gosok-intan';
+      else if (page.includes('game')) path = '/games';
+      else if (page.includes('fanart')) path = '/fanart';
+      else if (page.includes('mading')) path = '/mading';
+      else if (page.includes('toko') || page.includes('merchandise') || page.includes('merch')) path = '/merchandise';
+      else if (page.includes('photobooth')) path = '/photobooth';
+      else if (page.includes('recap') || page.includes('rekap')) path = '/recaps';
+      else if (page.includes('join') || page.includes('daftar')) path = '/join';
       return { path };
     },
+  },
+  {
+    intent: 'SEARCH_MERCHANDISE',
+    pattern: /(merchandise|merch|toko|kaos|t-shirt|photocard|lanyard|keychain|gantungan kunci|stiker|harga|beli|pesanan|invoice)/i,
+    extract: () => ({ path: '/merchandise' }),
+  },
+  {
+    intent: 'SEARCH_GAMES',
+    pattern: /(game|permainan|kecoa|gosok intan|gacha|clicker|leaderboard|skor)/i,
+    extract: (m) => {
+      const q = m[0].toLowerCase();
+      if (q.includes('kecoa')) return { path: '/games/menangkap-kecoa' };
+      if (q.includes('gosok')) return { path: '/games/gosok-intan' };
+      return { path: '/games' };
+    },
+  },
+  {
+    intent: 'SEARCH_ESPORT',
+    pattern: /(esport|e-sport|mobile legends|mlbb|pubg|roster|turnamen|klasemen|match)/i,
+    extract: () => ({ path: '/esport' }),
+  },
+  {
+    intent: 'SEARCH_FANART',
+    pattern: /(fanart|fan art|lukisan|gambar|karya seni|ilustrasi)/i,
+    extract: () => ({ path: '/fanart' }),
+  },
+  {
+    intent: 'SEARCH_PLAYLIST',
+    pattern: /(playlist|denger intan|dengerintan|lagu|spotify|voice note|podcast|cover lagu)/i,
+    extract: () => ({ path: '/denger-intan' }),
+  },
+  {
+    intent: 'SEARCH_RECAP',
+    pattern: /(recap|rekap|ringkasan show|mc highlight|majalah recap)/i,
+    extract: () => ({ path: '/recaps' }),
+  },
+  {
+    intent: 'SEARCH_JOIN',
+    pattern: /(join|gabung|daftar|keanggotaan|member|admin|volunteer|relawan)/i,
+    extract: () => ({ path: '/join' }),
   },
   {
     intent: 'FAQ_BIRTHDAY',
@@ -165,7 +218,7 @@ export async function detectIntent(userQuestion, apiKey = null) {
       let action = null;
       if (item.intent === 'SHOW_CITY_MAP' && extracted.city) {
         action = { name: 'zoomMap', city: extracted.city };
-      } else if (item.intent === 'NAVIGATE_PAGE' && extracted.path) {
+      } else if ((item.intent === 'NAVIGATE_PAGE' || extracted.path) && extracted.path) {
         action = { name: 'navigate', path: extracted.path };
       }
 
@@ -184,13 +237,13 @@ export async function detectIntent(userQuestion, apiKey = null) {
   // Layer 2: Gemini Flash Structured JSON Fallback
   if (apiKey) {
     try {
-      const promptText = `Klasifikasikan pertanyaan berikut ke salah satu intent (SEARCH_STATS, SHOW_CITY_MAP, NAVIGATE_PAGE, SEARCH_EVENT, FAQ_GENERAL) dan buat action jika relevan.
+      const promptText = `Klasifikasikan pertanyaan berikut ke salah satu intent (SEARCH_STATS, SHOW_CITY_MAP, NAVIGATE_PAGE, SEARCH_EVENT, SEARCH_MERCHANDISE, SEARCH_GAMES, SEARCH_ESPORT, SEARCH_FANART, SEARCH_PLAYLIST, SEARCH_RECAP, SEARCH_JOIN, FAQ_GENERAL) dan buat action jika relevan.
 Format JSON persis:
 {
   "intent": "nama_intent",
   "confidence": 0.85,
   "key_terms": "kata_kunci_pencarian_tanpa_kata_basa_basi",
-  "action": null | {"name": "zoomMap", "city": "Surabaya"} | {"name": "navigate", "path": "/gallery"}
+  "action": null | {"name": "zoomMap", "city": "Surabaya"} | {"name": "navigate", "path": "/merchandise"}
 }
 
 Pertanyaan: "${cleanQ}"`;

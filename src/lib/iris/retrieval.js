@@ -92,7 +92,108 @@ export async function retrieveContext(question, intentObj = {}) {
     }
   }
 
-  // 3. RPC search_all with extracted key terms (e.g. "show juli 2026" or "juli 2026")
+  // 2.5 Intent-driven direct table context retrieval
+  if (intentObj.intent === 'SEARCH_MERCHANDISE') {
+    try {
+      const { data: merchData } = await supabase
+        .from('merchandise')
+        .select('*')
+        .neq('id', 'payment_settings')
+        .neq('id', 'game_settings')
+        .limit(6);
+      if (merchData) {
+        for (const item of merchData) {
+          if (!docs.some((d) => d.id === String(item.id))) {
+            docs.push({
+              id: String(item.id),
+              source_table: 'merchandise',
+              title: item.name || 'Merchandise IRIS',
+              snippet: `Produk: ${item.name} | Kategori: ${item.category || 'Merch'} | Harga: Rp ${(item.price || 0).toLocaleString('id-ID')} | Stok: ${item.stock ?? 'Tersedia'} | Deskripsi: ${item.description || ''}`,
+              url: `/merchandise/${item.id}`,
+            });
+          }
+        }
+      }
+    } catch (e) {}
+  }
+
+  if (intentObj.intent === 'SEARCH_ESPORT') {
+    try {
+      const { data: esportData } = await supabase.from('esport_divisions').select('*').limit(5);
+      if (esportData) {
+        for (const item of esportData) {
+          if (!docs.some((d) => d.id === String(item.id))) {
+            docs.push({
+              id: String(item.id),
+              source_table: 'esport_divisions',
+              title: `Divisi Esports IRIS: ${item.name || item.game_title}`,
+              snippet: `Game: ${item.game_title || item.name} | Deskripsi: ${item.description || 'Divisi Esports IRIS'}`,
+              url: '/esport',
+            });
+          }
+        }
+      }
+    } catch (e) {}
+  }
+
+  if (intentObj.intent === 'SEARCH_PLAYLIST') {
+    try {
+      const { data: playlistData } = await supabase.from('playlists').select('*').limit(5);
+      if (playlistData) {
+        for (const item of playlistData) {
+          if (!docs.some((d) => d.id === String(item.id))) {
+            docs.push({
+              id: String(item.id),
+              source_table: 'playlists',
+              title: item.title || '#dengerINTAN Playlist',
+              snippet: `Playlist: ${item.title} | Kategori: ${item.category || 'Musik'} | Catatan Kurator: ${item.curator_note || item.description || ''}`,
+              url: '/denger-intan',
+            });
+          }
+        }
+      }
+    } catch (e) {}
+  }
+
+  if (intentObj.intent === 'SEARCH_FANART') {
+    try {
+      const { data: fanartData } = await supabase.from('fanart').select('*').limit(5);
+      if (fanartData) {
+        for (const item of fanartData) {
+          if (!docs.some((d) => d.id === String(item.id))) {
+            docs.push({
+              id: String(item.id),
+              source_table: 'fanart',
+              title: item.title || 'Fanart Nur Intan',
+              snippet: `Karya Seni: ${item.title} | Kreator: ${item.artist_name || 'Fans'} | Caption: ${item.caption || ''}`,
+              url: '/fanart',
+            });
+          }
+        }
+      }
+    } catch (e) {}
+  }
+
+  if (intentObj.intent === 'SEARCH_RECAP') {
+    try {
+      const { data: recapData } = await supabase.from('recaps').select('*').limit(5);
+      if (recapData) {
+        for (const item of recapData) {
+          if (!docs.some((d) => d.id === String(item.id))) {
+            docs.push({
+              id: String(item.id),
+              source_table: 'recaps',
+              title: item.title || 'Recap Pertunjukan',
+              snippet: `Recap: ${item.title} | Tanggal: ${item.publish_date || ''} | Summary: ${item.summary || item.content || ''}`,
+              url: `/recaps/${item.id}`,
+            });
+          }
+        }
+      }
+    } catch (e) {}
+  }
+
+  // 3. RPC search_all with extracted key terms
   const searchTargets = [keyTerms, normalizeQuery(cleanQ)].filter(Boolean);
 
   for (const target of searchTargets) {
@@ -118,64 +219,60 @@ export async function retrieveContext(question, intentObj = {}) {
     }
   }
 
-  // 4. Multi-word individual token fallback (Handles typos & partial word matches)
+  // 4. Multi-word individual token fallback across all public database tables
   const tokens = keyTerms.split(/\s+/).filter((t) => t.length >= 3);
   if (tokens.length > 0) {
     try {
       for (const token of tokens) {
-        const [perf, events, news, trivia] = await Promise.all([
-          supabase
-            .from('performance_locations')
-            .select('*')
-            .or(`title.ilike.%${token}%,city.ilike.%${token}%,summary.ilike.%${token}%`)
-            .limit(3),
-          supabase
-            .from('events')
-            .select('*')
-            .or(`title.ilike.%${token}%,description.ilike.%${token}%`)
-            .limit(3),
-          supabase
-            .from('news')
-            .select('*')
-            .or(`title.ilike.%${token}%,summary.ilike.%${token}%`)
-            .limit(3),
-          supabase
-            .from('intan_trivia')
-            .select('*')
-            .or(`question.ilike.%${token}%,answer.ilike.%${token}%`)
-            .limit(3),
+        const [
+          perf, events, news, trivia,
+          merch, fanart, esport, recaps,
+          playlists, achieve, comic, frames
+        ] = await Promise.allSettled([
+          supabase.from('performance_locations').select('*').or(`title.ilike.%${token}%,city.ilike.%${token}%,summary.ilike.%${token}%`).limit(3),
+          supabase.from('events').select('*').or(`title.ilike.%${token}%,description.ilike.%${token}%`).limit(3),
+          supabase.from('news').select('*').or(`title.ilike.%${token}%,summary.ilike.%${token}%`).limit(3),
+          supabase.from('intan_trivia').select('*').or(`question.ilike.%${token}%,answer.ilike.%${token}%`).limit(3),
+          supabase.from('merchandise').select('*').or(`name.ilike.%${token}%,category.ilike.%${token}%,description.ilike.%${token}%`).neq('id', 'payment_settings').neq('id', 'game_settings').limit(3),
+          supabase.from('fanart').select('*').or(`title.ilike.%${token}%,artist_name.ilike.%${token}%,caption.ilike.%${token}%`).limit(3),
+          supabase.from('esport_divisions').select('*').or(`name.ilike.%${token}%,game_title.ilike.%${token}%,description.ilike.%${token}%`).limit(3),
+          supabase.from('recaps').select('*').or(`title.ilike.%${token}%,summary.ilike.%${token}%,content.ilike.%${token}%`).limit(3),
+          supabase.from('playlists').select('*').or(`title.ilike.%${token}%,description.ilike.%${token}%,category.ilike.%${token}%`).limit(3),
+          supabase.from('intan_shining_star_achievements').select('*').or(`title.ilike.%${token}%,description.ilike.%${token}%,category.ilike.%${token}%`).limit(3),
+          supabase.from('intan_shining_star_comic_pages').select('*').or(`chapter_title.ilike.%${token}%,caption.ilike.%${token}%`).limit(3),
+          supabase.from('photobooth_frames').select('*').or(`name.ilike.%${token}%,description.ilike.%${token}%`).limit(3),
         ]);
 
-        if (perf.data) {
-          for (const item of perf.data) {
+        if (perf.status === 'fulfilled' && perf.value.data) {
+          for (const item of perf.value.data) {
             if (!docs.some((d) => d.id === String(item.id))) {
               docs.push({
                 id: String(item.id),
                 source_table: 'performance_locations',
                 title: item.title,
                 snippet: item.summary || item.description || `${item.city} - ${item.venue_name}`,
-                url: `/performance-map?id=${item.id}`,
+                url: `/peta-penampilan?id=${item.id}`,
               });
             }
           }
         }
 
-        if (events.data) {
-          for (const item of events.data) {
+        if (events.status === 'fulfilled' && events.value.data) {
+          for (const item of events.value.data) {
             if (!docs.some((d) => d.id === String(item.id))) {
               docs.push({
                 id: String(item.id),
                 source_table: 'events',
                 title: item.title,
-                snippet: item.description || `${item.platform} - ${item.duration || ''}`,
+                snippet: item.description || `${item.platform || 'Teater'} - ${item.duration || ''}`,
                 url: item.link || '/schedule',
               });
             }
           }
         }
 
-        if (news.data) {
-          for (const item of news.data) {
+        if (news.status === 'fulfilled' && news.value.data) {
+          for (const item of news.value.data) {
             if (!docs.some((d) => d.id === String(item.id))) {
               docs.push({
                 id: String(item.id),
@@ -188,8 +285,8 @@ export async function retrieveContext(question, intentObj = {}) {
           }
         }
 
-        if (trivia.data) {
-          for (const item of trivia.data) {
+        if (trivia.status === 'fulfilled' && trivia.value.data) {
+          for (const item of trivia.value.data) {
             if (!docs.some((d) => d.id === String(item.id))) {
               docs.push({
                 id: String(item.id),
@@ -197,6 +294,118 @@ export async function retrieveContext(question, intentObj = {}) {
                 title: item.question,
                 snippet: item.answer,
                 url: '/about-intan',
+              });
+            }
+          }
+        }
+
+        if (merch.status === 'fulfilled' && merch.value.data) {
+          for (const item of merch.value.data) {
+            if (!docs.some((d) => d.id === String(item.id))) {
+              docs.push({
+                id: String(item.id),
+                source_table: 'merchandise',
+                title: item.name || 'Merchandise IRIS',
+                snippet: `Produk: ${item.name} | Kategori: ${item.category || 'Merch'} | Harga: Rp ${(item.price || 0).toLocaleString('id-ID')} | Stok: ${item.stock ?? 'Tersedia'} | Deskripsi: ${item.description || item.name}`,
+                url: `/merchandise/${item.id}`,
+              });
+            }
+          }
+        }
+
+        if (fanart.status === 'fulfilled' && fanart.value.data) {
+          for (const item of fanart.value.data) {
+            if (!docs.some((d) => d.id === String(item.id))) {
+              docs.push({
+                id: String(item.id),
+                source_table: 'fanart',
+                title: item.title || 'Fanart Nur Intan',
+                snippet: `Karya Oleh: ${item.artist_name || 'Fans'} | Keterangan: ${item.caption || item.title}`,
+                url: '/fanart',
+              });
+            }
+          }
+        }
+
+        if (esport.status === 'fulfilled' && esport.value.data) {
+          for (const item of esport.value.data) {
+            if (!docs.some((d) => d.id === String(item.id))) {
+              docs.push({
+                id: String(item.id),
+                source_table: 'esport_divisions',
+                title: item.name || 'Divisi Esports IRIS',
+                snippet: `Game: ${item.game_title || item.name} | Deskripsi: ${item.description || 'Divisi Esports IRIS'}`,
+                url: '/esport',
+              });
+            }
+          }
+        }
+
+        if (recaps.status === 'fulfilled' && recaps.value.data) {
+          for (const item of recaps.value.data) {
+            if (!docs.some((d) => d.id === String(item.id))) {
+              docs.push({
+                id: String(item.id),
+                source_table: 'recaps',
+                title: item.title || 'Recap Pertunjukan',
+                snippet: item.summary || item.content || item.title,
+                url: `/recaps/${item.id}`,
+              });
+            }
+          }
+        }
+
+        if (playlists.status === 'fulfilled' && playlists.value.data) {
+          for (const item of playlists.value.data) {
+            if (!docs.some((d) => d.id === String(item.id))) {
+              docs.push({
+                id: String(item.id),
+                source_table: 'playlists',
+                title: item.title || '#dengerINTAN Playlist',
+                snippet: `Kategori: ${item.category || 'Playlist'} | Deskripsi: ${item.description || item.curator_note || item.title}`,
+                url: '/denger-intan',
+              });
+            }
+          }
+        }
+
+        if (achieve.status === 'fulfilled' && achieve.value.data) {
+          for (const item of achieve.value.data) {
+            if (!docs.some((d) => d.id === String(item.id))) {
+              docs.push({
+                id: String(item.id),
+                source_table: 'intan_shining_star_achievements',
+                title: item.title || 'Milestone Intan',
+                snippet: `Kategori: ${item.category || 'Milestone'} | Tanggal: ${item.date || ''} | Deskripsi: ${item.description || item.title}`,
+                url: '/milestone',
+              });
+            }
+          }
+        }
+
+        if (comic.status === 'fulfilled' && comic.value.data) {
+          for (const item of comic.value.data) {
+            if (!docs.some((d) => d.id === String(item.id))) {
+              docs.push({
+                id: String(item.id),
+                source_table: 'intan_shining_star_comic_pages',
+                title: item.chapter_title ? `Komik Intan: ${item.chapter_title}` : `Komik Intan Halaman ${item.page_number}`,
+                snippet: `Halaman ${item.page_number || 1}: ${item.caption || item.chapter_title || 'Komik Perjalanan Intan'}`,
+                url: '/milestone',
+              });
+            }
+          }
+        }
+
+        if (frames.status === 'fulfilled' && frames.value.data) {
+          for (const item of frames.value.data) {
+            if (!docs.some((d) => d.id === String(item.id))) {
+              docs.push({
+                id: String(item.id),
+                source_table: 'photobooth_frames',
+                title: item.name || 'Bingkai Photobooth Intan',
+                snippet: item.description || `Frame foto virtual bertema Nur Intan`,
+                url: '/photobooth',
               });
             }
           }
@@ -222,7 +431,7 @@ export async function retrieveContext(question, intentObj = {}) {
           source_table: 'statistics_snapshot',
           title: 'Statistik Penampilan & Pencapaian Nur Intan',
           snippet: `Total Show Teater: ${statsData.theater_count || 0}, Event Offair: ${statsData.offair_count || 0}, Total Kota: ${statsData.city_count || 0}, Total Provinsi: ${statsData.province_count || 0}, Total Pencapaian: ${statsData.achievement_count || 0}.`,
-          url: '/performance-map',
+          url: '/peta-penampilan',
         });
       }
     } catch (e) {}
