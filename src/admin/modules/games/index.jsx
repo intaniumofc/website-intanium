@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import Card from '../../../components/common/Card';
 import Button from '../../../components/common/Button';
 import Loading from '../../../components/common/Loading';
@@ -20,20 +20,10 @@ import {
   ChevronLeft,
   ChevronRight,
   Settings,
-  Save,
-  CheckCircle,
-  Eye,
-  Lock,
   Plus,
-  ChevronDown,
-  HelpCircle,
-  Zap,
-  Star,
-  Gamepad,
-  Flame,
-  Heart,
-  Music,
-  Info
+  Save,
+  Eye,
+  ChevronDown
 } from 'lucide-react';
 import {
   getAdminGameScores,
@@ -156,7 +146,7 @@ export default function AdminGames() {
   };
 
   // Fetch all scores
-  const fetchScores = async () => {
+  const fetchScores = useCallback(async () => {
     setIsLoadingScores(true);
     try {
       const data = await getAdminGameScores({ search: searchQuery, period, sortBy, mode: activeGame });
@@ -168,10 +158,10 @@ export default function AdminGames() {
     } finally {
       setIsLoadingScores(false);
     }
-  };
+  }, [searchQuery, period, sortBy, activeGame, notify]);
 
   // Fetch settings configuration
-  const fetchSettings = async () => {
+  const fetchSettings = useCallback(async () => {
     setIsLoadingSettings(true);
     try {
       const data = await getGameSettings();
@@ -182,15 +172,21 @@ export default function AdminGames() {
     } finally {
       setIsLoadingSettings(false);
     }
-  };
+  }, [notify]);
 
   useEffect(() => {
-    fetchScores();
-  }, [searchQuery, period, sortBy, activeGame]);
+    const timer = setTimeout(() => {
+      fetchScores();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [fetchScores]);
 
   useEffect(() => {
-    fetchSettings();
-  }, []);
+    const timer = setTimeout(() => {
+      fetchSettings();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [fetchSettings]);
 
   // Calculations for stats card
   const stats = useMemo(() => {
