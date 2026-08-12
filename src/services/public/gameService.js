@@ -7,21 +7,23 @@ export async function submitGameScore({
   maxCombo,
   title,
 }) {
-  const { data, error } = await supabase
-    .from('game_scores')
-    .insert({
+  const res = await fetch('/api/games/submit-score', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
       username,
       score,
-      caught_count: caughtCount,
-      max_combo: maxCombo,
+      caughtCount,
+      maxCombo,
       mode: 'classic',
       title,
-    })
-    .select('id')
-    .single();
+    }),
+  });
 
-  if (error) throw error;
-  return data;
+  const responseData = await res.json();
+  if (!res.ok) throw new Error(responseData.error || 'Failed to submit score');
+  
+  return responseData.data;
 }
 
 export function getStartOfWeekUTC() {

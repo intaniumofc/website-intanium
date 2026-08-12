@@ -406,13 +406,22 @@ export default function AdminMembershipPage() {
     setIsSubmitting(true);
     try {
       const payload = {
+        id: editingAdminId,
         role: adminFormData.role,
         permissions: adminFormData.permissions,
         division_id: adminFormData.division_id ? parseInt(adminFormData.division_id, 10) : null
       };
 
-      const { error } = await supabase.from('admin_profiles').update(payload).eq('id', editingAdminId);
-      if (error) throw error;
+      const res = await fetch('/api/admin/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Gagal menyimpan profil (Error Server)');
+      }
 
       await logAdminActivity(`Memperbarui hak akses admin: ${adminFormData.username}`);
 
