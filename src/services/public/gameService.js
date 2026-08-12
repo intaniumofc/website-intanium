@@ -76,8 +76,12 @@ export async function adminDeleteGameScore(id) {
   return { success: true };
 }
 
-export async function adminResetLeaderboard(period = 'weekly') {
+export async function adminResetLeaderboard(period = 'weekly', mode = '') {
   let query = supabase.from('game_scores').delete();
+
+  if (mode) {
+    query = query.eq('mode', mode);
+  }
 
   if (period === 'weekly') {
     const startOfWeek = getStartOfWeekUTC();
@@ -89,23 +93,33 @@ export async function adminResetLeaderboard(period = 'weekly') {
   return { success: true };
 }
 
-export async function adminPruneGameScores() {
+export async function adminPruneGameScores(mode = '') {
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-  const { error } = await supabase
+  let query = supabase
     .from('game_scores')
     .delete()
     .lt('created_at', thirtyDaysAgo.toISOString());
+
+  if (mode) {
+    query = query.eq('mode', mode);
+  }
+
+  const { error } = await query;
 
   if (error) throw error;
   return { success: true };
 }
 
-export async function getAdminGameScores({ search = '', period = 'all-time', sortBy = 'score_desc' } = {}) {
+export async function getAdminGameScores({ search = '', period = 'all-time', sortBy = 'score_desc', mode = '' } = {}) {
   let query = supabase
     .from('game_scores')
     .select('*');
+
+  if (mode) {
+    query = query.eq('mode', mode);
+  }
 
   if (search) {
     query = query.ilike('username', `%${search}%`);

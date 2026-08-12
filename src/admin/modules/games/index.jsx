@@ -59,6 +59,7 @@ export default function AdminGames() {
   const [searchQuery, setSearchQuery] = useState('');
   const [period, setPeriod] = useState('all-time'); // 'weekly' | 'all-time'
   const [sortBy, setSortBy] = useState('score_desc'); // 'score_desc' | 'score_asc' | 'newest' | 'oldest'
+  const [activeGame, setActiveGame] = useState('classic'); // 'classic' | 'gosok-intan'
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(0);
@@ -158,7 +159,7 @@ export default function AdminGames() {
   const fetchScores = async () => {
     setIsLoadingScores(true);
     try {
-      const data = await getAdminGameScores({ search: searchQuery, period, sortBy });
+      const data = await getAdminGameScores({ search: searchQuery, period, sortBy, mode: activeGame });
       setScores(data);
       setCurrentPage(0);
     } catch (err) {
@@ -185,7 +186,7 @@ export default function AdminGames() {
 
   useEffect(() => {
     fetchScores();
-  }, [searchQuery, period, sortBy]);
+  }, [searchQuery, period, sortBy, activeGame]);
 
   useEffect(() => {
     fetchSettings();
@@ -270,13 +271,13 @@ export default function AdminGames() {
     setActionLoading(true);
     try {
       if (confirmBulk.type === 'reset-weekly') {
-        await adminResetLeaderboard('weekly');
+        await adminResetLeaderboard('weekly', activeGame);
         notify.success('Leaderboard Mingguan Direset', 'Skor minggu berjalan berhasil dihapus.');
       } else if (confirmBulk.type === 'prune') {
-        await adminPruneGameScores();
+        await adminPruneGameScores(activeGame);
         notify.success('Pembersihan Berhasil', 'Skor lama yang lebih dari 30 hari telah dipangkas.');
       } else if (confirmBulk.type === 'reset-all') {
-        await adminResetLeaderboard('all-time');
+        await adminResetLeaderboard('all-time', activeGame);
         notify.success('Database Direset', 'Semua riwayat skor game berhasil dihapus total.');
       }
       fetchScores();
@@ -456,6 +457,18 @@ export default function AdminGames() {
 
             {/* Filters */}
             <div className="flex flex-wrap gap-3">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-[var(--text-secondary)]">Game:</span>
+                <select aria-label="Pilih game"
+                  value={activeGame}
+                  onChange={(e) => setActiveGame(e.target.value)}
+                  className="rounded-xl border border-[var(--border-color)] bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 focus:outline-none focus:ring-2 focus:ring-[var(--color-pink)]/15 focus:border-[var(--color-pink)] shadow-xs cursor-pointer"
+                >
+                  <option value="classic">Menangkap Kecoa</option>
+                  <option value="gosok-intan">Gosok Intan</option>
+                </select>
+              </div>
+
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-[var(--text-secondary)]">Periode:</span>
                 <select aria-label="Pilih filter periode"
