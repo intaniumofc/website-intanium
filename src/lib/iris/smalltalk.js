@@ -89,7 +89,7 @@ export function checkSmalltalk(message) {
       return {
         triggered: true,
         intent: 'IDENTITY',
-        message: 'Aku **IRIS Assistant**, copilot AI resmi untuk fan site Nur Intan (INTANIUM). Aku siap bantu kamu cari info jadwal, galeri, statistik, dan trivia seputar Intan!',
+        message: 'Aku **IRIS Assistant**, copilot AI resmi untuk fan site Nur Intan (IRIS). Aku siap bantu kamu cari info jadwal, galeri, statistik, dan trivia seputar Intan!',
       };
     }
   }

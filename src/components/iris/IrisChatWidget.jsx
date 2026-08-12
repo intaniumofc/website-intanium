@@ -537,9 +537,10 @@ export default function IrisChatWidget() {
                   }`}
                 >
                   {msg.isLoading ? (
-                    <div className="flex items-center gap-1.5 text-slate-500 text-[11px] py-0.5 font-medium">
-                      <RefreshCw className="w-3.5 h-3.5 animate-spin text-pink-500" />
-                      Menyusun jawaban...
+                    <div className="flex items-center gap-1.5 text-slate-400 text-xs py-1 px-1 h-5">
+                      <span className="w-1.5 h-1.5 bg-pink-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                      <span className="w-1.5 h-1.5 bg-pink-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                      <span className="w-1.5 h-1.5 bg-pink-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
                     </div>
                   ) : (
                     <div>{formatMessageText(msg.text, msg.sender === 'user')}</div>

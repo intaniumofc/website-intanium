@@ -3,6 +3,8 @@ import { detectIntent } from '../../../lib/iris/intent.js';
 import { retrieveContext } from '../../../lib/iris/retrieval.js';
 import { buildPrompt } from '../../../lib/iris/prompt.js';
 import { streamGeminiContent, generateFallbackAnswer } from '../../../lib/iris/gemini.js';
+import { streamFireworksContent } from '../../../lib/iris/fireworks.js';
+import { SYSTEM_PROMPT } from '../../../lib/iris/prompt.js';
 import { checkRateLimit, extractClientIp } from '../../../lib/iris/rateLimiter.js';
 import { checkPrivacyGuard } from '../../../lib/iris/privacyGuard.js';
 import { checkSmalltalk } from '../../../lib/iris/smalltalk.js';
@@ -333,7 +335,48 @@ export async function POST(request) {
         }
 
         try {
-          if (apiKey) {
+          const fireworksApiKey = process.env.FIREWORKS_API_KEY;
+          
+          if (fireworksApiKey) {
+            try {
+              fullAnswerText = await streamFireworksContent(
+                promptText,
+                SYSTEM_PROMPT,
+                fireworksApiKey,
+                (chunk) => {
+                  controller.enqueue(
+                    encoder.encode(
+                      `data: ${JSON.stringify({ type: 'token', content: chunk })}\n\n`
+                    )
+                  );
+                }
+              );
+            } catch (fireworksErr) {
+              console.warn('Fireworks API failed, falling back to Gemini:', fireworksErr.message);
+              // Fallback to Gemini
+              if (apiKey) {
+                fullAnswerText = await streamGeminiContent(
+                  promptText,
+                  apiKey,
+                  (chunk) => {
+                    controller.enqueue(
+                      encoder.encode(
+                        `data: ${JSON.stringify({ type: 'token', content: chunk })}\n\n`
+                      )
+                    );
+                  }
+                );
+              } else {
+                isFallbackLLM = true;
+                fullAnswerText = generateFallbackAnswer(cleanMessage, retrievedDocs);
+                controller.enqueue(
+                  encoder.encode(
+                    `data: ${JSON.stringify({ type: 'token', content: fullAnswerText })}\n\n`
+                  )
+                );
+              }
+            }
+          } else if (apiKey) {
             fullAnswerText = await streamGeminiContent(
               promptText,
               apiKey,
@@ -355,7 +398,7 @@ export async function POST(request) {
             );
           }
         } catch (err) {
-          console.error('Gemini streaming error, using fallback:', err.message);
+          console.error('LLM streaming error, using static fallback:', err.message);
           isFallbackLLM = true;
           fullAnswerText = generateFallbackAnswer(cleanMessage, retrievedDocs);
           controller.enqueue(
