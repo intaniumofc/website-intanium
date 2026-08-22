@@ -62,7 +62,7 @@ const nextConfig = {
     minimumCacheTTL: 31536000,
     localPatterns: [
       {
-        pathname: '/api/**',
+        pathname: '/**',
       },
     ],
     remotePatterns: [

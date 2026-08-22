@@ -4,6 +4,9 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import logoNobg from '../../assets/logos/logo-nobg.webp';
+import kupuOutlineLogo from '../../assets/logos/kupu-outline.webp';
+import bungaLogo from '../../assets/logos/bunga.webp';
+import matahariLogo from '../../assets/logos/matahari.webp';
 import IrisStructureSection from './IrisStructureSection';
 import GemintangSection from './GemintangSection';
 import AboutSection3 from './AboutSection';
@@ -50,24 +53,25 @@ const ButterflySVG = ({ className }) => (
 // Static Data Constants - Makna Logo IRIS Official
 const LOGO_PHILOSOPHY = [
   {
-    id: 'kupu_bunga',
-    title: 'Irisan Kupu-Kupu & Bunga',
-    desc: 'Kupu-kupu yang saling beririsan dengan bunga iris merepresentasikan pertemuan dua figur yang berbeda, menciptakan sinergi melalui pertumbuhan, dan hubungan yang saling memengaruhi.'
+    id: 'kupu_kupu',
+    title: 'Kupu-Kupu',
+    tag: 'Elemen 01',
+    image: kupuOutlineLogo,
+    desc: 'Kupu-kupu yang sudah ada dari logo sebelumnya, digambarkan saling beririsan dengan bunga iris merepresentasikan pertemuan dua figur yang berbeda, menciptakan sinergi melalui pertumbuhan, dan hubungan yang saling memengaruhi.'
   },
   {
-    id: 'bunga_pelangi',
-    title: 'Bunga Iris & Dewi Pelangi',
+    id: 'bunga_iris',
+    title: 'Bunga Iris',
+    tag: 'Elemen 02',
+    image: bungaLogo,
     desc: 'Bunga iris membawa dua makna: sebagai bunga merepresentasikan keindahan dan pertumbuhan; sementara dalam mitologi, Iris adalah dewi pelangi dan pembawa pesan, sebuah simbol penghubung utama.'
   },
   {
-    id: 'outline_pelangi',
-    title: 'Outline Terbuka Spektrum Pelangi',
-    desc: 'Outline terbuka dengan warna-warna spektrum pelangi merepresentasikan keberagaman dan inklusivitas. Bentuknya yang tidak tertutup menggambarkan sebuah ruang yang selalu terbuka bagi siapa pun.'
-  },
-  {
-    id: 'bintang',
-    title: 'Bintang Resonansi Dua Arah',
-    desc: 'Bintang di tengah menjadi pusat sekaligus titik resonansi dua arah: energi dan inspirasi dari Intan JKT48 memengaruhi orang-orang di dalam ruang ini, begitupun sebaliknya.'
+    id: 'matahari',
+    title: 'Matahari',
+    tag: 'Elemen 03',
+    image: matahariLogo,
+    desc: 'Matahari di bagian tengah melambangkan kehangatan, pancaran energi positif, dan titik pusat resonansi dua arah: energi dan inspirasi dari Intan JKT48 memengaruhi orang-orang di dalam ruang ini, begitupun sebaliknya.'
   }
 ];
 
@@ -280,7 +284,7 @@ function PhilosophyCard({ item, index, variants, className = '', activeId, onAct
   return (
     <motion.div
       variants={variants}
-      whileHover={{ y: -4, scale: 1.015 }}
+      whileHover={{ y: -5, scale: 1.015 }}
       transition={CARD_SPRING}
       onHoverStart={activate}
       onHoverEnd={deactivate}
@@ -296,39 +300,71 @@ function PhilosophyCard({ item, index, variants, className = '', activeId, onAct
       tabIndex={0}
       role="button"
       aria-pressed={isActive}
-      className={`group relative cursor-pointer rounded-3xl border bg-white/90 backdrop-blur-xl p-5 outline-none transition-all duration-300 flex flex-col items-center justify-center ${isActive
-        ? 'border-pink-300 shadow-[0_16px_40px_-15px_rgba(255,95,178,0.25)] ring-2 ring-[var(--color-primary)]/30 bg-white'
-        : 'border-slate-100 shadow-[0_10px_30px_-15px_rgba(255,95,178,0.12)] hover:border-pink-200 hover:shadow-[0_14px_35px_-12px_rgba(255,95,178,0.2)] hover:bg-white'} ${className}`}
+      className={`group relative cursor-pointer rounded-3xl border bg-white/95 backdrop-blur-xl p-5 sm:p-5.5 outline-none transition-all duration-300 flex flex-col items-center justify-between text-center ${
+        isActive
+          ? 'border-pink-300 shadow-[0_18px_45px_-12px_rgba(255,95,178,0.3)] ring-2 ring-[var(--color-primary)]/40 bg-white'
+          : 'border-slate-100 shadow-[0_10px_30px_-15px_rgba(255,95,178,0.12)] hover:border-pink-200 hover:shadow-[0_14px_35px_-12px_rgba(255,95,178,0.2)] hover:bg-white'
+      } ${className}`}
     >
       {/* Soft IRIS Hover Glow */}
-      <div className={`pointer-events-none absolute inset-0 -z-10 rounded-3xl bg-[radial-gradient(circle_at_50%_0%,rgba(255,95,178,0.08),transparent_70%)] transition-opacity duration-300 ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`} />
+      <div
+        className={`pointer-events-none absolute inset-0 -z-10 rounded-3xl bg-[radial-gradient(circle_at_50%_0%,rgba(255,95,178,0.1),transparent_70%)] transition-opacity duration-300 ${
+          isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+        }`}
+      />
 
-      <div className="flex flex-col items-center text-center space-y-2.5 w-full">
-        {/* Title */}
-        <h3 className="font-extrabold text-base sm:text-lg text-slate-900 leading-snug group-hover:text-[var(--color-primary)] transition-colors text-center">
-          {item.title}
-        </h3>
+      <div className="flex flex-col items-center space-y-3 w-full">
+        {/* Element Image Container */}
+        {item.image && (
+          <div className="relative flex items-center justify-center mb-0.5">
+            <div
+              className={`w-18 h-18 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center p-2 transition-transform duration-500 group-hover:scale-110 shadow-xs ${
+                item.id === 'matahari'
+                  ? 'bg-gradient-to-br from-[#FF5FB2] via-[#A855F7] to-[#170C79] shadow-[0_6px_18px_rgba(255,95,178,0.35)]'
+                  : 'bg-gradient-to-br from-pink-50/90 via-purple-50/50 to-pink-50/80 border border-pink-100/70 shadow-[0_4px_14px_rgba(255,95,178,0.12)]'
+              }`}
+            >
+              <Image
+                src={item.image}
+                alt={item.title}
+                width={80}
+                height={80}
+                className="w-full h-full object-contain filter drop-shadow-[0_2px_6px_rgba(0,0,0,0.06)]"
+              />
+            </div>
 
-        {/* Description Rata Kanan-Kiri (Justify) */}
-        <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium text-justify w-full [text-align-last:center]">
-          {item.desc}
-        </p>
+            {/* Element Tag badge */}
+            <span className="absolute -bottom-2 bg-white text-[var(--color-primary)] border border-pink-200 shadow-xs px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider">
+              {item.tag || `Elemen 0${index + 1}`}
+            </span>
+          </div>
+        )}
+
+        {/* Text Area */}
+        <div className="space-y-1.5 pt-1 w-full flex-1 flex flex-col justify-start">
+          <h3 className="font-black text-base sm:text-lg text-slate-900 leading-snug group-hover:text-[var(--color-primary)] transition-colors text-center">
+            {item.title}
+          </h3>
+
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium text-justify w-full [text-align-last:center]">
+            {item.desc}
+          </p>
+        </div>
       </div>
     </motion.div>
   );
 }
 
 const CONNECTOR_PATHS = [
-  { id: 'kupu_bunga', d: 'M 330 110 Q 420 180 435 235' },
-  { id: 'bunga_pelangi', d: 'M 670 110 Q 580 180 565 235' },
-  { id: 'outline_pelangi', d: 'M 330 450 Q 420 380 435 325' },
-  { id: 'bintang', d: 'M 670 450 Q 580 380 565 325' }
+  { id: 'kupu_kupu', d: 'M 330 120 Q 420 200 440 245' },
+  { id: 'bunga_iris', d: 'M 670 120 Q 580 200 560 245' },
+  { id: 'matahari', d: 'M 500 500 Q 500 430 500 365' }
 ];
 
 function OrbitConnectors({ activeId }) {
   return (
     <svg
-      viewBox="0 0 1000 560"
+      viewBox="0 0 1000 720"
       preserveAspectRatio="none"
       className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-visible"
       fill="none"
@@ -337,7 +373,19 @@ function OrbitConnectors({ activeId }) {
         const isActive = activeId === path.id;
         return (
           <g key={path.id}>
-            {/* Connector Line Path */}
+            {/* Ambient Background Glow Path */}
+            <motion.path
+              d={path.d}
+              stroke="#FF5FB2"
+              strokeOpacity={isActive ? 0.35 : 0.12}
+              strokeWidth={isActive ? 8 : 4}
+              strokeLinecap="round"
+              style={{
+                filter: 'blur(4px)',
+                transition: 'all 0.3s ease'
+              }}
+            />
+            {/* Dynamic Neon Connector Line */}
             <motion.path
               d={path.d}
               stroke="#FF5FB2"
@@ -443,12 +491,12 @@ export default function AboutIrisPage() {
             </p>
           </motion.div>
 
-          {/* --- DESKTOP: Constellation Map (Simetris 4-Card Grid) --- */}
-          <div className="relative hidden lg:block w-full max-w-6xl mx-auto min-h-[580px] overflow-visible">
+          {/* --- DESKTOP: Constellation Map (Simetris 3-Card Grid with Connectors) --- */}
+          <div className="relative hidden lg:block w-full max-w-6xl mx-auto min-h-[720px] xl:min-h-[760px] overflow-visible">
             <OrbitConnectors activeId={activeId} />
 
             {/* Center Logo Medallion */}
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 flex items-center justify-center">
+            <div className="absolute left-1/2 top-[38%] -translate-x-1/2 -translate-y-1/2 z-10 flex items-center justify-center">
               <motion.div
                 variants={logoMedallionReveal}
                 className="relative flex items-center justify-center"
@@ -462,7 +510,7 @@ export default function AboutIrisPage() {
               </motion.div>
             </div>
 
-            {/* Node 1: Irisan Kupu-Kupu & Bunga (Top Left) */}
+            {/* Node 1: Kupu-Kupu (Top Left) */}
             <div className="absolute left-[0%] top-[2%] w-[330px] xl:w-[370px] z-20">
               <PhilosophyCard
                 item={LOGO_PHILOSOPHY[0]}
@@ -475,7 +523,7 @@ export default function AboutIrisPage() {
               />
             </div>
 
-            {/* Node 2: Bunga Iris & Dewi Pelangi (Top Right) */}
+            {/* Node 2: Bunga Iris (Top Right) */}
             <div className="absolute right-[0%] top-[2%] w-[330px] xl:w-[370px] z-20">
               <PhilosophyCard
                 item={LOGO_PHILOSOPHY[1]}
@@ -488,24 +536,11 @@ export default function AboutIrisPage() {
               />
             </div>
 
-            {/* Node 3: Outline Terbuka Spektrum Pelangi (Bottom Left) */}
-            <div className="absolute left-[0%] bottom-[2%] w-[330px] xl:w-[370px] z-20">
+            {/* Node 3: Matahari (Bottom Center) */}
+            <div className="absolute left-1/2 bottom-[0%] -translate-x-1/2 w-[340px] xl:w-[380px] z-20">
               <PhilosophyCard
                 item={LOGO_PHILOSOPHY[2]}
                 index={2}
-                variants={philosophyCardReveal}
-                className="w-full"
-                activeId={activeId}
-                onActivate={setActiveId}
-                onDeactivate={handleDeactivatePhil}
-              />
-            </div>
-
-            {/* Node 4: Bintang Resonansi Dua Arah (Bottom Right) */}
-            <div className="absolute right-[0%] bottom-[2%] w-[330px] xl:w-[370px] z-20">
-              <PhilosophyCard
-                item={LOGO_PHILOSOPHY[3]}
-                index={3}
                 variants={philosophyCardReveal}
                 className="w-full"
                 activeId={activeId}
