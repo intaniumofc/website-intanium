@@ -55,21 +55,18 @@ const LOGO_PHILOSOPHY = [
   {
     id: 'kupu_kupu',
     title: 'Kupu-Kupu',
-    tag: 'Elemen 01',
     image: kupuOutlineLogo,
     desc: 'Kupu-kupu yang sudah ada dari logo sebelumnya, digambarkan saling beririsan dengan bunga iris merepresentasikan pertemuan dua figur yang berbeda, menciptakan sinergi melalui pertumbuhan, dan hubungan yang saling memengaruhi.'
   },
   {
     id: 'bunga_iris',
     title: 'Bunga Iris',
-    tag: 'Elemen 02',
     image: bungaLogo,
     desc: 'Bunga iris membawa dua makna: sebagai bunga merepresentasikan keindahan dan pertumbuhan; sementara dalam mitologi, Iris adalah dewi pelangi dan pembawa pesan, sebuah simbol penghubung utama.'
   },
   {
     id: 'matahari',
     title: 'Matahari',
-    tag: 'Elemen 03',
     image: matahariLogo,
     desc: 'Matahari di bagian tengah melambangkan kehangatan, pancaran energi positif, dan titik pusat resonansi dua arah: energi dan inspirasi dari Intan JKT48 memengaruhi orang-orang di dalam ruang ini, begitupun sebaliknya.'
   }
@@ -316,11 +313,16 @@ function PhilosophyCard({ item, index, variants, className = '', activeId, onAct
       <div className="flex flex-col items-center space-y-3 w-full">
         {/* Element Image Container */}
         {item.image && (
-          <div className="relative flex items-center justify-center mb-0.5">
+          <div className="relative flex items-center justify-center">
             <div
+              style={
+                item.id === 'matahari'
+                  ? { backgroundImage: 'var(--gradient-cta, linear-gradient(120deg, #FF5FB2 0%, #FFA66E 100%))' }
+                  : undefined
+              }
               className={`w-18 h-18 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center p-2 transition-transform duration-500 group-hover:scale-110 shadow-xs ${
                 item.id === 'matahari'
-                  ? 'bg-gradient-to-br from-[#FF5FB2] via-[#A855F7] to-[#170C79] shadow-[0_6px_18px_rgba(255,95,178,0.35)]'
+                  ? 'bg-gradient-to-br from-[#FF5FB2] to-[#FFA66E] shadow-[0_8px_25px_rgba(255,95,178,0.4)] border border-white/40'
                   : 'bg-gradient-to-br from-pink-50/90 via-purple-50/50 to-pink-50/80 border border-pink-100/70 shadow-[0_4px_14px_rgba(255,95,178,0.12)]'
               }`}
             >
@@ -332,11 +334,6 @@ function PhilosophyCard({ item, index, variants, className = '', activeId, onAct
                 className="w-full h-full object-contain filter drop-shadow-[0_2px_6px_rgba(0,0,0,0.06)]"
               />
             </div>
-
-            {/* Element Tag badge */}
-            <span className="absolute -bottom-2 bg-white text-[var(--color-primary)] border border-pink-200 shadow-xs px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider">
-              {item.tag || `Elemen 0${index + 1}`}
-            </span>
           </div>
         )}
 
